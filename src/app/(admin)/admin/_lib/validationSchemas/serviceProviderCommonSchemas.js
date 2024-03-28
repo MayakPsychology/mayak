@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { FormatOfWork } from '@prisma/client';
-import { MAX_NUM_SELECTED_SOCIAL_LINKS } from '@admin/_lib/consts';
+import { MAX_NUM_SELECTED_SOCIAL_LINKS, WEEKDAYS_TRANSLATION } from '@admin/_lib/consts';
+import { isSpecifiedWorkTime } from '@admin/_utils/common';
 import { PHONE_REGEX } from '@/lib/consts';
 
 // ------------------ COMMON SECTION ---------------------
@@ -37,6 +38,48 @@ export const zInteger = z
 
 export const zUrl = zString.url({ message: MESSAGES.unacceptableValue });
 
+export const zWorkTimeSchema = z
+  .array(
+    z
+      .object({
+        weekDay: z.enum(Object.values(WEEKDAYS_TRANSLATION)),
+        time: z
+          .string()
+          .refine(val => !val || /\d{2}:\d{2}\s-\s\d{2}:\d{2}/.test(val), {
+            message: 'Введіть час у форматі ХХ:ХХ - ХХ:ХХ',
+          })
+          .nullish(),
+        isDayOff: z.boolean().nullish(),
+      })
+      .superRefine((data, ctx) => {
+        const { time, isDayOff } = data;
+        if (time && isDayOff) {
+          ctx.addIssue({
+            code: 'custom',
+            message: 'Приберіть час роботи, якщо це вихідний',
+            path: ['time'],
+          });
+        }
+      }),
+  )
+  .superRefine((workTime, ctx) => {
+    if (!isSpecifiedWorkTime(workTime)) return;
+    workTime.forEach((day, index) => {
+      if (!day.isDayOff && !day.time) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Додайте час роботи, якщо це не вихідний',
+          path: [index, 'time'],
+        });
+        ctx.addIssue({
+          code: 'custom',
+          message: `Додайте час роботи або вихідний для кожного дня
+            (чи приберіть усі дані якщо графік роботи не зазначено)`,
+        });
+      }
+    });
+  });
+
 export const serviceProviderCore = z.object({
   isActive: z.boolean().optional(),
   formatOfWork: zString.refine(val => Object.values(FormatOfWork).includes(val), {
@@ -51,6 +94,7 @@ export const serviceProviderCore = z.object({
   email: zString.email().nullish(),
   addressesIds: zString.array().nullish(),
   website: zString.url({ message: MESSAGES.unacceptableValue }).nullish(),
+  workTime: zWorkTimeSchema,
   socialLink: z
     .object({
       instagram: zUrl.nullish(),
@@ -73,7 +117,16 @@ export const serviceProviderCore = z.object({
     ),
 });
 
-// ---- ADDRESS SECTION ----
+const zCoordinateSchema = z.object({
+  latitude: z
+    .number({ required_error: MESSAGES.requiredField, invalid_type_error: MESSAGES.unacceptableValue })
+    .min(-180, { message: 'Мінімальне допустиме значення -180' })
+    .max(180, { message: 'Максимальне допустиме значення 180' }),
+  longitude: z
+    .number({ required_error: MESSAGES.requiredField, invalid_type_error: MESSAGES.unacceptableValue })
+    .min(-90, { message: 'Мінімальне допустиме значення -90' })
+    .max(90, { message: 'Максимальне допустиме значення 90' }),
+});
 
 export const zEditAddressSchema = z.object({
   id: z.string().nullish(),
@@ -90,6 +143,7 @@ export const zEditAddressSchema = z.object({
     .boolean()
     .nullish()
     .transform(arg => (arg === null ? false : arg)),
+  ...zCoordinateSchema.shape,
 });
 
 export const zCreateAddressSchema = z.object({
@@ -97,6 +151,7 @@ export const zCreateAddressSchema = z.object({
   district: zStringWithMax,
   nameOfClinic: zStringWithMax.nullish(),
   isPrimary: z.boolean(),
+  ...zCoordinateSchema.shape,
 });
 
 export const singlePrimaryAddressRefine = addresses => {

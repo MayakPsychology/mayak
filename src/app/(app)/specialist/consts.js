@@ -9,11 +9,13 @@ export const specialistInclude = {
       therapy: true,
     },
   },
+  workTime: true,
   addresses: {
     include: {
       district: true,
     },
   },
+  specializationMethods: { select: { id: true, title: true, description: true } },
 };
 
 export const organizationInclude = {
@@ -33,4 +35,5 @@ export const organizationInclude = {
       district: true,
     },
   },
+  workTime: true,
 };

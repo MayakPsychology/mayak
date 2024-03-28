@@ -35,6 +35,16 @@ enum OwnershipType {
   GOVERNMENT
 }
 
+enum WeekDay {
+  MON
+  TUE
+  WED
+  THU
+  FRI
+  SAT
+  SUN
+}
+
 model Specialist {
   id                    String           @id @default(uuid()) @db.Uuid
   createdAt             DateTime         @default(now())
@@ -47,6 +57,7 @@ model Specialist {
   yearsOfExperience     Int?             @db.SmallInt
   formatOfWork          FormatOfWork?
   addresses             Address[]
+  workTime              WorkTime[]
   isFreeReception       Boolean?
   description           String?          @db.Text
   phone                 String?          @db.VarChar(15)
@@ -78,7 +89,7 @@ model Organization {
   yearsOnMarket         Int?               @db.SmallInt
   formatOfWork          FormatOfWork?
   addresses             Address[]
-  therapies             Therapy[]
+  workTime              WorkTime[]
   isFreeReception       Boolean?
   description           String?            @db.Text
   phone                 String?            @db.VarChar(15)
@@ -165,7 +176,6 @@ model Therapy {
 
   supportFocuses SupportFocus[]
   requests       Request[]
-  organizations  Organization[]
 
   @@map("therapy")
 }
@@ -190,6 +200,8 @@ model Address {
   specialists   Specialist[]
   organizations Organization[]
   isPrimary     Boolean        @default(false)
+  longitude     Float          @db.DoublePrecision
+  latitude      Float          @db.DoublePrecision
 
   @@map("address")
 }
@@ -270,4 +282,17 @@ model Method {
   specialists      Specialist[]
 
   @@map("method")
+}
+
+model WorkTime {
+  id            String         @id @default(uuid()) @db.Uuid
+  createdAt     DateTime       @default(now())
+  time          String         @db.VarChar(13)
+  isDayOff      Boolean        @default(false)
+  weekDay       WeekDay
+  specialists   Specialist[]
+  organizations Organization[]
+
+  @@unique([weekDay, time, isDayOff])
+  @@map("work_time")
 }

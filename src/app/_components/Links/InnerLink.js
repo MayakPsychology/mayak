@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import PropTypes from 'prop-types';
-import { cn } from '@utils/cn';
 
 export function InnerLink({ items, className, onClick }) {
   return (
@@ -11,7 +10,7 @@ export function InnerLink({ items, className, onClick }) {
           role="listitem"
           href={link.href}
           aria-label={`Open ${link.title} on click`}
-          className={cn(className)}
+          className={className}
           onClick={onClick}
         >
           {link?.title}

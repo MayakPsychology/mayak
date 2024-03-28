@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Create, required, SimpleForm } from 'react-admin';
 import { organizationCreateValidationSchema } from '@admin/_lib/validationSchemas/organizationSchema';
 import { RESOURCES, SUCCESS_NOTIFICATIONS } from '@admin/_lib/consts';
+import { WorkTimeForm } from '@admin/components/ServiceProvider/WorkTimeForm';
 import { ActivationForm } from '@admin/components/ServiceProvider/ActivationForm';
 import { ServicesForm } from '@admin/components/ServiceProvider/ServicesForm';
 import { AddressesForm } from '@admin/components/ServiceProvider/AddressesForm';
@@ -29,6 +30,7 @@ export function OrganizationCreate() {
         <GeneralInfoEditOrg type="create" />
         <DetailsEditOrg />
         <AddressesForm label="Адреси надання послуг" />
+        <WorkTimeForm />
         <ServicesForm label="Послуги" />
         <DescriptionEdit validate={required()} />
         <ContactsList />

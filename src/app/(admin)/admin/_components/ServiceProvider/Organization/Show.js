@@ -6,12 +6,15 @@ import {
   ChipField,
   Datagrid,
   DateField,
+  FunctionField,
   NumberField,
   Show,
   SimpleShowLayout,
   SingleFieldList,
   TextField,
+  WrapperField,
 } from 'react-admin';
+import { WorkTimeShow } from '@admin/components/ServiceProvider/WorkTimeShow';
 
 export function OrganizationShow() {
   return (
@@ -27,19 +30,36 @@ export function OrganizationShow() {
             <ChipField source="name" size="small" />
           </SingleFieldList>
         </ArrayField>
-        <BooleanField label="Інклюзівний простір" source="isInclusiveSpace" />
+        <BooleanField label="Інклюзивний простір" source="isInclusiveSpace" />
         <TextField label="Тип власності" source="ownershipType" />
         <DateField label="Дата додавання в сервіс" showTime source="createdAt" />
         <NumberField label="Роки на ринку" source="yearsOnMarket" />
         <TextField label="Формат послуг" source="formatOfWork" />
-        <ArrayField label="Адреси" source="addresses">
+        <ArrayField label="Місця надання послуг" source="addresses">
           <Datagrid bulkActionButtons={false}>
             <TextField label="Повна адреса" source="fullAddress" />
             <TextField label="Назва кліники" source="nameOfClinic" />
             <TextField label="Район" source="district.name" />
             <BooleanField label="Головна адреса" source="isPrimary" />
+            <FunctionField
+              source="location"
+              render={record => (
+                <a
+                  className="text-primary-500"
+                  target="_blank"
+                  rel="noreferrer"
+                  href={`https://www.google.com/maps/search/?api=1&query=${record.latitude},${record.longitude}`}
+                >
+                  Локація на Google карті
+                </a>
+              )}
+              label="На карті"
+            />
           </Datagrid>
         </ArrayField>
+        <WrapperField label="Графік роботи">
+          <WorkTimeShow />
+        </WrapperField>
         <ArrayField label="Типи терапій" source="supportFocuses">
           <Datagrid bulkActionButtons={false}>
             <TextField label="Тип" source="therapy.title" />

@@ -5,7 +5,7 @@ import { organizationPropType } from '@/app/_components/CardSpecialist/prop-type
 
 export function CardOrganizationExtended({ organization, className }) {
   return (
-    <CardModalWrapper className="mt-[40px] w-full max-w-[1080px] lg:mt-0 lg:w-[1080px]" key={organization?.id}>
+    <CardModalWrapper className="mt-10 w-full max-w-[1080px] lg:mt-0 lg:w-[1080px]" key={organization?.id}>
       <CardOrganization organization={organization} className={className} extended />
     </CardModalWrapper>
   );

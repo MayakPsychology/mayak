@@ -8,7 +8,6 @@ import {
   BlueTikTok,
   BlueViber,
   BlueYoutube,
-  Clock,
   InclusiveSpace,
   Mail,
   MedAttention,
@@ -40,12 +39,6 @@ export const getContactsList = ({ phone, email, website }) => [
     content: website,
     href: website,
     className: 'text-primary-300',
-  },
-  {
-    id: 'schedule',
-    icon: <Clock />,
-    content: ['пн-пт 9:00-18:00', 'ср-чт 18:00-20:00', 'ср-чт 08:00-13:00'],
-    href: null,
   },
 ];
 

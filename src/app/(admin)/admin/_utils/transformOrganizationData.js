@@ -14,10 +14,5 @@ export const transformOrganizationData = ({ type, ...rest }) => {
     type: {
       connect: type?.length ? toConnectList(type) : undefined,
     },
-    therapies: {
-      connect: rest.therapies.map(therapy => ({
-        id: therapy,
-      })),
-    },
   };
 };

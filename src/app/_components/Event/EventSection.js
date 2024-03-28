@@ -4,13 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { useSearchParams } from 'next/navigation';
-import CheckMark from '@icons/check-mark.svg';
-import Search from '@icons/search.svg';
+import { CheckMark, Search } from '@icons';
 import { allEvents, useSetParam } from '@hooks';
 import { EventCard } from '@components/Event/Card';
 import { PillButton } from '@components/PillButton';
 import { SkeletonCard } from '@components/Event/SkeletonCard';
-import { buttonColorVariant } from '@components/PillButton/style';
 import { NoInfoToShow } from '@components/NoInfoToShow';
 import { cn } from '@/utils/cn';
 import { capitalize } from '@/utils/common';
@@ -40,10 +38,7 @@ const filteredMonths =
     ? monthNames.slice(startMonthIndex).concat(monthNames.slice(0, endIndex))
     : monthNames.slice(startMonthIndex, endIndex);
 
-const { semiorange } = buttonColorVariant.eventFilter;
-const activeButtonStyles = cn({
-  'pointer-events-none border-secondary-300 bg-secondary-300 font-semibold text-gray-900': semiorange.active,
-});
+const activeButtonStyles = 'pointer-events-none border-secondary-300 bg-secondary-300 font-semibold text-gray-900';
 const commonIconStyle = 'h-4 w-4 transition-all';
 
 export function EventSection() {
@@ -81,7 +76,7 @@ export function EventSection() {
 
   return (
     <>
-      <div className="lg:w-max-[900px] mx-auto flex w-full flex-col items-start justify-start gap-6 self-stretch">
+      <section className="lg:w-max-[900px] mx-auto flex w-full flex-col items-start justify-start gap-6 self-stretch">
         <div className="flex flex-row flex-wrap items-start justify-start gap-3">
           {filteredMonths.map(month => (
             <PillButton
@@ -129,7 +124,7 @@ export function EventSection() {
               )}
           </>
         </ul>
-      </div>
+      </section>
 
       {isSuccess && !isFetchingNextPage && !hasNextPage && data.pages.length === 1 && <NoInfoToShow text="подій" />}
 

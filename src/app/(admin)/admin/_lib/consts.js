@@ -24,6 +24,16 @@ export const SUCCESS_NOTIFICATIONS = {
   deleted: 'Deleted successfully',
 };
 
+export const WEEKDAYS_TRANSLATION = {
+  MON: 'Понеділок',
+  TUE: 'Вівторок',
+  WED: 'Середа',
+  THU: 'Четвер',
+  FRI: "П'ятниця",
+  SAT: 'Субота',
+  SUN: 'Неділя',
+};
+
 export const PHONE = 'phone';
 export const EMAIL = 'email';
 

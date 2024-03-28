@@ -19,8 +19,8 @@ export function TherapyPrices({ supportFocuses, className }) {
         {therapyPrices?.length ? (
           <ul className="flex flex-wrap text-p4 lg:text-p3">
             {therapyPrices.map(therapyPrice => (
-              <li key={therapyPrice.id} className="whitespace-nowrap text-system-info lg:font-bold">
-                {therapyPrice.therapy.title} від {therapyPrice.price} грн / год{' '}
+              <li key={therapyPrice.id} className="text-system-info md:whitespace-nowrap md:font-bold">
+                {therapyPrice.therapy.title} від {therapyPrice.price} грн / год.
                 <div className="inline-block w-[20px]" />
               </li>
             ))}

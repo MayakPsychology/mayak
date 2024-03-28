@@ -1,12 +1,15 @@
 'use client';
 
-import { Tick } from '@icons';
-import Link from 'next/link';
-import PropTypes from 'prop-types';
 import { useState } from 'react';
+import PropTypes from 'prop-types';
+import Link from 'next/link';
+import { Search, CheckMark } from '@icons';
 import { PillButton } from '@components/PillButton';
 import { Slide, Slider } from '@components/Slider';
 import { cn } from '@utils/cn';
+
+const activeButtonStyles = 'pointer-events-none border-secondary-300 bg-secondary-300 font-semibold text-gray-900';
+const commonIconStyle = 'h-4 w-4 transition-all';
 
 export function DistrictList({ list, className }) {
   const [selected, setSelected] = useState(0);
@@ -18,22 +21,31 @@ export function DistrictList({ list, className }) {
     <Slider slidesPerView="auto" className={cn('flex', className)}>
       {list.map(({ id, name }, index) => {
         const isSelected = index === selected;
-        const icon = isSelected ? (
-          <span className="text-gray-900">
-            <Tick />
-          </span>
-        ) : null;
-        const pillButtonStyle = cn(isSelected && 'border-secondary-300 bg-secondary-300 font-semibold');
-        const linkStyle = cn(isSelected && 'pointer-events-none cursor-none');
 
         return (
           <Slide key={id} onClick={() => handleClick(index)} className="mr-3.5 last:mr-0">
-            <Link href={`/specialist?district=${id}`} className={linkStyle} tabIndex={-1}>
+            <Link
+              href={`/specialist?district=${id}`}
+              className={cn(isSelected && 'pointer-events-none cursor-none')}
+              tabIndex={-1}
+            >
               <PillButton
-                variant="transparent"
-                colorVariant="orange"
-                icon={icon}
-                className={pillButtonStyle}
+                variant="eventFilter"
+                colorVariant="semiorange"
+                icon={[
+                  isSelected && (
+                    <CheckMark
+                      key={`checkmark+${index}`}
+                      className={cn('block group-hover:hidden group-focus:hidden', commonIconStyle)}
+                    />
+                  ),
+
+                  <Search
+                    key={`searchicon+${index}`}
+                    className={cn('hidden group-hover:block group-focus:block', commonIconStyle)}
+                  />,
+                ]}
+                className={cn(isSelected && activeButtonStyles, 'group w-fit')}
                 aria-label={`Click to see specialists related to the district with id ${id}`}
               >
                 {name}

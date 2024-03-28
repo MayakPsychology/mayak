@@ -19,7 +19,7 @@ export function TextInputField({
   additionalContainerStyle = '',
 }) {
   const id = `textinput_${name}`;
-  const absoluteError = absolute ? 'absolute top-[45px] duration-150 ease-out transform' : '';
+  const absoluteError = absolute ? 'absolute top-[45px] transition-transform' : '';
   const absoluteLabel = absolute ? 'absolute bottom-[47px]' : '';
 
   return (

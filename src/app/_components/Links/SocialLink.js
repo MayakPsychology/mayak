@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import PropTypes from 'prop-types';
-import { cn } from '@utils/cn';
 
 export function SocialLink({ links, className }) {
   return (
@@ -14,7 +13,7 @@ export function SocialLink({ links, className }) {
           target="_blank"
           noopener="true"
           noreferrer="true"
-          className={cn(className)}
+          className={className}
         >
           {link?.svg}
         </Link>

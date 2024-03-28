@@ -1,4 +1,5 @@
 import { FormatOfWork } from '@prisma/client';
+import { WEEKDAYS_TRANSLATION } from '@admin/_lib/consts';
 
 export const capitalize = inputString => inputString.charAt(0).toUpperCase() + inputString.slice(1);
 
@@ -12,7 +13,27 @@ export function toConnectList(list, cb) {
   return list?.map(id => ({ id: cb?.(id) ?? id })) ?? [];
 }
 
-export function transformAddresses({ addresses, type = 'create' }) {
+export function isSpecifiedWorkTime(workTime) {
+  return workTime.some(day => day.isDayOff === false || day.isDayOff || day.time);
+}
+
+export function transformWorkTime(workTime) {
+  if (!isSpecifiedWorkTime(workTime)) return [];
+  return workTime.map(day => {
+    const { weekDay, time, isDayOff } = day;
+    const workTimeObj = {
+      weekDay: Object.keys(WEEKDAYS_TRANSLATION).find(key => WEEKDAYS_TRANSLATION[key] === weekDay),
+      isDayOff: !!isDayOff, // convert to false if it's null/undefined
+      time: time || '',
+    };
+    return {
+      create: workTimeObj,
+      where: { weekDay_time_isDayOff: workTimeObj },
+    };
+  });
+}
+
+function transformAddresses({ addresses, type = 'create' }) {
   return (
     addresses
       ?.filter(address => !address.id)
@@ -27,9 +48,9 @@ export function transformAddresses({ addresses, type = 'create' }) {
 export const transformSupportFocuses = ({ focuses, focusesIds }) => {
   const focusesToUpdate = [];
   const focusesToCreate = [];
-  const focusesToDelete = toConnectList(focusesIds.filter(cutId => !focuses.some(focus => focus.id === cutId)));
+  const focusesToDelete = toConnectList(focusesIds.filter(cutId => !focuses?.some(focus => focus.id === cutId)));
 
-  focuses.forEach(focus => {
+  focuses?.forEach(focus => {
     if (focus.id) {
       focusesToUpdate.push({
         where: { id: focus.id },
@@ -55,13 +76,14 @@ export const transformSupportFocuses = ({ focuses, focusesIds }) => {
   };
 };
 
-export const transformCreateData = ({ addresses, supportFocuses, socialLink, ...rest }) => ({
+export const transformCreateData = ({ addresses, supportFocuses, socialLink, workTime, ...rest }) => ({
   ...rest,
   ...socialLink,
   addresses: {
     create: addresses?.length ? transformAddresses({ addresses, type: 'create' }) : undefined,
   },
   supportFocuses: transformSupportFocuses({ focuses: supportFocuses, focusesIds: [] }),
+  workTime: { connectOrCreate: workTime?.length ? transformWorkTime(workTime) : undefined },
 });
 
 export const transformEditData = ({
@@ -71,6 +93,7 @@ export const transformEditData = ({
   supportFocusesIds,
   formatOfWork,
   socialLink,
+  workTime,
   ...rest
 }) => {
   const addressesToConnect = toConnectList(
@@ -83,13 +106,16 @@ export const transformEditData = ({
     addressesIds?.filter(addressId => !addressesToConnect.some(address => address.id === addressId)) ?? [];
   // if formatOfWork is ONLINE, we need to delete all connected addresses
   const addressesToDelete = formatOfWork !== FormatOfWork.ONLINE ? toConnectList(unselectedAddresses) : {};
-
   return {
     ...rest,
     ...socialLink,
     formatOfWork,
     supportFocusesIds: undefined,
     addressesIds: undefined,
+    workTime: {
+      set: [],
+      connectOrCreate: transformWorkTime(workTime),
+    },
     addresses: {
       connect: addressesToConnect,
       create: addressesToCreate,

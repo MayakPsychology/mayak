@@ -10,7 +10,7 @@ export async function TherapiesSection({ therapies }) {
     <section className="relative bg-primary-200 bg-blend-multiply">
       <div className="bg-cover-noise" />
       <TopWave className="h-3 bg-other-white lg:h-12" />
-      <div className="flex flex-col gap-[20px] p-4 md:p-10 lg:gap-12 lg:p-20">
+      <div className="flex flex-col gap-5 p-4 md:p-10 lg:gap-12 lg:p-20">
         <div className="flex flex-col items-center justify-center gap-2">
           <Heading type="h2" className="text-center text-p2 font-bold text-primary-800 lg:text-h3">
             Ти заслуговуєш на гарне самопочуття

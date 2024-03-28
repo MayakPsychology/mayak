@@ -8,6 +8,7 @@ import { AddressesForm } from '@admin/components/ServiceProvider/AddressesForm';
 import { ContactsList } from '@admin/components/ContactsList';
 import { SocialLinks } from '@admin/components/ServiceProvider/SocialLinks';
 import { PSYCHOLOGIST, PSYCHOTHERAPIST, RESOURCES } from '@admin/_lib/consts';
+import { WorkTimeForm } from '@admin/components/ServiceProvider/WorkTimeForm';
 import { GeneralInfoEditSpec } from './GeneralInfoEditSpec';
 import { DetailsEditSpec } from './DetailsEditSpec';
 
@@ -42,6 +43,7 @@ export function SpecialistEdit() {
         <GeneralInfoEditSpec type="edit" />
         <DetailsEditSpec />
         <AddressesForm type="edit" label="Адреси надання послуг" />
+        <WorkTimeForm />
         <ServicesForm type="edit" label="Послуги" />
         <TextInput name="description" source="description" label="Опис" fullWidth multiline />
         <ContactsList />

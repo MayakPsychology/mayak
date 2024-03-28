@@ -1,7 +1,6 @@
-import React from 'react';
+import { redirect } from 'next';
 import { CardSpecialist, CardOrganization } from '@/app/_components/CardSpecialist';
 import { getSpecialistById, getOrganizationById } from '@/app/(app)/specialist/utils';
-import NotFoundPage from '@/app/not-found';
 
 export async function generateMetadata({ params, searchParams }) {
   try {
@@ -50,5 +49,5 @@ export default async function Page({ params, searchParams }) {
     return <CardOrganization organization={organization} extended className={cardStyle} />;
   }
 
-  return <NotFoundPage />;
+  return redirect('/error');
 }

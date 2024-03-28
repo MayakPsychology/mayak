@@ -14,6 +14,10 @@ function nullable(value) {
   return Date.now() % 2 === 0 ? value : null;
 }
 
+function randomUndefined(value) {
+  return Date.now() % 2 === 0 ? value : undefined;
+}
+
 // returns array of unique objects with id field
 function uniqueObjectsWithId(instances) {
   if (instances.length === 0) return [];
@@ -28,6 +32,11 @@ function uniqueObjectsWithId(instances) {
 function randomAddress(districts, isPrimary) {
   const randomNameOfClinic = `Клініка ${faker.company.name()}`;
   const randomDistricts = faker.helpers.arrayElement(districts).id; // returns random object from districts array
+
+  // among coordinates of Lviv city
+  const randomLat = faker.location.latitude({ min: 49.83250892445946, max: 49.843362597265774 });
+  const randomLng = faker.location.longitude({ min: 24.02389821868425, max: 24.0279810366963 });
+
   return {
     nameOfClinic: randomNameOfClinic,
     fullAddress: getFullAddress(),
@@ -36,6 +45,8 @@ function randomAddress(districts, isPrimary) {
         id: randomDistricts,
       },
     },
+    latitude: randomLat,
+    longitude: randomLng,
     isPrimary,
   };
 }
@@ -69,6 +80,23 @@ function generateSocialMediaLinks() {
       .slice(0, Math.floor(Math.random() * 5) + 1)
       .map(network => [network, faker.internet.url()]),
   );
+}
+
+function randomWorkTime() {
+  const weekdays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+  return {
+    connectOrCreate: weekdays.map(weekDay => {
+      const isDayOff = faker.datatype.boolean();
+      const time = !isDayOff
+        ? `0${faker.number.int({ min: 7, max: 9 })}:00 - ${faker.number.int({ min: 17, max: 20 })}:00`
+        : '';
+      const workTimeData = { isDayOff, weekDay, time };
+      return {
+        create: workTimeData,
+        where: { weekDay_time_isDayOff: workTimeData },
+      };
+    }),
+  };
 }
 
 function randomSpecialist({ districts, specializations, specializationMethods, therapies }) {
@@ -106,6 +134,7 @@ function randomSpecialist({ districts, specializations, specializationMethods, t
     lastName: faker.person.lastName(),
     surname: nullable(faker.person.lastName()),
     gender,
+    workTime: randomUndefined(randomWorkTime()),
     yearsOfExperience: faker.number.int({ min: 1, max: 30 }),
     // take one of these
     formatOfWork,
@@ -152,6 +181,7 @@ function randomOrganization({ therapies, districts, organizationTypes, expertSpe
     supportFocuses: {
       create: randomSupportFocusArray({ therapies }),
     },
+    workTime: randomUndefined(randomWorkTime()),
     isFreeReception: faker.datatype.boolean(),
     isActive: faker.datatype.boolean(),
     phone: nullable(faker.helpers.fromRegExp(phoneRegexp)),
@@ -211,6 +241,7 @@ async function main() {
     await trx.faq.deleteMany();
     await trx.organization.deleteMany();
     await trx.searchEntry.deleteMany();
+    await trx.workTime.deleteMany();
   });
 
   const faqs = Array.from({ length: 15 }).map((_, i) => ({

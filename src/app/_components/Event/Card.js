@@ -46,6 +46,7 @@ export function EventCard({ event }) {
   const [isModalOpenOpen, setIsModalOpen] = useState(false);
   const { title, organizerName, tags, priceText, locationText, date, time, locationLink, additionalLink } =
     transformData(event);
+  const checkPrice = priceText === 'Безкоштовно' ? priceText : `${priceText} грн`;
 
   const addressElement = (
     <OverflownText
@@ -67,13 +68,13 @@ export function EventCard({ event }) {
         <OverflownText className="w-[259px] truncate text-p1 font-bold text-gray-700 underline" text={title} />
         <OverflownText className="w-[259px] truncate text-p3 font-bold text-primary-600" text={organizerName} />
       </div>
-      {tagsElements.length === 0 && <div className="flex h-[25px] w-64 items-start gap-4 overflow-hidden" />}
+      {tagsElements.length === 0 && <div className="flex h-[25px] w-64 items-start gap-4" />}
       <div className="flex w-64 items-start gap-4 overflow-hidden">{tagsElements}</div>
       <hr className="border border-dashed border-gray-300" />
       <ul className="flex w-[259px] flex-col gap-4">
         <ListItem icon={<CalendarIcon />} textColor="text-secondary-400" fontWeight="font-bold" text={date} />
         <ListItem icon={<TimeIcon />} textColor="text-gray-700" fontWeight="font-medium" text={time} />
-        <ListItem icon={<PriceIcon />} textColor="text-gray-700" fontWeight="font-medium" text={priceText} />
+        <ListItem icon={<PriceIcon />} textColor="text-gray-700" fontWeight="font-medium" text={checkPrice} />
         <li className="flex gap-2">
           <LocationIcon />
           {locationLink ? (
