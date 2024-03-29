@@ -28,12 +28,20 @@ export const MODEL_INCLUDES = {
         nameOfClinic: true,
         fullAddress: true,
         district: { select: { id: true, name: true } },
+        latitude: true,
+        longitude: true,
         isPrimary: true,
       },
     },
     workTime: { select: { weekDay: true, time: true, isDayOff: true } },
   },
   [RESOURCES.organization]: {
+    expertSpecializations: {
+      select: {
+        id: true,
+        name: true,
+      },
+    },
     supportFocuses: {
       select: {
         id: true,
@@ -48,6 +56,8 @@ export const MODEL_INCLUDES = {
         id: true,
         nameOfClinic: true,
         fullAddress: true,
+        latitude: true,
+        longitude: true,
         district: { select: { id: true, name: true } },
         isPrimary: true,
       },
@@ -81,6 +91,7 @@ export function transformServiceProvider(instance, modelName) {
   // React Admin issues
   if (modelName === RESOURCES.organization) {
     instance.organizationTypesIds = instance.type.map(orgType => orgType.id);
+    instance.expertSpecializationIds = instance.expertSpecializations.map(({ id }) => id);
   } else {
     instance.specializationsIds = instance.specializations.map(specialization => specialization.id);
   }

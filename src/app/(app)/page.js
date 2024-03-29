@@ -1,7 +1,6 @@
 import { DistrictSearchSection, FAQSection, SearchSection, TherapiesSection } from '@components/MainPageSections';
-import { prisma } from '@/lib/db';
 import { env } from '@/lib/env';
-
+import { prisma } from '@/lib/db';
 // Page metadata should contain
 // title - gets formatted into "%s | Маяк", %s is replaced by title,
 // description - short description of the page,
@@ -35,6 +34,7 @@ export default async function Page() {
     },
     orderBy: { priority: 'asc' },
   });
+
   return (
     <>
       <SearchSection />

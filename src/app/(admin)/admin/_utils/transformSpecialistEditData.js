@@ -1,18 +1,10 @@
 import { toConnectList, transformEditData } from './common';
 
-export function transformSpecialistEditData({
-  specializationsIds,
-  specializationMethodsIds,
-  socialLink,
-  therapyPricesEdit,
-  therapyPrices,
-  therapiesIds,
-  ...rest
-}) {
+export function transformSpecialistEditData({ specializationsIds, specializationMethodsIds, ...rest }) {
   const specializationsToConnect = toConnectList(specializationsIds);
   const specializationMethodsToConnect = toConnectList([].concat(...Object.values(specializationMethodsIds)));
 
-  const base = transformEditData({ ...rest, therapiesIds, therapyPrices });
+  const base = transformEditData({ ...rest });
 
   return {
     ...base,

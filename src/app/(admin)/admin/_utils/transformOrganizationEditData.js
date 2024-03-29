@@ -1,9 +1,9 @@
 import { toConnectList, transformEditData } from './common';
 
-export function transformOrganizationEditData({ expertSpecializationIds, organizationTypesIds, socialLink, ...rest }) {
+export function transformOrganizationEditData({ expertSpecializationIds, organizationTypesIds, ...rest }) {
   const organizationTypesToConnect = toConnectList(organizationTypesIds);
   const expertSpecializationsToConnect = toConnectList(expertSpecializationIds);
-  const base = transformEditData(rest);
+  const base = transformEditData({ ...rest });
 
   return {
     ...base,

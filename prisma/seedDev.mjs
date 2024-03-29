@@ -32,6 +32,11 @@ function uniqueObjectsWithId(instances) {
 function randomAddress(districts, isPrimary) {
   const randomNameOfClinic = `Клініка ${faker.company.name()}`;
   const randomDistricts = faker.helpers.arrayElement(districts).id; // returns random object from districts array
+
+  // among coordinates of Lviv city
+  const randomLat = faker.location.latitude({ min: 49.83250892445946, max: 49.843362597265774 });
+  const randomLng = faker.location.longitude({ min: 24.02389821868425, max: 24.0279810366963 });
+
   return {
     nameOfClinic: randomNameOfClinic,
     fullAddress: getFullAddress(),
@@ -40,6 +45,8 @@ function randomAddress(districts, isPrimary) {
         id: randomDistricts,
       },
     },
+    latitude: randomLat,
+    longitude: randomLng,
     isPrimary,
   };
 }

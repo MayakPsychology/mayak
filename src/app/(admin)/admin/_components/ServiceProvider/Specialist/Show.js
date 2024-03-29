@@ -4,6 +4,7 @@ import {
   ChipField,
   Datagrid,
   DateField,
+  FunctionField,
   NumberField,
   Show,
   SimpleShowLayout,
@@ -40,6 +41,20 @@ export function SpecialistShow() {
             <TextField label="Назва кліники" source="nameOfClinic" />
             <TextField label="Район" source="district.name" />
             <BooleanField label="Головна адреса" source="isPrimary" />
+            <FunctionField
+              source="location"
+              render={record => (
+                <a
+                  className="text-primary-500"
+                  target="_blank"
+                  rel="noreferrer"
+                  href={`https://www.google.com/maps/search/?api=1&query=${record.latitude},${record.longitude}`}
+                >
+                  Локація на Google карті
+                </a>
+              )}
+              label="На карті"
+            />
           </Datagrid>
         </ArrayField>
         <WrapperField label="Графік роботи">

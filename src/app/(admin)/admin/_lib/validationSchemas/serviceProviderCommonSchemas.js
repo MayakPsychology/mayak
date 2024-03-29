@@ -117,7 +117,16 @@ export const serviceProviderCore = z.object({
     ),
 });
 
-// ---- ADDRESS SECTION ----
+const zCoordinateSchema = z.object({
+  latitude: z
+    .number({ required_error: MESSAGES.requiredField, invalid_type_error: MESSAGES.unacceptableValue })
+    .min(-180, { message: 'Мінімальне допустиме значення -180' })
+    .max(180, { message: 'Максимальне допустиме значення 180' }),
+  longitude: z
+    .number({ required_error: MESSAGES.requiredField, invalid_type_error: MESSAGES.unacceptableValue })
+    .min(-90, { message: 'Мінімальне допустиме значення -90' })
+    .max(90, { message: 'Максимальне допустиме значення 90' }),
+});
 
 export const zEditAddressSchema = z.object({
   id: z.string().nullish(),
@@ -134,6 +143,7 @@ export const zEditAddressSchema = z.object({
     .boolean()
     .nullish()
     .transform(arg => (arg === null ? false : arg)),
+  ...zCoordinateSchema.shape,
 });
 
 export const zCreateAddressSchema = z.object({
@@ -141,6 +151,7 @@ export const zCreateAddressSchema = z.object({
   district: zStringWithMax,
   nameOfClinic: zStringWithMax.nullish(),
   isPrimary: z.boolean(),
+  ...zCoordinateSchema.shape,
 });
 
 export const singlePrimaryAddressRefine = addresses => {
