@@ -6,9 +6,10 @@ const listEntries = searchParams => ky('/api/search', { searchParams }).json();
 export const usePaginatedEntries = searchParams =>
   useInfiniteQuery({
     queryFn: ({ pageParam = '' }) => {
-      const params = Array.from(searchParams.entries())
-        .map(([key, value]) => ({ [key]: value }))
-        .reduce((acc, curr) => ({ ...acc, ...curr }), { lastCursor: pageParam });
+      const params = {
+        ...Object.fromEntries(searchParams.entries()),
+        lastCursor: pageParam,
+      };
       return listEntries(params);
     },
     getNextPageParam: lastPage => lastPage?.metaData.lastCursor,
