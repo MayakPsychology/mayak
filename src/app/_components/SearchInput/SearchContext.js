@@ -37,16 +37,16 @@ export function SearchProvider({ children }) {
     queryClient.cancelQueries({ queryKey: searchSyncKey });
     router.push(`/specialist?searchType=${currentSearchType}&query=${query}`);
   }
-  function navigateToAutoCompleteItem(id) {
+  function navigateToAutoCompleteItem(autoCompleteItem) {
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
     if (currentSearchType === searchInputTypeEnum.REQUEST) {
-      router.push(`/specialist?request=${id}`);
+      router.push(`/specialist?searchType=${searchInputTypeEnum.REQUEST}&query=${autoCompleteItem.title}`);
     } else if (
       currentSearchType === searchInputTypeEnum.SPECIALIST ||
       currentSearchType === searchInputTypeEnum.ORGANIZATION
     ) {
-      router.push(`/specialist/${id}?type=${currentSearchType}`);
+      router.push(`/specialist/${autoCompleteItem.id}?type=${currentSearchType}`);
     }
   }
 

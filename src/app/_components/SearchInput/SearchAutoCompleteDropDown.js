@@ -37,7 +37,7 @@ export function SearchAutoCompleteDropDown() {
                   ...item,
                   onClick: e => {
                     e.stopPropagation();
-                    navigateToAutoCompleteItem(item.id);
+                    navigateToAutoCompleteItem(item);
                   },
                 }))}
                 onItemsOverflow={onItemsOverflow}
