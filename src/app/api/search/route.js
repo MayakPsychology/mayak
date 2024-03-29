@@ -6,9 +6,9 @@ import { prisma } from '@/lib/db';
 export async function GET(req) {
   const {
     type,
-    // TODO: Uncomment pagination params take and skip when pagination is implemented on the frontend
-    // take,
-    // skip,
+    take,
+    skip,
+    lastCursor,
     format,
     district: districts,
   } = getSearchParamsFromRequest(
@@ -16,8 +16,8 @@ export async function GET(req) {
     {
       format: undefined,
       type: undefined,
-      // take: 10,
-      // skip: 0,
+      take: 5,
+      skip: 0,
       district: undefined,
     },
     params => ({
@@ -27,6 +27,7 @@ export async function GET(req) {
       district: typeof params.district === 'string' ? [params.district] : params.district,
     }),
   );
+
   const whereFilter = {
     AND: {
       supportFocuses: type && {
@@ -88,7 +89,7 @@ export async function GET(req) {
     },
   });
 
-  const searchEntries = await prisma.searchEntry.findMany({
+  const searchEntriesPlusOneExtra = await prisma.searchEntry.findMany({
     include: {
       specialist: {
         include: {
@@ -117,14 +118,29 @@ export async function GET(req) {
     orderBy: {
       sortString: 'asc',
     },
-    // take,
-    // skip,
+    // take one more, to see if there next page available
+    take: take + 1,
+    skip,
+    ...(lastCursor && {
+      skip: 1,
+      cursor: {
+        id: lastCursor,
+      },
+    }),
   });
-
-  const data = searchEntries.map(entry => (entry.specialist ? entry.specialist : entry.organization));
+  // take last one
+  const isNextPageExist = searchEntriesPlusOneExtra.length === take + 1;
+  // take rest ( page requested )
+  const results = searchEntriesPlusOneExtra.slice(0, -1);
+  const lastResult = results.slice(-1)[0];
+  const newCursor = lastResult?.id;
 
   return NextResponse.json({
-    totalCount,
-    data,
+    data: results,
+    metaData: {
+      totalCount,
+      lastCursor: newCursor,
+      hasNextPage: isNextPageExist,
+    },
   });
 }
