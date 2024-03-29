@@ -21,7 +21,7 @@ export function SearchAutoCompleteDropDown() {
   }, []);
 
   return (
-    <OverlayContainer isOpen={isAutoCompleteOpen} className="left-0 top-[58px] z-[4]">
+    <OverlayContainer isOpen={isAutoCompleteOpen} className="left-0 top-[58px] z-[4999]">
       {debouncedQuery?.length >= SEARCH_MIN_QUERY_LENGTH ? (
         <>
           {isAutoCompleteLoading && (

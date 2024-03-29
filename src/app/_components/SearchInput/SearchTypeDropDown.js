@@ -18,7 +18,7 @@ export function SearchTypeDropDown() {
           <DownTick className={cn(isSelectTypeOpen && 'rotate-180')} />
         </button>
       </div>
-      <OverlayContainer isOpen={isSelectTypeOpen} className="left-0 top-[58px] z-[5] lg:w-[300px]">
+      <OverlayContainer isOpen={isSelectTypeOpen} className="left-0 top-[58px] z-[5000] lg:w-[300px]">
         <OverlayList
           listItems={searchInputTypeConfigs.map(config => ({
             id: config.id,
