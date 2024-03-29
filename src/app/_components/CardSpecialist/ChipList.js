@@ -1,127 +1,74 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import 'react-truncate-list/dist/styles.css';
 import PropTypes from 'prop-types';
-import { Show as ShowHint, Window as HintWindow } from '@components/Hint';
-import { cn } from '@/utils/cn';
-import presets from '@/app/styles/tailwind';
+import { useState } from 'react';
+import { Tooltip } from 'react-tooltip';
+import { TruncatedList } from 'react-truncate-list';
+import { cn } from '@utils/cn';
+import { Paragraph } from '@components/Typography';
 
-export function ChipList({ id, className, items, wrap }) {
-  const chipListRef = useRef(null);
-  const [maxChipWidth, setMaxChipWidth] = useState(0);
-  const [truncateAt, setTruncateAt] = useState(null);
-  const truncatedCount = items.length - truncateAt;
-
-  useEffect(() => {
-    const node = chipListRef.current;
-    const children = Array.from(node.children);
-    let maxChildWidth = 0;
-    children.forEach(el => {
-      maxChildWidth = Math.max(maxChildWidth, el.getBoundingClientRect().width);
-    });
-    setMaxChipWidth(maxChildWidth);
-  }, [items]);
-
-  useEffect(() => {
-    const node = chipListRef.current;
-    const resizeHandler = () => {
-      // don't truncate if wrapping is allowed
-      if (wrap) {
-        setTruncateAt(null);
-        return;
-      }
-      if (truncateAt === null) {
-        setTruncateAt(0);
-        return;
-      }
-
-      const nodeRect = node.getBoundingClientRect();
-      const children = Array.from(node.children);
-      const child = children[Math.min(items.length - 1, truncateAt)];
-      const childRect = child.getBoundingClientRect();
-
-      if (childRect.right < nodeRect.right - (maxChipWidth + 36)) {
-        setTruncateAt(state => Math.min(state + 1, items.length));
-      } else if (childRect.right > nodeRect.right) {
-        setTruncateAt(state => Math.max(state - 1, 0));
-      }
-    };
-
-    resizeHandler();
-    window.addEventListener('resize', resizeHandler);
-    return () => {
-      window.removeEventListener('resize', resizeHandler);
-    };
-  }, [wrap, truncateAt, items.length, maxChipWidth]);
-
+function ChipListItem({ id, title, tooltipText, backgroundColor, textColor, icon }) {
   return (
-    <ul ref={chipListRef} className={cn('flex w-full gap-2', wrap && 'flex-wrap', className)}>
-      {truncateAt >= items.length || truncateAt === null ? (
-        items.map(el => (
-          <ChipListItem key={el.id} text={el.text} color={el.color} textColor={el.textColor} icon={el.icon} />
-        ))
-      ) : (
-        <>
-          {items.slice(0, truncateAt).map(el => (
-            <ChipListItem key={el.id} text={el.text} color={el.color} textColor={el.textColor} icon={el.icon} />
-          ))}
-
-          <ShowHint id={id} opens={id}>
-            <div className="relative">
-              <ChipListItem
-                text={`${truncatedCount}+`}
-                color="rgba(0,0,0,0)"
-                textColor={presets.theme.colors.gray[900]}
-              />
-            </div>
-          </ShowHint>
-          <HintWindow
-            id={id}
-            name={id}
-            className={cn('absolute left-[-170px] z-[200] flex w-[200px] select-text flex-col text-gray-900')}
-          >
-            <p>{items.map(el => el.text).join('; ')}</p>
-          </HintWindow>
-        </>
-      )}
-    </ul>
-  );
-}
-
-function ChipListItem({ text, icon, color, textColor }) {
-  return (
-    <div
-      className="flex items-center gap-1 rounded-full bg-primary-300 px-3 py-1 text-c3 font-medium"
-      style={{
-        backgroundColor: color,
-      }}
-    >
-      {icon}
-      <span
-        className="whitespace-nowrap"
-        style={{
-          color: textColor,
-        }}
-      >
-        {text}
+    <div className="flex h-[24px] w-fit place-items-center gap-1 rounded-3xl px-3 py-1" style={{ backgroundColor }}>
+      <span data-tooltip-id={id}>{icon}</span>
+      <span className="w-full text-c3 font-medium" style={{ color: textColor }} data-tooltip-id={id}>
+        {title}
       </span>
+      {tooltipText && (
+        <Tooltip
+          id={id}
+          style={{ backgroundColor: '#FFF', color: '#080809', boxShadow: '0px 0px 7px 1px rgba(0,0,0,0.2)' }}
+          place="bottom"
+          opacity={1}
+        >
+          <Paragraph className="max-w-64 md:max-w-80">{tooltipText}</Paragraph>
+        </Tooltip>
+      )}
     </div>
   );
 }
 
-const chipListPropType = {
-  id: PropTypes.any,
-  text: PropTypes.string,
-  color: PropTypes.string,
+ChipListItem.propTypes = {
+  id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  tooltipText: PropTypes.string,
+  backgroundColor: PropTypes.string,
   textColor: PropTypes.string,
   icon: PropTypes.node,
 };
 
-ChipList.propTypes = {
-  id: PropTypes.string,
-  className: PropTypes.string,
-  wrap: PropTypes.bool,
-  items: PropTypes.arrayOf(PropTypes.shape(chipListPropType)).isRequired,
-};
+export function ChipList({ id, items }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div className="flex flex-col gap-2">
+      <TruncatedList
+        alwaysShowTruncator
+        className={cn('flex flex-wrap gap-[8px]', expanded ? 'max-h-none' : 'max-h-14 md:max-h-6')}
+        renderTruncator={({ hiddenItemsCount }) => {
+          if (hiddenItemsCount > 0) {
+            return (
+              <span className="cursor-pointer text-c3 text-gray-900" onClick={() => setExpanded(true)}>
+                +{hiddenItemsCount}
+              </span>
+            );
+          }
+          return (
+            <span className="cursor-pointer text-c3 text-gray-900" onClick={() => setExpanded(false)}>
+              Приховати
+            </span>
+          );
+        }}
+      >
+        {items.map(({ id: itemId, ...rest }) => (
+          <ChipListItem key={`${id}_${itemId}`} id={`${id}_${itemId}`} {...rest} />
+        ))}
+      </TruncatedList>
+    </div>
+  );
+}
 
-ChipListItem.propTypes = chipListPropType;
+ChipList.propTypes = {
+  id: PropTypes.string.isRequired,
+  items: PropTypes.arrayOf(PropTypes.shape(ChipListItem.propTypes)).isRequired,
+};

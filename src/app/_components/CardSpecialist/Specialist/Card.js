@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { ProfileImage } from '@components/CardSpecialist/ProfileImage';
 import { AddressesList } from '@components/CardSpecialist/AddressesList';
 import { BadgeList } from '@components/CardSpecialist/BadgeList';
-import { MethodList } from '@components/CardSpecialist/MethodList';
 import { CardButton } from '@components/CardSpecialist/CardButton';
 import { CardWrapper } from '@components/CardSpecialist/CardWrapper';
 import { ContactsList } from '@components/CardSpecialist/ContactsList';
@@ -16,6 +15,7 @@ import { SpecializationsPanel } from '@components/CardSpecialist/Specializations
 import { getContactsList, getLabelsList, getSpecialistSocials } from '@components/CardSpecialist/config';
 import { specialistPropType } from '@components/CardSpecialist/prop-types';
 import { WorkTime } from '../WorkTime';
+import { SpecialistChipLists } from './SpecialistChipLists';
 
 export function CardSpecialist({ specialist, className, extended = false }) {
   if (!specialist) throw new Error('Specialist is not found');
@@ -78,7 +78,12 @@ export function CardSpecialist({ specialist, className, extended = false }) {
           </div>
         </header>
         <BadgeList labels={labelsList} />
-        <MethodList specializations={specializationsList} methods={specializationMethods} />
+        <SpecialistChipLists
+          id={id}
+          specializationMethods={specializationMethods}
+          specializationsList={specializationsList}
+          className="border-t border-dashed border-t-gray-200 pt-4"
+        />
         {extended ? (
           <>
             <DetailsList

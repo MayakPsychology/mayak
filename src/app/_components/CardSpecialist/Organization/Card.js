@@ -92,10 +92,9 @@ export function CardOrganization({ organization, className, extended = false }) 
         </header>
         <BadgeList labels={labelsList} />
         <OrganizationChipLists
-          className="border-t border-dashed border-t-gray-200 pt-4"
           id={id}
           expertSpecializations={expertSpecializations}
-          extended={extended}
+          className="border-t border-dashed border-t-gray-200 pt-4"
         />
         {extended ? (
           <>
