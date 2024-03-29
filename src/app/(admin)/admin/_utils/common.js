@@ -48,7 +48,10 @@ function transformAddresses({ addresses, type = 'create' }) {
 export const transformSupportFocuses = ({ focuses, focusesIds }) => {
   const focusesToUpdate = [];
   const focusesToCreate = [];
-  const focusesToDelete = toConnectList(focusesIds.filter(cutId => !focuses?.some(focus => focus.id === cutId)));
+
+  const focusesToDelete = toConnectList(
+    focusesIds.filter(cutId => !focuses?.some(focus => focus.id === cutId) ?? true),
+  );
 
   focuses?.forEach(focus => {
     if (focus.id) {
