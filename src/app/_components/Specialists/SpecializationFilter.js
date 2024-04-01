@@ -66,7 +66,7 @@ export function SpecializationFilter() {
   const specializationsInUrl = useSearchParams().getAll('specializations');
   const [count, setCount] = useState(specializationsInUrl.length);
   return (
-    <FilterBase filterText="Спеціалісти" count={count}>
+    <FilterBase filterText="Посада" count={count}>
       <SpecializationList setCount={setCount} defaultValue={specializationsInUrl} />
     </FilterBase>
   );

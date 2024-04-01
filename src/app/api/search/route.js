@@ -18,7 +18,7 @@ function getPriceFilter(prices) {
     above1500: { price: { gte: 1500 } },
   };
 
-  return prices.map(price => priceConditions[price] || parseDynamicPriceRange(price));
+  return prices.map(price => priceConditions[price] || parseDynamicPriceRange(price)).filter(price => price);
 }
 
 export async function GET(req) {
@@ -51,22 +51,31 @@ export async function GET(req) {
       price: typeof params.price === 'string' ? [params.price] : params.price,
     }),
   );
+
   const priceFilter = price && getPriceFilter(price);
 
   const specializationIds = specializations && {
     some: { OR: specializations.map(id => ({ id })) },
   };
-  const sharedWhere = {
-    supportFocuses: {
-      some: {
-        therapy: type && {
-          type,
+
+  const supportFocusesWhere = [
+    {
+      supportFocuses: {
+        some: {
+          therapy: type && {
+            type,
+          },
+          OR: priceFilter,
         },
-        OR: priceFilter,
       },
     },
+    { supportFocuses: { every: price?.includes('notSpecified') ? { price: { equals: null } } : undefined } },
+  ];
+
+  const sharedWhere = {
     isActive: true,
-    OR: format && [{ formatOfWork: FormatOfWork.BOTH }, { formatOfWork: format }],
+    OR: supportFocusesWhere,
+    formatOfWork: format && { in: [FormatOfWork.BOTH, format] },
     addresses: districts && {
       some: {
         OR: districts.map(id => ({

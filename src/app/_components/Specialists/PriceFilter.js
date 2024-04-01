@@ -8,6 +8,7 @@ import { useSetParam } from '@hooks';
 import { useSearchParams } from 'next/navigation';
 
 const priceVariants = {
+  'Не зазначено': 'notSpecified',
   Безкоштовно: 'free',
   'до 500 грн': 'below500',
   '500-1000 грн': 'from500to1000',
