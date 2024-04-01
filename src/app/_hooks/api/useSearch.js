@@ -1,11 +1,16 @@
 import ky from 'ky';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-const specialistKey = 'specialist';
+const listEntries = searchParams => ky('/api/search', { searchParams }).json();
 
-export function useListEntries(searchParams) {
-  return useQuery({
-    queryKey: [specialistKey, searchParams],
-    queryFn: async () => ky(`/api/search`, { searchParams }).json(),
+export const usePaginatedEntries = searchParams =>
+  useInfiniteQuery({
+    queryFn: ({ pageParam = '' }) => {
+      const params = {
+        ...Object.fromEntries(searchParams.entries()),
+        lastCursor: pageParam,
+      };
+      return listEntries(params);
+    },
+    getNextPageParam: lastPage => lastPage?.metaData.lastCursor,
   });
-}
