@@ -24,9 +24,9 @@ function getPriceFilter(prices) {
 export async function GET(req) {
   const {
     type,
-    // TODO: Uncomment pagination params take and skip when pagination is implemented on the frontend
-    // take,
-    // skip,
+    take,
+    skip,
+    lastCursor,
     format,
     district: districts,
     specialization: specializations,
@@ -37,8 +37,8 @@ export async function GET(req) {
       format: undefined,
       type: undefined,
       specialization: undefined,
-      // take: 10,
-      // skip: 0,
+      take: 5,
+      skip: 0,
       district: undefined,
       price: undefined,
     },
@@ -113,6 +113,8 @@ export async function GET(req) {
         id: true,
         nameOfClinic: true,
         fullAddress: true,
+        latitude: true,
+        longitude: true,
         district: { select: { id: true, name: true } },
         isPrimary: true,
       },
@@ -139,7 +141,7 @@ export async function GET(req) {
     },
   });
 
-  const searchEntries = await prisma.searchEntry.findMany({
+  const searchEntriesPlusOneExtra = await prisma.searchEntry.findMany({
     include: {
       specialist: {
         include: {
@@ -169,13 +171,29 @@ export async function GET(req) {
     orderBy: {
       sortString: 'asc',
     },
-    // take,
-    // skip,
+    // take one more, to see if there next page available
+    take: take + 1,
+    skip,
+    ...(lastCursor && {
+      skip: 1,
+      cursor: {
+        id: lastCursor,
+      },
+    }),
   });
+  // take last one
+  const isNextPageExist = searchEntriesPlusOneExtra.length === take + 1;
+  // take rest ( page requested )
+  const results = searchEntriesPlusOneExtra.slice(0, -1);
+  const lastResult = results.slice(-1)[0];
+  const newCursor = lastResult?.id;
 
-  const data = searchEntries.map(entry => (entry.specialist ? entry.specialist : entry.organization));
   return NextResponse.json({
-    totalCount,
-    data,
+    data: results,
+    metaData: {
+      totalCount,
+      lastCursor: newCursor,
+      hasNextPage: isNextPageExist,
+    },
   });
 }
