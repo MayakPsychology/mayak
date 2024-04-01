@@ -6,10 +6,10 @@ import { getSearchParamsFromRequest } from '@/utils/getSearchParamsFromRequest';
 import { createSearchSyncFilter } from '../helpers';
 
 export const handler = withErrorHandler(async req => {
-  const queryParams = getSearchParamsFromRequest(req, { searchType: 'request', query: undefined });
-  const { searchType, query } = queryParams;
+  const params = getSearchParamsFromRequest(req, { searchType: 'request', query: undefined });
+  const { searchType, query } = params;
 
-  const searchSyncFilter = createSearchSyncFilter(query, searchType);
+  const searchSyncFilter = createSearchSyncFilter(params);
 
   const searchTypeFindAndMap = {
     request: {

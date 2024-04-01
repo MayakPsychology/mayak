@@ -1,22 +1,15 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { withErrorHandler } from '@/lib/errors/errorHandler';
-import { createSearchEntryFilter, createEntityFilter, getSearchFilterQueryParams } from './helpers';
+import { createSearchEntryFilter, getSearchFilterQueryParams } from './helpers';
 
 export const handler = withErrorHandler(async req => {
-  const queryParams = getSearchFilterQueryParams(req);
-  const {
-    // TODO: Uncomment pagination params take and skip when pagination is implemented on the frontend
-    // take,
-    // skip,
-    searchType,
-    query,
-  } = queryParams;
-
-  const entityFilter = createEntityFilter(queryParams);
-  const searchEntryFilter = createSearchEntryFilter(entityFilter, query, searchType);
+  const params = getSearchFilterQueryParams(req);
+  const { take, skip, lastCursor } = params;
+  const searchEntryFilter = createSearchEntryFilter(params);
 
   const totalCount = await prisma.searchEntry.count({ where: searchEntryFilter });
+
   const sharedInclude = {
     supportFocuses: {
       select: {
@@ -31,6 +24,8 @@ export const handler = withErrorHandler(async req => {
         id: true,
         nameOfClinic: true,
         fullAddress: true,
+        latitude: true,
+        longitude: true,
         district: { select: { id: true, name: true } },
         isPrimary: true,
       },
@@ -44,7 +39,7 @@ export const handler = withErrorHandler(async req => {
     },
   };
 
-  const searchEntries = await prisma.searchEntry.findMany({
+  const searchEntriesPlusOneExtra = await prisma.searchEntry.findMany({
     include: {
       specialist: {
         include: {
@@ -57,6 +52,7 @@ export const handler = withErrorHandler(async req => {
         include: {
           ...sharedInclude,
           type: { select: { id: true, name: true } },
+          expertSpecializations: { select: { name: true } },
         },
       },
     },
@@ -64,15 +60,30 @@ export const handler = withErrorHandler(async req => {
     orderBy: {
       sortString: 'asc',
     },
-    // take,
-    // skip,
+    // take one more, to see if there next page available
+    take: take + 1,
+    skip,
+    ...(lastCursor && {
+      skip: 1,
+      cursor: {
+        id: lastCursor,
+      },
+    }),
   });
-
-  const data = searchEntries.map(entry => (entry.specialist ? entry.specialist : entry.organization));
+  // take last one
+  const isNextPageExist = searchEntriesPlusOneExtra.length === take + 1;
+  // take rest ( page requested )
+  const results = searchEntriesPlusOneExtra.slice(0, -1);
+  const lastResult = results.slice(-1)[0];
+  const newCursor = lastResult?.id;
 
   return NextResponse.json({
-    totalCount,
-    data,
+    data: results,
+    metaData: {
+      totalCount,
+      lastCursor: newCursor,
+      hasNextPage: isNextPageExist,
+    },
   });
 });
 

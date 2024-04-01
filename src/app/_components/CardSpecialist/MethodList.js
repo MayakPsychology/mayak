@@ -28,14 +28,16 @@ function Method({ id, title, description }) {
       <span className="w-full px-3 py-1 text-c3 font-medium text-primary-600" data-tooltip-id={`method_tooltip_${id}`}>
         {title}
       </span>
-      <Tooltip
-        id={`method_tooltip_${id}`}
-        style={{ backgroundColor: '#FFF', color: '#080809', boxShadow: '0px 0px 7px 1px rgba(0,0,0,0.2)' }}
-        place="bottom"
-        opacity={1}
-      >
-        <Paragraph className="max-w-64 md:max-w-80">{description}</Paragraph>
-      </Tooltip>
+      {description && (
+        <Tooltip
+          id={`method_tooltip_${id}`}
+          style={{ backgroundColor: '#FFF', color: '#080809', boxShadow: '0px 0px 7px 1px rgba(0,0,0,0.2)' }}
+          place="bottom"
+          opacity={1}
+        >
+          <Paragraph className="max-w-64 md:max-w-80">{description}</Paragraph>
+        </Tooltip>
+      )}
     </div>
   );
 }
@@ -71,7 +73,7 @@ export function MethodList({ methods = [], specializations = [] }) {
           }
           if (expanded) {
             return (
-              <span className="text-c3 cursor-pointer text-gray-900" onClick={() => setExpanded(false)}>
+              <span className="cursor-pointer text-c3 text-gray-900" onClick={() => setExpanded(false)}>
                 Приховати
               </span>
             );

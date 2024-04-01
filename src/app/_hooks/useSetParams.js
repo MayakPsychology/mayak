@@ -4,7 +4,6 @@ export function useSetParam(param) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const newParams = new URLSearchParams(searchParams);
-
   const add = value => {
     newParams.append(param, value);
     router.push(`?${newParams.toString()}`);

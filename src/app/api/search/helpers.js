@@ -1,8 +1,87 @@
 import { FormatOfWork } from '@prisma/client';
 import { getSearchParamsFromRequest } from '@/utils/getSearchParamsFromRequest';
 
-export function createSearchEntryFilter(entityFilter, query, searchType) {
-  const defaultFilter = { OR: [{ specialist: entityFilter }, { organization: entityFilter }] };
+function parseDynamicPriceRange(price) {
+  const match = price.match(/from(\d+)to(\d+)/);
+  if (!match) return null;
+  const gteFilter = { price: { gte: parseInt(match[1], 10) } };
+  const ltFilter = { price: { lt: parseInt(match[2], 10) } };
+  return { AND: [gteFilter, ltFilter] };
+}
+
+function getPriceFilter(prices) {
+  const priceConditions = {
+    free: { price: { equals: 0 } },
+    below500: { AND: [{ price: { gt: 0 } }, { price: { lt: 500 } }] },
+    above1500: { price: { gte: 1500 } },
+  };
+
+  return prices.map(price => priceConditions[price] || parseDynamicPriceRange(price)).filter(price => price);
+}
+
+export function createEntityFilter({ type, requests, format, districts, prices, query, searchType }) {
+  const priceFilter = prices && getPriceFilter(prices);
+
+  const supportFocusesFilter = requests || type || priceFilter || query ? true : undefined;
+
+  return {
+    isActive: true,
+    supportFocuses: supportFocusesFilter && {
+      every: prices?.includes('notSpecified') ? { price: { equals: null } } : undefined,
+      some: {
+        AND: {
+          therapy: type && {
+            type,
+          },
+          requests: (searchType === 'request' || requests) && {
+            some: {
+              name: searchType === 'request' && query && { contains: query, mode: 'insensitive' },
+              id: requests && { in: requests },
+            },
+          },
+          OR: priceFilter,
+        },
+      },
+    },
+    formatOfWork: format && { in: [FormatOfWork.BOTH, format] },
+    addresses: districts && {
+      some: {
+        OR: districts.map(id => ({
+          districtId: id,
+        })),
+      },
+    },
+  };
+}
+
+export function createSpecialistFilter(queryParams) {
+  const sharedWhere = createEntityFilter(queryParams);
+  const { specializations } = queryParams;
+  return {
+    ...sharedWhere,
+    specializations: specializations && {
+      some: { id: { in: specializations } },
+    },
+  };
+}
+
+export function createOrganizationFilter(queryParams) {
+  const sharedWhere = createEntityFilter(queryParams);
+  const { specializations } = queryParams;
+  return {
+    ...sharedWhere,
+    expertSpecializations: specializations && {
+      some: { id: { in: specializations } },
+    },
+  };
+}
+
+export function createSearchEntryFilter(queryParams) {
+  const { query, searchType } = queryParams;
+  const specialistWhere = createSpecialistFilter(queryParams);
+  const organizationWhere = createOrganizationFilter(queryParams);
+
+  const defaultFilter = { OR: [{ specialist: specialistWhere }, { organization: organizationWhere }] };
 
   if (!query) {
     return defaultFilter;
@@ -10,8 +89,44 @@ export function createSearchEntryFilter(entityFilter, query, searchType) {
 
   switch (searchType) {
     case 'request': {
-      Object.assign(entityFilter, {
-        ...entityFilter,
+      return defaultFilter;
+    }
+
+    case 'specialist':
+      return {
+        sortString: {
+          contains: query,
+          mode: 'insensitive',
+        },
+        specialist: specialistWhere,
+      };
+    case 'organization':
+      return {
+        sortString: {
+          contains: query,
+          mode: 'insensitive',
+        },
+        organization: organizationWhere,
+      };
+    default:
+      return defaultFilter;
+  }
+}
+
+export function createSearchSyncFilter(params) {
+  const { query, searchType } = params;
+
+  const activeFilter = { isActive: true };
+  const defaultFilter = { OR: [{ specialist: activeFilter }, { organization: activeFilter }] };
+
+  if (!query) {
+    return defaultFilter;
+  }
+
+  switch (searchType) {
+    case 'request':
+      Object.assign(activeFilter, {
+        ...activeFilter,
         supportFocuses: {
           some: {
             requests: {
@@ -26,15 +141,13 @@ export function createSearchEntryFilter(entityFilter, query, searchType) {
         },
       });
       return defaultFilter;
-    }
-
     case 'specialist':
       return {
         sortString: {
           contains: query,
           mode: 'insensitive',
         },
-        specialist: entityFilter,
+        specialist: activeFilter,
       };
     case 'organization':
       return {
@@ -42,45 +155,11 @@ export function createSearchEntryFilter(entityFilter, query, searchType) {
           contains: query,
           mode: 'insensitive',
         },
-        organization: entityFilter,
+        organization: activeFilter,
       };
     default:
       return defaultFilter;
   }
-}
-
-export function createSearchSyncFilter(query, searchType) {
-  return createSearchEntryFilter({ isActive: true }, query, searchType);
-}
-
-export function createEntityFilter({ type, requests, format, districts }) {
-  return {
-    isActive: true,
-    supportFocuses: (requests || type) && {
-      some: {
-        AND: {
-          therapy: type && {
-            type,
-          },
-          requests: requests && {
-            some: {
-              OR: requests.map(request => ({
-                id: request,
-              })),
-            },
-          },
-        },
-      },
-    },
-    OR: format && [{ formatOfWork: FormatOfWork.BOTH }, { formatOfWork: format }],
-    addresses: districts && {
-      some: {
-        OR: districts.map(id => ({
-          districtId: id,
-        })),
-      },
-    },
-  };
 }
 
 export function getSearchFilterQueryParams(req) {
@@ -89,14 +168,15 @@ export function getSearchFilterQueryParams(req) {
     {
       format: undefined,
       type: undefined,
-      // TODO: uncomment pagination once needed
-      // take: 10,
-      // skip: 0,
+      specializations: undefined,
+      take: 5,
+      skip: 0,
       searchSync: false,
       searchType: undefined,
       query: undefined,
       districts: undefined,
       requests: undefined,
+      price: undefined,
     },
     params => ({
       ...params,
@@ -106,6 +186,10 @@ export function getSearchFilterQueryParams(req) {
       district: undefined,
       requests: typeof params.request === 'string' ? [params.request] : params.request,
       request: undefined,
+      specializations: typeof params.specialization === 'string' ? [params.specialization] : params.specialization,
+      specialization: undefined,
+      prices: typeof params.price === 'string' ? [params.price] : params.price,
+      price: typeof params.price === 'string' ? [params.price] : params.price,
     }),
   );
 }
