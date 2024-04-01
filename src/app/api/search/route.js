@@ -3,6 +3,24 @@ import { NextResponse } from 'next/server';
 import { getSearchParamsFromRequest } from '@/utils/getSearchParamsFromRequest';
 import { prisma } from '@/lib/db';
 
+function parseDynamicPriceRange(price) {
+  const match = price.match(/from(\d+)to(\d+)/);
+  if (!match) return null;
+  const gteFilter = { price: { gte: parseInt(match[1], 10) } };
+  const ltFilter = { price: { lt: parseInt(match[2], 10) } };
+  return { AND: [gteFilter, ltFilter] };
+}
+
+function getPriceFilter(prices) {
+  const priceConditions = {
+    free: { price: { equals: 0 } },
+    below500: { AND: [{ price: { gt: 0 } }, { price: { lt: 500 } }] },
+    above1500: { price: { gte: 1500 } },
+  };
+
+  return prices.map(price => priceConditions[price] || parseDynamicPriceRange(price)).filter(price => price);
+}
+
 export async function GET(req) {
   const {
     type,
@@ -11,41 +29,73 @@ export async function GET(req) {
     lastCursor,
     format,
     district: districts,
+    specialization: specializations,
+    price,
   } = getSearchParamsFromRequest(
     req,
     {
       format: undefined,
       type: undefined,
+      specialization: undefined,
       take: 5,
       skip: 0,
       district: undefined,
+      price: undefined,
     },
     params => ({
       ...params,
       take: parseInt(params.take, 10),
       skip: parseInt(params.skip, 10),
       district: typeof params.district === 'string' ? [params.district] : params.district,
+      specialization: typeof params.specialization === 'string' ? [params.specialization] : params.specialization,
+      price: typeof params.price === 'string' ? [params.price] : params.price,
     }),
   );
 
-  const whereFilter = {
-    AND: {
-      supportFocuses: type && {
+  const priceFilter = price && getPriceFilter(price);
+
+  const specializationIds = specializations && {
+    some: { OR: specializations.map(id => ({ id })) },
+  };
+
+  const supportFocusesWhere = [
+    {
+      supportFocuses: {
         some: {
-          therapy: {
+          therapy: type && {
             type,
           },
+          OR: priceFilter,
         },
       },
-      isActive: true,
-      OR: format && [{ formatOfWork: FormatOfWork.BOTH }, { formatOfWork: format }],
-      addresses: districts && {
-        some: {
-          OR: districts.map(id => ({
-            districtId: id,
-          })),
-        },
+    },
+    { supportFocuses: { every: price?.includes('notSpecified') ? { price: { equals: null } } : undefined } },
+  ];
+
+  const sharedWhere = {
+    isActive: true,
+    OR: supportFocusesWhere,
+    formatOfWork: format && { in: [FormatOfWork.BOTH, format] },
+    addresses: districts && {
+      some: {
+        OR: districts.map(id => ({
+          districtId: id,
+        })),
       },
+    },
+  };
+
+  const specialistWhere = {
+    AND: {
+      ...sharedWhere,
+      specializations: specializationIds,
+    },
+  };
+
+  const organizationWhere = {
+    AND: {
+      ...sharedWhere,
+      expertSpecializations: specializationIds,
     },
   };
 
@@ -82,10 +132,10 @@ export async function GET(req) {
     where: {
       OR: [
         {
-          organization: whereFilter,
+          organization: organizationWhere,
         },
         {
-          specialist: whereFilter,
+          specialist: specialistWhere,
         },
       ],
     },
@@ -104,16 +154,17 @@ export async function GET(req) {
         include: {
           ...sharedInclude,
           type: { select: { id: true, name: true } },
+          expertSpecializations: { select: { name: true } },
         },
       },
     },
     where: {
       OR: [
         {
-          organization: whereFilter,
+          organization: organizationWhere,
         },
         {
-          specialist: whereFilter,
+          specialist: specialistWhere,
         },
       ],
     },
