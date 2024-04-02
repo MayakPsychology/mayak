@@ -39,7 +39,7 @@ export const handler = withErrorHandler(async req => {
     },
   };
 
-  const searchEntriesPlusOneExtra = await prisma.searchEntry.findMany({
+  const searchEntries = await prisma.searchEntry.findMany({
     include: {
       specialist: {
         include: {
@@ -60,8 +60,7 @@ export const handler = withErrorHandler(async req => {
     orderBy: {
       sortString: 'asc',
     },
-    // take one more, to see if there next page available
-    take: take + 1,
+    take,
     skip,
     ...(lastCursor && {
       skip: 1,
@@ -70,15 +69,13 @@ export const handler = withErrorHandler(async req => {
       },
     }),
   });
-  // take last one
-  const isNextPageExist = searchEntriesPlusOneExtra.length === take + 1;
-  // take rest ( page requested )
-  const results = searchEntriesPlusOneExtra.slice(0, -1);
-  const lastResult = results.slice(-1)[0];
+
+  const isNextPageExist = searchEntries.length === take;
+  const lastResult = searchEntries.slice(-1)[0];
   const newCursor = lastResult?.id;
 
   return NextResponse.json({
-    data: results,
+    data: searchEntries,
     metaData: {
       totalCount,
       lastCursor: newCursor,
