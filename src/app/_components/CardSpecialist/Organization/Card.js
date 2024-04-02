@@ -54,6 +54,7 @@ export function CardOrganization({ organization, className, extended = false }) 
     formatOfWork,
     isInclusiveSpace,
     specialistType: 'organization',
+    extended,
   });
   const socials = getSpecialistSocials({ instagram, facebook, tiktok, youtube, linkedin, viber, telegram });
   const workTimeElement = !!workTime?.length && <WorkTime workTime={workTime} />;

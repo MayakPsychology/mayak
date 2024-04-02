@@ -48,6 +48,7 @@ export const getLabelsList = ({
   formatOfWork,
   specialistType,
   isInclusiveSpace,
+  extended,
 }) => [
   {
     id: 'yearsOfExperience',
@@ -66,7 +67,10 @@ export const getLabelsList = ({
   {
     id: 'formatOfWork',
     icon: <OnlineMeeting />,
-    content: formatOfWork !== FormatOfWork.OFFLINE ? 'Онлайн консультації' : null,
+    content:
+      formatOfWork !== FormatOfWork.OFFLINE && ((specialistType === 'specialist' && !extended) || extended)
+        ? 'Онлайн консультації'
+        : null,
     color: 'text-other-blue',
   },
   {
