@@ -24,6 +24,7 @@ export const organizationInclude = {
       name: 'asc',
     },
   },
+  expertSpecializations: true,
   supportFocuses: {
     include: {
       therapy: true,

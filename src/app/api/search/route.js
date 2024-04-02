@@ -154,7 +154,9 @@ export async function GET(req) {
         include: {
           ...sharedInclude,
           type: { select: { id: true, name: true } },
-          expertSpecializations: { select: { name: true } },
+          expertSpecializations: {
+            select: { id: true, name: true },
+          },
         },
       },
     },
