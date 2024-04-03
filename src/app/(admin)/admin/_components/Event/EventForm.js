@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import { useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EventSchema } from '@admin/_lib/validationSchemas/eventSchema';
-import { capitalizeFirstLetter } from '@admin/_utils/common';
+import { capitalize } from '@admin/_utils/common';
 import { EventPriceFormat, EventFormat } from '@prisma/client';
 import { FormTranslations } from '@admin/_lib/translations';
 import { TagSelect } from './TagSelect';
@@ -54,7 +54,7 @@ export function EventForm({ toolbar, setSelectedTags, recordTags }) {
   const getChoicesList = (list, translations) =>
     list.map(item => ({
       id: item,
-      name: capitalizeFirstLetter(translations[item.toLowerCase()]) ?? item,
+      name: capitalize(translations[item.toLowerCase()]) ?? item,
     }));
 
   const priceTypeChoices = getChoicesList(Object.values(EventPriceFormat), FormTranslations.eventPriceFormat);

@@ -9,18 +9,23 @@ export const specialistInclude = {
       therapy: true,
     },
   },
+  workTime: true,
   addresses: {
     include: {
       district: true,
     },
   },
-  //! this shit no work at all
-  // clientCategory: {
-  clientCategories: {
+  clientsWorkingWith: {
     orderBy: {
       name: 'asc',
     },
   },
+  clientsNotWorkingWith: {
+    orderBy: {
+      name: 'asc',
+    },
+  },
+  specializationMethods: { select: { id: true, title: true, description: true } },
 };
 
 export const organizationInclude = {
@@ -29,6 +34,7 @@ export const organizationInclude = {
       name: 'asc',
     },
   },
+  expertSpecializations: true,
   supportFocuses: {
     include: {
       therapy: true,
@@ -39,10 +45,15 @@ export const organizationInclude = {
       district: true,
     },
   },
-  //! this shit no work at all
-  // clientCategories: {
-  //   orderBy: {
-  //     name: 'asc',
-  //   },
-  // },
+  workTime: true,
+  clientsWorkingWith: {
+    orderBy: {
+      name: 'asc',
+    },
+  },
+  clientsNotWorkingWith: {
+    orderBy: {
+      name: 'asc',
+    },
+  },
 };

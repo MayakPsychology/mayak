@@ -4,6 +4,7 @@ import { withErrorHandler } from '@/lib/errors/errorHandler';
 export const GET = withErrorHandler(async req => {
   const today = new Date();
   const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth() + 1;
 
   const url = new URL(req.url);
   const take = url.searchParams.get('take');
@@ -12,16 +13,16 @@ export const GET = withErrorHandler(async req => {
 
   const filteredQueryMonth = parseInt(queryMonth, 10);
   const startOfNextMonth = new Date(currentYear, filteredQueryMonth - 1, 1);
-  const endOfMonth = new Date(currentYear, filteredQueryMonth, 0);
-  const endOfNextMonth = new Date(currentYear, filteredQueryMonth, 0);
+  const endOfMonth = new Date(currentYear, filteredQueryMonth, 1);
+  const endOfNextMonth = new Date(currentYear, filteredQueryMonth, 1);
 
   const result = await prisma.event.findMany({
     include: { tags: true, additionalLink: true },
     where: {
       isActive: true,
       eventDate: {
-        gte: filteredQueryMonth === today.getMonth() + 1 ? today : startOfNextMonth,
-        lte: filteredQueryMonth === today.getMonth() + 1 ? endOfMonth : endOfNextMonth,
+        gte: filteredQueryMonth === currentMonth ? today : startOfNextMonth,
+        lte: filteredQueryMonth === currentMonth ? endOfMonth : endOfNextMonth,
       },
     },
     take: take ? parseInt(take, 10) : 6,

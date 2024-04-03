@@ -15,6 +15,8 @@ import { SpecializationsPanel } from '@components/CardSpecialist/Specializations
 import { getContactsList, getLabelsList, getSpecialistSocials } from '@components/CardSpecialist/config';
 import { specialistPropType } from '@components/CardSpecialist/prop-types';
 import { ClientCategoryList } from '../ClientCategoryList';
+import { WorkTime } from '../WorkTime';
+import { SpecialistChipLists } from './SpecialistChipLists';
 
 export function CardSpecialist({ specialist, className, extended = false }) {
   if (!specialist) throw new Error('Specialist is not found');
@@ -26,11 +28,13 @@ export function CardSpecialist({ specialist, className, extended = false }) {
     lastName,
     surname,
     specializations,
+    specializationMethods,
     yearsOfExperience,
     isFreeReception,
     formatOfWork,
     addresses,
     supportFocuses,
+    workTime,
     phone,
     email,
     website,
@@ -47,18 +51,15 @@ export function CardSpecialist({ specialist, className, extended = false }) {
   } = specialist;
 
   const specializationsList = specializations.map(s => s.name);
+  addresses.sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary));
   const addressPrimary = addresses[0];
   const contactsList = getContactsList({ phone, email, website });
   const labelsList = getLabelsList({ yearsOfExperience, isFreeReception, formatOfWork, specialistType: 'specialist' });
   const socials = getSpecialistSocials({ instagram, facebook, tiktok, youtube, linkedin, viber, telegram });
   const name = surname ? `${lastName} ${firstName} ${surname}` : `${lastName} ${firstName}`;
 
-  const ClientCategoryWorkWithOrNot = (
-    <>
-      <ClientCategoryList isWorkWith clientCategories={clientsWorkingWith} />
-      <ClientCategoryList isWorkWith={false} clientCategories={clientsNotWorkingWith} />
-    </>
-  );
+  const workTimeElement = !!workTime?.length && <WorkTime workTime={workTime} />;
+
   return (
     <CardWrapper className={className} id={id} type="specialist">
       <div className="hidden max-w-[150px] md:block lg:max-w-[200px]">
@@ -66,6 +67,7 @@ export function CardSpecialist({ specialist, className, extended = false }) {
           <SocialsList socials={socials} className="absolute bottom-4" />
         </ProfileImage>
         <ContactsList truncate={!extended} specialistId={id} contacts={contactsList} className="mt-4" />
+        {workTimeElement}
       </div>
       <div className="flex w-[100%] max-w-full flex-col gap-4 overflow-hidden md:ml-4">
         <header className="relative flex flex-row gap-2.5">
@@ -82,9 +84,16 @@ export function CardSpecialist({ specialist, className, extended = false }) {
           </div>
         </header>
         <BadgeList labels={labelsList} />
+        <SpecialistChipLists
+          id={id}
+          specializationMethods={specializationMethods}
+          specializationsList={specializationsList}
+          className="border-t border-dashed border-t-gray-200 pt-4"
+        />
         {extended ? (
           <>
-            {ClientCategoryWorkWithOrNot}
+            <ClientCategoryList id={id} isWorkWith clientCategories={clientsWorkingWith} />
+            <ClientCategoryList id={id} isWorkWith={false} clientCategories={clientsNotWorkingWith} />
             <DetailsList
               className="border-t border-dashed border-t-gray-200 pt-4"
               details={{ addresses, description, supportFocuses }}
@@ -98,11 +107,13 @@ export function CardSpecialist({ specialist, className, extended = false }) {
               contacts={contactsList}
               className="border-t border-dashed border-t-gray-200 pt-3 md:hidden"
             />
+            <div className="flex md:hidden">{workTimeElement}</div>
             <SocialsList socials={socials} className="border-t border-dashed border-t-gray-200 pt-3 md:hidden" />
           </>
         ) : (
           <>
-            {ClientCategoryWorkWithOrNot}
+            <ClientCategoryList id={id} isWorkWith clientCategories={clientsWorkingWith} />
+            <ClientCategoryList id={id} isWorkWith={false} clientCategories={clientsNotWorkingWith} />
             {addressPrimary && (
               <AddressesList className="border-t pt-3 md:border-b md:py-3" addresses={[addressPrimary]} />
             )}

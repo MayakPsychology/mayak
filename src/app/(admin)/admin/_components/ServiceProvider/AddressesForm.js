@@ -11,12 +11,14 @@ import {
   TextInput,
   useGetList,
 } from 'react-admin';
+import { Stack } from '@mui/material';
 import { FormatOfWork } from '@prisma/client';
 import { FORM_TYPES, RESOURCES } from '@admin/_lib/consts';
 import PropTypes from 'prop-types';
 import { FormFieldWrapper } from '@admin/components/FormFieldWrapper';
 import { districtPropType } from '@/app/(admin)/admin/_lib/specialistPropTypes';
 import Loading from '@/app/loading';
+import { CoordinateInput } from './CoordinateInput';
 
 function AddressForm({ getSource, districts, type, readOnly = false }) {
   return (
@@ -48,6 +50,7 @@ function AddressForm({ getSource, districts, type, readOnly = false }) {
       />
       {type === FORM_TYPES.create ? (
         <SelectInput
+          fullWidth
           InputProps={{
             readOnly,
           }}
@@ -61,6 +64,7 @@ function AddressForm({ getSource, districts, type, readOnly = false }) {
       ) : (
         <ReferenceInput source={getSource('districtId')} reference="District">
           <SelectInput
+            fullWidth
             InputProps={{
               readOnly,
             }}
@@ -71,6 +75,10 @@ function AddressForm({ getSource, districts, type, readOnly = false }) {
           />
         </ReferenceInput>
       )}
+      <Stack direction="row" gap="10px">
+        <CoordinateInput label="Широта точки" source={getSource('latitude')} readOnly={readOnly} />
+        <CoordinateInput label="Довгота точки" source={getSource('longitude')} readOnly={readOnly} />
+      </Stack>
     </>
   );
 }
@@ -101,6 +109,7 @@ export function AddressesForm({ type = FORM_TYPES.create, label, className }) {
           const { formatOfWork } = formData;
           const onlineOnly = formatOfWork === FormatOfWork.ONLINE;
           const disabled = onlineOnly || !formatOfWork;
+
           return (
             <>
               {!formatOfWork && <HelperText>Оберіть формат роботи</HelperText>}

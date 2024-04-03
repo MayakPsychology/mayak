@@ -3,7 +3,7 @@ import {
   createValidationSchema,
   MESSAGES,
   singlePrimaryAddressRefine,
-  specialistCore,
+  serviceProviderCore,
   zCreateAddressSchema,
   zEditAddressSchema,
   zSupportFocusSchema,
@@ -11,11 +11,11 @@ import {
   zString,
   zStringArray,
   zStringWithMax,
-} from './specialistCommonSchemas';
+} from './serviceProviderCommonSchemas';
 
 // ------------------ COMMON SECTION ---------------------
 
-const zOrganizationSchema = specialistCore.extend({
+const zOrganizationSchema = serviceProviderCore.extend({
   yearsOnMarket: zInteger,
 });
 
@@ -33,6 +33,9 @@ const createDefaultProps = z.object({
 });
 
 const activeOrganizationSchema = restCreateProps.extend({
+  ownershipType: z.enum(['PRIVATE', 'GOVERNMENT']),
+  isInclusiveSpace: z.boolean(),
+  expertSpecializations: zStringArray,
   supportFocuses: zSupportFocusSchema.array().min(1, {
     message: 'Необхідно обрати хоча б один тип терапії',
   }),
@@ -45,6 +48,9 @@ const draftOrganizationSchema = restCreateProps.partial().extend({
   supportFocuses: zSupportFocusSchema.array().nullish(),
   type: zStringArray.nullish().default([]),
   addresses: zCreateAddressSchema.array().nullish(),
+  ownershipType: z.enum(['PRIVATE', 'GOVERNMENT']).nullish(),
+  isInclusiveSpace: z.boolean(),
+  expertSpecializations: zStringArray.nullish(),
   isActive: z.literal(false),
 });
 
@@ -73,6 +79,9 @@ const activeOrganizationEditSchema = restEditProps.extend({
     message: 'Необхідно обрати хоча б один тип терапії',
   }),
   organizationTypesIds: zStringArray.default([]),
+  expertSpecializationIds: zStringArray.default([]),
+  ownershipType: z.enum(['PRIVATE', 'GOVERNMENT']),
+  isInclusiveSpace: z.boolean(),
   description: zString,
   isActive: z.literal(true),
   clientsWorkingWithIds: z.string().array().default([]),
@@ -84,6 +93,9 @@ const draftOrganizationEditSchema = restEditProps.partial().extend({
   organizationTypesIds: zStringArray.nullish(),
   formatOfWork: zString.nullish(),
   isActive: z.literal(false),
+  expertSpecializationIds: zStringArray.nullish(),
+  ownershipType: z.enum(['PRIVATE', 'GOVERNMENT']).nullish(),
+  isInclusiveSpace: z.boolean(),
 });
 
 const organizationSchemaEditUnion = z.discriminatedUnion('isActive', [

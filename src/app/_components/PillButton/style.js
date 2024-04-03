@@ -66,15 +66,6 @@ export const buttonColorVariant = {
       hover: 'hover:text-other-white',
     },
   },
-  transparent: {
-    orange: {
-      regular: 'bg-transparent border border-solid border-gray-700 text-p4 text-gray-900 font-normal',
-      hover: 'hover:bg-secondary-300',
-      focused: 'focus:outline-none focus:bg-secondary-300 focus:border-secondary-300',
-      active: 'active:bg-secondary-300 active:border-secondary-300',
-      disabled,
-    },
-  },
 };
 
 export const buttonType = {
@@ -131,18 +122,6 @@ export const buttonType = {
     icon: {
       buttonStyle: `flex justify-center align-middle w-[1rem] h-[1rem]
       flex-shrink-0`,
-    },
-  },
-  transparent: {
-    icon: {
-      buttonStyle: 'transition-all inline-flex justify-center items-center flex-col flex-shrink-0 text-p4',
-      layoutStyle: `flex justify-center items-center
-      gap-[8px] self-stretch flex-grow flex-shrink-0 flex-basis-0 py-1.5 px-3`,
-    },
-    regular: {
-      buttonStyle: 'transition-all inline-flex justify-center align-middle flex-col flex-shrink-0 text-p4',
-      layoutStyle: `flex justify-center align-middle
-      gap-[8px] self-stretch flex-grow flex-shrink-0 flex-basis-0 py-1.5 px-3`,
     },
   },
 };

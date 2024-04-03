@@ -17,4 +17,8 @@ export const FormTranslations = {
     online: 'онлайн',
     offline: 'офлайн',
   },
+  ownershipType: {
+    private: 'Приватна',
+    government: 'Державна',
+  },
 };

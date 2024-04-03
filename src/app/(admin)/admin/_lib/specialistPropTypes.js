@@ -39,6 +39,8 @@ export const addressPropType = PropTypes.shape({
   nameOfClinic: PropTypes.string,
   fullAddress: PropTypes.string,
   district: districtPropType,
+  latitude: PropTypes.number,
+  longitude: PropTypes.number,
   createdAt: PropTypes.instanceOf(Date),
 });
 

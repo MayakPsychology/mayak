@@ -34,3 +34,42 @@ export const formatPhoneNumber = phoneNumber => {
 };
 
 export const capitalize = inputString => inputString.charAt(0).toUpperCase() + inputString.slice(1);
+
+export const addressesToPoints = addresses =>
+  addresses?.map(({ fullAddress, nameOfClinic, district, latitude, longitude }) => ({
+    title: (
+      <>
+        <p>
+          {nameOfClinic ? <strong>{`${nameOfClinic}, `}</strong> : null}
+          {`${fullAddress}, ${district.name} район`}
+        </p>
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          На Google Maps
+        </a>
+      </>
+    ),
+    latitude,
+    longitude,
+  })) ?? [];
+const weekDaySorter = {
+  MON: 1,
+  TUE: 2,
+  WED: 3,
+  THU: 4,
+  FRI: 5,
+  SAT: 6,
+  SUN: 7,
+};
+
+export const transformWorkTime = (time, translation) =>
+  time
+    .sort((a, b) => weekDaySorter[a.weekDay] - weekDaySorter[b.weekDay])
+    .map(entry => ({
+      isDayOff: entry.isDayOff,
+      time: entry.time,
+      weekDay: translation[entry.weekDay],
+    }));

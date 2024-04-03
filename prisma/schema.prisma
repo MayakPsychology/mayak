@@ -30,6 +30,21 @@ enum EventPriceFormat {
   MIN_PRICE
 }
 
+enum OwnershipType {
+  PRIVATE
+  GOVERNMENT
+}
+
+enum WeekDay {
+  MON
+  TUE
+  WED
+  THU
+  FRI
+  SAT
+  SUN
+}
+
 model Specialist {
   id                    String           @id @default(uuid()) @db.Uuid
   createdAt             DateTime         @default(now())
@@ -37,10 +52,12 @@ model Specialist {
   lastName              String           @db.VarChar(64)
   surname               String?          @db.VarChar(64)
   specializations       Specialization[]
+  specializationMethods Method[]
   gender                Gender?
   yearsOfExperience     Int?             @db.SmallInt
   formatOfWork          FormatOfWork?
   addresses             Address[]
+  workTime              WorkTime[]
   isFreeReception       Boolean?
   description           String?          @db.Text
   phone                 String?          @db.VarChar(15)
@@ -70,6 +87,11 @@ model Organization {
   yearsOnMarket         Int?               @db.SmallInt
   formatOfWork          FormatOfWork?
   addresses             Address[]
+  ownershipType         OwnershipType?
+  isInclusiveSpace      Boolean?
+  // this is light version of specialists relation to organization
+  expertSpecializations Specialization[]
+  workTime              WorkTime[]
   isFreeReception       Boolean?
   description           String?            @db.Text
   phone                 String?            @db.VarChar(15)
@@ -115,14 +137,17 @@ model SearchEntry {
   specialistId   String?       @unique @db.Uuid
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId String?       @unique @db.Uuid
+
+  @@map("search_entry")
 }
 
 model Specialization {
-  id          String       @id @default(uuid()) @db.Uuid
-  createdAt   DateTime     @default(now())
-  name        String       @unique @db.VarChar(128)
-  specialists Specialist[]
-  methods     Method[]
+  id           String         @id @default(uuid()) @db.Uuid
+  createdAt    DateTime       @default(now())
+  name         String         @unique @db.VarChar(128)
+  specialists  Specialist[]
+  Organization Organization[]
+  methods      Method[]
 
   @@map("specialization")
 }
@@ -164,7 +189,7 @@ model Therapy {
 model Request {
   id             String         @id @default(uuid()) @db.Uuid
   createdAt      DateTime       @default(now())
-  name           String         @unique @db.VarChar(128)
+  name           String         @unique
   supportFocuses SupportFocus[]
   therapies      Therapy[]
 
@@ -181,6 +206,8 @@ model Address {
   specialists   Specialist[]
   organizations Organization[]
   isPrimary     Boolean        @default(false)
+  longitude     Float          @default(0) @db.DoublePrecision
+  latitude      Float          @default(0) @db.DoublePrecision
 
   @@map("address")
 }
@@ -258,6 +285,7 @@ model Method {
   description      String?        @db.Text
   specializationId String         @db.Uuid
   specialization   Specialization @relation(fields: [specializationId], references: [id])
+  specialists      Specialist[]
 
   @@map("method")
 }
@@ -272,4 +300,17 @@ model ClientCategory {
   organizationsNotWorkingWith Organization[] @relation(name: "OrganizationToClientCategoryNotWorkingWith")
 
   @@map("client_category")
+}
+
+model WorkTime {
+  id            String         @id @default(uuid()) @db.Uuid
+  createdAt     DateTime       @default(now())
+  time          String         @db.VarChar(13)
+  isDayOff      Boolean        @default(false)
+  weekDay       WeekDay
+  specialists   Specialist[]
+  organizations Organization[]
+
+  @@unique([weekDay, time, isDayOff])
+  @@map("work_time")
 }
