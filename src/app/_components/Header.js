@@ -9,6 +9,7 @@ import { useBodyScrollLock } from '@hooks';
 import { SocialLink, InnerLink } from '@components/Links';
 import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';
+import { DonateModal, DonationSection } from './DonationSection';
 
 export function Header() {
   const { links, innerLinks } = siteNav;
@@ -23,6 +24,7 @@ export function Header() {
 
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isFeedbackOpen, setFeedbackOpen] = useState(false);
+  const [isDonateModalOpen, setDonateModalOpen] = useState(false);
 
   const toggleMenu = useCallback(() => {
     setMenuOpen(state => !state);
@@ -32,9 +34,18 @@ export function Header() {
     setFeedbackOpen(prevState => !prevState);
   }, [setFeedbackOpen]);
 
+  const toggleDonateModal = useCallback(() => {
+    setDonateModalOpen(prevState => !prevState);
+  }, [setDonateModalOpen]);
+
   useBodyScrollLock(isMenuOpen, 'y');
   return (
     <header>
+      {/* Desktop Donation Section */}
+      <DonationSection
+        onDonateClick={toggleDonateModal}
+        className="hidden items-center justify-end gap-[24px] py-[12px] pe-[80px] ps-[104px] lg:flex"
+      />
       {/* this element is used to fill the space under navbar on mobile screens */}
       <div className="border-t-[1px] p-4 lg:hidden">
         <div className="h-9" />
@@ -132,6 +143,7 @@ export function Header() {
       </nav>
 
       <Feedback isFeedbackOpen={isFeedbackOpen} onClose={toggleFeedback} />
+      <DonateModal isOpen={isDonateModalOpen} onClose={toggleDonateModal} />
     </header>
   );
 }
