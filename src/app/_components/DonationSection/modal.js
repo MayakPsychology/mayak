@@ -32,10 +32,13 @@ const qrLink = 'https://www.youtube.com/watch?v=JhOdRtuLjTY&list=RDfCMvWoAq9Io&i
 
 function PillLink({ href, children, className }) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={cn('cursor-pointer', className)}>
-      <div className="flex h-[48px] w-full flex-1 items-center justify-center gap-5 rounded-[100px] border-[1px] border-primary-500 bg-other-white px-[1px] py-0">
-        {children}
-      </div>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex h-[48px] w-full flex-1 cursor-pointer items-center justify-center gap-5 rounded-[100px] border-[1px] border-primary-500 bg-other-white px-[1px] py-0"
+    >
+      <div className={cn('flex items-center', className)}>{children}</div>
     </a>
   );
 }
@@ -51,9 +54,9 @@ export function DonateModal({ isOpen, onClose }) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      className="max-h-[530px] w-[100vw] flex-shrink-0 bg-primary-200  px-[16px] md:max-w-[320px] lg:max-h-[663px] lg:max-w-[744px]"
+      className="max-h-[550px] w-[100vw] flex-shrink-0 bg-primary-200 px-[16px] md:max-w-[340px] lg:max-h-[663px] lg:max-w-[744px] lg:pb-[57px]"
     >
-      <div className="flex flex-col gap-[36px] p-1 md:p-0 lg:px-[37px] lg:pb-[59px]">
+      <div className="flex flex-col gap-[36px] p-1 pb-[30px] md:p-0 lg:px-[37px] lg:pb-[59px]">
         <div className="flex flex-col items-center gap-5">
           <div className="flex items-center">
             <Paragraph type="p1" className="text-inherit text-center text-p1 font-bold lg:text-h3">
@@ -69,15 +72,11 @@ export function DonateModal({ isOpen, onClose }) {
         </div>
         <div className="flex w-full flex-col gap-[10px] lg:gap-[20px]">
           <div className="inline-flex w-full items-start justify-between gap-[10px]">
-            <PillLink href={private24Link} className="flex-1">
-              <div className="flex h-[24px] w-[73px] items-center lg:h-[30px] lg:w-[117px]">
-                <Privat24 />
-              </div>
+            <PillLink href={private24Link} className="h-[24px] w-[73px] lg:h-[30px] lg:w-[117px]">
+              <Privat24 />
             </PillLink>
-            <PillLink href={paypalLink} className="flex-1">
-              <div className="flex h-[24px] w-[73px] items-center lg:h-[23px] lg:w-[90px]">
-                <PayPal />
-              </div>
+            <PillLink href={paypalLink} className="h-[24px] w-[73px] lg:h-[23px] lg:w-[90px]">
+              <PayPal />
             </PillLink>
           </div>
 
