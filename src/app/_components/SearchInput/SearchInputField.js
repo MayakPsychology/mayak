@@ -25,7 +25,7 @@ export function SearchInputField() {
   return (
     <input
       ref={inputRef}
-      className="h-6 w-[1px] grow border-none bg-other-black/0 p-0 caret-primary-500 placeholder:text-p3 placeholder:text-gray-500 focus:ring-0"
+      className="h-6 w-[1px] grow border-none bg-other-black/0 p-0 caret-primary-500 placeholder:text-p3 placeholder:text-gray-500 focus:ring-0 focus:placeholder:text-other-white/0"
       placeholder={currentConfig.placeholder}
       value={query}
       onChange={e => {
