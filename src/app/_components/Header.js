@@ -137,8 +137,10 @@ export function Header() {
               />
             </div>
           </div>
-          {/* Part of the Donation task */}
-          <div className="h-[100px] bg-secondary-100 text-primary-700">Donation stub</div>
+          <DonationSection
+            onDonateClick={toggleDonateModal}
+            className="flex h-[100px] items-center justify-between gap-[8px] px-[16px] py-[6px] lg:hidden"
+          />
         </div>
       </nav>
 

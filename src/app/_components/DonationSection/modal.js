@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+import toast from 'react-hot-toast';
 import { Modal } from '@components/Modal';
 import { Paragraph } from '@components/Typography';
 import PropTypes from 'prop-types';
@@ -6,6 +8,12 @@ import { Group, PayPal, Privat24 } from '@icons';
 import { cn } from '@/utils/cn';
 
 function DataSection({ label, text }) {
+  const copyToClipboard = useCallback(() => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success('Copied to clipboard');
+    });
+  }, [text]);
+
   return (
     <div className="flex w-full flex-col items-start gap-[6px]">
       <div className="flex items-start gap-[6px] self-stretch">
@@ -13,7 +21,7 @@ function DataSection({ label, text }) {
       </div>
       <div className="wrap-1 flex content-center items-center gap-[6px]">
         <Paragraph className="text-p4 text-gray-900">{text}</Paragraph>
-        <div className="px-[5px] py-[4px]">
+        <div className="relative cursor-pointer px-[5px] py-1" id={label} onClick={copyToClipboard}>
           <Group />
         </div>
       </div>
@@ -25,10 +33,6 @@ DataSection.propTypes = {
   label: PropTypes.string,
   text: PropTypes.string,
 };
-
-const private24Link = 'https://www.youtube.com/watch?v=JhOdRtuLjTY&list=RDfCMvWoAq9Io&index=2';
-const paypalLink = 'https://www.youtube.com/watch?v=Jw8ovW6LHgg';
-const qrLink = 'https://www.youtube.com/watch?v=JhOdRtuLjTY&list=RDfCMvWoAq9Io&index=2';
 
 function PillLink({ href, children, className }) {
   return (
@@ -49,14 +53,14 @@ PillLink.propTypes = {
   className: PropTypes.string,
 };
 
-export function DonateModal({ isOpen, onClose }) {
+export function DonateModal({ isOpen, onClose, privatLink, paypalLink, qrLink }) {
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      className="max-h-[550px] w-[100vw] flex-shrink-0 bg-primary-200 px-[16px] md:max-w-[340px] lg:max-h-[663px] lg:max-w-[744px] lg:pb-[57px]"
+      className="max-h-[570px] w-[100vw] flex-shrink-0 bg-primary-200 px-4 md:max-w-[340px] lg:max-h-[663px] lg:max-w-[744px] lg:pb-[57px]"
     >
-      <div className="flex flex-col gap-[36px] p-1 pb-[30px] md:p-0 lg:px-[37px] lg:pb-[59px]">
+      <div className="flex flex-col gap-9 p-1 md:p-0 lg:px-9 lg:pb-2">
         <div className="flex flex-col items-center gap-5">
           <div className="flex items-center">
             <Paragraph type="p1" className="text-inherit text-center text-p1 font-bold lg:text-h3">
@@ -70,9 +74,9 @@ export function DonateModal({ isOpen, onClose }) {
             Ваш донат допоможе...
           </Paragraph>
         </div>
-        <div className="flex w-full flex-col gap-[10px] lg:gap-[20px]">
+        <div className="flex w-full flex-col gap-[10px] lg:gap-5">
           <div className="inline-flex w-full items-start justify-between gap-[10px]">
-            <PillLink href={private24Link} className="h-[24px] w-[73px] lg:h-[30px] lg:w-[117px]">
+            <PillLink href={privatLink} className="h-[24px] w-[73px] lg:h-[30px] lg:w-[117px]">
               <Privat24 />
             </PillLink>
             <PillLink href={paypalLink} className="h-[24px] w-[73px] lg:h-[23px] lg:w-[90px]">
@@ -80,9 +84,9 @@ export function DonateModal({ isOpen, onClose }) {
             </PillLink>
           </div>
 
-          <div className="flex gap-[20px]">
-            <div className="flex w-full flex-col items-center gap-5 rounded-[30px] bg-other-white px-[10px] py-[15px] lg:py-[20px] lg:pe-[40px] lg:ps-[20px]">
-              <div className="flex w-full items-center justify-between gap-[36px] lg:gap-[54px]">
+          <div className="flex gap-5">
+            <div className="flex w-full flex-col items-center gap-5 rounded-[30px] bg-other-white px-3 py-6 lg:py-5 lg:pe-10 lg:ps-5">
+              <div className="flex w-full items-center justify-between gap-9 lg:gap-14">
                 <div className="flex flex-col gap-5 p-1">
                   <DataSection label="Назва підприємства" text={'Соціальний проект "Маяк"'} />
                   <DataSection label="IBAN" text="UA123456789012345678901234567" />
@@ -102,6 +106,9 @@ export function DonateModal({ isOpen, onClose }) {
 }
 
 DonateModal.propTypes = {
+  privatLink: PropTypes.string,
+  paypalLink: PropTypes.string,
+  qrLink: PropTypes.string,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
 };
