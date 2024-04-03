@@ -72,10 +72,19 @@ function generateSocialMediaLinks() {
 }
 
 function setClientCategories(categories) {
-  const categoriesIds = categories.map(c => ({ id: c.id })).sort(() => Math.random() - 0.5);
+  const [clientsWorkingWith, clientsNotWorkingWith] = categories.reduce(
+    (acc, category) => {
+      const decision = Math.floor(Math.random() * 3); // 0, 1, or 2
+      if (decision === 0) acc[0].push(category);
+      else if (decision === 1) acc[1].push(category);
+      // Skip adding to any array if decision is 2
+      return acc;
+    },
+    [[], []],
+  );
   return {
-    clientsWorkingWith: [categoriesIds[0]],
-    clientsNotWorkingWith: [categoriesIds[1]],
+    clientsWorkingWith,
+    clientsNotWorkingWith,
   };
 }
 
