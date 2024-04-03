@@ -5,7 +5,7 @@ const listEntries = searchParams => ky('/api/search', { searchParams }).json();
 
 export const usePaginatedEntries = searchParams =>
   useInfiniteQuery({
-    queryKey: [searchParams],
+    queryKey: [searchParams.toString()],
     queryFn: ({ pageParam = '' }) => {
       const params = {
         ...Object.fromEntries(searchParams.entries()),
