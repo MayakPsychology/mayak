@@ -5,7 +5,7 @@ import { TherapyCard } from '@components/MainPageSections/TherapyCard';
 import { Heading } from '@components/Typography';
 import { TherapyCardPropTypes } from './prop-types';
 
-export async function TherapiesSection({ therapies }) {
+export function TherapiesSection({ therapies }) {
   return (
     <section className="relative bg-primary-200 bg-blend-multiply">
       <div className="bg-cover-noise" />

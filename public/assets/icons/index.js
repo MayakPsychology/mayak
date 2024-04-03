@@ -1,4 +1,5 @@
 export { default as Site } from '@icons/site.svg';
+export { default as SearchIcon } from '@icons/searchIcon.svg';
 export { default as Clock } from '@icons/clock.svg';
 export { default as HospitalSVG } from '@icons/hospital.svg';
 export { default as HospitalLogo } from '@icons/hospitalIMG.svg';
@@ -12,6 +13,8 @@ export { default as Price } from '@icons/price.svg';
 export { default as Female } from '@icons/female.svg';
 export { default as Male } from '@icons/male.svg';
 export { default as Dot } from '@icons/card-dot.svg';
+export { default as DownTick } from '@icons/downTick.svg';
+export { default as ClearSearchIcon } from '@icons/clearSearchIcon.svg';
 export { default as BlueFb } from '@icons/specialist-facebook.svg';
 export { default as BlueInsta } from '@icons/specialist-instagram.svg';
 export { default as BlueTikTok } from '@icons/specialist-tiktok.svg';

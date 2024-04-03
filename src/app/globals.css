@@ -15,6 +15,28 @@
   }
 }
 
+@layer utilities {
+  .overlay-scrollbar::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  .overlay-scrollbar::-webkit-scrollbar-track {
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0);
+  }
+
+  .overlay-scrollbar::-webkit-scrollbar-thumb {
+    background: #deddec;
+    border-radius: 9999px;
+  }
+  .overlay-scrollbar::-webkit-scrollbar-track-piece:end {
+    margin-bottom: 10px;
+  }
+  .overlay-scrollbar::-webkit-scrollbar-track-piece:start {
+    margin-top: 10px;
+  }
+}
+
 .swiper-slide {
   width: auto !important;
 }

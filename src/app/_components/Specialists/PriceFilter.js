@@ -1,38 +1,38 @@
 'use client';
 
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSetParam } from '@hooks';
 import { useSearchParams } from 'next/navigation';
 
 const priceVariants = {
-  'Не зазначено': 'notSpecified',
-  Безкоштовно: 'free',
-  'до 500 грн': 'below500',
-  '500-1000 грн': 'from500to1000',
-  '1000-1500 грн': 'from1000to1500',
-  'більше 1500 грн': 'above1500',
+  notSpecified: 'Не зазначено',
+  free: 'Безкоштовно',
+  below500: 'до 500 грн',
+  from500to1000: '500-1000 грн',
+  from1000to1500: '1000-1500 грн',
+  above1500: 'більше 1500 грн',
 };
 
-function PricesList({ setCount, defaultValue }) {
-  const [selectedPrices, setSelectedPrices] = useState(defaultValue);
+function PricesList() {
+  const [selectedPrices, setSelectedPrices] = useState([]);
 
+  const searchParams = useSearchParams();
   const { add, remove } = useSetParam('price');
 
   const onChange = price => {
-    const priceEncoded = priceVariants[price];
     if (selectedPrices.includes(price)) {
-      setSelectedPrices(selectedPrices.filter(selPrice => selPrice !== price));
-      setCount(count => count - 1);
-      remove(priceEncoded);
+      remove(price);
     } else {
-      setSelectedPrices([...selectedPrices, price]);
-      setCount(count => count + 1);
-      add(priceEncoded);
+      add(price);
     }
   };
+
+  useEffect(() => {
+    const pricesInUrl = searchParams.getAll('price');
+    setSelectedPrices(pricesInUrl);
+  }, [searchParams]);
 
   return (
     <>
@@ -44,15 +44,13 @@ function PricesList({ setCount, defaultValue }) {
               value={priceVariant}
               checked={selectedPrices.includes(priceVariant)}
               onChange={() => onChange(priceVariant)}
-              text={priceVariant}
+              text={priceVariants[priceVariant]}
             />
           </li>
         ))}
       </ul>
       <ClearFilterButton
         clear={() => {
-          setSelectedPrices([]);
-          setCount(0);
           remove();
         }}
       />
@@ -61,19 +59,11 @@ function PricesList({ setCount, defaultValue }) {
 }
 
 export function PriceFilter() {
-  const priceInUrl = useSearchParams().getAll('price');
-  const [count, setCount] = useState(priceInUrl.length);
+  const pricesInUrl = useSearchParams().getAll('price');
+
   return (
-    <FilterBase filterText="Ціна" count={count}>
-      <PricesList
-        setCount={setCount}
-        defaultValue={Object.keys(priceVariants).filter(key => priceInUrl.includes(priceVariants[key]))}
-      />
+    <FilterBase filterText="Ціна" count={pricesInUrl?.length || 0}>
+      <PricesList />
     </FilterBase>
   );
 }
-
-PricesList.propTypes = {
-  setCount: PropTypes.func,
-  defaultValue: PropTypes.arrayOf(PropTypes.string),
-};

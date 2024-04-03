@@ -1,32 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useListSpecialization, useSetParam } from '@hooks';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSearchParams } from 'next/navigation';
-import PropTypes from 'prop-types';
 
-function SpecializationList({ setCount, defaultValue }) {
+function SpecializationList() {
   const { data: specializations, isLoading } = useListSpecialization();
-  const [selectedSpecializations, setSelectedSpecializations] = useState(defaultValue);
+  const [selectedSpecializations, setSelectedSpecializations] = useState([]);
 
+  const searchParams = useSearchParams();
   const { add, remove } = useSetParam('specialization');
 
   const onChange = specialization => {
     if (selectedSpecializations.includes(specialization)) {
-      setSelectedSpecializations(
-        selectedSpecializations.filter(selSpecialization => selSpecialization !== specialization),
-      );
-      setCount(count => count - 1);
       remove(specialization);
     } else {
-      setSelectedSpecializations([...selectedSpecializations, specialization]);
-      setCount(count => count + 1);
       add(specialization);
     }
   };
+
+  useEffect(() => {
+    const specializationsInUrl = searchParams.getAll('specialization');
+    setSelectedSpecializations(specializationsInUrl);
+  }, [searchParams]);
 
   if (isLoading) return <CircularProgress />;
 
@@ -53,8 +52,6 @@ function SpecializationList({ setCount, defaultValue }) {
       </ul>
       <ClearFilterButton
         clear={() => {
-          setSelectedSpecializations([]);
-          setCount(0);
           remove();
         }}
       />
@@ -63,16 +60,11 @@ function SpecializationList({ setCount, defaultValue }) {
 }
 
 export function SpecializationFilter() {
-  const specializationsInUrl = useSearchParams().getAll('specializations');
-  const [count, setCount] = useState(specializationsInUrl.length);
+  const specializationsInUrl = useSearchParams().getAll('specialization');
+
   return (
-    <FilterBase filterText="Посада" count={count}>
-      <SpecializationList setCount={setCount} defaultValue={specializationsInUrl} />
+    <FilterBase filterText="Посада" count={specializationsInUrl?.length || 0}>
+      <SpecializationList />
     </FilterBase>
   );
 }
-
-SpecializationList.propTypes = {
-  setCount: PropTypes.func,
-  defaultValue: PropTypes.arrayOf(PropTypes.string),
-};

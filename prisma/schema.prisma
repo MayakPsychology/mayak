@@ -133,6 +133,8 @@ model SearchEntry {
   specialistId   String?       @unique @db.Uuid
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId String?       @unique @db.Uuid
+
+  @@map("search_entry")
 }
 
 model Specialization {
@@ -183,7 +185,7 @@ model Therapy {
 model Request {
   id             String         @id @default(uuid()) @db.Uuid
   createdAt      DateTime       @default(now())
-  name           String         @unique @db.VarChar(128)
+  name           String         @unique
   supportFocuses SupportFocus[]
   therapies      Therapy[]
 

@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSetParam } from '@hooks';
@@ -10,15 +9,20 @@ import { useSearchParams } from 'next/navigation';
 const offline = 'OFFLINE';
 const online = 'ONLINE';
 
-function FormatList({ setCount, defaultValue }) {
-  const [selectedFormat, setSelectedFormat] = useState(defaultValue);
+function FormatList() {
+  const [selectedFormat, setSelectedFormat] = useState();
 
+  const searchParams = useSearchParams();
   const { remove, replace } = useSetParam('format');
+
   const onChange = format => {
-    setSelectedFormat(format);
-    setCount(1);
     replace(format);
   };
+
+  useEffect(() => {
+    const formatInUrl = searchParams.get('format');
+    setSelectedFormat(formatInUrl);
+  }, [searchParams]);
 
   return (
     <>
@@ -46,8 +50,6 @@ function FormatList({ setCount, defaultValue }) {
       </ul>
       <ClearFilterButton
         clear={() => {
-          setSelectedFormat(null);
-          setCount(0);
           remove();
         }}
       />
@@ -57,15 +59,10 @@ function FormatList({ setCount, defaultValue }) {
 
 export function FormatFilter() {
   const formatInUrl = useSearchParams().get('format');
-  const [count, setCount] = useState(Number(!!formatInUrl));
+
   return (
-    <FilterBase filterText="Формат роботи" count={count}>
-      <FormatList setCount={setCount} defaultValue={formatInUrl} />
+    <FilterBase filterText="Формат роботи" count={Number(!!formatInUrl)}>
+      <FormatList />
     </FilterBase>
   );
 }
-
-FormatList.propTypes = {
-  setCount: PropTypes.func,
-  defaultValue: PropTypes.string,
-};

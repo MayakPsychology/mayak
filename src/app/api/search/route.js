@@ -1,103 +1,14 @@
-import { FormatOfWork } from '@prisma/client';
 import { NextResponse } from 'next/server';
-import { getSearchParamsFromRequest } from '@/utils/getSearchParamsFromRequest';
 import { prisma } from '@/lib/db';
+import { withErrorHandler } from '@/lib/errors/errorHandler';
+import { createSearchEntryFilter, getSearchFilterQueryParams } from './helpers';
 
-function parseDynamicPriceRange(price) {
-  const match = price.match(/from(\d+)to(\d+)/);
-  if (!match) return null;
-  const gteFilter = { price: { gte: parseInt(match[1], 10) } };
-  const ltFilter = { price: { lt: parseInt(match[2], 10) } };
-  return { AND: [gteFilter, ltFilter] };
-}
+export const handler = withErrorHandler(async req => {
+  const params = getSearchFilterQueryParams(req);
+  const { take, skip, lastCursor } = params;
+  const searchEntryFilter = createSearchEntryFilter(params);
 
-function getPriceFilter(prices) {
-  const priceConditions = {
-    free: { price: { equals: 0 } },
-    below500: { AND: [{ price: { gt: 0 } }, { price: { lt: 500 } }] },
-    above1500: { price: { gte: 1500 } },
-  };
-
-  return prices.map(price => priceConditions[price] || parseDynamicPriceRange(price)).filter(price => price);
-}
-
-export async function GET(req) {
-  const {
-    type,
-    take,
-    skip,
-    lastCursor,
-    format,
-    district: districts,
-    specialization: specializations,
-    price,
-  } = getSearchParamsFromRequest(
-    req,
-    {
-      format: undefined,
-      type: undefined,
-      specialization: undefined,
-      take: 5,
-      skip: 0,
-      district: undefined,
-      price: undefined,
-    },
-    params => ({
-      ...params,
-      take: parseInt(params.take, 10),
-      skip: parseInt(params.skip, 10),
-      district: typeof params.district === 'string' ? [params.district] : params.district,
-      specialization: typeof params.specialization === 'string' ? [params.specialization] : params.specialization,
-      price: typeof params.price === 'string' ? [params.price] : params.price,
-    }),
-  );
-
-  const priceFilter = price && getPriceFilter(price);
-
-  const specializationIds = specializations && {
-    some: { OR: specializations.map(id => ({ id })) },
-  };
-
-  const supportFocusesWhere = [
-    {
-      supportFocuses: {
-        some: {
-          therapy: type && {
-            type,
-          },
-          OR: priceFilter,
-        },
-      },
-    },
-    { supportFocuses: { every: price?.includes('notSpecified') ? { price: { equals: null } } : undefined } },
-  ];
-
-  const sharedWhere = {
-    isActive: true,
-    OR: supportFocusesWhere,
-    formatOfWork: format && { in: [FormatOfWork.BOTH, format] },
-    addresses: districts && {
-      some: {
-        OR: districts.map(id => ({
-          districtId: id,
-        })),
-      },
-    },
-  };
-
-  const specialistWhere = {
-    AND: {
-      ...sharedWhere,
-      specializations: specializationIds,
-    },
-  };
-
-  const organizationWhere = {
-    AND: {
-      ...sharedWhere,
-      expertSpecializations: specializationIds,
-    },
-  };
+  const totalCount = await prisma.searchEntry.count({ where: searchEntryFilter });
 
   const sharedInclude = {
     supportFocuses: {
@@ -128,20 +39,7 @@ export async function GET(req) {
     },
   };
 
-  const totalCount = await prisma.searchEntry.count({
-    where: {
-      OR: [
-        {
-          organization: organizationWhere,
-        },
-        {
-          specialist: specialistWhere,
-        },
-      ],
-    },
-  });
-
-  const searchEntriesPlusOneExtra = await prisma.searchEntry.findMany({
+  const searchEntries = await prisma.searchEntry.findMany({
     include: {
       specialist: {
         include: {
@@ -160,21 +58,11 @@ export async function GET(req) {
         },
       },
     },
-    where: {
-      OR: [
-        {
-          organization: organizationWhere,
-        },
-        {
-          specialist: specialistWhere,
-        },
-      ],
-    },
+    where: searchEntryFilter,
     orderBy: {
       sortString: 'asc',
     },
-    // take one more, to see if there next page available
-    take: take + 1,
+    take,
     skip,
     ...(lastCursor && {
       skip: 1,
@@ -183,19 +71,19 @@ export async function GET(req) {
       },
     }),
   });
-  // take last one
-  const isNextPageExist = searchEntriesPlusOneExtra.length === take + 1;
-  // take rest ( page requested )
-  const results = searchEntriesPlusOneExtra.slice(0, -1);
-  const lastResult = results.slice(-1)[0];
+
+  const isNextPageExist = searchEntries.length === take;
+  const lastResult = searchEntries.slice(-1)[0];
   const newCursor = lastResult?.id;
 
   return NextResponse.json({
-    data: results,
+    data: searchEntries,
     metaData: {
       totalCount,
       lastCursor: newCursor,
       hasNextPage: isNextPageExist,
     },
   });
-}
+});
+
+export { handler as GET };
