@@ -73,6 +73,8 @@ model Specialist {
   telegram              String?          @db.Text
   searchEntry           SearchEntry?
   supportFocuses        SupportFocus[]
+  clientsWorkingWith    ClientCategory[] @relation(name: "SpecialistToClientCategoryWorkingWith")
+  clientsNotWorkingWith ClientCategory[] @relation(name: "SpecialistToClientCategoryNotWorkingWith")
 
   @@map("specialist")
 }
@@ -82,13 +84,13 @@ model Organization {
   createdAt             DateTime           @default(now())
   name                  String             @db.VarChar(128)
   type                  OrganizationType[]
+  yearsOnMarket         Int?               @db.SmallInt
+  formatOfWork          FormatOfWork?
+  addresses             Address[]
   ownershipType         OwnershipType?
   isInclusiveSpace      Boolean?
   // this is light version of specialists relation to organization
   expertSpecializations Specialization[]
-  yearsOnMarket         Int?               @db.SmallInt
-  formatOfWork          FormatOfWork?
-  addresses             Address[]
   workTime              WorkTime[]
   isFreeReception       Boolean?
   description           String?            @db.Text
@@ -105,6 +107,8 @@ model Organization {
   telegram              String?            @db.Text
   searchEntry           SearchEntry?
   supportFocuses        SupportFocus[]
+  clientsWorkingWith    ClientCategory[]   @relation(name: "OrganizationToClientCategoryWorkingWith")
+  clientsNotWorkingWith ClientCategory[]   @relation(name: "OrganizationToClientCategoryNotWorkingWith")
 
   @@map("organization")
 }
@@ -284,6 +288,18 @@ model Method {
   specialists      Specialist[]
 
   @@map("method")
+}
+
+model ClientCategory {
+  id                          String         @id @default(uuid()) @db.Uuid
+  createdAt                   DateTime       @default(now())
+  name                        String         @unique @db.VarChar(64)
+  specialistsWorkingWith      Specialist[]   @relation(name: "SpecialistToClientCategoryWorkingWith")
+  specialistsNotWorkingWith   Specialist[]   @relation(name: "SpecialistToClientCategoryNotWorkingWith")
+  organizationsWorkingWith    Organization[] @relation(name: "OrganizationToClientCategoryWorkingWith")
+  organizationsNotWorkingWith Organization[] @relation(name: "OrganizationToClientCategoryNotWorkingWith")
+
+  @@map("client_category")
 }
 
 model WorkTime {

@@ -15,6 +15,7 @@ import { AddressesList } from '@components/CardSpecialist/AddressesList';
 import { CardButton } from '@components/CardSpecialist/CardButton';
 import { WorkTime } from '@components/CardSpecialist/WorkTime';
 import { organizationPropType } from '@components/CardSpecialist/prop-types';
+import { ClientCategoryList } from '../ClientCategoryList';
 import { OrganizationChipLists } from './OrganizationChipLists';
 import { OwnershipTypeTile } from './OwnershipTypeTile';
 
@@ -43,6 +44,8 @@ export function CardOrganization({ organization, className, extended = false }) 
     linkedin,
     viber,
     telegram,
+    clientsWorkingWith,
+    clientsNotWorkingWith,
   } = organization;
 
   addresses.sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary));
@@ -57,6 +60,13 @@ export function CardOrganization({ organization, className, extended = false }) 
     extended,
   });
   const socials = getSpecialistSocials({ instagram, facebook, tiktok, youtube, linkedin, viber, telegram });
+
+  const ClientCategoryWorkWithOrNot = (
+    <>
+      <ClientCategoryList isWorkWith clientCategories={clientsWorkingWith} />
+      <ClientCategoryList isWorkWith={false} clientCategories={clientsNotWorkingWith} />
+    </>
+  );
   const workTimeElement = !!workTime?.length && <WorkTime workTime={workTime} />;
   return (
     <CardWrapper className={className} id={id} type="organization">
@@ -99,6 +109,7 @@ export function CardOrganization({ organization, className, extended = false }) 
         />
         {extended ? (
           <>
+            {ClientCategoryWorkWithOrNot}
             <DetailsList
               className="mt-4 border-t border-dashed border-t-gray-200 pt-4"
               details={{
@@ -119,6 +130,7 @@ export function CardOrganization({ organization, className, extended = false }) 
           </>
         ) : (
           <>
+            {ClientCategoryWorkWithOrNot}
             {addressPrimary && (
               <AddressesList className="border-t pt-3 md:border-b md:py-3" addresses={[addressPrimary]} />
             )}

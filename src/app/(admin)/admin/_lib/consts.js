@@ -11,6 +11,7 @@ export const RESOURCES = {
   faq: 'faq',
   organizationType: 'organizationType',
   method: 'method',
+  clientCategory: 'clientCategory',
 };
 
 export const FORM_TYPES = {

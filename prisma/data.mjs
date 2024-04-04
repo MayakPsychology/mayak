@@ -16,6 +16,16 @@ export const specializations = ['Психолог', 'Психотерапевт'
   }),
 );
 
+export const clientCategories = [
+  'Сім’ї військових',
+  'Військові',
+  'ЛГБТ+',
+  'Супровід у психіатрії',
+  'ВІЛ-інфіковані',
+].map(name => ({
+  name,
+}));
+
 export const organizationTypes = ['Психологічний центр', 'Соціальна служба', 'Лікарня'].map(name => ({ name }));
 
 export const therapies = [

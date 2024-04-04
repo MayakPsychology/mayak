@@ -33,6 +33,8 @@ export const MODEL_INCLUDES = {
         isPrimary: true,
       },
     },
+    clientsWorkingWith: { select: { id: true, name: true } },
+    clientsNotWorkingWith: { select: { id: true, name: true } },
     workTime: { select: { weekDay: true, time: true, isDayOff: true } },
   },
   [RESOURCES.organization]: {
@@ -62,6 +64,8 @@ export const MODEL_INCLUDES = {
         isPrimary: true,
       },
     },
+    clientsWorkingWith: { select: { id: true, name: true } },
+    clientsNotWorkingWith: { select: { id: true, name: true } },
     workTime: { select: { weekDay: true, time: true, isDayOff: true } },
   },
   [RESOURCES.event]: {
@@ -96,6 +100,9 @@ export function transformServiceProvider(instance, modelName) {
     instance.specializationsIds = instance.specializations.map(specialization => specialization.id);
   }
 
+  instance.clientsWorkingWithIds = instance.clientsWorkingWith.map(({ id }) => id);
+  instance.clientsNotWorkingWithIds = instance.clientsNotWorkingWith.map(({ id }) => id);
+
   if (modelName === RESOURCES.specialist) {
     const specializationMethodsMapped = instance.specializationMethods.map(method => ({
       id: method.id,
@@ -126,6 +133,7 @@ export function transformServiceProvider(instance, modelName) {
     ...focus,
     requestsIds: focus.requests.map(request => request.id),
   }));
+
   instance.addresses = instance?.addresses?.map(address => ({
     ...address,
     districtId: address.district.id,

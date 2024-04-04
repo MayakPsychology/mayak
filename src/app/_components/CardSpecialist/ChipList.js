@@ -8,11 +8,14 @@ import { TruncatedList } from 'react-truncate-list';
 import { cn } from '@utils/cn';
 import { Paragraph } from '@components/Typography';
 
-function ChipListItem({ id, title, tooltipText, backgroundColor, textColor, icon }) {
+function ChipListItem({ id, title, tooltipText, iconClassName, containerClassName, textClassName, icon }) {
   return (
-    <div className="flex h-[24px] w-fit place-items-center gap-1 rounded-3xl px-3 py-1" style={{ backgroundColor }}>
-      <span data-tooltip-id={id}>{icon}</span>
-      <span className="w-full text-c3 font-medium" style={{ color: textColor }} data-tooltip-id={id}>
+    <div
+      data-tooltip-id={id}
+      className={cn('flex h-[24px] w-fit place-items-center gap-1 rounded-3xl px-3 py-1', containerClassName)}
+    >
+      <div className={cn(iconClassName)}>{icon}</div>
+      <span className={cn('w-full text-c3 font-medium', textClassName)} data-tooltip-id={id}>
         {title}
       </span>
       {tooltipText && (
@@ -33,8 +36,9 @@ ChipListItem.propTypes = {
   id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   tooltipText: PropTypes.string,
-  backgroundColor: PropTypes.string,
-  textColor: PropTypes.string,
+  containerClassName: PropTypes.string,
+  textClassName: PropTypes.string,
+  iconClassName: PropTypes.string,
   icon: PropTypes.node,
 };
 

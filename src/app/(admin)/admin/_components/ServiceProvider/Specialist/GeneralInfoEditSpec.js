@@ -1,7 +1,10 @@
+'use client';
+
 import { required, TextInput } from 'react-admin';
 import PropTypes from 'prop-types';
 import { FORM_TYPES } from '@admin/_lib/consts';
 import { FormFieldWrapper } from '@admin/components/FormFieldWrapper';
+import { ClientCategoriesSelect } from '@admin/components/ServiceProvider/ClientCategoriesSelect';
 import { SpecializationsSelect } from '@admin/components/ServiceProvider/SpecializationsSelect';
 import { useWatch } from 'react-hook-form';
 import { SpecializationMethodsList } from '@admin/components/ServiceProvider/Specialist/SpecializationMethodsList';
@@ -17,6 +20,7 @@ export function GeneralInfoEditSpec({ type = FORM_TYPES.create }) {
         <TextInput key="lastName" name="lastName" type="text" label="Прізвище" validate={required()} />
         <TextInput key="surname" name="surname" type="text" label="По-батькові" />
       </div>
+      <ClientCategoriesSelect type={type} />
       <SpecializationsSelect
         source={{ create: 'specializations', update: 'specializationsIds' }}
         type={type}

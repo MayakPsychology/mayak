@@ -23,6 +23,8 @@ import {
 } from '@admin/components/ServiceProvider/Specialist';
 
 import { authProvider } from './authProvider';
+import { ClientCategoryList } from './_components/ClientCategoriesType';
+import { ClientCategoryCreate } from './_components/ClientCategoriesType/Create';
 
 export default function AdminPage() {
   const data = dataProvider('/api/admin');
@@ -104,6 +106,14 @@ export default function AdminPage() {
         edit={MethodsEdit}
         create={MethodsCreate}
         options={{ label: 'Методи терапії' }}
+      />
+      <Resource
+        name={RESOURCES.clientCategory}
+        options={{ label: 'Категорії клієнтів' }}
+        list={ClientCategoryList}
+        show={ShowGuesser}
+        edit={EditGuesser}
+        create={ClientCategoryCreate}
       />
     </Admin>
   );

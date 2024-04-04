@@ -7,6 +7,7 @@ import {
   requests,
   specializations,
   therapies,
+  clientCategories,
 } from './data.mjs';
 
 const prisma = new PrismaClient();
@@ -47,6 +48,7 @@ async function createIfNotExist(model, data, filter) {
 }
 
 async function main() {
+  await createIfNotExist(prisma.clientCategory, clientCategories, ({ name }) => ({ name }));
   await createIfNotExist(prisma.district, districts, ({ name }) => ({ name }));
   await createIfNotExist(prisma.request, requests, ({ name }) => ({ name }));
   await createIfNotExist(prisma.specialization, specializations, ({ name }) => ({ name }));

@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { Caption } from '@components/Typography';
 import { ChipList } from '@components/CardSpecialist/ChipList';
 import { cn } from '@/utils/cn';
-import presets from '@/app/styles/tailwind';
 
 function makeSpecializationsMethodsCaption(specializations) {
   const hasPsychotherapist = specializations.includes('Психотерапевт');
@@ -25,8 +24,8 @@ export function SpecialistChipLists({ id, className, specializationsList, specia
   const specializationsMethodsItems = specializationMethods.map(el => ({
     id: el.id,
     title: el.title,
-    backgroundColor: presets.theme.colors.primary[100],
-    textColor: presets.theme.colors.primary[600],
+    containerClassName: "bg-primary-100",
+    textClassName: "text-primary-600",
     tooltipText: el.description,
   }));
 

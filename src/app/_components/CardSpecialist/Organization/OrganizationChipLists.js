@@ -2,14 +2,13 @@ import PropTypes from 'prop-types';
 import { Caption } from '@components/Typography';
 import { ChipList } from '@components/CardSpecialist/ChipList';
 import { cn } from '@/utils/cn';
-import presets from '@/app/styles/tailwind';
 
 export function OrganizationChipLists({ id, className, expertSpecializations }) {
   const expertSpecializationsChipItems = expertSpecializations.map((el, i) => ({
     id: i,
     text: el.name,
-    color: presets.theme.colors.secondary[100],
-    textColor: presets.theme.colors.secondary[600],
+    containerClassName: 'bg-primary-100',
+    textClassName: 'text-primary-600',
   }));
   return (
     <div className={cn('flex flex-col gap-3 *:flex *:flex-col *:gap-2', className)}>
