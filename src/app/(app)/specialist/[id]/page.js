@@ -7,30 +7,29 @@ export async function generateMetadata({ params, searchParams }) {
     const { id } = params;
     const { type } = searchParams;
 
-    let name;
+    let title;
     let description;
 
     if (type === 'specialist') {
       const specialist = await getSpecialistById({ id });
-      name = `${specialist.lastName} ${specialist.firstName}`;
+      title = `${specialist.lastName} ${specialist.firstName}`;
       description = specialist.description;
-      return { name, description };
+      return { title, description };
     }
     if (type === 'organization') {
       const organization = await getOrganizationById({ id });
-      name = organization.name;
+      title = organization.name;
       description = organization.description;
-      return { name, description };
+      return { title, description };
     }
-
     return {
-      name,
+      title,
       description,
     };
   } catch (e) {
     return {
-      name: '',
-      description: '',
+      title: 'Маяк',
+      description: 'Опис спеціаліста',
     };
   }
 }

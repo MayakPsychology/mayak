@@ -8,6 +8,7 @@ import {
   BlueTikTok,
   BlueViber,
   BlueYoutube,
+  InclusiveSpace,
   Mail,
   MedAttention,
   MedCare,
@@ -41,7 +42,14 @@ export const getContactsList = ({ phone, email, website }) => [
   },
 ];
 
-export const getLabelsList = ({ yearsOfExperience, isFreeReception, formatOfWork, specialistType }) => [
+export const getLabelsList = ({
+  yearsOfExperience,
+  isFreeReception,
+  formatOfWork,
+  specialistType,
+  isInclusiveSpace,
+  extended,
+}) => [
   {
     id: 'yearsOfExperience',
     icon: <MedCare />,
@@ -59,8 +67,17 @@ export const getLabelsList = ({ yearsOfExperience, isFreeReception, formatOfWork
   {
     id: 'formatOfWork',
     icon: <OnlineMeeting />,
-    content: formatOfWork !== FormatOfWork.OFFLINE ? 'Онлайн консультації' : null,
+    content:
+      formatOfWork !== FormatOfWork.OFFLINE && ((specialistType === 'specialist' && !extended) || extended)
+        ? 'Онлайн консультації'
+        : null,
     color: 'text-other-blue',
+  },
+  {
+    id: 'inclusiveSpace',
+    icon: <InclusiveSpace />,
+    content: isInclusiveSpace ? 'Інклюзивний простір' : null,
+    color: 'text-tertiary-500',
   },
 ];
 

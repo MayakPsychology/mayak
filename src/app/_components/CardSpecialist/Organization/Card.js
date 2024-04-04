@@ -15,12 +15,17 @@ import { AddressesList } from '@components/CardSpecialist/AddressesList';
 import { CardButton } from '@components/CardSpecialist/CardButton';
 import { WorkTime } from '@components/CardSpecialist/WorkTime';
 import { organizationPropType } from '@components/CardSpecialist/prop-types';
+import { OrganizationChipLists } from './OrganizationChipLists';
+import { OwnershipTypeTile } from './OwnershipTypeTile';
 
 export function CardOrganization({ organization, className, extended = false }) {
   const {
     id,
     name,
     type,
+    ownershipType,
+    isInclusiveSpace,
+    expertSpecializations,
     yearsOnMarket,
     formatOfWork,
     addresses,
@@ -47,7 +52,9 @@ export function CardOrganization({ organization, className, extended = false }) 
     yearsOfExperience: yearsOnMarket,
     isFreeReception,
     formatOfWork,
+    isInclusiveSpace,
     specialistType: 'organization',
+    extended,
   });
   const socials = getSpecialistSocials({ instagram, facebook, tiktok, youtube, linkedin, viber, telegram });
   const workTimeElement = !!workTime?.length && <WorkTime workTime={workTime} />;
@@ -65,16 +72,31 @@ export function CardOrganization({ organization, className, extended = false }) 
           <ProfileImage className="md:hidden">
             <SocialsList socials={socials} className="absolute bottom-4 hidden md:inline-block" />
           </ProfileImage>
-          <div className="max-w-full overflow-hidden">
-            <SpecializationsPanel
-              specialistId={id}
-              specializations={type.map(t => t.name)}
-              extendedCardOpened={extended}
-            />
-            <SpecialistTitle id={id} truncate={!extended} name={name} className="mt-1.5" />
+          <div className="w-full overflow-hidden">
+            <div className="flex justify-between gap-4">
+              <div className="flex w-full justify-between gap-4">
+                <SpecializationsPanel
+                  specialistId={id}
+                  specializations={type.map(t => t.name)}
+                  extendedCardOpened={extended}
+                />
+              </div>
+              <div className="hidden md:block">
+                <OwnershipTypeTile ownershipType={ownershipType} />
+              </div>
+            </div>
+            <SpecialistTitle id={id} truncate={!extended} name={name} className="md:mt-1.5" />
+            <div className="md:hidden">
+              <OwnershipTypeTile ownershipType={ownershipType} />
+            </div>
           </div>
         </header>
         <BadgeList labels={labelsList} />
+        <OrganizationChipLists
+          id={id}
+          expertSpecializations={expertSpecializations}
+          className="border-t border-dashed border-t-gray-200 pt-4"
+        />
         {extended ? (
           <>
             <DetailsList

@@ -1,52 +1,15 @@
-import { FormatOfWork } from '@prisma/client';
 import { NextResponse } from 'next/server';
-import { getSearchParamsFromRequest } from '@/utils/getSearchParamsFromRequest';
 import { prisma } from '@/lib/db';
+import { withErrorHandler } from '@/lib/errors/errorHandler';
+import { createSearchEntryFilter, getSearchFilterQueryParams } from './helpers';
 
-export async function GET(req) {
-  const {
-    type,
-    // TODO: Uncomment pagination params take and skip when pagination is implemented on the frontend
-    // take,
-    // skip,
-    format,
-    district: districts,
-  } = getSearchParamsFromRequest(
-    req,
-    {
-      format: undefined,
-      type: undefined,
-      // take: 10,
-      // skip: 0,
-      district: undefined,
-    },
-    params => ({
-      ...params,
-      take: parseInt(params.take, 10),
-      skip: parseInt(params.skip, 10),
-      district: typeof params.district === 'string' ? [params.district] : params.district,
-    }),
-  );
-  const whereFilter = {
-    AND: {
-      supportFocuses: type && {
-        some: {
-          therapy: {
-            type,
-          },
-        },
-      },
-      isActive: true,
-      OR: format && [{ formatOfWork: FormatOfWork.BOTH }, { formatOfWork: format }],
-      addresses: districts && {
-        some: {
-          OR: districts.map(id => ({
-            districtId: id,
-          })),
-        },
-      },
-    },
-  };
+export const handler = withErrorHandler(async req => {
+  const params = getSearchFilterQueryParams(req);
+  const { take, skip, lastCursor } = params;
+
+  const searchEntryFilter = createSearchEntryFilter(params);
+
+  const totalCount = await prisma.searchEntry.count({ where: searchEntryFilter });
 
   const sharedInclude = {
     supportFocuses: {
@@ -62,6 +25,8 @@ export async function GET(req) {
         id: true,
         nameOfClinic: true,
         fullAddress: true,
+        latitude: true,
+        longitude: true,
         district: { select: { id: true, name: true } },
         isPrimary: true,
       },
@@ -74,19 +39,6 @@ export async function GET(req) {
       },
     },
   };
-
-  const totalCount = await prisma.searchEntry.count({
-    where: {
-      OR: [
-        {
-          organization: whereFilter,
-        },
-        {
-          specialist: whereFilter,
-        },
-      ],
-    },
-  });
 
   const searchEntries = await prisma.searchEntry.findMany({
     include: {
@@ -101,30 +53,38 @@ export async function GET(req) {
         include: {
           ...sharedInclude,
           type: { select: { id: true, name: true } },
+          expertSpecializations: {
+            select: { id: true, name: true },
+          },
         },
       },
     },
-    where: {
-      OR: [
-        {
-          organization: whereFilter,
-        },
-        {
-          specialist: whereFilter,
-        },
-      ],
-    },
+    where: searchEntryFilter,
     orderBy: {
       sortString: 'asc',
     },
-    // take,
-    // skip,
+    take: params?.mode === 'map' ? 99999 : take,
+    skip,
+    ...(lastCursor && {
+      skip: 1,
+      cursor: {
+        id: lastCursor,
+      },
+    }),
   });
 
-  const data = searchEntries.map(entry => (entry.specialist ? entry.specialist : entry.organization));
+  const isNextPageExist = searchEntries.length === take;
+  const lastResult = searchEntries.slice(-1)[0];
+  const newCursor = lastResult?.id;
 
   return NextResponse.json({
-    totalCount,
-    data,
+    data: searchEntries,
+    metaData: {
+      totalCount,
+      lastCursor: newCursor,
+      hasNextPage: isNextPageExist,
+    },
   });
-}
+});
+
+export { handler as GET };

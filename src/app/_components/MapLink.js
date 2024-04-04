@@ -17,7 +17,6 @@ export function MapLink({ mapMode = false, className }) {
         variant="filled"
         colorVariant="orange"
         className={cn('z-10 flex items-center', className)}
-        classNameWrapper="!py-4 !px-6 md:py-3 md:px-4"
       >
         <span className="hidden md:block">{buttonText}</span>
       </PillButton>

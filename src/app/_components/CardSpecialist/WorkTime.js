@@ -47,11 +47,13 @@ export function WorkTime({ workTime, className, shortVersion = false }) {
 }
 
 WorkTime.propTypes = {
-  workTime: PropTypes.shape({
-    isDayOff: PropTypes.bool,
-    time: PropTypes.string,
-    weekDay: PropTypes.string,
-  }),
+  workTime: PropTypes.arrayOf(
+    PropTypes.shape({
+      isDayOff: PropTypes.bool,
+      time: PropTypes.string,
+      weekDay: PropTypes.string,
+    }),
+  ),
   shortVersion: PropTypes.bool,
   className: PropTypes.string,
 };

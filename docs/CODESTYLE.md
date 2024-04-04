@@ -59,7 +59,7 @@ export const utility = () => {
 ```jsx
 <Resource
   name={'specialist'}
-  list={SpecialistList}
+  list={SpecialistListWrapper}
   edit={SpecialistEdit}
   show={SpecialistShow}
   create={SpecialistCreate}
@@ -74,7 +74,7 @@ _components
     ├───Create.js // File with SpecialistCreate component
     ├───Edit.js // File with SpecialistEdit component
     ├───Show.js // File with SpecialistShow component
-    ├───List.js // File with SpecialistList component
+    ├───List.js // File with SpecialistListWrapper component
     └───index.js
 ```
 

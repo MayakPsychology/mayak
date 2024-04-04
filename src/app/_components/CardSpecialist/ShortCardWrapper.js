@@ -3,52 +3,49 @@
 import PropTypes from 'prop-types';
 import { CardWrapper } from '@components/CardSpecialist/CardWrapper';
 import { organizationPropType, specialistPropType } from '@components/CardSpecialist/prop-types';
-import {
-  AddressesList,
-  BadgeList,
-  CardButton,
-  ContactsList,
-  getContactsList,
-  getLabelsList,
-  getSpecialistSocials,
-  ProfileImage,
-  SocialsList,
-  SpecialistTitle,
-  SpecializationsPanel,
-} from '@components/CardSpecialist';
+import { ProfileImage } from '@components/CardSpecialist/ProfileImage';
+import { SpecializationsPanel } from '@components/CardSpecialist/SpecializationsPanel';
+import { SpecialistTitle } from '@components/CardSpecialist/SpecialistTitle';
+import { getContactsList, getLabelsList, getSpecialistSocials } from '@components/CardSpecialist/config';
+import { BadgeList } from '@components/CardSpecialist/BadgeList';
 import Link from 'next/link';
-import { MethodList } from '@components/CardSpecialist/MethodList';
+import { CardButton } from '@components/CardSpecialist/CardButton';
+import { SocialsList } from '@components/CardSpecialist/SocialsList';
 import { WorkTime } from '@components/CardSpecialist/WorkTime';
+import { AddressesList } from '@components/CardSpecialist/AddressesList';
+import { MethodList } from '@components/CardSpecialist/MethodList';
+import { ContactsList } from '@components/CardSpecialist/ContactsList';
 
 export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
   const isOrganization = type === 'organization';
-
-  const specializationsList = isOrganization ? data.type.map(t => t.name) : data.specializations.map(s => s.name);
+  const specializationsList = isOrganization ? data.type?.map(t => t.name) : data.specializations.map(s => s.name);
   const { lastName, firstName, surname } = data;
   const name = isOrganization ? data.name : [lastName, firstName, surname].filter(Boolean).join(' ');
-
   const labelsList = getLabelsList({
     yearsOfExperience: data.yearsOnMarket,
     isFreeReception: data.isFreeReception,
     formatOfWork: data.formatOfWork,
-    specialistType: isOrganization ? 'organization' : 'specialist',
+    specialistType: type,
   });
-
   const isBadgeList = !!labelsList.filter(label => !!label.content).length;
-
   const { instagram, facebook, tiktok, youtube, linkedin, viber, telegram, phone, email, website, addresses } = data;
   const socials = getSpecialistSocials({ instagram, facebook, tiktok, youtube, linkedin, viber, telegram });
   const contactsList = getContactsList({ phone, email, website });
-  const addressPrimary = addresses.sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary))[0];
+  const addressPrimary = addresses[0];
   const workTimeElement = !!data.workTime?.length && (
     <WorkTime workTime={data.workTime} shortVersion className="mt-2" />
   );
+
+  const methodsList = isOrganization ? data.expertSpecializations : data.specializationMethods;
 
   return (
     <CardWrapper className={className} id={data.id} type={type}>
       <div className="flex w-full flex-col lg:hidden">
         <div className="flex gap-3">
-          <ProfileImage className="relative w-[75px]  md:h-[100px] md:max-w-[100px]" />
+          <ProfileImage
+            gender={isOrganization ? undefined : data.gender}
+            className="relative w-[75px]  md:h-[100px] md:max-w-[100px]"
+          />
           <div>
             <SpecializationsPanel
               specialistId={data.id}
@@ -94,7 +91,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
               <div className="border-1 mt-5 w-full border-t border-dashed border-t-gray-200">
                 <MethodList
                   specializations={specializationsList}
-                  methods={data.specializationMethods}
+                  methods={methodsList}
                   className="max-w-[500px] border-0"
                   showCaption={false}
                 />

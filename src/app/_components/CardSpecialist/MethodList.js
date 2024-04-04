@@ -43,7 +43,7 @@ function Method({ id, title, description }) {
 Method.propTypes = {
   id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  description: PropTypes.string,
 };
 
 export function MethodList({ methods = [], specializations = [], showCaption = true, className }) {
@@ -88,7 +88,7 @@ export function MethodList({ methods = [], specializations = [], showCaption = t
 
 MethodList.propTypes = {
   specializations: PropTypes.arrayOf(PropTypes.string),
-  methods: PropTypes.arrayOf(Method.propTypes),
+  methods: PropTypes.arrayOf(PropTypes.shape(Method.propTypes)),
   showCaption: PropTypes.bool,
   className: PropTypes.string,
 };

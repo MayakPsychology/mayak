@@ -1,24 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSetParam, useListTherapies } from '@hooks';
 import { useSearchParams } from 'next/navigation';
-import PropTypes from 'prop-types';
 
-function TypeList({ setCount, defaultValue }) {
+function TypeList() {
   const { data: therapies, isLoading } = useListTherapies();
-  const [selectedType, setSelectedType] = useState(defaultValue);
+  const [selectedType, setSelectedType] = useState();
 
+  const searchParams = useSearchParams();
   const { replace, remove } = useSetParam('type');
 
   const onChange = type => {
-    setSelectedType(type);
-    setCount(1);
     replace(type);
   };
+
+  useEffect(() => {
+    const typeInUrl = searchParams.get('type');
+    setSelectedType(typeInUrl);
+  }, [searchParams]);
 
   if (!isLoading && !therapies?.length) return null;
 
@@ -46,8 +49,6 @@ function TypeList({ setCount, defaultValue }) {
       </ul>
       <ClearFilterButton
         clear={() => {
-          setSelectedType(null);
-          setCount(0);
           remove();
         }}
       />
@@ -57,15 +58,10 @@ function TypeList({ setCount, defaultValue }) {
 
 export function TypeFilter() {
   const typeInUrl = useSearchParams().get('type');
-  const [count, setCount] = useState(Number(!!typeInUrl));
+
   return (
-    <FilterBase filterText="Тип" count={count}>
-      <TypeList setCount={setCount} defaultValue={typeInUrl} />
+    <FilterBase filterText="Тип" count={Number(!!typeInUrl)}>
+      <TypeList />
     </FilterBase>
   );
 }
-
-TypeList.propTypes = {
-  setCount: PropTypes.func,
-  defaultValue: PropTypes.string,
-};

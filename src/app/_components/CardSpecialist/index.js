@@ -8,6 +8,7 @@ export * from './DetailsList';
 export * from './ProfileImage';
 export * from './SocialsList';
 export * from './BadgeList';
+export * from './ChipList';
 export * from './SpecialistTitle';
 export * from './CardWrapper';
 export * from './CardModalWrapper';
