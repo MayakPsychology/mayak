@@ -10,7 +10,7 @@ import { cn } from '@/utils/cn';
 function DataSection({ label, text }) {
   const copyToClipboard = useCallback(() => {
     navigator.clipboard.writeText(text).then(() => {
-      toast.success('Copied to clipboard');
+      toast.success('Скопійовано');
     });
   }, [text]);
 
