@@ -24,5 +24,6 @@ export const DonationDetailsSchema = z.object({
     message: 'Код ЄДРПОУ має містити тільки цифри та мати довжину 8 символів',
   }),
   paymentPurpose: zString,
+  qrEnabled: zBoolean,
   qrLink: zUrl,
 });

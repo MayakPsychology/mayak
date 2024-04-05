@@ -38,6 +38,7 @@ export function DonateDetailsShow() {
         <TextField label="IBAN" source="iban" />
         <TextField label="ЄДРПОУ" source="enterpriseRegisterId" />
         <TextField label="Призначення платежу" source="paymentPurpose" />
+        <BooleanField label="Показувати QR-код" source="qrEnabled" />
         <TextField label="Посилання для QR-коду" source="qrLink" />
         <FunctionField
           label="QR-код"

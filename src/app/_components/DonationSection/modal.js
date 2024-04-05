@@ -53,7 +53,24 @@ PillLink.propTypes = {
   className: PropTypes.string,
 };
 
-export function DonateModal({ isOpen, onClose, privatLink, paypalLink, qrLink }) {
+export function DonateModal({ isOpen, onClose, donationDetails }) {
+  const {
+    title,
+    subtitle,
+    subtitleEnabled,
+    paypalLink,
+    paypalLinkEnabled,
+    privatLink,
+    privatLinkEnabled,
+    bankDetailsEnabled,
+    enterpriceName,
+    iban,
+    enterpriseRegisterId,
+    paymentPurpose,
+    qrEnabled,
+    qrLink,
+  } = donationDetails;
+
   return (
     <Modal
       isOpen={isOpen}
@@ -64,41 +81,51 @@ export function DonateModal({ isOpen, onClose, privatLink, paypalLink, qrLink })
         <div className="flex flex-col items-center gap-5">
           <div className="flex items-center">
             <Paragraph type="p1" className="text-inherit text-center text-p1 font-bold lg:text-h3">
-              Підтримати проект
+              {title}
             </Paragraph>
           </div>
-          <Paragraph
-            type="p4"
-            className="w-full whitespace-nowrap text-center text-p4 font-normal text-gray-900 lg:text-p2"
-          >
-            Ваш донат допоможе...
-          </Paragraph>
+          {subtitleEnabled && (
+            <Paragraph
+              type="p4"
+              className="w-full whitespace-nowrap text-center text-p4 font-normal text-gray-900 lg:text-p2"
+            >
+              {subtitle}
+            </Paragraph>
+          )}
         </div>
         <div className="flex w-full flex-col gap-[10px] lg:gap-5">
           <div className="inline-flex w-full items-start justify-between gap-[10px]">
-            <PillLink href={privatLink} className="h-[24px] w-[73px] lg:h-[30px] lg:w-[117px]">
-              <Privat24 />
-            </PillLink>
-            <PillLink href={paypalLink} className="h-[24px] w-[73px] lg:h-[23px] lg:w-[90px]">
-              <PayPal />
-            </PillLink>
+            {privatLinkEnabled && (
+              <PillLink href={privatLink} className="h-[24px] w-[73px] lg:h-[30px] lg:w-[117px]">
+                <Privat24 />
+              </PillLink>
+            )}
+            {paypalLinkEnabled && (
+              <PillLink href={paypalLink} className="h-[24px] w-[73px] lg:h-[30px] lg:w-[117px]">
+                <PayPal />
+              </PillLink>
+            )}
           </div>
 
-          <div className="flex gap-5">
-            <div className="flex w-full flex-col items-center gap-5 rounded-[30px] bg-other-white px-3 py-6 lg:py-5 lg:pe-10 lg:ps-5">
-              <div className="flex w-full items-center justify-between gap-9 lg:gap-14">
-                <div className="flex flex-col gap-5 p-1">
-                  <DataSection label="Назва підприємства" text={'Соціальний проект "Маяк"'} />
-                  <DataSection label="IBAN" text="UA123456789012345678901234567" />
-                  <DataSection label="Єдрпоу" text="12345678" />
-                  <DataSection label="Призначення платежу:" text="Благодійний внесок" />
+          {bankDetailsEnabled && (
+            <div className="flex gap-5">
+              <div className="flex w-full flex-col items-center gap-5 rounded-[30px] bg-other-white px-3 py-6 lg:py-5 lg:pe-10 lg:ps-5">
+                <div className="flex w-full items-center justify-between gap-9 lg:gap-14">
+                  <div className="flex flex-col gap-5 p-1">
+                    <DataSection label="Назва підприємства" text={enterpriceName} />
+                    <DataSection label="IBAN" text={iban} />
+                    <DataSection label="Єдрпоу" text={enterpriseRegisterId} />
+                    <DataSection label="Призначення платежу" text={paymentPurpose} />
+                  </div>
+                  {qrEnabled && (
+                    <div className="flex h-[150px] w-[150px] flex-col items-center justify-center lg:h-[200px] lg:w-[200px]">
+                      <QRCodeSVG value={qrLink} size={150} />
+                    </div>
+                  )}
                 </div>
-                <a className="hidden w-fit lg:block" href={qrLink} target="_blank" rel="noopener noreferrer">
-                  <QRCodeSVG size={200} value={qrLink} />
-                </a>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </Modal>
@@ -106,9 +133,22 @@ export function DonateModal({ isOpen, onClose, privatLink, paypalLink, qrLink })
 }
 
 DonateModal.propTypes = {
-  privatLink: PropTypes.string,
-  paypalLink: PropTypes.string,
-  qrLink: PropTypes.string,
+  donationDetails: PropTypes.shape({
+    title: PropTypes.string,
+    subtitle: PropTypes.string,
+    subtitleEnabled: PropTypes.string,
+    paypalLink: PropTypes.string,
+    paypalLinkEnabled: PropTypes.bool,
+    privatLink: PropTypes.string,
+    privatLinkEnabled: PropTypes.bool,
+    bankDetailsEnabled: PropTypes.bool,
+    enterpriceName: PropTypes.string,
+    iban: PropTypes.string,
+    enterpriseRegisterId: PropTypes.string,
+    paymentPurpose: PropTypes.string,
+    qrEnabled: PropTypes.bool,
+    qrLink: PropTypes.string,
+  }),
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
 };

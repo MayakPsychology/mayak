@@ -19,6 +19,7 @@ export function DonationDetailsEdit() {
         <TextInput label="IBAN" source="iban" />
         <TextInput label="ЄДРПОУ" source="enterpriseRegisterId" />
         <TextInput label="Призначення платежу" source="paymentPurpose" />
+        <BooleanInput label="Показувати QR-код" source="qrEnabled" />
         <TextInput label="Посилання для QR-коду" source="qrLink" />
       </SimpleForm>
     </Edit>

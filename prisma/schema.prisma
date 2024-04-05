@@ -330,6 +330,7 @@ model DonationDetails {
   enterpriseRegisterId String  @db.VarChar(20) // ЄДРПОУ
   paymentPurpose       String  @db.VarChar(50) // Призначення платежу
   iban                 String  @db.VarChar(50) // IBAN
+  qrEnabled            Boolean @default(true)
   qrLink               String  @db.Text // посилання, яке буде відображене QR-кодом
 
   @@map("donation_details")
