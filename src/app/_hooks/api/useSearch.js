@@ -5,12 +5,10 @@ const listEntries = searchParams => ky('/api/search', { searchParams }).json();
 
 export const usePaginatedEntries = searchParams =>
   useInfiniteQuery({
-    queryKey: [searchParams.toString()],
     queryFn: ({ pageParam = '' }) => {
-      const params = {
-        ...Object.fromEntries(searchParams.entries()),
-        lastCursor: pageParam,
-      };
+      // just in case there is immutable instance passed
+      const params = new URLSearchParams(searchParams);
+      params.set('lastCursor', pageParam);
       return listEntries(params);
     },
     getNextPageParam: lastPage => lastPage?.metaData.lastCursor,
