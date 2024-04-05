@@ -570,12 +570,31 @@ export const psychologyMethods = [
   },
 ];
 
+// id                   String  @id @default(uuid()) @db.Uuid
+//   donationEnabled      Boolean @default(true)
+//   title                String  @unique @db.VarChar(50)
+//   subtitle             String  @db.VarChar(50)
+//   subtitleEnabled      Boolean @default(true)
+//   paypalLink           String  @db.Text
+//   paypalLinkEnabled    Boolean @default(true)
+//   privatLink           String  @db.Text
+//   privatLinkEnabled    Boolean @default(true)
+//   bankDetailsEnabled   Boolean @default(true)
+//   enterpriceName       String  @db.VarChar(128) // Назва підприємства
+//   enterpriseRegisterId String  @db.VarChar(20) // ЄДРПОУ
+//   paymentPurpose       String  @db.VarChar(50) // Призначення платежу
+//   iban                 String  @db.VarChar(50) // IBAN
+//   qrLink               String  @db.Text // посилання, яке буде відображене QR-кодом
+
 export const donationDetails = {
   donationEnabled: true,
   title: 'Підтримати проект',
   subtitle: 'Ваш донат допоможе...',
+  subtitleEnabled: true,
   paypalLink: 'https://www.paypal.com/paypalme/',
+  paypalLinkEnabled: true,
   privatLink: 'https://next.privat24.ua/',
+  privatLinkEnabled: true,
   bankDetailsEnabled: true,
   enterpriceName: 'Соціальний проект "Маяк"',
   iban: 'UA123456789012345678901234567',
