@@ -41,6 +41,7 @@ const handler = withErrorHandlerAndAuth(async req => {
         type: true,
         clientsWorkingWith: true,
         clientsNotWorkingWith: true,
+        donationDetails: true,
       },
       include: MODEL_INCLUDES[modelName],
     },

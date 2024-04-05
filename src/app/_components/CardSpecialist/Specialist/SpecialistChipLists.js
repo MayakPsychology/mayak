@@ -24,8 +24,8 @@ export function SpecialistChipLists({ id, className, specializationsList, specia
   const specializationsMethodsItems = specializationMethods.map(el => ({
     id: el.id,
     title: el.title,
-    containerClassName: "bg-primary-100",
-    textClassName: "text-primary-600",
+    containerClassName: 'bg-primary-100',
+    textClassName: 'text-primary-600',
     tooltipText: el.description,
   }));
 

@@ -81,6 +81,7 @@ export const MODEL_INCLUDES = {
   [RESOURCES.method]: {
     specialization: { select: { name: true } },
   },
+  [RESOURCES.donationDetails]: true,
 };
 
 export function searchInputFilters(modelName, filter) {
