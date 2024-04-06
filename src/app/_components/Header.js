@@ -5,15 +5,15 @@ import Link from 'next/link';
 import { BurgerIcon, Logo, HeaderCloseIcon } from '@icons';
 import siteNav from '@config/siteNav';
 import { cn } from '@utils/cn';
-import { useBodyScrollLock, useDonationDetails } from '@hooks';
+import { useBodyScrollLock } from '@hooks';
 import { SocialLink, InnerLink } from '@components/Links';
 import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';
+import PropTypes from 'prop-types';
 import { DonateModal, DonationSection } from './DonationSection';
 
-export function Header() {
+export function Header({ donationDetails }) {
   const { links, innerLinks } = siteNav;
-  const { data: donationDetails, isLoading: isLoadingDonationDetails } = useDonationDetails();
   //  Basic styles
   const flexBetween = 'flex flex-row items-center justify-between';
   const flexCenter = 'flex flex-row items-center justify-center';
@@ -40,12 +40,12 @@ export function Header() {
 
   useBodyScrollLock(isMenuOpen, 'y');
 
-  if (isLoadingDonationDetails) return null;
+  const showDonationDetails = donationDetails && donationDetails.donationEnabled;
 
   return (
     <header>
       {/* Desktop Donation Section */}
-      {donationDetails.donationEnabled && (
+      {showDonationDetails && (
         <DonationSection
           onDonateClick={toggleDonateModal}
           className="hidden items-center justify-end gap-[24px] py-[12px] pe-[80px] ps-[104px] lg:flex"
@@ -142,7 +142,7 @@ export function Header() {
               />
             </div>
           </div>
-          {donationDetails.donationEnabled && (
+          {showDonationDetails && (
             <DonationSection
               onDonateClick={toggleDonateModal}
               className="flex h-[100px] items-center justify-between gap-[8px] px-[16px] py-[6px] lg:hidden"
@@ -156,3 +156,23 @@ export function Header() {
     </header>
   );
 }
+
+Header.propTypes = {
+  donationDetails: PropTypes.shape({
+    donationEnabled: PropTypes.bool,
+    title: PropTypes.string,
+    subtitle: PropTypes.string,
+    subtitleEnabled: PropTypes.string,
+    paypalLink: PropTypes.string,
+    paypalLinkEnabled: PropTypes.bool,
+    privatLink: PropTypes.string,
+    privatLinkEnabled: PropTypes.bool,
+    bankDetailsEnabled: PropTypes.bool,
+    enterpriceName: PropTypes.string,
+    iban: PropTypes.string,
+    enterpriseRegisterId: PropTypes.string,
+    paymentPurpose: PropTypes.string,
+    qrEnabled: PropTypes.bool,
+    qrLink: PropTypes.string,
+  }),
+};

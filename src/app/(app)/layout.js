@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Footer } from '@components/Footer';
 import { Header } from '@components/Header';
 import { Hint } from '@components/Hint';
+import { prisma } from '@/lib/db';
 
 export const metadata = {
   title: {
@@ -12,11 +13,12 @@ export const metadata = {
   },
 };
 
-export default function Layout({ children }) {
+export default async function Layout({ children }) {
+  const donationDetails = await prisma.donationDetails.findFirst();
   return (
     <Hint>
       <div className="flex min-h-screen flex-col">
-        <Header />
+        <Header donationDetails={donationDetails} />
         <main className="relative flex-1">{children}</main>
         <Footer />
       </div>
