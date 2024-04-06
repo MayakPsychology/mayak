@@ -5,16 +5,13 @@ import Link from 'next/link';
 import { BurgerIcon, Logo, HeaderCloseIcon } from '@icons';
 import siteNav from '@config/siteNav';
 import { cn } from '@utils/cn';
-import { useBodyScrollLock, useDonationDetails } from '@hooks';
+import { useBodyScrollLock } from '@hooks';
 import { SocialLink, InnerLink } from '@components/Links';
 import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';
-// import PropTypes from 'prop-types';
-import { DonateModal, DonationSection } from './DonationSection';
+import { DonateModal, DonationSection, donationDetailsPropTypes } from '@components/DonationSection';
 
-// export function Header({ donationDetails }) {
-export function Header() {
-  const { data: donationDetails, isLoading: donationDetailsLoading } = useDonationDetails();
+export function Header({ donationDetails }) {
   const { links, innerLinks } = siteNav;
   //  Basic styles
   const flexBetween = 'flex flex-row items-center justify-between';
@@ -42,10 +39,7 @@ export function Header() {
 
   useBodyScrollLock(isMenuOpen, 'y');
 
-  if (donationDetailsLoading) return null;
-
-  const showDonationDetails = !donationDetailsLoading && donationDetails && donationDetails.donationEnabled;
-  // const showDonationDetails = donationDetails && donationDetails.donationEnabled;
+  const showDonationDetails = donationDetails && donationDetails.donationEnabled;
 
   return (
     <header>
@@ -162,22 +156,6 @@ export function Header() {
   );
 }
 
-// Header.propTypes = {
-//   donationDetails: PropTypes.shape({
-//     donationEnabled: PropTypes.bool,
-//     title: PropTypes.string,
-//     subtitle: PropTypes.string,
-//     subtitleEnabled: PropTypes.string,
-//     paypalLink: PropTypes.string,
-//     paypalLinkEnabled: PropTypes.bool,
-//     privatLink: PropTypes.string,
-//     privatLinkEnabled: PropTypes.bool,
-//     bankDetailsEnabled: PropTypes.bool,
-//     enterpriceName: PropTypes.string,
-//     iban: PropTypes.string,
-//     enterpriseRegisterId: PropTypes.string,
-//     paymentPurpose: PropTypes.string,
-//     qrEnabled: PropTypes.bool,
-//     qrLink: PropTypes.string,
-//   }),
-// };
+Header.propTypes = {
+  donationDetails: donationDetailsPropTypes,
+};

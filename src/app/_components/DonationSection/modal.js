@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { QRCodeSVG } from 'qrcode.react';
 import { Group, PayPal, Privat24 } from '@icons';
 import { cn } from '@/utils/cn';
+import { donationDetailsPropTypes } from './prop-types';
 
 function DataSection({ label, text }) {
   const copyToClipboard = useCallback(() => {
@@ -133,22 +134,7 @@ export function DonateModal({ isOpen, onClose, donationDetails }) {
 }
 
 DonateModal.propTypes = {
-  donationDetails: PropTypes.shape({
-    title: PropTypes.string,
-    subtitle: PropTypes.string,
-    subtitleEnabled: PropTypes.string,
-    paypalLink: PropTypes.string,
-    paypalLinkEnabled: PropTypes.bool,
-    privatLink: PropTypes.string,
-    privatLinkEnabled: PropTypes.bool,
-    bankDetailsEnabled: PropTypes.bool,
-    enterpriceName: PropTypes.string,
-    iban: PropTypes.string,
-    enterpriseRegisterId: PropTypes.string,
-    paymentPurpose: PropTypes.string,
-    qrEnabled: PropTypes.bool,
-    qrLink: PropTypes.string,
-  }),
+  donationDetails: donationDetailsPropTypes,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
 };
