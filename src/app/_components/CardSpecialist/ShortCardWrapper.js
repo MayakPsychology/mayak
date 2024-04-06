@@ -16,9 +16,9 @@ import { AddressesList } from '@components/CardSpecialist/AddressesList';
 import { MethodList } from '@components/CardSpecialist/MethodList';
 import { ContactsList } from '@components/CardSpecialist/ContactsList';
 import { ChipList } from '@components/CardSpecialist/ChipList';
-import { transformClientCategoryIntoChipListItem } from '@utils/common';
 import { OwnershipTypeTile } from '@components/CardSpecialist/Organization/OwnershipTypeTile';
 import { OrganizationChipLists } from '@components/CardSpecialist/Organization/OrganizationChipLists';
+import { transformClientCategoryIntoChipListItem } from '@components/CardSpecialist/utils';
 
 export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
   const isOrganization = type === 'organization';
@@ -62,7 +62,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
             className="text-c3 md:text-p4"
           />
         </div>
-        <div className="flex gap-3">
+        <div className="flex w-full gap-3">
           <ProfileImage
             gender={isOrganization ? undefined : data.gender}
             className="relative w-[75px]  md:h-[100px] md:max-w-[100px]"
@@ -100,7 +100,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
               </>
             )}
           </div>
-          <div className="flex flex-col">
+          <div className="flex w-full flex-col">
             <SpecializationsPanel
               specialistId={data.id}
               specializations={specializationsList}
@@ -144,7 +144,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
               <Link
                 href={`/specialist/${data.id}?type=${type}`}
                 scroll={false}
-                className="mt-4 hidden self-end justify-self-end md:inline-block"
+                className="mt-4 hidden self-end md:inline-block"
               >
                 <CardButton />
               </Link>

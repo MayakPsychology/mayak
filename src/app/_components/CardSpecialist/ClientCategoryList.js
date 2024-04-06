@@ -4,7 +4,7 @@ import { Caption } from '@components/Typography';
 import { ChipList } from '@components/CardSpecialist/ChipList';
 import PropTypes from 'prop-types';
 import { cn } from '@utils/cn';
-import { transformClientCategoryIntoChipListItem } from '@utils/common';
+import { transformClientCategoryIntoChipListItem } from '@components/CardSpecialist/utils';
 
 export function ClientCategoryList({ id, clientCategories, isWorkWith, className }) {
   if (!clientCategories?.length) return null;

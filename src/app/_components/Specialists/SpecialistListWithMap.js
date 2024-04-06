@@ -57,7 +57,7 @@ export function SpecialistListWithMap({ mapMode, className }) {
       {totalCount && (
         <p className="hidden font-bold uppercase text-primary-600 md:block">{`Знайдено: ${totalCount} ${getProperEnding(totalCount)}`}</p>
       )}
-      <div className="mt-5 lg:grid lg:h-[750px] lg:grid-cols-5 lg:grid-rows-1 lg:gap-2">
+      <div className="mt-5 lg:grid lg:h-[900px] lg:grid-cols-5 lg:grid-rows-1 lg:gap-2">
         <div className="relative grid h-[500px] place-content-center rounded-3xl bg-primary-300 lg:col-span-2 lg:col-start-4 lg:h-full">
           <span>Map</span>
           <MapLink mapMode={mapMode} className="absolute bottom-auto left-3 top-3 translate-x-0" />
