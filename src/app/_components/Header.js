@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { BurgerIcon, Logo, HeaderCloseIcon } from '@icons';
 import siteNav from '@config/siteNav';
 import { cn } from '@utils/cn';
-import { useBodyScrollLock , useDonationDetails } from '@hooks';
+import { useBodyScrollLock, useDonationDetails } from '@hooks';
 import { SocialLink, InnerLink } from '@components/Links';
 import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';

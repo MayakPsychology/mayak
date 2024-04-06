@@ -118,9 +118,9 @@ export function DonateModal({ isOpen, onClose, donationDetails }) {
                     <DataSection label="Призначення платежу" text={paymentPurpose} />
                   </div>
                   {qrEnabled && (
-                    <div className="flex h-[150px] w-[150px] flex-col items-center justify-center lg:h-[200px] lg:w-[200px]">
-                      <QRCodeSVG value={qrLink} size={150} />
-                    </div>
+                    <a className="hidden w-fit lg:block" href={qrLink} target="_blank" rel="noopener noreferrer">
+                      <QRCodeSVG size={200} value={qrLink} />
+                    </a>
                   )}
                 </div>
               </div>
