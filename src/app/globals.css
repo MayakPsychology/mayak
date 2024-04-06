@@ -39,10 +39,6 @@
   }
 }
 
-.swiper-slide {
-  width: auto !important;
-}
-
 .tooltip {
   display: flex;
   padding: 8px 4px;

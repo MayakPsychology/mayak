@@ -49,6 +49,8 @@ const colorsHex = {
     green: '#007112',
     orange: '#DD6F09',
     blue: '#00529E',
+    lightRed: '#ffece6',
+    lightGreen: '#f2ffe6',
   },
   system: {
     success: '#0ce5b9',

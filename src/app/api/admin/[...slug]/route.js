@@ -12,6 +12,7 @@ const handler = withErrorHandlerAndAuth(async req => {
   const getOneTransform = instance => {
     transformServiceProvider(instance, modelName);
   };
+
   const result = await defaultHandler(json, prisma, {
     getList: {
       debug: false,
@@ -38,6 +39,8 @@ const handler = withErrorHandlerAndAuth(async req => {
         requests: true,
         workTime: true,
         type: true,
+        clientsWorkingWith: true,
+        clientsNotWorkingWith: true,
       },
       include: MODEL_INCLUDES[modelName],
     },

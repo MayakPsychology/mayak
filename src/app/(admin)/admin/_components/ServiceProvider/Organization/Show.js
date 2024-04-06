@@ -30,6 +30,17 @@ export function OrganizationShow() {
             <ChipField source="name" size="small" />
           </SingleFieldList>
         </ArrayField>
+        <ArrayField label="Працює з наступними клієнтами" source="clientsWorkingWith">
+          <SingleFieldList linkType={false}>
+            <ChipField source="name" size="small" />
+          </SingleFieldList>
+        </ArrayField>
+        <ArrayField label="Не працює з наступними клієнтами" source="clientsNotWorkingWith">
+          <SingleFieldList linkType={false}>
+            <ChipField source="name" size="small" />
+          </SingleFieldList>
+        </ArrayField>
+        <TextField label="Назва" source="name" />
         <BooleanField label="Інклюзивний простір" source="isInclusiveSpace" />
         <TextField label="Тип власності" source="ownershipType" />
         <DateField label="Дата додавання в сервіс" showTime source="createdAt" />

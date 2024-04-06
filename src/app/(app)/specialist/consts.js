@@ -15,6 +15,16 @@ export const specialistInclude = {
       district: true,
     },
   },
+  clientsWorkingWith: {
+    orderBy: {
+      name: 'asc',
+    },
+  },
+  clientsNotWorkingWith: {
+    orderBy: {
+      name: 'asc',
+    },
+  },
   specializationMethods: { select: { id: true, title: true, description: true } },
 };
 
@@ -36,4 +46,14 @@ export const organizationInclude = {
     },
   },
   workTime: true,
+  clientsWorkingWith: {
+    orderBy: {
+      name: 'asc',
+    },
+  },
+  clientsNotWorkingWith: {
+    orderBy: {
+      name: 'asc',
+    },
+  },
 };

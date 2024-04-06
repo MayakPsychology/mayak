@@ -82,6 +82,23 @@ function generateSocialMediaLinks() {
   );
 }
 
+function setClientCategories(categories) {
+  const [clientsWorkingWith, clientsNotWorkingWith] = categories.reduce(
+    (acc, category) => {
+      const decision = Math.floor(Math.random() * 3); // 0, 1, or 2
+      if (decision === 0) acc[0].push(category);
+      else if (decision === 1) acc[1].push(category);
+      // Skip adding to any array if decision is 2
+      return acc;
+    },
+    [[], []],
+  );
+  return {
+    clientsWorkingWith,
+    clientsNotWorkingWith,
+  };
+}
+
 function randomWorkTime() {
   const weekdays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
   return {
@@ -99,7 +116,7 @@ function randomWorkTime() {
   };
 }
 
-function randomSpecialist({ districts, specializations, specializationMethods, therapies }) {
+function randomSpecialist({ districts, specializations, therapies, clientCategories, specializationMethods }) {
   const gender = faker.helpers.arrayElement(['FEMALE', 'MALE']);
   let addresses;
   const formatOfWork = faker.helpers.arrayElement(['BOTH', 'ONLINE', 'OFFLINE']);
@@ -115,6 +132,7 @@ function randomSpecialist({ districts, specializations, specializationMethods, t
 
   const socialMediaLinks = generateSocialMediaLinks();
 
+  const { clientsWorkingWith, clientsNotWorkingWith } = setClientCategories(clientCategories);
   const specializationsIds = uniqueObjectsWithId(specializations);
   const specializationMethodsIds = uniqueObjectsWithId(
     specializationMethods.filter(({ specializationId }) =>
@@ -149,10 +167,16 @@ function randomSpecialist({ districts, specializations, specializationMethods, t
     website: nullable(faker.internet.url()),
     description: faker.lorem.paragraph(),
     ...socialMediaLinks,
+    clientsWorkingWith: {
+      connect: clientsWorkingWith,
+    },
+    clientsNotWorkingWith: {
+      connect: clientsNotWorkingWith,
+    },
   };
 }
 
-function randomOrganization({ therapies, districts, organizationTypes, expertSpecializations }) {
+function randomOrganization({ therapies, districts, organizationTypes, expertSpecializations, clientCategories }) {
   let addresses;
   const formatOfWork = faker.helpers.arrayElement(['BOTH', 'ONLINE', 'OFFLINE']);
   if (formatOfWork !== 'ONLINE') {
@@ -164,6 +188,8 @@ function randomOrganization({ therapies, districts, organizationTypes, expertSpe
   }
   const phoneRegexp = '+380[0-9]{9}';
   const socialMediaLinks = generateSocialMediaLinks();
+
+  const { clientsWorkingWith, clientsNotWorkingWith } = setClientCategories(clientCategories);
 
   return {
     name: faker.company.name(),
@@ -189,6 +215,12 @@ function randomOrganization({ therapies, districts, organizationTypes, expertSpe
     website: nullable(faker.internet.url()),
     description: faker.lorem.paragraph(),
     ...socialMediaLinks,
+    clientsWorkingWith: {
+      connect: clientsWorkingWith,
+    },
+    clientsNotWorkingWith: {
+      connect: clientsNotWorkingWith,
+    },
   };
 }
 
@@ -269,6 +301,11 @@ async function main() {
   const specializations = await prisma.specialization.findMany({
     select: { id: true },
   });
+
+  const clientCategories = await prisma.clientCategory.findMany({
+    select: { id: true },
+  });
+
   const specializationMethods = await prisma.method.findMany();
   const districts = await prisma.district.findMany({ select: { id: true } });
 
@@ -279,7 +316,13 @@ async function main() {
   // createMany does not support records with relations
   for (let i = 0; i < 10; i += 1) {
     // for instead of Promise.all to avoid overloading the database pool
-    const specialistData = randomSpecialist({ districts, specializations, specializationMethods, therapies });
+    const specialistData = randomSpecialist({
+      districts,
+      specializations,
+      therapies,
+      clientCategories,
+      specializationMethods,
+    });
     // eslint-disable-next-line no-await-in-loop
     await prisma.specialist.create({
       data: {
@@ -304,6 +347,7 @@ async function main() {
       districts,
       organizationTypes,
       expertSpecializations: specializations,
+      clientCategories,
     });
     // eslint-disable-next-line no-await-in-loop
     await prisma.organization.create({

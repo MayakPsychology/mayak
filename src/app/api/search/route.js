@@ -38,6 +38,8 @@ export const handler = withErrorHandler(async req => {
         isDayOff: true,
       },
     },
+    clientsWorkingWith: true,
+    clientsNotWorkingWith: true,
   };
 
   const searchEntries = await prisma.searchEntry.findMany({

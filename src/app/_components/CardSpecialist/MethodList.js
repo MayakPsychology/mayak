@@ -41,8 +41,8 @@ function Method({ id, title, description }) {
 }
 
 Method.propTypes = {
-  id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  id: PropTypes.string,
+  title: PropTypes.string,
   description: PropTypes.string,
 };
 
@@ -59,29 +59,33 @@ export function MethodList({ methods = [], specializations = [], showCaption = t
   return (
     <div className={cn('flex flex-col gap-2 border-t border-dashed border-t-gray-200 pt-3', className)}>
       {showCaption && <Caption className="text-p4 font-bold text-gray-600">{caption}</Caption>}
-      <TruncatedList
-        alwaysShowTruncator
-        className={cn('flex max-w-[550px] flex-wrap gap-2', expanded ? 'max-h-none' : 'max-h-14 md:max-h-6')}
-        renderTruncator={({ hiddenItemsCount }) => {
-          const hasHiddenItems = hiddenItemsCount > 0;
+      {methods.length === 1 ? (
+        <Method id={methods[0].id} title={methods[0].title} description={methods[0].description} />
+      ) : (
+        <TruncatedList
+          alwaysShowTruncator
+          className={cn('flex max-w-[550px] gap-2', expanded ? 'max-h-none flex-wrap' : 'max-h-14 md:max-h-6')}
+          renderTruncator={({ hiddenItemsCount }) => {
+            const hasHiddenItems = hiddenItemsCount > 0;
 
-          return (
-            <button
-              className="cursor-pointer text-c3 text-gray-900"
-              onClick={e => {
-                e.stopPropagation();
-                setExpanded(hasHiddenItems);
-              }}
-            >
-              {hasHiddenItems ? `+${hiddenItemsCount}` : 'Приховати'}
-            </button>
-          );
-        }}
-      >
-        {methods.map(({ id, ...rest }) => (
-          <Method key={id} id={id} {...rest} />
-        ))}
-      </TruncatedList>
+            return (
+              <button
+                className="cursor-pointer text-c3 text-gray-900"
+                onClick={e => {
+                  e.stopPropagation();
+                  setExpanded(hasHiddenItems);
+                }}
+              >
+                {hasHiddenItems ? `+${hiddenItemsCount}` : 'Приховати'}
+              </button>
+            );
+          }}
+        >
+          {methods.map(({ id, ...rest }) => (
+            <Method key={id} id={id} {...rest} />
+          ))}
+        </TruncatedList>
+      )}
     </div>
   );
 }

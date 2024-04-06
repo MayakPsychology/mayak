@@ -14,6 +14,7 @@ import { getProperEnding } from '@components/Specialists/utils';
 import { NoInfoToShow } from '@components/NoInfoToShow';
 import Loading from '@/app/loading';
 
+// import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
