@@ -1,10 +1,16 @@
 'use client';
 
-import { Edit } from 'react-admin';
+import { Edit, SaveButton, Toolbar } from 'react-admin';
 import React from 'react';
 import { useRedirectToList } from '@admin/components/ServiceProvider/hooks';
 import { SocialMediaFormShared } from '@admin/components/SocialMedia/SocialMediaFormShared';
 import { socialMediaUseRedirectParams } from '@admin/components/SocialMedia/consts';
+
+export const EditToolbar = () => (
+  <Toolbar>
+    <SaveButton label="Save" />
+  </Toolbar>
+);
 
 export function SocialMediaEdit() {
   const { handleError, handleSuccess } = useRedirectToList(socialMediaUseRedirectParams);
@@ -15,7 +21,7 @@ export function SocialMediaEdit() {
       mutationOptions={{ onSuccess: handleSuccess, onError: handleError }}
       mutationMode="pessimistic"
     >
-      <SocialMediaFormShared />
+      <SocialMediaFormShared toolbar={<EditToolbar />} />
     </Edit>
   );
 }
