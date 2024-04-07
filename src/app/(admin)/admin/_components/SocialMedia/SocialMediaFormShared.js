@@ -13,7 +13,7 @@ export function SocialMediaFormShared() {
         choices={socialMediaChoices}
         className="w-full"
       />
-      <TextInput source="link" label="Посилання" validate={required()} className="w-full" />
+      <TextInput source="href" label="Посилання" validate={required()} className="w-full" />
     </SimpleForm>
   );
 }

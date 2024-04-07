@@ -22,8 +22,7 @@ import {
   SpecialistsList,
 } from '@admin/components/ServiceProvider/Specialist';
 
-import { SocialMediaCreate, SocialMediaList } from '@admin/components/SocialMedia';
-import { SocialMediaEdit } from '@admin/components/SocialMedia/Edit';
+import { SocialMediaCreate, SocialMediaEdit, SocialMediaList } from '@admin/components/SocialMedia';
 import { authProvider } from './authProvider';
 import { ClientCategoryList } from './_components/ClientCategoriesType';
 import { ClientCategoryCreate } from './_components/ClientCategoriesType/Create';

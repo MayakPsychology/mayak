@@ -347,11 +347,11 @@ async function main() {
     data: [
       {
         title: SocialMediaPlatform.FACEBOOK,
-        link: 'https://www.facebook.com',
+        href: 'https://www.facebook.com',
       },
       {
         title: SocialMediaPlatform.INSTAGRAM,
-        link: 'https://www.instagram.com',
+        href: 'https://www.instagram.com',
       },
     ],
   });

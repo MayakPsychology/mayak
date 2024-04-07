@@ -330,7 +330,7 @@ model SocialMedia {
   id        String              @id @default(uuid()) @db.Uuid
   createdAt DateTime            @default(now())
   title     SocialMediaPlatform @unique
-  link      String              @db.Text
+  href      String              @db.Text
 
   @@map("social_media")
 }

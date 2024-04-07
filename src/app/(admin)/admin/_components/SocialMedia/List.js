@@ -7,8 +7,8 @@ export function SocialMediaList() {
   return (
     <List>
       <Datagrid bulkActionButtons={false}>
-        <TextField label="Title" source="title" />
-        <TextField label="Link" source="link" />
+        <TextField label="Назва" source="title" />
+        <TextField label="Посилання" source="href" />
         <EditButton label="Редагувати" />
         <DeleteWithConfirmButton
           confirmContent="Ви впевнені?"

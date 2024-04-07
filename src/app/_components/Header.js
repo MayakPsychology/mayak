@@ -2,17 +2,19 @@
 
 import { useCallback, useState } from 'react';
 import Link from 'next/link';
-import { BurgerIcon, Logo, HeaderCloseIcon } from '@icons';
+import { BurgerIcon, HeaderCloseIcon, Logo } from '@icons';
 import siteNav from '@config/siteNav';
 import { cn } from '@utils/cn';
 import { useBodyScrollLock } from '@hooks';
-import { SocialLink, InnerLink } from '@components/Links';
+import { InnerLink, SocialLink } from '@components/Links';
 import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';
+import { useSocialMediaList } from '@/app/_hooks/api/useSocialMediaList';
 import { DonateModal, DonationSection } from './DonationSection';
 
 export function Header() {
-  const { links, innerLinks } = siteNav;
+  const { innerLinks } = siteNav;
+  const socialMediaList = useSocialMediaList();
 
   //  Basic styles
   const flexBetween = 'flex flex-row items-center justify-between';
@@ -71,10 +73,16 @@ export function Header() {
               className={cn(basicLink, listItemTextHover, listItemText, 'gap-4 px-3 py-1 transition-all')}
             />
           </div>
-          <SocialLink
-            links={links}
-            className={cn(basicLink, iconColors, 'hover:color-primary-500 gap-6 transition-all hover:text-primary-500')}
-          />
+          {socialMediaList && (
+            <SocialLink
+              links={socialMediaList}
+              className={cn(
+                basicLink,
+                iconColors,
+                'hover:color-primary-500 gap-6 transition-all hover:text-primary-500',
+              )}
+            />
+          )}
           <PillButton
             variant="outlined"
             colorVariant="blue"
@@ -127,14 +135,16 @@ export function Header() {
             </PillButton>
             <div className={cn(flexBetween, 'items-center')}>
               <p className="inline text-p4 text-primary-700 lg:hidden">Наші соціальні мережі:</p>
-              <SocialLink
-                links={links}
-                className={cn(
-                  basicLink,
-                  iconColors,
-                  'hover:color-primary-500 gap-4 transition-all hover:text-primary-500',
-                )}
-              />
+              {socialMediaList && (
+                <SocialLink
+                  links={socialMediaList}
+                  className={cn(
+                    basicLink,
+                    iconColors,
+                    'hover:color-primary-500 gap-4 transition-all hover:text-primary-500',
+                  )}
+                />
+              )}
             </div>
           </div>
           <DonationSection

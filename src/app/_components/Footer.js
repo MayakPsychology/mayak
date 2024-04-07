@@ -1,12 +1,14 @@
+'use client';
+
 import Link from 'next/link';
 import { WhiteLogo } from '@icons';
 import { cn } from '@utils/cn';
-import siteNav from '@config/siteNav';
 import { PillButton } from '@components/PillButton';
 import { SocialLink } from '@components/Links';
+import { useSocialMediaList } from '@/app/_hooks/api/useSocialMediaList';
 
 export function Footer() {
-  const { links } = siteNav;
+  const socialMediaList = useSocialMediaList();
 
   // Basic styles
   const flexBetweenMd = 'lg:inline-flex lg:flex-row lg:items-center lg:justify-between';
@@ -41,12 +43,18 @@ export function Footer() {
         <div className={cn(flexCenter, 'gap-5 lg:gap-4')}>
           <p className="hidden text-p2 font-medium text-other-white lg:inline">Слідкуй за нами в соцмережах</p>
           <p className="inline text-p4 text-other-white lg:hidden">Наші соціальні мережі:</p>
-          <SocialLink
-            role="list"
-            status="footerSocials"
-            links={links}
-            className={cn(basicLink, iconColors, 'hover:color-primary-500 gap-4 transition-all hover:text-primary-500')}
-          />
+          {socialMediaList && (
+            <SocialLink
+              role="list"
+              status="footerSocials"
+              links={socialMediaList}
+              className={cn(
+                basicLink,
+                iconColors,
+                'hover:color-primary-500 gap-4 transition-all hover:text-primary-500',
+              )}
+            />
+          )}
         </div>
       </div>
     </footer>
