@@ -21,42 +21,49 @@ import { OrganizationChipLists } from '@components/CardSpecialist/Organization/O
 import { transformClientCategoryIntoChipListItem } from '@components/CardSpecialist/utils';
 
 export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
+  const { id } = data;
+
   const isOrganization = type === 'organization';
   const specializationsList = isOrganization ? data.type?.map(t => t.name) : data.specializations.map(s => s.name);
+
   const { lastName, firstName, surname } = data;
   const name = isOrganization ? data.name : [lastName, firstName, surname].filter(Boolean).join(' ');
+
+  const { yearsOnMarket, isFreeReception, formatOfWork } = data;
   const labelsList = getLabelsList({
-    yearsOfExperience: data.yearsOnMarket,
-    isFreeReception: data.isFreeReception,
-    formatOfWork: data.formatOfWork,
+    yearsOfExperience: yearsOnMarket,
+    isFreeReception,
+    formatOfWork,
     specialistType: type,
   });
   const isBadgeList = !!labelsList.filter(label => !!label.content).length;
-  const { instagram, facebook, tiktok, youtube, linkedin, viber, telegram, phone, email, website, addresses } = data;
-  const socials = getSpecialistSocials({ instagram, facebook, tiktok, youtube, linkedin, viber, telegram });
-  const contactsList = getContactsList({ phone, email, website });
-  const addressPrimary = addresses[0];
-  const workTimeElement = !!data.workTime?.length && (
-    <WorkTime workTime={data.workTime} shortVersion className="mt-2" />
-  );
 
-  const methodsList = isOrganization ? data.expertSpecializations : data.specializationMethods;
+  const { instagram, facebook, tiktok, youtube, linkedin, viber, telegram } = data;
+  const socials = getSpecialistSocials({ instagram, facebook, tiktok, youtube, linkedin, viber, telegram });
+
+  const { phone, email, website } = data;
+  const contactsList = getContactsList({ phone, email, website });
+
+  const { addresses, workTime } = data;
+  const addressPrimary = addresses[0];
+  const workTimeElement = !!workTime?.length && <WorkTime workTime={workTime} shortVersion className="mt-2" />;
+
+  const { expertSpecializations, specializationMethods } = data;
+  const methodsList = isOrganization ? expertSpecializations : specializationMethods;
 
   const { clientsWorkingWith, clientsNotWorkingWith } = data;
-
   const clientsWorkingWithList = clientsWorkingWith.map(transformClientCategoryIntoChipListItem({ workingWith: true }));
   const clientsNotWorkingWithList = clientsNotWorkingWith.map(
     transformClientCategoryIntoChipListItem({ workingWith: false }),
   );
-
   const clientsList = [...clientsWorkingWithList, ...clientsNotWorkingWithList];
 
   return (
-    <CardWrapper className={className} id={data.id} type={type}>
+    <CardWrapper className={className} id={id} type={type}>
       <div className="flex w-full flex-col lg:hidden">
         <div className="relative mb-3 flex justify-between">
           <SpecializationsPanel
-            specialistId={data.id}
+            specialistId={id}
             specializations={specializationsList}
             extendedCardOpened={false}
             className="text-c3 md:text-p4"
@@ -68,7 +75,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
             className="relative w-[75px]  md:h-[100px] md:max-w-[100px]"
           />
           <div>
-            <SpecialistTitle id={data.id} truncate={false} name={name} className="text-p2" />
+            <SpecialistTitle id={id} truncate={false} name={name} className="text-p2" />
             {data.ownershipType && <OwnershipTypeTile ownershipType={data?.ownershipType} className="mt-1" />}
           </div>
         </div>
@@ -80,7 +87,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
           showCaption={false}
         />
         <Link
-          href={`/specialist/${data.id}?type=${type}`}
+          href={`/specialist/${id}?type=${type}`}
           scroll={false}
           className="mt-auto hidden self-end justify-self-end md:inline-block"
         >
@@ -95,27 +102,27 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
             </ProfileImage>
             {isHoveredOn && (
               <>
-                <ContactsList truncate={false} specialistId={data.id} contacts={contactsList} className="mt-4" />
+                <ContactsList truncate={false} specialistId={id} contacts={contactsList} className="mt-4" />
                 {workTimeElement}
               </>
             )}
           </div>
           <div className="flex w-full flex-col">
             <SpecializationsPanel
-              specialistId={data.id}
+              specialistId={id}
               specializations={specializationsList}
               extendedCardOpened
               className="flex-wrap"
             />
             {data.ownershipType && <OwnershipTypeTile ownershipType={data?.ownershipType} className="mt-2.5" />}
-            <SpecialistTitle id={data.id} truncate name={name} className="mt-2" />
+            <SpecialistTitle id={id} truncate name={name} className="mt-2" />
             {isBadgeList && <BadgeList labels={labelsList} className="mt-4 flex-wrap" />}
             {isHoveredOn && (
               <>
                 <div className="border-1 mt-5 w-full border-t border-dashed border-t-gray-200">
                   {isOrganization ? (
                     <OrganizationChipLists
-                      id={data.id}
+                      id={id}
                       expertSpecializations={data.expertSpecializations}
                       className="border-t border-dashed border-t-gray-200 pt-4"
                       showCaption={false}
@@ -129,7 +136,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
                     />
                   )}
                 </div>
-                <ChipList id={`${data.id}-clientCategories`} items={clientsList} className="mt-4" />
+                <ChipList id={`${id}-clientCategories`} items={clientsList} className="mt-4" />
               </>
             )}
             {isHoveredOn && addressPrimary && (
@@ -142,7 +149,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
 
             {isHoveredOn && (
               <Link
-                href={`/specialist/${data.id}?type=${type}`}
+                href={`/specialist/${id}?type=${type}`}
                 scroll={false}
                 className="mt-4 hidden self-end md:inline-block"
               >
