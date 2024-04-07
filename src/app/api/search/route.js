@@ -6,6 +6,7 @@ import { createSearchEntryFilter, getSearchFilterQueryParams } from './helpers';
 export const handler = withErrorHandler(async req => {
   const params = getSearchFilterQueryParams(req);
   const { take, skip, lastCursor } = params;
+
   const searchEntryFilter = createSearchEntryFilter(params);
 
   const totalCount = await prisma.searchEntry.count({ where: searchEntryFilter });
@@ -64,7 +65,7 @@ export const handler = withErrorHandler(async req => {
     orderBy: {
       sortString: 'asc',
     },
-    take,
+    take: params?.mode === 'map' ? totalCount : take,
     skip,
     ...(lastCursor && {
       skip: 1,

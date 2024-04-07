@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { Swiper } from 'swiper/react';
+import 'swiper/css';
 
 export { SwiperSlide as Slide } from 'swiper/react';
 

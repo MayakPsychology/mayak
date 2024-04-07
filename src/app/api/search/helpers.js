@@ -180,8 +180,6 @@ export function getSearchFilterQueryParams(req) {
     },
     params => ({
       ...params,
-      // take: parseInt(params.take, 10),
-      // skip: parseInt(params.skip, 10),
       districts: typeof params.district === 'string' ? [params.district] : params.district,
       district: undefined,
       requests: typeof params.request === 'string' ? [params.request] : params.request,

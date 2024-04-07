@@ -21,7 +21,7 @@ function ChipListItem({ id, title, tooltipText, iconClassName, containerClassNam
       {tooltipText && (
         <Tooltip
           id={id}
-          style={{ backgroundColor: '#FFF', color: '#080809', boxShadow: '0px 0px 7px 1px rgba(0,0,0,0.2)' }}
+          style={{ backgroundColor: '#fff', color: '#080809', boxShadow: '0px 0px 7px 1px rgba(0,0,0,0.2)' }}
           place="bottom"
           opacity={1}
         >
@@ -33,7 +33,7 @@ function ChipListItem({ id, title, tooltipText, iconClassName, containerClassNam
 }
 
 ChipListItem.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   title: PropTypes.string.isRequired,
   tooltipText: PropTypes.string,
   containerClassName: PropTypes.string,
@@ -42,10 +42,10 @@ ChipListItem.propTypes = {
   icon: PropTypes.node,
 };
 
-export function ChipList({ id, items }) {
+export function ChipList({ id, items, className }) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className="flex flex-col gap-2">
+    <div className={cn('flex flex-col gap-2', className)}>
       <TruncatedList
         alwaysShowTruncator
         className={cn('flex flex-wrap gap-[8px]', expanded ? 'max-h-none' : 'max-h-14 md:max-h-6')}
@@ -78,4 +78,5 @@ export function ChipList({ id, items }) {
 ChipList.propTypes = {
   id: PropTypes.string.isRequired,
   items: PropTypes.arrayOf(PropTypes.shape(ChipListItem.propTypes)).isRequired,
+  className: PropTypes.string,
 };

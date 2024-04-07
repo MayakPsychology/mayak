@@ -2,10 +2,11 @@ import PropTypes from 'prop-types';
 import { Dot } from '@icons/index';
 import { ListTruncator } from '@components/ListTruncator';
 import { Caption } from '@components/Typography';
+import { cn } from '@utils/cn';
 
-export function SpecializationsPanel({ specialistId, specializations, extendedCardOpened = false }) {
+export function SpecializationsPanel({ specialistId, specializations, extendedCardOpened = false, className }) {
   return extendedCardOpened ? (
-    <div className="inline-flex shrink flex-wrap items-center gap-[8px]">
+    <div className={cn('inline-flex shrink flex-wrap items-center gap-[8px]', className)}>
       {specializations.map((specialization, index) => (
         <div className="flex items-center justify-center gap-2.5" key={`${specialization}-${index}`}>
           <Caption className="whitespace-normal text-start font-bold text-gray-600 lg:text-p4">
@@ -39,4 +40,5 @@ SpecializationsPanel.propTypes = {
   specializations: PropTypes.arrayOf(PropTypes.string).isRequired,
   specialistId: PropTypes.string.isRequired,
   extendedCardOpened: PropTypes.bool,
+  className: PropTypes.string,
 };
