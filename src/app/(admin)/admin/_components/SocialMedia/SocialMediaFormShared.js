@@ -6,14 +6,8 @@ import { socialMediaChoices } from '@admin/components/SocialMedia/socialMediaCho
 export function SocialMediaFormShared() {
   return (
     <SimpleForm className="max-w-[500px]" resolver={zodResolver(SocialMediaSchema)}>
-      <SelectInput
-        source="title"
-        label="Соц мережа"
-        validate={required()}
-        choices={socialMediaChoices}
-        className="w-full"
-      />
-      <TextInput source="href" label="Посилання" validate={required()} className="w-full" />
+      <SelectInput source="title" label="Соц мережа" validate={required()} choices={socialMediaChoices} fullWidth />
+      <TextInput source="href" label="Посилання" validate={required()} fullWidth />
     </SimpleForm>
   );
 }
