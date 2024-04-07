@@ -9,9 +9,9 @@ import { getProperEnding } from '@components/Specialists/utils';
 import { MapLink } from '@components/MapLink';
 import { cn } from '@utils/cn';
 import { PaginationLoader } from '@components/Specialists/PaginationLoader';
+import { NoMatches } from '@components/Specialists/NoMatches';
 import { usePaginatedEntries } from '@/app/_hooks';
 import Loading from '@/app/loading';
-import { NoInfoToShow } from '../NoInfoToShow';
 
 export function SpecialistListMain({ mapMode, className }) {
   const searchParams = useSearchParams();
@@ -35,18 +35,7 @@ export function SpecialistListMain({ mapMode, className }) {
 
   const isNoMatches = !isLoading && (!data?.pages?.length || totalCount === 0);
 
-  if (isNoMatches)
-    return (
-      <div className="mt-4 flex flex-col gap-4 lg:mt-8 lg:gap-8">
-        <div className="flex flex-col gap-2 text-p4 font-bold uppercase lg:flex-row lg:gap-1">
-          <p className=" text-system-error">Результатів не Знайдено.</p>
-          {searchParams.get('query')?.length > 0 && (
-            <p className=" text-primary-600">Перевірте правильність написання запиту</p>
-          )}
-        </div>
-        <NoInfoToShow text="збігів" />
-      </div>
-    );
+  if (isNoMatches) return <NoMatches />;
 
   return (
     <div className={className}>
@@ -69,13 +58,14 @@ export function SpecialistListMain({ mapMode, className }) {
             )}
 
           {isLoading || (hasNextPage && <PaginationLoader innerRef={ref} />)}
-          {error && <div className="mt-10">{('An error has occurred: ', error.message)}</div>}
+          {error && <div className="mt-10">{`An error has occurred: ${error.message}`}</div>}
         </>
       </ul>
-      <MapLink
-        mapMode={mapMode}
-        className={cn('sticky bottom-20 left-[50%] translate-x-[-50%]', { hidden: mapMode })}
-      />
+      {!inView && (
+        <div className="sticky bottom-20 flex w-full justify-center ">
+          <MapLink mapMode={mapMode} className={cn({ hidden: mapMode })} />
+        </div>
+      )}
     </div>
   );
 }

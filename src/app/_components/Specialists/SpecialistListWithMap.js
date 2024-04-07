@@ -11,10 +11,9 @@ import { cn } from '@utils/cn';
 import { MapLink } from '@components/MapLink';
 import { ShortCardWrapper } from '@components/CardSpecialist/ShortCardWrapper';
 import { getProperEnding } from '@components/Specialists/utils';
-import { NoInfoToShow } from '@components/NoInfoToShow';
+import { NoMatches } from '@components/Specialists/NoMatches';
 import Loading from '@/app/loading';
 
-// import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
@@ -39,18 +38,7 @@ export function SpecialistListWithMap({ mapMode, className }) {
 
   const isNoMatches = !isLoading && (!data?.pages?.length || totalCount === 0);
 
-  if (isNoMatches)
-    return (
-      <div className="mt-4 flex flex-col gap-4 lg:mt-8 lg:gap-8">
-        <div className="flex flex-col gap-2 text-p4 font-bold uppercase lg:flex-row lg:gap-1">
-          <p className=" text-system-error">Результатів не Знайдено.</p>
-          {searchParams.get('query')?.length > 0 && (
-            <p className=" text-primary-600">Перевірте правильність написання запиту</p>
-          )}
-        </div>
-        <NoInfoToShow text="збігів" />
-      </div>
-    );
+  if (isNoMatches) return <NoMatches />;
 
   return (
     <div className={cn('p-0', className)}>

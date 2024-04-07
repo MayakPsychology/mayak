@@ -65,7 +65,7 @@ export const handler = withErrorHandler(async req => {
     orderBy: {
       sortString: 'asc',
     },
-    take: params?.mode === 'map' ? 99999 : take,
+    take: params?.mode === 'map' ? totalCount : take,
     skip,
     ...(lastCursor && {
       skip: 1,
