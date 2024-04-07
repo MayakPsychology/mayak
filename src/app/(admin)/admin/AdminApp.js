@@ -22,6 +22,8 @@ import {
   SpecialistsList,
 } from '@admin/components/ServiceProvider/Specialist';
 
+import { SocialMediaCreate, SocialMediaList } from '@admin/components/SocialMedia';
+import { SocialMediaEdit } from '@admin/components/SocialMedia/Edit';
 import { authProvider } from './authProvider';
 import { ClientCategoryList } from './_components/ClientCategoriesType';
 import { ClientCategoryCreate } from './_components/ClientCategoriesType/Create';
@@ -114,6 +116,13 @@ export default function AdminPage() {
         show={ShowGuesser}
         edit={EditGuesser}
         create={ClientCategoryCreate}
+      />
+      <Resource
+        name={RESOURCES.socialMedia}
+        options={{ label: 'Соц мережі' }}
+        list={SocialMediaList}
+        edit={SocialMediaEdit}
+        create={SocialMediaCreate}
       />
     </Admin>
   );

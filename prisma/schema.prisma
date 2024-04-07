@@ -45,6 +45,17 @@ enum WeekDay {
   SUN
 }
 
+enum SocialMediaPlatform {
+  FACEBOOK
+  TWITTER
+  INSTAGRAM
+  LINKEDIN
+  YOUTUBE
+  TIKTOK
+  WHATSAPP
+  TELEGRAM
+}
+
 model Specialist {
   id                    String           @id @default(uuid()) @db.Uuid
   createdAt             DateTime         @default(now())
@@ -313,4 +324,13 @@ model WorkTime {
 
   @@unique([weekDay, time, isDayOff])
   @@map("work_time")
+}
+
+model SocialMedia {
+  id        String              @id @default(uuid()) @db.Uuid
+  createdAt DateTime            @default(now())
+  title     SocialMediaPlatform @unique
+  link      String              @db.Text
+
+  @@map("social_media")
 }

@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, SocialMediaPlatform } from '@prisma/client';
 import { getSpecialistFullName } from '../src/utils/getSpecialistFullName.mjs';
 
 function getFullAddress() {
@@ -274,6 +274,7 @@ async function main() {
     await trx.organization.deleteMany();
     await trx.searchEntry.deleteMany();
     await trx.workTime.deleteMany();
+    await trx.socialMedia.deleteMany();
   });
 
   const faqs = Array.from({ length: 15 }).map((_, i) => ({
@@ -341,6 +342,20 @@ async function main() {
       data: randomEvent({ tags, link }),
     });
   }
+
+  await prisma.socialMedia.createMany({
+    data: [
+      {
+        title: SocialMediaPlatform.FACEBOOK,
+        link: 'https://www.facebook.com',
+      },
+      {
+        title: SocialMediaPlatform.INSTAGRAM,
+        link: 'https://www.instagram.com',
+      },
+    ],
+  });
+
   for (let i = 0; i < 10; i += 1) {
     const organizationData = randomOrganization({
       therapies,
