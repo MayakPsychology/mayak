@@ -6,12 +6,13 @@ import { BurgerIcon, HeaderCloseIcon, Logo } from '@icons';
 import siteNav from '@config/siteNav';
 import { cn } from '@utils/cn';
 import { useBodyScrollLock } from '@hooks';
-import { InnerLink, SocialLinksList } from '@components/Links';
+import { InnerLink } from '@components/Links';
 import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';
+import PropTypes from 'prop-types';
 import { DonateModal, DonationSection } from './DonationSection';
 
-export function Header() {
+export function Header({ socialLinks }) {
   const { innerLinks } = siteNav;
 
   //  Basic styles
@@ -20,7 +21,6 @@ export function Header() {
   const basicLink = 'no-underline list-none cursor-pointer';
   const listItemText = 'text-p2 font-bold';
   const listItemTextHover = 'text-primary-700 hover:text-primary-500';
-  const iconColors = 'text-primary-700 hover:text-primary-500';
 
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isFeedbackOpen, setFeedbackOpen] = useState(false);
@@ -71,9 +71,7 @@ export function Header() {
               className={cn(basicLink, listItemTextHover, listItemText, 'gap-4 px-3 py-1 transition-all')}
             />
           </div>
-          <SocialLinksList
-            className={cn(basicLink, iconColors, 'hover:color-primary-500 gap-6 transition-all hover:text-primary-500')}
-          />
+          {socialLinks}
           <PillButton
             variant="outlined"
             colorVariant="blue"
@@ -126,13 +124,7 @@ export function Header() {
             </PillButton>
             <div className={cn(flexBetween, 'items-center')}>
               <p className="inline text-p4 text-primary-700 lg:hidden">Наші соціальні мережі:</p>
-              <SocialLinksList
-                className={cn(
-                  basicLink,
-                  iconColors,
-                  'hover:color-primary-500 gap-4 transition-all hover:text-primary-500',
-                )}
-              />
+              {socialLinks}
             </div>
           </div>
           <DonationSection
@@ -147,3 +139,7 @@ export function Header() {
     </header>
   );
 }
+
+Header.propTypes = {
+  socialLinks: PropTypes.element,
+};

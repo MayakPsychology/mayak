@@ -1,7 +1,5 @@
 'use server';
 
-import { Facebook, Instagram } from '@icons';
-import { revalidateTag } from 'next/cache';
 import { NavigationUrl } from '@prisma/client';
 import { prisma } from '@/lib/db';
 
@@ -13,22 +11,10 @@ export async function getSocialMediaList() {
     },
   });
 
-  revalidateTag('/');
-
-  const { INSTAGRAM, APPLICATION } = NavigationUrl;
-
-  const socialMediaList = data
-    ?.filter(({ title }) => title !== APPLICATION)
-    .map(({ title, href }) => ({
-      title,
-      href,
-      svg: title === INSTAGRAM ? <Instagram /> : <Facebook />,
-    }));
-
-  const applicationLink = data?.find(({ title }) => title === APPLICATION);
+  const { APPLICATION } = NavigationUrl;
 
   return {
-    socialMediaList,
-    applicationLink,
+    socialMediaList: data?.filter(({ title }) => title !== APPLICATION),
+    applicationLink: data?.filter(({ title }) => title === APPLICATION)[0],
   };
 }

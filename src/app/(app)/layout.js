@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Footer } from '@components/Footer';
 import { Header } from '@components/Header';
 import { Hint } from '@components/Hint';
+import { SocialLinksList } from '@components/Links';
 
 export const metadata = {
   title: {
@@ -16,7 +17,7 @@ export default function Layout({ children }) {
   return (
     <Hint>
       <div className="flex min-h-screen flex-col">
-        <Header />
+        <Header socialLinks={<SocialLinksList className="text-primary-700 hover:text-primary-500" />} />
         <main className="relative flex-1">{children}</main>
         <Footer />
       </div>

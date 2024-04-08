@@ -1,21 +1,12 @@
-'use client';
-
 import Link from 'next/link';
 import { WhiteLogo } from '@icons';
 import { cn } from '@utils/cn';
 import { PillButton } from '@components/PillButton';
 import { SocialLinksList } from '@components/Links';
-import { useEffect, useState } from 'react';
 import { getSocialMediaList } from '@components/Links/socialMediaActions';
 
-export function Footer() {
-  const [applicationLink, setApplicationLink] = useState('');
-
-  useEffect(() => {
-    getSocialMediaList().then(data => {
-      setApplicationLink(data.applicationLink);
-    });
-  }, []);
+export async function Footer() {
+  const { applicationLink } = await getSocialMediaList();
 
   // Basic styles
   const flexBetweenMd = 'lg:inline-flex lg:flex-row lg:items-center lg:justify-between';
