@@ -16,11 +16,7 @@ export function SpecialistListWrapper({ className }) {
 
   return (
     <section
-      className={cn(
-        { 'mx-auto px-2 md:px-4 lg:max-w-[1600px]': isMapMode },
-        { 'mx-auto lg:max-w-[900px]': !isMapMode },
-        className,
-      )}
+      className={cn('mx-auto px-4', { 'lg:max-w-[1600px]': isMapMode }, { 'lg:max-w-[900px]': !isMapMode }, className)}
     >
       <SearchProvider>
         <SearchInput />
