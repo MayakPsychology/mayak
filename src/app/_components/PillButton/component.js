@@ -3,7 +3,7 @@ import { Paragraph } from '@components/Typography';
 import { cn } from '@/utils/cn';
 import { buttonColorVariant, buttonType } from './style';
 
-export function PillButton({ children, className, icon, variant, colorVariant, ...props }) {
+export function PillButton({ children, className, icon, variant, colorVariant, forceShowIcon, ...props }) {
   const buttonVariant = icon ? buttonType[variant]?.icon : buttonType[variant]?.regular || {};
   const buttonColor = buttonColorVariant[variant]?.[colorVariant] || {};
 
@@ -11,7 +11,7 @@ export function PillButton({ children, className, icon, variant, colorVariant, .
   const { buttonStyle, layoutStyle } = buttonVariant;
 
   const styles = cn(
-    'gap-[8px] rounded-[100px] font-bold',
+    'rounded-[100px] font-bold group relative',
     buttonStyle,
     regular,
     hover,
@@ -23,8 +23,18 @@ export function PillButton({ children, className, icon, variant, colorVariant, .
 
   return (
     <button type="button" className={styles} {...props}>
-      <div className={layoutStyle || ''}>
-        {icon}
+      <div className={cn(layoutStyle)}>
+        {icon && (
+          <div
+            className={cn(
+              forceShowIcon
+                ? 'mr-1 h-4 w-4'
+                : 'h-4 w-0 transition-all duration-150 *:opacity-0 group-hover:mr-1 group-hover:w-4 group-hover:*:opacity-100',
+            )}
+          >
+            {icon}
+          </div>
+        )}
         <Paragraph className="text-inherit">{children}</Paragraph>
       </div>
     </button>
@@ -38,4 +48,5 @@ PillButton.propTypes = {
   type: PropTypes.string,
   className: PropTypes.string,
   icon: PropTypes.node,
+  forceShowIcon: PropTypes.bool,
 };

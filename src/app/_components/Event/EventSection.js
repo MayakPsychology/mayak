@@ -38,8 +38,8 @@ const filteredMonths =
     ? monthNames.slice(startMonthIndex).concat(monthNames.slice(0, endIndex))
     : monthNames.slice(startMonthIndex, endIndex);
 
-const activeButtonStyles = 'pointer-events-none border-secondary-300 bg-secondary-300 font-semibold text-gray-900';
-const commonIconStyle = 'h-4 w-4 transition-all';
+const activeButtonStyles =
+  'pointer-events-none border-secondary-300 bg-secondary-300 focus:bg-secondary-300 font-semibold text-gray-900 focus:text-gray-900 focus:border-secondary-300';
 
 export function EventSection() {
   const searchParams = useSearchParams();
@@ -73,7 +73,9 @@ export function EventSection() {
     },
     [replaceParam],
   );
-
+  useEffect(() => {
+    setActiveMonth(Number(monthFromQuery));
+  }, [monthFromQuery]);
   return (
     <>
       <section className="lg:w-max-[900px] mx-auto flex w-full flex-col items-start justify-start gap-6 self-stretch">
@@ -87,19 +89,8 @@ export function EventSection() {
               onClick={() => {
                 handleFilter(month.index + 1);
               }}
-              icon={[
-                activeMonth - 1 === month.index && (
-                  <CheckMark
-                    key={`checkmark+${month.index}`}
-                    className={cn('block group-hover:hidden group-focus:hidden', commonIconStyle)}
-                  />
-                ),
-
-                <Search
-                  key={`searchicon+${month.index}`}
-                  className={cn('hidden group-hover:block group-focus:block', commonIconStyle)}
-                />,
-              ]}
+              icon={activeMonth - 1 === month.index ? <CheckMark /> : <Search />}
+              forceShowIcon={activeMonth - 1 === month.index}
             >
               {capitalize(month.name)}
             </PillButton>

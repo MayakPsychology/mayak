@@ -7,15 +7,17 @@ import { CheckMark, Search } from '@icons';
 import { PillButton } from '@components/PillButton';
 import { Slide, Slider } from '@components/Slider';
 import { cn } from '@utils/cn';
+import { useBodyScrollLock } from '@/app/_hooks';
 
 const activeButtonStyles = 'pointer-events-none border-secondary-300 bg-secondary-300 font-semibold text-gray-900';
-const commonIconStyle = 'h-4 w-4 transition-all';
 
 export function DistrictList({ list, className }) {
   const [selected, setSelected] = useState(0);
   const handleClick = index => {
     setSelected(index);
   };
+
+  useBodyScrollLock(true, 'x');
 
   return (
     <Slider slidesPerView="auto" className={cn('flex', className)}>
@@ -32,25 +34,10 @@ export function DistrictList({ list, className }) {
               <PillButton
                 variant="eventFilter"
                 colorVariant="semiorange"
-                icon={[
-                  isSelected && (
-                    <CheckMark
-                      key={`checkmark+${index}`}
-                      className={cn('block group-hover:hidden group-focus:hidden', commonIconStyle)}
-                    />
-                  ),
-                  <Search
-                    key={`searchicon+${index}`}
-                    className={cn('hidden group-hover:block group-focus:block', commonIconStyle)}
-                  />,
-                ]}
-                className={cn(
-                  isSelected && activeButtonStyles,
-                  'group',
-                  { 'w-[170px]': index !== 0 },
-                  { 'w-[100px]': index === 0 },
-                )}
-                aria-label={`Click to see specialists related to the district with id ${id}`}
+                icon={isSelected ? <CheckMark /> : <Search />}
+                forceShowIcon={isSelected}
+                className={cn('*:gap-0', isSelected && activeButtonStyles)}
+                aria-label={`Click to see specialists related to the district ${name}`}
               >
                 {name}
               </PillButton>
@@ -61,7 +48,6 @@ export function DistrictList({ list, className }) {
     </Slider>
   );
 }
-
 DistrictList.propTypes = {
   list: PropTypes.arrayOf(
     PropTypes.shape({

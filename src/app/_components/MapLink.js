@@ -29,7 +29,13 @@ export function MapLink({ mapMode = false, className }) {
       className={className}
     >
       <Link href={href} aria-label="">
-        <PillButton icon={icon} variant="filled" colorVariant="orange" className={cn('z-10 flex items-center')}>
+        <PillButton
+          icon={icon}
+          forceShowIcon
+          variant="filled"
+          colorVariant="orange"
+          className={cn('z-10 flex items-center')}
+        >
           <span className="hidden md:block">{buttonText}</span>
         </PillButton>
       </Link>
