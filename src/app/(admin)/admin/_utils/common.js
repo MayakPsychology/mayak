@@ -79,29 +79,24 @@ export const transformSupportFocuses = ({ focuses, focusesIds }) => {
   };
 };
 
-export const transformCreateData = ({
-  addresses,
-  supportFocuses,
-  socialLink,
-  workTime,
-  workingWith,
-  notWorkingWith,
-  ...rest
-}) => ({
-  ...rest,
-  ...socialLink,
-  clientsWorkingWith: {
-    connect: workingWith?.length ? toConnectList(workingWith) : undefined,
-  },
-  clientsNotWorkingWith: {
-    connect: notWorkingWith?.length ? toConnectList(notWorkingWith) : undefined,
-  },
-  addresses: {
-    create: addresses?.length ? transformAddresses({ addresses, type: 'create' }) : undefined,
-  },
-  supportFocuses: transformSupportFocuses({ focuses: supportFocuses, focusesIds: [] }),
-  workTime: { connectOrCreate: workTime?.length ? transformWorkTime(workTime) : undefined },
-});
+export const transformCreateData = ({ addresses, supportFocuses, socialLink, workTime, clients, ...rest }) => {
+  const { workingWith, notWorkingWith } = clients;
+  return {
+    ...rest,
+    ...socialLink,
+    clientsWorkingWith: {
+      connect: workingWith?.length ? toConnectList(workingWith) : undefined,
+    },
+    clientsNotWorkingWith: {
+      connect: notWorkingWith?.length ? toConnectList(notWorkingWith) : undefined,
+    },
+    addresses: {
+      create: addresses?.length ? transformAddresses({ addresses, type: 'create' }) : undefined,
+    },
+    supportFocuses: transformSupportFocuses({ focuses: supportFocuses, focusesIds: [] }),
+    workTime: { connectOrCreate: workTime?.length ? transformWorkTime(workTime) : undefined },
+  };
+};
 
 export const transformEditData = ({
   addresses,
