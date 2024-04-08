@@ -3,7 +3,7 @@ import { Paragraph } from '@components/Typography';
 import { cn } from '@/utils/cn';
 import { buttonColorVariant, buttonType } from './style';
 
-export function PillButton({ children, className, clasaNameDiv, icon, variant, colorVariant, ...props }) {
+export function PillButton({ children, className, icon, variant, colorVariant, ...props }) {
   const buttonVariant = icon ? buttonType[variant]?.icon : buttonType[variant]?.regular || {};
   const buttonColor = buttonColorVariant[variant]?.[colorVariant] || {};
 
@@ -21,11 +21,9 @@ export function PillButton({ children, className, clasaNameDiv, icon, variant, c
     className,
   );
 
-  const divStyle = layoutStyle || '';
-
   return (
     <button type="button" className={styles} {...props}>
-      <div className={cn(divStyle, clasaNameDiv)}>
+      <div className={cn(layoutStyle)}>
         {icon}
         <Paragraph className="text-inherit">{children}</Paragraph>
       </div>
@@ -39,6 +37,5 @@ PillButton.propTypes = {
   children: PropTypes.node,
   type: PropTypes.string,
   className: PropTypes.string,
-  clasaNameDiv: PropTypes.string,
   icon: PropTypes.node,
 };
