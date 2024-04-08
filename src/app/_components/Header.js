@@ -39,7 +39,7 @@ export function Header({ donationDetails }) {
 
   useBodyScrollLock(isMenuOpen, 'y');
 
-  const showDonationDetails = donationDetails && donationDetails.donationEnabled;
+  const showDonationDetails = donationDetails && donationDetails.isDonationEnabled;
 
   return (
     <header>

@@ -58,17 +58,17 @@ export function DonateModal({ isOpen, onClose, donationDetails }) {
   const {
     title,
     subtitle,
-    subtitleEnabled,
+    isSubtitleEnabled,
     paypalLink,
-    paypalLinkEnabled,
+    isPayPalLinkEnabled,
     privatLink,
-    privatLinkEnabled,
-    bankDetailsEnabled,
+    isPrivatLinkEnabled,
+    isBankDetailsEnabled,
     enterpriceName,
     iban,
     enterpriseRegisterId,
     paymentPurpose,
-    qrEnabled,
+    isQREnabled,
     qrLink,
   } = donationDetails;
 
@@ -85,7 +85,7 @@ export function DonateModal({ isOpen, onClose, donationDetails }) {
               {title}
             </Paragraph>
           </div>
-          {subtitleEnabled && (
+          {isSubtitleEnabled && (
             <Paragraph
               type="p4"
               className="w-full whitespace-nowrap text-center text-p4 font-normal text-gray-900 lg:text-p2"
@@ -96,19 +96,19 @@ export function DonateModal({ isOpen, onClose, donationDetails }) {
         </div>
         <div className="flex w-full flex-col gap-[10px] lg:gap-5">
           <div className="inline-flex w-full items-start justify-between gap-[10px]">
-            {privatLinkEnabled && (
+            {isPrivatLinkEnabled && (
               <PillLink href={privatLink} className="h-[24px] w-[73px] lg:h-[30px] lg:w-[117px]">
                 <Privat24 />
               </PillLink>
             )}
-            {paypalLinkEnabled && (
+            {isPayPalLinkEnabled && (
               <PillLink href={paypalLink} className="h-[24px] w-[73px] lg:h-[30px] lg:w-[117px]">
                 <PayPal />
               </PillLink>
             )}
           </div>
 
-          {bankDetailsEnabled && (
+          {isBankDetailsEnabled && (
             <div className="flex gap-5">
               <div className="flex w-full flex-col items-center gap-5 rounded-[30px] bg-other-white px-3 py-6 lg:py-5 lg:pe-10 lg:ps-5">
                 <div className="flex w-full items-center justify-between gap-9 lg:gap-14">
@@ -118,7 +118,7 @@ export function DonateModal({ isOpen, onClose, donationDetails }) {
                     <DataSection label="Єдрпоу" text={enterpriseRegisterId} />
                     <DataSection label="Призначення платежу" text={paymentPurpose} />
                   </div>
-                  {qrEnabled && (
+                  {isQREnabled && (
                     <a className="hidden w-fit lg:block" href={qrLink} target="_blank" rel="noopener noreferrer">
                       <QRCodeSVG size={200} value={qrLink} />
                     </a>

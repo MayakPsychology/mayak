@@ -571,19 +571,19 @@ export const psychologyMethods = [
 ];
 
 export const donationDetails = {
-  donationEnabled: true,
+  isDonationEnabled: true,
   title: 'Підтримати проект',
   subtitle: 'Ваш донат допоможе...',
-  subtitleEnabled: true,
+  isSubtitleEnabled: true,
   paypalLink: 'https://www.paypal.com/ua/home',
-  paypalLinkEnabled: true,
+  isPayPalLinkEnabled: true,
   privatLink: 'https://next.privat24.ua',
-  privatLinkEnabled: true,
-  bankDetailsEnabled: true,
+  isPrivatLinkEnabled: true,
+  isBankDetailsEnabled: true,
   enterpriceName: 'Соціальний проект "Маяк"',
   iban: 'UA213223130000026007233566001',
   enterpriseRegisterId: '12345678',
   paymentPurpose: 'Благодійний внесок',
-  qrEnabled: true,
+  isQREnabled: true,
   qrLink: 'https://next.privat24.ua',
 };

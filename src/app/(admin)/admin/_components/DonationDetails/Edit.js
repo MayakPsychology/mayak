@@ -6,20 +6,20 @@ export function DonationDetailsEdit() {
   return (
     <Edit>
       <SimpleForm reValidateMode="onChange" resolver={zodResolver(DonationDetailsSchema)}>
-        <BooleanInput label="Донати дозволені" source="donationEnabled" />
+        <BooleanInput label="Донати дозволені" source="isDonationEnabled" />
         <TextInput label="Заголовок модального вікна" source="title" fullWidth />
-        <BooleanInput label="Показувати підзаголовок модального вікна" source="subtitleEnabled" />
+        <BooleanInput label="Показувати підзаголовок модального вікна" source="isSubtitleEnabled" />
         <TextInput label="Підзаголовок модального вікна" fullWidth source="subtitle" />
-        <BooleanInput label="Показувати реквізити у модальному вікні" fullWidth source="bankDetailsEnabled" />
+        <BooleanInput label="Показувати реквізити у модальному вікні" fullWidth source="isBankDetailsEnabled" />
         <TextInput label="Посилання на PayPal" fullWidth source="paypalLink" />
-        <BooleanInput label="Показувати секцію з донатом на PayPal" source="paypalLinkEnabled" />
+        <BooleanInput label="Показувати секцію з донатом на PayPal" source="isPayPalLinkEnabled" />
         <TextInput label="Посилання на Privat24" source="privatLink" fullWidth />
-        <BooleanInput label="Показувати секцію з донатом на Privat24" fullWidth source="privatLinkEnabled" />
+        <BooleanInput label="Показувати секцію з донатом на Privat24" fullWidth source="isPrivatLinkEnabled" />
         <TextInput label="Назва підприємства" source="enterpriceName" fullWidth />
         <TextInput label="IBAN" source="iban" fullWidth />
         <TextInput label="ЄДРПОУ" source="enterpriseRegisterId" fullWidth />
         <TextInput label="Призначення платежу" source="paymentPurpose" fullWidth />
-        <BooleanInput label="Показувати QR-код" source="qrEnabled" />
+        <BooleanInput label="Показувати QR-код" source="isQREnabled" />
         <TextInput label="Посилання для QR-коду" source="qrLink" fullWidth />
       </SimpleForm>
     </Edit>

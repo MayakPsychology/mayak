@@ -43,3 +43,4 @@ export const MAX_NUM_SELECTED_SOCIAL_LINKS = 5;
 
 export const PSYCHOTHERAPIST = 'Психотерапевт';
 export const PSYCHOLOGIST = 'Психолог';
+export const REGISTER_ID_LENGTH = 8;
