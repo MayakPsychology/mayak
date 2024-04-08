@@ -106,6 +106,7 @@ export const transformEditData = ({
   formatOfWork,
   socialLink,
   workTime,
+  clients,
   ...rest
 }) => {
   const addressesToConnect = toConnectList(
@@ -118,6 +119,10 @@ export const transformEditData = ({
     addressesIds?.filter(addressId => !addressesToConnect.some(address => address.id === addressId)) ?? [];
   // if formatOfWork is ONLINE, we need to delete all connected addresses
   const addressesToDelete = formatOfWork !== FormatOfWork.ONLINE ? toConnectList(unselectedAddresses) : {};
+
+  const clientsWorkingWith = toConnectList(clients.workingWith);
+  const clientsNotWorkingWith = toConnectList(clients.notWorkingWith);
+
   return {
     ...rest,
     ...socialLink,
@@ -134,5 +139,15 @@ export const transformEditData = ({
       deleteMany: addressesToDelete,
     },
     supportFocuses: transformSupportFocuses({ focuses: supportFocuses, focusesIds: supportFocusesIds }),
+    clientsWorkingWith: {
+      set: [],
+      connect: clientsWorkingWith,
+    },
+    clientsWorkingWithIds: undefined,
+    clientsNotWorkingWith: {
+      set: [],
+      connect: clientsNotWorkingWith,
+    },
+    clientsNotWorkingWithIds: undefined,
   };
 };
