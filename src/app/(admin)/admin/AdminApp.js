@@ -22,10 +22,10 @@ import {
   SpecialistsList,
 } from '@admin/components/ServiceProvider/Specialist';
 
-import { SocialMediaCreate, SocialMediaEdit, SocialMediaList } from '@admin/components/SocialMedia';
+import { NavigationEdit, NavigationList } from '@admin/components/Navigation';
+import { ClientCategoryList } from '@admin/components/ClientCategoriesType';
+import { ClientCategoryCreate } from '@admin/components/ClientCategoriesType/Create';
 import { authProvider } from './authProvider';
-import { ClientCategoryList } from './_components/ClientCategoriesType';
-import { ClientCategoryCreate } from './_components/ClientCategoriesType/Create';
 
 export default function AdminPage() {
   const data = dataProvider('/api/admin');
@@ -117,11 +117,10 @@ export default function AdminPage() {
         create={ClientCategoryCreate}
       />
       <Resource
-        name={RESOURCES.socialMedia}
-        options={{ label: 'Соц мережі' }}
-        list={SocialMediaList}
-        edit={SocialMediaEdit}
-        create={SocialMediaCreate}
+        name={RESOURCES.navigation}
+        options={{ label: 'Посилання' }}
+        list={NavigationList}
+        edit={NavigationEdit}
       />
     </Admin>
   );

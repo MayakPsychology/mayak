@@ -1,11 +1,11 @@
 -- CreateEnum
-CREATE TYPE "SocialMediaPlatform" AS ENUM ('FACEBOOK', 'TWITTER', 'INSTAGRAM', 'LINKEDIN', 'YOUTUBE', 'TIKTOK', 'WHATSAPP', 'TELEGRAM');
+CREATE TYPE "NavigationUrl" AS ENUM ('FACEBOOK', 'INSTAGRAM', 'APPLICATION');
 
 -- CreateTable
 CREATE TABLE "social_media" (
     "id" UUID NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "title" "SocialMediaPlatform" NOT NULL,
+    "title" "NavigationUrl" NOT NULL,
     "href" TEXT NOT NULL,
 
     CONSTRAINT "social_media_pkey" PRIMARY KEY ("id")

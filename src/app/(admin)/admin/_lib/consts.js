@@ -12,7 +12,7 @@ export const RESOURCES = {
   organizationType: 'organizationType',
   method: 'method',
   clientCategory: 'clientCategory',
-  socialMedia: 'socialMedia',
+  navigation: 'navigation',
 };
 
 export const FORM_TYPES = {

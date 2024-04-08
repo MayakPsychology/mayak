@@ -45,15 +45,10 @@ enum WeekDay {
   SUN
 }
 
-enum SocialMediaPlatform {
+enum NavigationUrl {
   FACEBOOK
-  TWITTER
   INSTAGRAM
-  LINKEDIN
-  YOUTUBE
-  TIKTOK
-  WHATSAPP
-  TELEGRAM
+  APPLICATION
 }
 
 model Specialist {
@@ -326,11 +321,11 @@ model WorkTime {
   @@map("work_time")
 }
 
-model SocialMedia {
-  id        String              @id @default(uuid()) @db.Uuid
-  createdAt DateTime            @default(now())
-  title     SocialMediaPlatform @unique
-  href      String              @db.Text
+model Navigation {
+  id        String        @id @default(uuid()) @db.Uuid
+  createdAt DateTime      @default(now())
+  title     NavigationUrl @unique
+  href      String        @db.Text
 
   @@map("social_media")
 }

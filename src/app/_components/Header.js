@@ -6,15 +6,13 @@ import { BurgerIcon, HeaderCloseIcon, Logo } from '@icons';
 import siteNav from '@config/siteNav';
 import { cn } from '@utils/cn';
 import { useBodyScrollLock } from '@hooks';
-import { InnerLink, SocialLink } from '@components/Links';
+import { InnerLink, SocialLinksList } from '@components/Links';
 import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';
-import { useSocialMediaList } from '@/app/_hooks/api/useSocialMediaList';
 import { DonateModal, DonationSection } from './DonationSection';
 
 export function Header() {
   const { innerLinks } = siteNav;
-  const socialMediaList = useSocialMediaList();
 
   //  Basic styles
   const flexBetween = 'flex flex-row items-center justify-between';
@@ -73,16 +71,9 @@ export function Header() {
               className={cn(basicLink, listItemTextHover, listItemText, 'gap-4 px-3 py-1 transition-all')}
             />
           </div>
-          {socialMediaList && (
-            <SocialLink
-              links={socialMediaList}
-              className={cn(
-                basicLink,
-                iconColors,
-                'hover:color-primary-500 gap-6 transition-all hover:text-primary-500',
-              )}
-            />
-          )}
+          <SocialLinksList
+            className={cn(basicLink, iconColors, 'hover:color-primary-500 gap-6 transition-all hover:text-primary-500')}
+          />
           <PillButton
             variant="outlined"
             colorVariant="blue"
@@ -135,16 +126,13 @@ export function Header() {
             </PillButton>
             <div className={cn(flexBetween, 'items-center')}>
               <p className="inline text-p4 text-primary-700 lg:hidden">Наші соціальні мережі:</p>
-              {socialMediaList && (
-                <SocialLink
-                  links={socialMediaList}
-                  className={cn(
-                    basicLink,
-                    iconColors,
-                    'hover:color-primary-500 gap-4 transition-all hover:text-primary-500',
-                  )}
-                />
-              )}
+              <SocialLinksList
+                className={cn(
+                  basicLink,
+                  iconColors,
+                  'hover:color-primary-500 gap-4 transition-all hover:text-primary-500',
+                )}
+              />
             </div>
           </div>
           <DonationSection
