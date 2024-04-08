@@ -30,14 +30,15 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
   const { lastName, firstName, surname } = data;
   const name = isOrganization ? data.name : [lastName, firstName, surname].filter(Boolean).join(' ');
 
-  const { yearsOnMarket, isFreeReception, formatOfWork, isInclusiveSpace } = data;
+  const { yearsOnMarket, yearsOfExperience, isFreeReception, formatOfWork, isInclusiveSpace } = data;
   const labelsList = getLabelsList({
-    yearsOfExperience: yearsOnMarket,
+    yearsOfExperience: isOrganization ? yearsOnMarket : yearsOfExperience,
     isFreeReception,
     formatOfWork,
     isInclusiveSpace,
     specialistType: type,
   });
+
   const isBadgeList = !!labelsList.filter(label => !!label.content).length;
 
   const { instagram, facebook, tiktok, youtube, linkedin, viber, telegram } = data;
@@ -118,25 +119,25 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
             <SpecialistTitle id={id} truncate name={name} className="mt-2" />
             {data.ownershipType && <OwnershipTypeTile ownershipType={data?.ownershipType} className="mt-2.5" />}
             {isBadgeList && <BadgeList labels={labelsList} className="mt-4 flex-wrap" />}
+            <div className="mt-5 w-full">
+              {isOrganization ? (
+                <OrganizationChipLists
+                  id={id}
+                  expertSpecializations={data.expertSpecializations}
+                  className="border-t border-dashed border-t-gray-200 pt-4"
+                  showCaption={false}
+                />
+              ) : (
+                <MethodList
+                  specializations={specializationsList}
+                  methods={methodsList}
+                  className="max-w-[300px] border-0"
+                  showCaption={false}
+                />
+              )}
+            </div>
             {isHoveredOn && (
               <>
-                <div className="mt-5 w-full">
-                  {isOrganization ? (
-                    <OrganizationChipLists
-                      id={id}
-                      expertSpecializations={data.expertSpecializations}
-                      className="border-t border-dashed border-t-gray-200 pt-4"
-                      showCaption={false}
-                    />
-                  ) : (
-                    <MethodList
-                      specializations={specializationsList}
-                      methods={methodsList}
-                      className="max-w-[300px] border-0"
-                      showCaption={false}
-                    />
-                  )}
-                </div>
                 <ChipList id={`${id}-clientCategories`} items={clientsList} className="mt-4" />
               </>
             )}
