@@ -27,7 +27,7 @@ export function MapLink({ mapMode = false, className }) {
       }}
       className={className}
     >
-      <Link href={href} aria-label="">
+      <Link href={href} aria-label={`Click to see specialist list${mapMode ? ' along with the map' : ''}`}>
         <PillButton
           icon={icon}
           variant="filled"
