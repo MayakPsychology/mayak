@@ -4,7 +4,6 @@ import { PillButton } from '@components/PillButton';
 import { List, Map } from '@icons';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { cn } from '@utils/cn';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -29,7 +28,13 @@ export function MapLink({ mapMode = false, className }) {
       className={className}
     >
       <Link href={href} aria-label="">
-        <PillButton icon={icon} variant="filled" colorVariant="orange" className={cn('z-10 flex items-center')}>
+        <PillButton
+          icon={icon}
+          variant="filled"
+          colorVariant="orange"
+          className="z-10 flex items-center"
+          clasaNameDiv="gap-0 md:gap-2"
+        >
           <span className="hidden md:block">{buttonText}</span>
         </PillButton>
       </Link>

@@ -19,6 +19,7 @@ import { ChipList } from '@components/CardSpecialist/ChipList';
 import { OwnershipTypeTile } from '@components/CardSpecialist/Organization/OwnershipTypeTile';
 import { OrganizationChipLists } from '@components/CardSpecialist/Organization/OrganizationChipLists';
 import { transformClientCategoryIntoChipListItem } from '@components/CardSpecialist/utils';
+import { cn } from '@utils/cn';
 
 export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
   const { id } = data;
@@ -29,11 +30,12 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
   const { lastName, firstName, surname } = data;
   const name = isOrganization ? data.name : [lastName, firstName, surname].filter(Boolean).join(' ');
 
-  const { yearsOnMarket, isFreeReception, formatOfWork } = data;
+  const { yearsOnMarket, isFreeReception, formatOfWork, isInclusiveSpace } = data;
   const labelsList = getLabelsList({
     yearsOfExperience: yearsOnMarket,
     isFreeReception,
     formatOfWork,
+    isInclusiveSpace,
     specialistType: type,
   });
   const isBadgeList = !!labelsList.filter(label => !!label.content).length;
@@ -57,7 +59,6 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
     transformClientCategoryIntoChipListItem({ workingWith: false }),
   );
   const clientsList = [...clientsWorkingWithList, ...clientsNotWorkingWithList];
-
   return (
     <CardWrapper className={className} id={id} type={type}>
       <div className="flex w-full flex-col lg:hidden">
@@ -79,7 +80,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
             {data.ownershipType && <OwnershipTypeTile ownershipType={data?.ownershipType} className="mt-1" />}
           </div>
         </div>
-        <BadgeList labels={labelsList} className="mb-2 mt-4 flex-wrap border-0" />
+        <BadgeList labels={labelsList} className={cn('mt mb-2 flex-wrap border-0', { hidden: !isBadgeList })} />
         <MethodList
           specializations={specializationsList}
           methods={methodsList}
@@ -114,12 +115,12 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
               extendedCardOpened
               className="flex-wrap"
             />
-            {data.ownershipType && <OwnershipTypeTile ownershipType={data?.ownershipType} className="mt-2.5" />}
             <SpecialistTitle id={id} truncate name={name} className="mt-2" />
+            {data.ownershipType && <OwnershipTypeTile ownershipType={data?.ownershipType} className="mt-2.5" />}
             {isBadgeList && <BadgeList labels={labelsList} className="mt-4 flex-wrap" />}
             {isHoveredOn && (
               <>
-                <div className="border-1 mt-5 w-full border-t border-dashed border-t-gray-200">
+                <div className="mt-5 w-full">
                   {isOrganization ? (
                     <OrganizationChipLists
                       id={id}
