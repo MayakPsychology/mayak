@@ -12,7 +12,7 @@ export const donationDetailsPropTypes = PropTypes.shape({
   isBankDetailsEnabled: PropTypes.bool,
   enterpriceName: PropTypes.string,
   iban: PropTypes.string,
-  enterpriseRegisterId: PropTypes.string,
+  enterpriseRegisterId: PropTypes.number,
   paymentPurpose: PropTypes.string,
   isQREnabled: PropTypes.bool,
   qrLink: PropTypes.string,

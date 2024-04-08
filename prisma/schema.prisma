@@ -327,7 +327,7 @@ model DonationDetails {
   isPrivatLinkEnabled  Boolean @default(true)
   isBankDetailsEnabled Boolean @default(true)
   enterpriceName       String  @db.VarChar(128) // Назва підприємства
-  enterpriseRegisterId String  @db.VarChar(20) // ЄДРПОУ
+  enterpriseRegisterId Int     @db.Integer // ЄДРПОУ
   paymentPurpose       String  @db.VarChar(50) // Призначення платежу
   iban                 String  @db.VarChar(50) // IBAN
   isQREnabled          Boolean @default(true)

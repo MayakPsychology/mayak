@@ -582,7 +582,7 @@ export const donationDetails = {
   isBankDetailsEnabled: true,
   enterpriceName: 'Соціальний проект "Маяк"',
   iban: 'UA213223130000026007233566001',
-  enterpriseRegisterId: '12345678',
+  enterpriseRegisterId: 12345678,
   paymentPurpose: 'Благодійний внесок',
   isQREnabled: true,
   qrLink: 'https://next.privat24.ua',

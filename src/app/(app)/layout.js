@@ -15,6 +15,7 @@ export const metadata = {
 
 export default async function Layout({ children }) {
   const donationDetails = await prisma.donationDetails.findFirst();
+
   return (
     <Hint>
       <div className="flex min-h-screen flex-col">

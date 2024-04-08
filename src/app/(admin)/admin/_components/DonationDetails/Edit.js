@@ -17,7 +17,15 @@ export function DonationDetailsEdit() {
         <BooleanInput label="Показувати секцію з донатом на Privat24" fullWidth source="isPrivatLinkEnabled" />
         <TextInput label="Назва підприємства" source="enterpriceName" fullWidth />
         <TextInput label="IBAN" source="iban" fullWidth />
-        <TextInput label="ЄДРПОУ" source="enterpriseRegisterId" fullWidth />
+        <TextInput
+          label="ЄДРПОУ"
+          source="enterpriseRegisterId"
+          parse={v => {
+            if (!v) return v;
+            return !Number.isNaN(Number(v)) ? Number(v) : v;
+          }}
+          fullWidth
+        />
         <TextInput label="Призначення платежу" source="paymentPurpose" fullWidth />
         <BooleanInput label="Показувати QR-код" source="isQREnabled" />
         <TextInput label="Посилання для QR-коду" source="qrLink" fullWidth />

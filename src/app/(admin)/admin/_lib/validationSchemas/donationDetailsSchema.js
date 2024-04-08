@@ -22,8 +22,17 @@ export const DonationDetailsSchema = z.object({
     message: 'Введіть коректний IBAN',
   }),
   enterpriseRegisterId: z
-    .string()
-    .refine(value => value.length === REGISTER_ID_LENGTH && !Number.isNaN(Number(value)), {
+    .number({
+      invalid_type_error: 'Код ЄДРПОУ має бути числом',
+      required_error: "Код ЄДРПОУ є обов'язковим",
+    })
+    .int({
+      message: 'Код ЄДРПОУ має бути цілим числом',
+    })
+    .positive({
+      message: 'Код ЄДРПОУ має бути додатнім числом',
+    })
+    .refine(value => String(value).length === REGISTER_ID_LENGTH, {
       message: `Код ЄДРПОУ має містити тільки цифри та мати довжину ${REGISTER_ID_LENGTH} символів`,
     }),
   paymentPurpose: zString,
