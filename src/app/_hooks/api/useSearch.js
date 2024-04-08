@@ -14,6 +14,7 @@ export const useListEntries = searchParams =>
 
 export const usePaginatedEntries = searchParams =>
   useInfiniteQuery({
+    // this is needed for auto-invalidate query when changing url query params
     queryKey: [searchParams.toString()],
     queryFn: ({ pageParam = '' }) => {
       // just in case there is immutable instance passed
