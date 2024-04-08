@@ -12,7 +12,7 @@ export function useSetParam(param) {
   const replace = value => {
     newParams.delete(param);
     newParams.set(param, value);
-    router.push(`?${newParams.toString()}`);
+    router.replace(`?${newParams.toString()}`);
   };
 
   const remove = value => {
