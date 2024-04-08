@@ -2,11 +2,11 @@
 
 import { useCallback, useState } from 'react';
 import Link from 'next/link';
-import { BurgerIcon, Logo, HeaderCloseIcon } from '@icons';
+import { BurgerIcon, HeaderCloseIcon, Logo } from '@icons';
 import siteNav from '@config/siteNav';
 import { cn } from '@utils/cn';
 import { useBodyScrollLock } from '@hooks';
-import { SocialLink, InnerLink } from '@components/Links';
+import { InnerLink, SocialLink } from '@components/Links';
 import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';
 import { DonateModal, DonationSection, donationDetailsPropTypes } from '@components/DonationSection';
@@ -42,7 +42,7 @@ export function Header({ donationDetails }) {
   const showDonationDetails = donationDetails && donationDetails.isDonationEnabled;
 
   return (
-    <header>
+    <header className="z-50">
       {/* Desktop Donation Section */}
       {showDonationDetails && (
         <DonationSection

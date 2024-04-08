@@ -1,6 +1,6 @@
-import { redirect } from 'next';
-import { CardSpecialist, CardOrganization } from '@/app/_components/CardSpecialist';
-import { getSpecialistById, getOrganizationById } from '@/app/(app)/specialist/utils';
+import { redirect } from 'next/navigation';
+import { CardOrganization, CardSpecialist } from '@/app/_components/CardSpecialist';
+import { getOrganizationById, getSpecialistById } from '@/app/(app)/specialist/utils';
 
 export async function generateMetadata({ params, searchParams }) {
   try {

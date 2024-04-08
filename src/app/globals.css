@@ -29,16 +29,14 @@
     background: #deddec;
     border-radius: 9999px;
   }
+
   .overlay-scrollbar::-webkit-scrollbar-track-piece:end {
     margin-bottom: 10px;
   }
+
   .overlay-scrollbar::-webkit-scrollbar-track-piece:start {
     margin-top: 10px;
   }
-}
-
-.swiper-slide {
-  width: auto !important;
 }
 
 .tooltip {
@@ -50,7 +48,7 @@
   background: rgba(255, 255, 255, 0.6);
   text-align: center;
   color: '#1d1d1e';
-  box-shadow: 0px 2px 8px 0px rgba(192, 191, 206, 0.5);
+  box-shadow: 0 2px 8px 0 rgba(192, 191, 206, 0.5);
   backdrop-filter: blur(3px);
   width: max-content;
 }
