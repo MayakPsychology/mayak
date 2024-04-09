@@ -141,5 +141,5 @@ export function Header({ socialLinks }) {
 }
 
 Header.propTypes = {
-  socialLinks: PropTypes.element,
+  socialLinks: PropTypes.elementType,
 };
