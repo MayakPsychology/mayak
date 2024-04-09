@@ -29,7 +29,7 @@ export function PillButton({ children, className, icon, variant, colorVariant, f
             className={cn(
               forceShowIcon
                 ? 'mr-1 h-4 w-4'
-                : 'h-4 w-0 transition-all duration-150 *:opacity-0 group-hover:mr-1 group-hover:w-4 group-hover:*:opacity-100',
+                : 'h-4 w-0 scale-0 transition-all *:opacity-0 *:transition-all group-hover:mr-1 group-hover:w-4 group-hover:scale-100 group-hover:*:opacity-100',
             )}
           >
             {icon}
