@@ -6,7 +6,6 @@ import { CalendarIcon, LocationIcon, PriceIcon, TimeIcon } from '@icons';
 import { Label } from '@components/Label';
 import { OverflownText } from '@components/OverflownText';
 import { EventLinkModal } from '@components/EventLinkModal';
-import { useBodyScrollLock } from '@hooks';
 import { cn } from '@/utils/cn';
 import { parseDate } from '@/utils/parseDate';
 
@@ -45,7 +44,6 @@ function transformData(event) {
 
 export function EventCard({ event }) {
   const [isModalOpenOpen, setIsModalOpen] = useState(false);
-  useBodyScrollLock(isModalOpenOpen);
 
   const { title, organizerName, tags, priceText, locationText, date, time, locationLink, additionalLink } =
     transformData(event);

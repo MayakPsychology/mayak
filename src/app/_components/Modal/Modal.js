@@ -3,6 +3,7 @@
 import PropTypes from 'prop-types';
 import { cn } from '@utils/cn';
 import { motion } from 'framer-motion';
+import { useBodyScrollLock } from '@hooks';
 import { ClientPortal } from '../ClientPortal';
 import { ModalCloseButton } from './ModalCloseButton';
 
@@ -36,6 +37,8 @@ export const Modal = ({
     },
   };
 
+  useBodyScrollLock(isOpen);
+
   return (
     <ClientPortal selector="modal-root" show={isOpen}>
       {isOpen && (
@@ -63,7 +66,7 @@ export const Modal = ({
                   <ModalCloseButton onClose={onClose} />
                 </div>
               )}
-              <div className={cn('mt-4 overflow-y-auto')}>{children}</div>
+              <div className="mt-4 overflow-y-auto">{children}</div>
             </motion.div>
           </div>
         </>

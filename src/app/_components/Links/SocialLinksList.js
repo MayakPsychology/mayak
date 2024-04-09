@@ -1,13 +1,11 @@
 import Link from 'next/link';
 import PropTypes from 'prop-types';
-import { getLinksList } from '@components/Links/linksActions';
 import { NavigationUrl } from '@prisma/client';
 import { Facebook, Instagram } from '@icons';
 
-export async function SocialLinksList({ className }) {
-  const { socialMediaList } = await getLinksList();
+export function SocialLinksList({ list, className }) {
   const { INSTAGRAM } = NavigationUrl;
-  const links = socialMediaList.map(({ title, href }) => ({
+  const links = list?.map(({ title, href }) => ({
     title,
     href,
     svg: title === INSTAGRAM ? <Instagram /> : <Facebook />,
@@ -33,6 +31,12 @@ export async function SocialLinksList({ className }) {
   );
 }
 
+export const linkItemPropType = PropTypes.shape({
+  title: PropTypes.string,
+  href: PropTypes.string,
+});
+
 SocialLinksList.propTypes = {
+  list: PropTypes.arrayOf(linkItemPropType),
   className: PropTypes.string,
 };

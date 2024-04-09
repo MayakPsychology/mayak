@@ -2,11 +2,11 @@ import Link from 'next/link';
 import { WhiteLogo } from '@icons';
 import { cn } from '@utils/cn';
 import { PillButton } from '@components/PillButton';
-import { SocialLinksList } from '@components/Links';
-import { getLinksList } from '@components/Links/linksActions';
+import PropTypes from 'prop-types';
+import { linkItemPropType, SocialLinksList } from '@components/Links';
 
-export async function Footer() {
-  const { applicationLink } = await getLinksList();
+export async function Footer({ socialLinks }) {
+  const { applicationLink, socialLinksList } = socialLinks;
 
   // Basic styles
   const flexBetweenMd = 'lg:inline-flex lg:flex-row lg:items-center lg:justify-between';
@@ -52,9 +52,17 @@ export async function Footer() {
             role="list"
             status="footerSocials"
             className={cn(basicLink, iconColors, 'hover:color-primary-500 gap-4 transition-all hover:text-primary-500')}
+            list={socialLinksList}
           />
         </div>
       </div>
     </footer>
   );
 }
+
+Footer.propTypes = {
+  socialLinks: PropTypes.shape({
+    socialLinksList: PropTypes.arrayOf(linkItemPropType),
+    applicationLink: linkItemPropType,
+  }),
+};

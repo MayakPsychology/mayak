@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { BurgerIcon, HeaderCloseIcon, Logo } from '@icons';
 import siteNav from '@config/siteNav';
 import { cn } from '@utils/cn';
-import { useBodyScrollLock } from '@hooks';
-import { InnerLink } from '@components/Links';
+import { InnerLink, linkItemPropType, SocialLinksList } from '@components/Links';
 import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';
 import PropTypes from 'prop-types';
@@ -36,9 +35,6 @@ export function Header({ socialLinks, donationDetails }) {
   const toggleDonateModal = useCallback(() => {
     setDonateModalOpen(prevState => !prevState);
   }, [setDonateModalOpen]);
-
-  const isScrollLock = isMenuOpen || isFeedbackOpen || isDonateModalOpen;
-  useBodyScrollLock(isScrollLock);
 
   const showDonationDetails = donationDetails && donationDetails.isDonationEnabled;
 
@@ -76,7 +72,7 @@ export function Header({ socialLinks, donationDetails }) {
               className={cn(basicLink, listItemTextHover, listItemText, 'gap-4 px-3 py-1 transition-all')}
             />
           </div>
-          {socialLinks}
+          <SocialLinksList list={socialLinks} className="text-primary-700 hover:text-primary-500" />
           <PillButton
             variant="outlined"
             colorVariant="blue"
@@ -129,7 +125,7 @@ export function Header({ socialLinks, donationDetails }) {
             </PillButton>
             <div className={cn(flexBetween, 'items-center')}>
               <p className="inline text-p4 text-primary-700 lg:hidden">Наші соціальні мережі:</p>
-              {socialLinks}
+              <SocialLinksList list={socialLinks} className="text-primary-700 hover:text-primary-500" />
             </div>
           </div>
           {showDonationDetails && (
@@ -148,6 +144,6 @@ export function Header({ socialLinks, donationDetails }) {
 }
 
 Header.propTypes = {
-  socialLinks: PropTypes.elementType,
+  socialLinks: PropTypes.arrayOf(linkItemPropType),
   donationDetails: donationDetailsPropTypes,
 };
