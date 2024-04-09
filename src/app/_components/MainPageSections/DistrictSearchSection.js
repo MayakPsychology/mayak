@@ -11,7 +11,7 @@ export async function DistrictSearchSection({ className }) {
     .reduce((acc, district) => [...acc, district], [{ id: 'all-districts', name: 'Усі' }]);
 
   return (
-    <section className={cn('lg:px-[80px]', className)}>
+    <section className={cn('px-4 lg:px-[80px]', className)}>
       <div className="mx-auto max-w-[910px]">
         <Heading type="h3" className="text-p4 font-bold uppercase text-primary-600">
           Райони міста Львова

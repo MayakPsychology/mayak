@@ -74,8 +74,9 @@ export function EventSection() {
     [replaceParam],
   );
   useEffect(() => {
-    setActiveMonth(Number(monthFromQuery));
+    setActiveMonth(monthFromQuery ? Number(monthFromQuery) : filteredMonths[0].index + 1);
   }, [monthFromQuery]);
+
   return (
     <>
       <section className="lg:w-max-[900px] mx-auto flex w-full flex-col items-start justify-start gap-6 self-stretch">
@@ -84,7 +85,7 @@ export function EventSection() {
             <PillButton
               variant="eventFilter"
               colorVariant="semiorange"
-              className={cn(activeMonth - 1 === month.index && activeButtonStyles, 'group w-fit')}
+              className={cn('*:gap-0', activeMonth - 1 === month.index && activeButtonStyles)}
               key={month.index}
               onClick={() => {
                 handleFilter(month.index + 1);
