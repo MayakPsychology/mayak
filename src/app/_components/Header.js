@@ -9,11 +9,10 @@ import { useBodyScrollLock } from '@hooks';
 import { InnerLink, SocialLink } from '@components/Links';
 import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';
-import { DonateModal, DonationSection } from './DonationSection';
+import { DonateModal, DonationSection, donationDetailsPropTypes } from '@components/DonationSection';
 
-export function Header() {
+export function Header({ donationDetails }) {
   const { links, innerLinks } = siteNav;
-
   //  Basic styles
   const flexBetween = 'flex flex-row items-center justify-between';
   const flexCenter = 'flex flex-row items-center justify-center';
@@ -39,13 +38,18 @@ export function Header() {
   }, [setDonateModalOpen]);
 
   useBodyScrollLock(isMenuOpen, 'y');
+
+  const showDonationDetails = donationDetails && donationDetails.isDonationEnabled;
+
   return (
     <header className="z-50">
       {/* Desktop Donation Section */}
-      <DonationSection
-        onDonateClick={toggleDonateModal}
-        className="hidden items-center justify-end gap-[24px] py-[12px] pe-[80px] ps-[104px] lg:flex"
-      />
+      {showDonationDetails && (
+        <DonationSection
+          onDonateClick={toggleDonateModal}
+          className="hidden items-center justify-end gap-[24px] py-[12px] pe-[80px] ps-[104px] lg:flex"
+        />
+      )}
       {/* this element is used to fill the space under navbar on mobile screens */}
       <div className="border-t-[1px] p-4 lg:hidden">
         <div className="h-9" />
@@ -137,15 +141,21 @@ export function Header() {
               />
             </div>
           </div>
-          <DonationSection
-            onDonateClick={toggleDonateModal}
-            className="flex h-[100px] items-center justify-between gap-[8px] px-[16px] py-[6px] lg:hidden"
-          />
+          {showDonationDetails && (
+            <DonationSection
+              onDonateClick={toggleDonateModal}
+              className="flex h-[100px] items-center justify-between gap-[8px] px-[16px] py-[6px] lg:hidden"
+            />
+          )}
         </div>
       </nav>
 
       <Feedback isFeedbackOpen={isFeedbackOpen} onClose={toggleFeedback} />
-      <DonateModal isOpen={isDonateModalOpen} onClose={toggleDonateModal} />
+      <DonateModal isOpen={isDonateModalOpen} onClose={toggleDonateModal} donationDetails={donationDetails} />
     </header>
   );
 }
+
+Header.propTypes = {
+  donationDetails: donationDetailsPropTypes,
+};

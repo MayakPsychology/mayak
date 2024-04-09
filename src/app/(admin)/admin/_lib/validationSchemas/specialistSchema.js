@@ -2,17 +2,16 @@ import { z } from 'zod';
 import { Gender } from '@prisma/client';
 import {
   createValidationSchema,
-  MESSAGES,
   singlePrimaryAddressRefine,
   serviceProviderCore,
   zCreateAddressSchema,
   zEditAddressSchema,
   zSupportFocusSchema,
   zInteger,
-  zString,
   zStringArray,
   zStringWithMax,
 } from './serviceProviderCommonSchemas';
+import { MESSAGES, zString } from './common';
 
 // ------------------ COMMON SECTION ---------------------
 

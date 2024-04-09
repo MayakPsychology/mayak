@@ -30,6 +30,7 @@
     "cssnano": "^6.0.3",
     "framer-motion": "^11.0.12",
     "husky": "^9.0.7",
+    "iban": "^0.0.14",
     "ky": "^1.2.0",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",

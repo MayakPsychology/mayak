@@ -314,3 +314,24 @@ model WorkTime {
   @@unique([weekDay, time, isDayOff])
   @@map("work_time")
 }
+
+model DonationDetails {
+  id                   String  @id @default(uuid()) @db.Uuid
+  isDonationEnabled    Boolean @default(true)
+  title                String  @unique @db.VarChar(50)
+  subtitle             String  @db.VarChar(50)
+  isSubtitleEnabled    Boolean @default(true)
+  paypalLink           String  @db.Text
+  isPayPalLinkEnabled  Boolean @default(true)
+  privatLink           String  @db.Text
+  isPrivatLinkEnabled  Boolean @default(true)
+  isBankDetailsEnabled Boolean @default(true)
+  enterpriceName       String  @db.VarChar(128) // Назва підприємства
+  enterpriseRegisterId Int     @db.Integer // ЄДРПОУ
+  paymentPurpose       String  @db.VarChar(50) // Призначення платежу
+  iban                 String  @db.VarChar(50) // IBAN
+  isQREnabled          Boolean @default(true)
+  qrLink               String  @db.Text // посилання, яке буде відображене QR-кодом
+
+  @@map("donation_details")
+}
