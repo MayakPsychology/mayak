@@ -3,23 +3,17 @@
 import { Caption } from '@components/Typography';
 import { ChipList } from '@components/CardSpecialist/ChipList';
 import PropTypes from 'prop-types';
-import CheckGreen from '@icons/check-green.svg';
-import CrossIcon from '@icons/crossSmall.svg';
+import { cn } from '@utils/cn';
+import { transformClientCategoryIntoChipListItem } from '@components/CardSpecialist/utils';
 
-export function ClientCategoryList({ id, clientCategories, isWorkWith }) {
+export function ClientCategoryList({ id, clientCategories, isWorkWith, className }) {
   if (!clientCategories?.length) return null;
 
-  const items = clientCategories.map(({ id: categoryId, name }) => ({
-    id: categoryId,
-    title: name,
-    icon: isWorkWith ? <CheckGreen /> : <CrossIcon />,
-    containerClassName: isWorkWith ? 'bg-other-lightGreen' : 'bg-other-lightRed',
-    textClassName: isWorkWith ? 'text-primary-600' : 'text-other-black',
-    iconClassName: 'text-xl',
-  }));
+  const clientCategoryCallback = transformClientCategoryIntoChipListItem({ workingWith: isWorkWith });
+  const items = clientCategories.map(clientCategoryCallback);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className={cn('flex flex-col gap-2', className)}>
       <Caption className="text-p4 font-bold text-gray-600">{isWorkWith ? 'працює з' : 'не працює з'}</Caption>
       <ChipList id={`${id}-clientCategories`} items={items} />
     </div>
@@ -32,4 +26,5 @@ ClientCategoryList.propTypes = {
     PropTypes.shape({ id: PropTypes.string, name: PropTypes.string, isWorkWith: PropTypes.bool }),
   ),
   isWorkWith: PropTypes.bool,
+  className: PropTypes.string,
 };

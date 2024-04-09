@@ -13,6 +13,7 @@ export const RESOURCES = {
   method: 'method',
   clientCategory: 'clientCategory',
   navigation: 'navigation',
+  donationDetails: 'donationDetails',
 };
 
 export const FORM_TYPES = {
@@ -43,3 +44,4 @@ export const MAX_NUM_SELECTED_SOCIAL_LINKS = 5;
 
 export const PSYCHOTHERAPIST = 'Психотерапевт';
 export const PSYCHOLOGIST = 'Психолог';
+export const REGISTER_ID_LENGTH = 8;

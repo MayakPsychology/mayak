@@ -41,6 +41,8 @@ export { default as ArrowIconDown } from '@icons/arrowDown.svg';
 export { default as ArrowIconUp } from '@icons/arrowDown.svg';
 export { default as Ellipse } from '@icons/ellipse.svg';
 export { default as Tick } from '@icons/tickIcon.svg';
+export { default as Map } from '@icons/map.svg';
+export { default as List } from '@icons/list.svg';
 export { default as InclusiveSpace } from '@icons/inclusiveSpace.svg';
 export { default as Privat24 } from '@icons/privat24.svg';
 export { default as PayPal } from '@icons/paypal.svg';

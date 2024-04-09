@@ -3,20 +3,9 @@ import { FormatOfWork } from '@prisma/client';
 import { MAX_NUM_SELECTED_SOCIAL_LINKS, WEEKDAYS_TRANSLATION } from '@admin/_lib/consts';
 import { isSpecifiedWorkTime } from '@admin/_utils/common';
 import { PHONE_REGEX } from '@/lib/consts';
+import { MESSAGES, zString, zUrl } from './common';
 
 // ------------------ COMMON SECTION ---------------------
-export const MESSAGES = {
-  requiredField: `Обов'язкове поле`,
-  unacceptableValue: 'Недопустиме значення',
-  singlePrimaryAddress: 'Необхідно вказати одну головну адресу',
-};
-
-export const zString = z
-  .string({
-    required_error: MESSAGES.requiredField,
-    invalid_type_error: MESSAGES.requiredField,
-  })
-  .trim();
 
 export const zStringWithMax = zString.max(128, {
   message: 'Поле не повинно перевищувати 128 символів',
@@ -35,8 +24,6 @@ export const zInteger = z
     message: 'Число має бути не менше 0',
   })
   .nullish();
-
-export const zUrl = zString.url({ message: MESSAGES.unacceptableValue });
 
 export const zWorkTimeSchema = z
   .array(

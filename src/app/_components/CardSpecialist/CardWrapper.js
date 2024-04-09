@@ -2,7 +2,7 @@
 
 import PropTypes from 'prop-types';
 import { useMediaQuery } from '@mui/material';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useHintContext } from '@components/Hint';
 import { cn } from '@utils/cn';
 import { screens } from '@/app/styles/tailwind/ui';
@@ -10,10 +10,10 @@ import { screens } from '@/app/styles/tailwind/ui';
 export function CardWrapper({ children, className, id, type }) {
   const router = useRouter();
   const matches = useMediaQuery(`(max-width: ${screens.md})`);
-  const params = useSearchParams();
   const { toggle } = useHintContext();
+  const pathname = usePathname();
 
-  const isExtendedCardOpened = !!params.get('id');
+  const isExtendedCardOpened = pathname === `/specialist/${id}`;
 
   const handleClick = () => {
     router.push(`/specialist/${id}?type=${type}`, { scroll: false });
@@ -25,8 +25,8 @@ export function CardWrapper({ children, className, id, type }) {
   return (
     <div
       className={cn(
-        'transition-all md:flex md:cursor-auto lg:mx-auto',
-        isExtendedCardOpened ? 'cursor-auto' : 'cursor-pointer',
+        'transition-all md:flex md:cursor-auto',
+        hasClickHandler ? 'cursor-pointer' : 'cursor-default',
         className,
       )}
       onClick={hasClickHandler ? handleClick : undefined}

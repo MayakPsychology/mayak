@@ -16,7 +16,7 @@ export const Modal = ({
   isCloseButton = true,
   layout = true,
 }) => {
-  const blurBackground = <div className="fixed left-0 top-0 z-10 h-full w-full backdrop-blur-sm" />;
+  const blurBackground = <div className="fixed left-0 top-0 z-[55] h-full w-full backdrop-blur-sm" />;
 
   const motionData = {
     initial: {
@@ -42,13 +42,13 @@ export const Modal = ({
         <>
           {isBlurBackground && blurBackground}
           <div
-            className="fixed left-0 top-1/2 z-10 grid h-[75vh] w-full -translate-y-1/2 place-content-center"
+            className="fixed left-0 top-1/2 z-[75] grid h-[75vh] w-full -translate-y-1/2 place-content-center"
             onClick={onClose}
           >
             <motion.div
               className={cn(
                 layout &&
-                  'flex flex-col overflow-hidden rounded-xl bg-other-white px-4 py-[18px] shadow-custom-2 md:p-6',
+                  'z-[99] flex flex-col overflow-hidden rounded-xl bg-other-white px-4 py-[18px] shadow-custom-2 md:p-6',
                 className,
               )}
               onClick={e => {

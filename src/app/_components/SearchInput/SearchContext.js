@@ -4,8 +4,8 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-import { searchSyncKey, useSearchSync, useDebounce } from '@/app/_hooks';
-import { SEARCH_DEBOUNCE_TIME_MS, SEARCH_MIN_QUERY_LENGTH, getSearchTypeConfig, searchInputTypeEnum } from './config';
+import { searchSyncKey, useDebounce, useSearchSync } from '@/app/_hooks';
+import { getSearchTypeConfig, SEARCH_DEBOUNCE_TIME_MS, SEARCH_MIN_QUERY_LENGTH, searchInputTypeEnum } from './config';
 
 const SearchContext = createContext();
 
@@ -13,6 +13,7 @@ export function SearchProvider({ children }) {
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('query');
   const searchTypeParam = searchParams.get('searchType');
+  const mode = searchParams.get('mode');
   const [query, setQuery] = useState(queryParam || '');
   const [searchType, setSearchType] = useState(searchTypeParam || '');
   const [isSelectTypeOpen, setIsSelectTypeOpen] = useState(false);
@@ -32,16 +33,19 @@ export function SearchProvider({ children }) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  const mapMode = mode ? 'mode=map&' : '';
+
   function submitSearch() {
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
-    router.push(`/specialist?searchType=${currentSearchType}&query=${query}`);
+    router.push(`/specialist?${mapMode}searchType=${currentSearchType}&query=${query}`);
   }
+
   function navigateToAutoCompleteItem(autoCompleteItem) {
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
     if (currentSearchType === searchInputTypeEnum.REQUEST) {
-      router.push(`/specialist?searchType=${searchInputTypeEnum.REQUEST}&query=${autoCompleteItem.title}`);
+      router.push(`/specialist?${mapMode}searchType=${searchInputTypeEnum.REQUEST}&query=${autoCompleteItem.title}`);
     } else if (
       currentSearchType === searchInputTypeEnum.SPECIALIST ||
       currentSearchType === searchInputTypeEnum.ORGANIZATION

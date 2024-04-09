@@ -25,6 +25,8 @@ import {
 import { NavigationEdit, NavigationList } from '@admin/components/Navigation';
 import { ClientCategoryList } from '@admin/components/ClientCategoriesType';
 import { ClientCategoryCreate } from '@admin/components/ClientCategoriesType/Create';
+import { DonationDetailsList, DonateDetailsShow, DonationDetailsEdit } from '@admin/components/DonationDetails';
+
 import { authProvider } from './authProvider';
 
 export default function AdminPage() {
@@ -121,6 +123,13 @@ export default function AdminPage() {
         options={{ label: 'Посилання' }}
         list={NavigationList}
         edit={NavigationEdit}
+      />
+      <Resource
+        name={RESOURCES.donationDetails}
+        options={{ label: 'Реквізити для донатів' }}
+        list={DonationDetailsList}
+        show={DonateDetailsShow}
+        edit={DonationDetailsEdit}
       />
     </Admin>
   );

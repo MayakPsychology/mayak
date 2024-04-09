@@ -91,14 +91,10 @@ export function CardOrganization({ organization, className, extended = false }) 
                   extendedCardOpened={extended}
                 />
               </div>
-              <div className="hidden md:block">
-                <OwnershipTypeTile ownershipType={ownershipType} />
-              </div>
+              <OwnershipTypeTile ownershipType={ownershipType} className="hidden md:block" />
             </div>
-            <SpecialistTitle id={id} truncate={!extended} name={name} className="md:mt-1.5" />
-            <div className="md:hidden">
-              <OwnershipTypeTile ownershipType={ownershipType} />
-            </div>
+            <SpecialistTitle id={id} truncate={!extended} name={name} className="mt-1 md:mt-1.5" />
+            <OwnershipTypeTile ownershipType={ownershipType} className="mt-1 md:hidden" />
           </div>
         </header>
         <BadgeList labels={labelsList} />
@@ -111,7 +107,7 @@ export function CardOrganization({ organization, className, extended = false }) 
           <>
             {ClientCategoryWorkWithOrNot}
             <DetailsList
-              className="mt-4 border-t border-dashed border-t-gray-200 pt-4"
+              className="border-t border-dashed border-t-gray-200 pt-4"
               details={{
                 addresses,
                 description,

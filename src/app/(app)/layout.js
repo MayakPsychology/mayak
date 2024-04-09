@@ -5,6 +5,7 @@ import { Footer } from '@components/Footer';
 import { Header } from '@components/Header';
 import { Hint } from '@components/Hint';
 import { SocialLinksList } from '@components/Links';
+import { prisma } from '@/lib/db';
 
 export const metadata = {
   title: {
@@ -13,11 +14,14 @@ export const metadata = {
   },
 };
 
-export default function Layout({ children }) {
+export default async function Layout({ children }) {
+  const donationDetails = await prisma.donationDetails.findFirst();
+  const socialLinks = <SocialLinksList className="text-primary-700 hover:text-primary-500" />;
+
   return (
     <Hint>
       <div className="flex min-h-screen flex-col">
-        <Header socialLinks={<SocialLinksList className="text-primary-700 hover:text-primary-500" />} />
+        <Header socialLinks={socialLinks} donationDetails={donationDetails}/>
         <main className="relative flex-1">{children}</main>
         <Footer />
       </div>

@@ -49,8 +49,8 @@ SpecialistChipLists.propTypes = {
   specializationsList: PropTypes.arrayOf(PropTypes.string),
   specializationMethods: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
+      id: PropTypes.string,
+      name: PropTypes.string,
     }),
   ),
 };

@@ -47,10 +47,10 @@ const colorsHex = {
     black: '#080809',
     white: '#fff',
     green: '#007112',
-    orange: '#DD6F09',
-    blue: '#00529E',
+    orange: '#dd6f09',
+    blue: '#00529e',
     lightRed: '#ffece6',
-    lightGreen: '#f2ffe6',
+    lightGreen: '#e7f3dd',
   },
   system: {
     success: '#0ce5b9',

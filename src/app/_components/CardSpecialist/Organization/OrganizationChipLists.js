@@ -3,7 +3,7 @@ import { Caption } from '@components/Typography';
 import { ChipList } from '@components/CardSpecialist/ChipList';
 import { cn } from '@/utils/cn';
 
-export function OrganizationChipLists({ id, className, expertSpecializations }) {
+export function OrganizationChipLists({ id, className, expertSpecializations, showCaption = true }) {
   const expertSpecializationsChipItems = expertSpecializations.map((el, i) => ({
     id: i,
     text: el.name,
@@ -14,7 +14,7 @@ export function OrganizationChipLists({ id, className, expertSpecializations }) 
     <div className={cn('flex flex-col gap-3 *:flex *:flex-col *:gap-2', className)}>
       {expertSpecializations?.length && (
         <div>
-          <Caption className="text-p4 font-bold text-gray-600">Cпеціалісти</Caption>
+          {showCaption && <Caption className="text-p4 font-bold text-gray-600">Cпеціалісти</Caption>}
           <ChipList
             id={`${id}-expertSpecializations`}
             items={expertSpecializationsChipItems.map(el => ({ ...el, title: el.text, backgroundColor: el.color }))}
@@ -28,6 +28,7 @@ export function OrganizationChipLists({ id, className, expertSpecializations }) 
 OrganizationChipLists.propTypes = {
   id: PropTypes.string,
   className: PropTypes.string,
+  showCaption: PropTypes.bool,
   expertSpecializations: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string,
