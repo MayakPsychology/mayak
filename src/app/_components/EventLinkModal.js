@@ -47,6 +47,7 @@ export function EventLinkModal({ isOpen, onClose, link }) {
       className="w-64 opacity-100 lg:w-fit lg:bg-primary-200"
       isCloseButton={isDesktop}
       layout={isDesktop}
+      scrollY
     >
       <div className="hidden flex-col items-center gap-6 px-[72px] pb-12 pt-3 lg:flex lg:w-[744px]">
         <Heading type="h3" className="text-center font-bold">

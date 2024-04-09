@@ -20,16 +20,17 @@ export function CardModalWrapper({ children, className }) {
     setIsOpen(true);
   }, []);
 
-  useBodyScrollLock(isOpen, 'y');
+  useBodyScrollLock(isOpen);
 
   return (
     <Modal
-      isOpen
+      isOpen={isOpen}
       onClose={handleClose}
       className={cn(
-        'fixed bottom-0 top-0 overflow-y-auto rounded-b-none rounded-tl-3xl rounded-tr-3xl lg:static lg:mx-4 lg:max-w-[1000px] lg:rounded-3xl lg:p-[50px]',
+        'fixed bottom-0 top-0 rounded-b-none rounded-tl-3xl rounded-tr-3xl lg:static lg:mx-4 lg:max-w-[1000px] lg:rounded-3xl lg:p-[50px]',
         className,
       )}
+      scrollY
     >
       {children}
     </Modal>

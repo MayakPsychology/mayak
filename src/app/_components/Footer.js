@@ -3,10 +3,10 @@ import { WhiteLogo } from '@icons';
 import { cn } from '@utils/cn';
 import { PillButton } from '@components/PillButton';
 import { SocialLinksList } from '@components/Links';
-import { getSocialMediaList } from '@components/Links/socialMediaActions';
+import { getLinksList } from '@components/Links/linksActions';
 
 export async function Footer() {
-  const { applicationLink } = await getSocialMediaList();
+  const { applicationLink } = await getLinksList();
 
   // Basic styles
   const flexBetweenMd = 'lg:inline-flex lg:flex-row lg:items-center lg:justify-between';

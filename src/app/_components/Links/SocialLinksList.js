@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import PropTypes from 'prop-types';
-import { getSocialMediaList } from '@components/Links/socialMediaActions';
+import { getLinksList } from '@components/Links/linksActions';
 import { NavigationUrl } from '@prisma/client';
 import { Facebook, Instagram } from '@icons';
 
 export async function SocialLinksList({ className }) {
-  const { socialMediaList } = await getSocialMediaList();
+  const { socialMediaList } = await getLinksList();
   const { INSTAGRAM } = NavigationUrl;
   const links = socialMediaList.map(({ title, href }) => ({
     title,

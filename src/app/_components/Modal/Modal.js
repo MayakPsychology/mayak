@@ -15,6 +15,7 @@ export const Modal = ({
   isBlurBackground = true,
   isCloseButton = true,
   layout = true,
+  scrollY = false,
 }) => {
   const blurBackground = <div className="fixed left-0 top-0 z-10 h-full w-full backdrop-blur-sm" />;
 
@@ -42,11 +43,15 @@ export const Modal = ({
         <>
           {isBlurBackground && blurBackground}
           <div
-            className="fixed left-0 top-0 z-10 grid h-full w-full place-content-center overflow-y-scroll"
+            className="fixed left-0 top-1/2 z-10 grid h-[75vh] w-full -translate-y-1/2 place-content-center"
             onClick={onClose}
           >
             <motion.div
-              className={cn(layout && 'rounded-xl bg-other-white px-4 py-[18px] shadow-custom-2 md:p-6', className)}
+              className={cn(
+                layout &&
+                  'flex flex-col overflow-hidden rounded-xl bg-other-white px-4 py-[18px] shadow-custom-2 md:p-6',
+                className,
+              )}
               onClick={e => {
                 e.stopPropagation();
               }}
@@ -59,7 +64,7 @@ export const Modal = ({
                   <ModalCloseButton onClose={onClose} />
                 </div>
               )}
-              {children}
+              <div className={cn('mt-4', { 'overflow-y-scroll pr-3': scrollY })}>{children}</div>
             </motion.div>
           </div>
         </>
@@ -76,5 +81,6 @@ Modal.propTypes = {
   isCloseButton: PropTypes.bool,
   children: PropTypes.node,
   title: PropTypes.string,
+  scrollY: PropTypes.bool,
   className: PropTypes.string,
 };

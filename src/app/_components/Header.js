@@ -38,7 +38,9 @@ export function Header({ socialLinks }) {
     setDonateModalOpen(prevState => !prevState);
   }, [setDonateModalOpen]);
 
-  useBodyScrollLock(isMenuOpen, 'y');
+  const isScrollLock = isMenuOpen || isFeedbackOpen || isDonateModalOpen;
+  useBodyScrollLock(isScrollLock);
+
   return (
     <header>
       {/* Desktop Donation Section */}
