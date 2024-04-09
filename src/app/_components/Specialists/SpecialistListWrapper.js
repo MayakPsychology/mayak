@@ -15,13 +15,7 @@ export function SpecialistListWrapper({ className }) {
   const isMapMode = searchParams.get('mode') === 'map';
 
   return (
-    <section
-      className={cn(
-        { 'mx-auto px-2 md:px-4 lg:max-w-[1600px]': isMapMode },
-        { 'mx-auto lg:max-w-[900px]': !isMapMode },
-        className,
-      )}
-    >
+    <section className={cn('mx-auto px-4 lg:max-w-[900px]', { 'lg:max-w-[1600px]': isMapMode }, className)}>
       <SearchProvider>
         <SearchInput />
       </SearchProvider>

@@ -2,7 +2,7 @@ import { DistrictFilter, FormatFilter, PriceFilter, SpecializationFilter, TypeFi
 
 export function Filters() {
   return (
-    <section className="relative z-[50] -mb-[250px] inline-flex w-full flex-col items-start gap-6 py-6">
+    <section className="relative z-10 -mb-[250px] inline-flex w-full flex-col items-start gap-6 py-6">
       <div className="no-scrollbar relative flex w-full touch-pan-x content-start items-start gap-4 overflow-x-auto">
         <TypeFilter />
         <SpecializationFilter />

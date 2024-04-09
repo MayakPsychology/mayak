@@ -11,7 +11,7 @@ export function PillButton({ children, className, icon, variant, colorVariant, f
   const { buttonStyle, layoutStyle } = buttonVariant;
 
   const styles = cn(
-    'rounded-[100px] font-bold group relative',
+    'rounded-[100px] font-bold group relative *:items-center',
     buttonStyle,
     regular,
     hover,
@@ -28,8 +28,8 @@ export function PillButton({ children, className, icon, variant, colorVariant, f
           <div
             className={cn(
               forceShowIcon
-                ? 'mr-1 h-4 w-4'
-                : 'h-4 w-0 scale-0 transition-all *:opacity-0 *:transition-all group-hover:mr-1 group-hover:w-4 group-hover:scale-100 group-hover:*:opacity-100',
+                ? 'h-fit w-fit'
+                : 'h-fit w-fit max-w-0 scale-0 transition-all *:opacity-0 *:transition-all  group-hover:mr-1 group-hover:max-w-6 group-hover:scale-100 group-hover:*:opacity-100',
             )}
           >
             {icon}
