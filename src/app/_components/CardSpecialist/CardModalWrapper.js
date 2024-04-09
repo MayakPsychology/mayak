@@ -30,7 +30,6 @@ export function CardModalWrapper({ children, className }) {
         'fixed bottom-0 top-0 rounded-b-none rounded-tl-3xl rounded-tr-3xl lg:static lg:mx-4 lg:max-w-[1000px] lg:rounded-3xl lg:p-[50px]',
         className,
       )}
-      scrollY
     >
       {children}
     </Modal>
