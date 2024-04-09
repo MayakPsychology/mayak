@@ -28,7 +28,7 @@ export function PillButton({ children, className, icon, variant, colorVariant, f
           <div
             className={cn(
               forceShowIcon
-                ? 'h-fit w-fit'
+                ? 'mr-1 h-fit w-fit'
                 : 'h-fit w-fit max-w-0 scale-0 transition-all *:opacity-0 *:transition-all  group-hover:mr-1 group-hover:max-w-6 group-hover:scale-100 group-hover:*:opacity-100',
             )}
           >
