@@ -45,7 +45,7 @@ export const Modal = ({
         <>
           {isBlurBackground && blurBackground}
           <div
-            className="fixed left-0 top-1/2 z-[75] grid h-[75vh] w-full -translate-y-1/2 place-content-center"
+            className="fixed bottom-0 left-0 top-0 z-[75] grid w-full place-content-center lg:top-1/2 lg:h-[75vh] lg:-translate-y-1/2"
             onClick={onClose}
           >
             <motion.div
@@ -66,7 +66,7 @@ export const Modal = ({
                   <ModalCloseButton onClose={onClose} />
                 </div>
               )}
-              <div className="mt-4 overflow-y-auto">{children}</div>
+              <div className="mt-4 overflow-y-auto pr-5">{children}</div>
             </motion.div>
           </div>
         </>

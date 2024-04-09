@@ -8,7 +8,7 @@ import { addressesToPoints } from '@/utils/common';
 export function CardSpecialistExtended({ specialist, className }) {
   const points = addressesToPoints(specialist.addresses);
   return (
-    <CardModalWrapper className="mt-10 w-full max-w-[1080px] lg:mt-0 lg:w-[1080px]" key={specialist.id}>
+    <CardModalWrapper className="mt-10 h-full w-full max-w-[1080px] lg:mt-0 lg:w-[1080px]" key={specialist.id}>
       <div className="flex flex-col gap-3 lg:gap-6">
         <CardSpecialist specialist={specialist} className={className} extended />
         {points?.length ? (

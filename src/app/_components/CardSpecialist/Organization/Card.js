@@ -91,7 +91,7 @@ export function CardOrganization({ organization, className, extended = false }) 
                   extendedCardOpened={extended}
                 />
               </div>
-              <OwnershipTypeTile ownershipType={ownershipType} className="hidden md:block" />
+              <OwnershipTypeTile ownershipType={ownershipType} className="hidden self-start md:block" />
             </div>
             <SpecialistTitle id={id} truncate={!extended} name={name} className="mt-1 md:mt-1.5" />
             <OwnershipTypeTile ownershipType={ownershipType} className="mt-1 md:hidden" />

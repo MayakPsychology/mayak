@@ -17,7 +17,7 @@ export async function DistrictSearchSection({ className }) {
         Райони міста Львова
       </Heading>
       <DistrictList list={optionsList} className="mt-4" />
-      <MapLink enableAnimation={false} className="mt-8 hidden w-full justify-center lg:flex" />
+      <MapLink enableAnimation={false} className="mx-auto my-6 mt-8 hidden max-w-max lg:flex" />
     </section>
   );
 }

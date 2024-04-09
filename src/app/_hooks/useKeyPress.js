@@ -10,9 +10,9 @@ export function useKeyPress(key, handler) {
     [key, handler],
   );
   useEffect(() => {
-    window.addEventListener('keypress', onKeyPress);
+    window.addEventListener('keyup', onKeyPress);
     return () => {
-      window.removeEventListener('keypress', onKeyPress);
+      window.removeEventListener('keyup', onKeyPress);
     };
   }, [onKeyPress]);
 }

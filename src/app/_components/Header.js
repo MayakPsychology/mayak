@@ -10,6 +10,7 @@ import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';
 import PropTypes from 'prop-types';
 import { DonateModal, donationDetailsPropTypes, DonationSection } from '@components/DonationSection';
+import { useKeyPress } from '@hooks';
 
 export function Header({ socialLinks, donationDetails }) {
   const { innerLinks } = siteNav;
@@ -37,6 +38,16 @@ export function Header({ socialLinks, donationDetails }) {
   }, [setDonateModalOpen]);
 
   const showDonationDetails = donationDetails && donationDetails.isDonationEnabled;
+
+  useKeyPress('Escape', () => {
+    if (isMenuOpen) {
+      setMenuOpen(false);
+    } else if (isFeedbackOpen) {
+      setFeedbackOpen(false);
+    } else if (isDonateModalOpen) {
+      setDonateModalOpen(false);
+    }
+  });
 
   return (
     <header className="z-50">
@@ -83,7 +94,9 @@ export function Header({ socialLinks, donationDetails }) {
           </PillButton>
         </div>
         {/* Burger menu */}
-        <BurgerIcon className="block transition-all lg:hidden" onClick={toggleMenu} />
+        <span tabIndex={0}>
+          <BurgerIcon className="block transition-all lg:hidden" onClick={toggleMenu} />
+        </span>
         <div
           className={cn(
             'absolute inset-0 flex h-dvh w-dvw flex-col bg-other-black transition-all lg:hidden',
@@ -99,7 +112,9 @@ export function Header({ socialLinks, donationDetails }) {
                 className="h-[36px] w-[66px] lg:h-[74px] lg:w-[129px]"
               />
             </Link>
-            <HeaderCloseIcon onClick={toggleMenu} className="transition-all" />
+            <span tabIndex={0}>
+              <HeaderCloseIcon onClick={toggleMenu} className="transition-all" />
+            </span>
           </div>
           <div className="flex grow flex-col bg-other-white p-4">
             <div className="flex flex-col items-center">
