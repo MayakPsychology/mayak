@@ -11,6 +11,7 @@ function parseDynamicPriceRange(price) {
 
 function getPriceFilter(prices) {
   const priceConditions = {
+    notSpecified: { price: { equals: null } },
     free: { price: { equals: 0 } },
     below500: { AND: [{ price: { gt: 0 } }, { price: { lt: 500 } }] },
     above1500: { price: { gte: 1500 } },
@@ -21,36 +22,37 @@ function getPriceFilter(prices) {
 
 export function createEntityFilter({ type, requests, format, districts, prices, query, searchType }) {
   const priceFilter = prices && getPriceFilter(prices);
-
-  const supportFocusesFilter = requests || type || priceFilter || query ? true : undefined;
+  const therapyFilter = type && { type };
+  const requestFilter = (searchType === 'request' || requests) && {
+    some: {
+      name: searchType === 'request' && query && { contains: query, mode: 'insensitive' },
+      id: requests && { in: requests },
+    },
+  };
+  const formatOfWorkFilter = format && { in: [FormatOfWork.BOTH, format] };
+  const addressesFilter = districts && {
+    some: {
+      OR: districts.map(id => ({
+        districtId: id,
+      })),
+    },
+  };
+  const isSupportFocusesFilterExist = requests || type || priceFilter || query;
+  const supportFocusesFilter = isSupportFocusesFilterExist && {
+    some: {
+      AND: {
+        therapy: therapyFilter,
+        requests: requestFilter,
+        OR: priceFilter,
+      },
+    },
+  };
 
   return {
     isActive: true,
-    supportFocuses: supportFocusesFilter && {
-      every: prices?.includes('notSpecified') ? { price: { equals: null } } : undefined,
-      some: {
-        AND: {
-          therapy: type && {
-            type,
-          },
-          requests: (searchType === 'request' || requests) && {
-            some: {
-              name: searchType === 'request' && query && { contains: query, mode: 'insensitive' },
-              id: requests && { in: requests },
-            },
-          },
-          OR: priceFilter,
-        },
-      },
-    },
-    formatOfWork: format && { in: [FormatOfWork.BOTH, format] },
-    addresses: districts && {
-      some: {
-        OR: districts.map(id => ({
-          districtId: id,
-        })),
-      },
-    },
+    supportFocuses: supportFocusesFilter,
+    formatOfWork: formatOfWorkFilter,
+    addresses: addressesFilter,
   };
 }
 
