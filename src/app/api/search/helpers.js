@@ -19,10 +19,21 @@ function getPriceFilter(prices) {
   return prices.map(price => priceConditions[price] || parseDynamicPriceRange(price)).filter(price => price);
 }
 
+function safeParse(param) {
+  let res;
+  try {
+    res = JSON.parse(param);
+  } catch (e) {
+    res = undefined;
+  }
+  return Number.isInteger(res) || Array.isArray(res) ? res : undefined;
+}
+
 export function createEntityFilter({ type, requests, format, districts, prices, query, searchType }) {
   const priceFilter = prices && getPriceFilter(prices);
 
-  const supportFocusesFilter = requests || type || priceFilter || query ? true : undefined;
+  const requestTypes = safeParse(requests);
+  const supportFocusesFilter = requestTypes || type || priceFilter || query ? true : undefined;
 
   return {
     isActive: true,
@@ -33,10 +44,10 @@ export function createEntityFilter({ type, requests, format, districts, prices, 
           therapy: type && {
             type,
           },
-          requests: (searchType === 'request' || requests) && {
+          requests: (searchType === 'request' || requestTypes) && {
             some: {
               name: searchType === 'request' && query && { contains: query, mode: 'insensitive' },
-              id: requests && { in: requests },
+              simpleId: requestTypes && { in: requestTypes },
             },
           },
           OR: priceFilter,
@@ -56,11 +67,17 @@ export function createEntityFilter({ type, requests, format, districts, prices, 
 
 export function createSpecialistFilter(queryParams) {
   const sharedWhere = createEntityFilter(queryParams);
-  const { specializations } = queryParams;
+  const { specializations, specializationMethods } = queryParams;
+
+  const methods = safeParse(specializationMethods);
+
   return {
     ...sharedWhere,
     specializations: specializations && {
       some: { id: { in: specializations } },
+    },
+    specializationMethods: methods && {
+      some: { simpleId: { in: methods } },
     },
   };
 }
@@ -86,7 +103,6 @@ export function createSearchEntryFilter(queryParams) {
   if (!query) {
     return defaultFilter;
   }
-
   switch (searchType) {
     case 'request': {
       return defaultFilter;
