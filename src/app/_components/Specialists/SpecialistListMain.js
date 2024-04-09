@@ -62,9 +62,7 @@ export function SpecialistListMain({ mapMode, className }) {
         </>
       </ul>
       {!inView && (
-        <div className="sticky bottom-20 flex w-full justify-center ">
-          <MapLink mapMode={mapMode} className={cn({ hidden: mapMode })} />
-        </div>
+        <MapLink mapMode={mapMode} className={cn('sticky bottom-20 flex w-full justify-center', { hidden: mapMode })} />
       )}
     </div>
   );

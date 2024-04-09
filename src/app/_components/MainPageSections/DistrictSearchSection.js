@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { cn } from '@utils/cn';
 import { Heading } from '@components/Typography';
 import { DistrictList } from '@components/MainPageSections/DistrictList';
+import { MapLink } from '@components/MapLink';
 import { prisma } from '@/lib/db';
 
 export async function DistrictSearchSection({ className }) {
@@ -16,6 +17,7 @@ export async function DistrictSearchSection({ className }) {
         Райони міста Львова
       </Heading>
       <DistrictList list={optionsList} className="mt-4" />
+      <MapLink enableAnimation={false} className="mt-8 hidden w-full justify-center lg:flex" />
     </section>
   );
 }
