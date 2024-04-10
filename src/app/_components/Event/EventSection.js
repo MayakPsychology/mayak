@@ -12,6 +12,7 @@ import { SkeletonCard } from '@components/Event/SkeletonCard';
 import { NoInfoToShow } from '@components/NoInfoToShow';
 import { cn } from '@/utils/cn';
 import { capitalize } from '@/utils/common';
+import { Slide, Slider } from '../Slider';
 
 const currentMonth = new Date().getMonth() + 1;
 
@@ -77,27 +78,34 @@ export function EventSection() {
     setActiveMonth(monthFromQuery ? Number(monthFromQuery) : filteredMonths[0].index + 1);
   }, [monthFromQuery]);
 
+  const [swipeToIndex, setSwipeToIndex] = useState(0);
   return (
     <>
       <section className="lg:w-max-[900px] mx-auto flex w-full flex-col items-start justify-start gap-6 self-stretch">
-        <div className="flex flex-row flex-wrap items-start justify-start gap-3">
-          {filteredMonths.map(month => (
-            <PillButton
-              variant="eventFilter"
-              colorVariant="semiorange"
-              className={cn('*:gap-0', activeMonth - 1 === month.index && activeButtonStyles)}
-              key={month.index}
-              onClick={() => {
-                handleFilter(month.index + 1);
-              }}
-              icon={activeMonth - 1 === month.index ? <CheckMark /> : <Search />}
-              forceShowIcon={activeMonth - 1 === month.index}
-            >
-              {capitalize(month.name)}
-            </PillButton>
-          ))}
+        <div className="flex w-fit max-w-full justify-start">
+          <Slider slidesPerView="auto" className="flex" swipeToIndex={swipeToIndex}>
+            {filteredMonths.map((month, filteredIndex) => {
+              const isSelected = activeMonth - 1 === month.index;
+              return (
+                <Slide key={month.index} className="mr-3.5 !w-auto last:mr-0">
+                  <PillButton
+                    variant="eventFilter"
+                    colorVariant="semiorange"
+                    className={cn('*:gap-0', isSelected && activeButtonStyles)}
+                    icon={isSelected ? <CheckMark /> : <Search />}
+                    forceShowIcon={isSelected}
+                    onClick={() => {
+                      handleFilter(month.index + 1);
+                      setSwipeToIndex(filteredIndex);
+                    }}
+                  >
+                    {capitalize(month.name)}
+                  </PillButton>
+                </Slide>
+              );
+            })}
+          </Slider>
         </div>
-
         <ul className="grid w-full gap-4 self-stretch sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {isLoading && new Array(6).fill(9).map((el, index) => <SkeletonCard el={el} key={index} />)}
           <>
