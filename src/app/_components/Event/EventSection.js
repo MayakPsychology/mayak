@@ -4,14 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { useSearchParams } from 'next/navigation';
-import { CheckMark, Search } from '@icons';
 import { allEvents, useSetParam } from '@hooks';
 import { EventCard } from '@components/Event/Card';
-import { PillButton } from '@components/PillButton';
 import { SkeletonCard } from '@components/Event/SkeletonCard';
 import { NoInfoToShow } from '@components/NoInfoToShow';
-import { cn } from '@/utils/cn';
-import { capitalize } from '@/utils/common';
+import { MonthFilter } from './MonthFilter';
 
 const currentMonth = new Date().getMonth() + 1;
 
@@ -38,9 +35,6 @@ const filteredMonths =
     ? monthNames.slice(startMonthIndex).concat(monthNames.slice(0, endIndex))
     : monthNames.slice(startMonthIndex, endIndex);
 
-const activeButtonStyles = 'pointer-events-none border-secondary-300 bg-secondary-300 font-semibold text-gray-900';
-const commonIconStyle = 'h-4 w-4 transition-all';
-
 export function EventSection() {
   const searchParams = useSearchParams();
   const monthFromQuery = searchParams.get('month');
@@ -66,7 +60,7 @@ export function EventSection() {
   }, [hasNextPage, inView]);
 
   // Filter data based on selected month
-  const handleFilter = useCallback(
+  const handleClick = useCallback(
     newMonth => {
       setActiveMonth(newMonth);
       replaceParam(newMonth.toString());
@@ -74,38 +68,14 @@ export function EventSection() {
     [replaceParam],
   );
 
+  useEffect(() => {
+    setActiveMonth(monthFromQuery ? Number(monthFromQuery) : filteredMonths[0].index + 1);
+  }, [monthFromQuery]);
+
   return (
     <>
       <section className="lg:w-max-[900px] mx-auto flex w-full flex-col items-start justify-start gap-6 self-stretch">
-        <div className="flex flex-row flex-wrap items-start justify-start gap-3">
-          {filteredMonths.map(month => (
-            <PillButton
-              variant="eventFilter"
-              colorVariant="semiorange"
-              className={cn(activeMonth - 1 === month.index && activeButtonStyles, 'group w-fit')}
-              key={month.index}
-              onClick={() => {
-                handleFilter(month.index + 1);
-              }}
-              icon={[
-                activeMonth - 1 === month.index && (
-                  <CheckMark
-                    key={`checkmark+${month.index}`}
-                    className={cn('block group-hover:hidden group-focus:hidden', commonIconStyle)}
-                  />
-                ),
-
-                <Search
-                  key={`searchicon+${month.index}`}
-                  className={cn('hidden group-hover:block group-focus:block', commonIconStyle)}
-                />,
-              ]}
-            >
-              {capitalize(month.name)}
-            </PillButton>
-          ))}
-        </div>
-
+        <MonthFilter filteredMonths={filteredMonths} handleClick={handleClick} activeMonth={activeMonth} />
         <ul className="grid w-full gap-4 self-stretch sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {isLoading && new Array(6).fill(9).map((el, index) => <SkeletonCard el={el} key={index} />)}
           <>
