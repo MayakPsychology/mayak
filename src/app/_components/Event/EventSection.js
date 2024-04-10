@@ -4,15 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { useSearchParams } from 'next/navigation';
-import { CheckMark, Search } from '@icons';
 import { allEvents, useSetParam } from '@hooks';
 import { EventCard } from '@components/Event/Card';
-import { PillButton } from '@components/PillButton';
 import { SkeletonCard } from '@components/Event/SkeletonCard';
 import { NoInfoToShow } from '@components/NoInfoToShow';
-import { cn } from '@/utils/cn';
-import { capitalize } from '@/utils/common';
-import { Slide, Slider } from '../Slider';
+import { MonthFilter } from './MonthFilter';
 
 const currentMonth = new Date().getMonth() + 1;
 
@@ -39,9 +35,6 @@ const filteredMonths =
     ? monthNames.slice(startMonthIndex).concat(monthNames.slice(0, endIndex))
     : monthNames.slice(startMonthIndex, endIndex);
 
-const activeButtonStyles =
-  'pointer-events-none border-secondary-300 bg-secondary-300 focus:bg-secondary-300 font-semibold text-gray-900 focus:text-gray-900 focus:border-secondary-300';
-
 export function EventSection() {
   const searchParams = useSearchParams();
   const monthFromQuery = searchParams.get('month');
@@ -67,45 +60,22 @@ export function EventSection() {
   }, [hasNextPage, inView]);
 
   // Filter data based on selected month
-  const handleFilter = useCallback(
+  const handleClick = useCallback(
     newMonth => {
       setActiveMonth(newMonth);
       replaceParam(newMonth.toString());
     },
     [replaceParam],
   );
+
   useEffect(() => {
     setActiveMonth(monthFromQuery ? Number(monthFromQuery) : filteredMonths[0].index + 1);
   }, [monthFromQuery]);
 
-  const [swipeToIndex, setSwipeToIndex] = useState(0);
   return (
     <>
       <section className="lg:w-max-[900px] mx-auto flex w-full flex-col items-start justify-start gap-6 self-stretch">
-        <div className="flex w-fit max-w-full justify-start">
-          <Slider slidesPerView="auto" className="flex" swipeToIndex={swipeToIndex}>
-            {filteredMonths.map((month, filteredIndex) => {
-              const isSelected = activeMonth - 1 === month.index;
-              return (
-                <Slide key={month.index} className="mr-3.5 !w-auto last:mr-0">
-                  <PillButton
-                    variant="eventFilter"
-                    colorVariant="semiorange"
-                    className={cn('*:gap-0', isSelected && activeButtonStyles)}
-                    icon={isSelected ? <CheckMark /> : <Search />}
-                    forceShowIcon={isSelected}
-                    onClick={() => {
-                      handleFilter(month.index + 1);
-                      setSwipeToIndex(filteredIndex);
-                    }}
-                  >
-                    {capitalize(month.name)}
-                  </PillButton>
-                </Slide>
-              );
-            })}
-          </Slider>
-        </div>
+        <MonthFilter filteredMonths={filteredMonths} handleClick={handleClick} activeMonth={activeMonth} />
         <ul className="grid w-full gap-4 self-stretch sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {isLoading && new Array(6).fill(9).map((el, index) => <SkeletonCard el={el} key={index} />)}
           <>
