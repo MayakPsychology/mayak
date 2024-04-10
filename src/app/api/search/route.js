@@ -8,7 +8,6 @@ export const handler = withErrorHandler(async req => {
   const { take, skip, lastCursor } = params;
 
   const searchEntryFilter = createSearchEntryFilter(params);
-
   const totalCount = await prisma.searchEntry.count({ where: searchEntryFilter });
 
   const sharedInclude = {
@@ -47,7 +46,7 @@ export const handler = withErrorHandler(async req => {
       specialist: {
         include: {
           ...sharedInclude,
-          specializationMethods: { select: { id: true, title: true, description: true } },
+          specializationMethods: { select: { id: true, simpleId: true, title: true, description: true } },
           specializations: { select: { id: true, name: true } },
         },
       },
