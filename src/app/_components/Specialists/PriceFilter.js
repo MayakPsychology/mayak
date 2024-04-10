@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSetParam } from '@hooks';
 import { useSearchParams } from 'next/navigation';
+import { useDebounceCallback } from '@/app/_hooks';
 
 const priceVariants = {
   notSpecified: 'Не зазначено',
@@ -15,24 +17,20 @@ const priceVariants = {
   above1500: 'більше 1500 грн',
 };
 
-function PricesList() {
-  const [selectedPrices, setSelectedPrices] = useState([]);
-
-  const searchParams = useSearchParams();
-  const { add, remove } = useSetParam('price');
+function PricesList({ pricesInUrl }) {
+  const priceParam = useSetParam('price');
+  const [selectedPrices, setSelectedPrices] = useState(pricesInUrl);
+  const setParamDebounced = useDebounceCallback(prices => {
+    priceParam.replace(prices);
+  }, 500);
 
   const onChange = price => {
-    if (selectedPrices.includes(price)) {
-      remove(price);
-    } else {
-      add(price);
-    }
+    const updatedPrices = selectedPrices.includes(price)
+      ? selectedPrices.filter(it => it !== price)
+      : [...selectedPrices, price];
+    setSelectedPrices(updatedPrices);
+    setParamDebounced(updatedPrices);
   };
-
-  useEffect(() => {
-    const pricesInUrl = searchParams.getAll('price');
-    setSelectedPrices(pricesInUrl);
-  }, [searchParams]);
 
   return (
     <>
@@ -51,19 +49,23 @@ function PricesList() {
       </ul>
       <ClearFilterButton
         clear={() => {
-          remove();
+          priceParam.remove();
         }}
       />
     </>
   );
 }
 
+PricesList.propTypes = {
+  pricesInUrl: PropTypes.arrayOf(PropTypes.string),
+};
+
 export function PriceFilter() {
   const pricesInUrl = useSearchParams().getAll('price');
 
   return (
     <FilterBase filterText="Ціна" count={pricesInUrl?.length || 0}>
-      <PricesList />
+      <PricesList pricesInUrl={pricesInUrl || []} />
     </FilterBase>
   );
 }
