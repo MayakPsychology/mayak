@@ -25,7 +25,7 @@ function parseNumericParam(param) {
   if (Array.isArray(param)) {
     res = param.map(val => parseInt(val, 10)).filter(val => Number.isInteger(val));
   } else {
-    res = Number.isInteger(parseInt(param, 10)) && [parseInt(param, 10)];
+    res = Number.isInteger(parseInt(param, 10)) ? [parseInt(param, 10)] : undefined;
   }
   return res;
 }
@@ -98,7 +98,6 @@ export function createSearchEntryFilter(queryParams) {
   const { query, searchType } = queryParams;
   const specialistWhere = createSpecialistFilter(queryParams);
   const organizationWhere = createOrganizationFilter(queryParams);
-
   const defaultFilter = { OR: [{ specialist: specialistWhere }, { organization: organizationWhere }] };
 
   if (!query) {
