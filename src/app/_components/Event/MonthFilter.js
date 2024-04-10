@@ -12,28 +12,30 @@ const activeButtonStyles =
 export function MonthFilter({ filteredMonths, handleClick, activeMonth }) {
   const [swipeToIndex, setSwipeToIndex] = useState(0);
   return (
-    <Slider slidesPerView="auto" className="mr-auto flex w-fit max-w-full" swipeToIndex={swipeToIndex}>
-      {filteredMonths.map((month, filteredIndex) => {
-        const isSelected = activeMonth - 1 === month.index;
-        return (
-          <Slide key={month.index} className="mr-3.5 !w-auto last:mr-0">
-            <PillButton
-              variant="eventFilter"
-              colorVariant="semiorange"
-              className={cn('*:gap-0', isSelected && activeButtonStyles)}
-              icon={isSelected ? <CheckMark /> : <Search />}
-              forceShowIcon={isSelected}
-              onClick={() => {
-                handleClick(month.index + 1);
-                setSwipeToIndex(filteredIndex);
-              }}
-            >
-              {capitalize(month.name)}
-            </PillButton>
-          </Slide>
-        );
-      })}
-    </Slider>
+    <div className="flex w-fit max-w-full justify-start">
+      <Slider slidesPerView="auto" className="flex" swipeToIndex={swipeToIndex}>
+        {filteredMonths.map((month, filteredIndex) => {
+          const isSelected = activeMonth - 1 === month.index;
+          return (
+            <Slide key={month.index} className="mr-3.5 !w-auto">
+              <PillButton
+                variant="eventFilter"
+                colorVariant="semiorange"
+                className={cn('*:gap-0', isSelected && activeButtonStyles)}
+                icon={isSelected ? <CheckMark /> : <Search />}
+                forceShowIcon={isSelected}
+                onClick={() => {
+                  handleClick(month.index + 1);
+                  setSwipeToIndex(filteredIndex);
+                }}
+              >
+                {capitalize(month.name)}
+              </PillButton>
+            </Slide>
+          );
+        })}
+      </Slider>
+    </div>
   );
 }
 
@@ -46,5 +48,5 @@ MonthFilter.propTypes = {
     }),
   ),
   handleClick: PropTypes.func,
-  activeMonth: PropTypes.number,
+  activeMonth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };

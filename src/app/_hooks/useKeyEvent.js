@@ -7,7 +7,7 @@ export function useKeyEvent({ key, handler, event = 'keypress' }) {
         handler();
       }
     },
-    [key, event, handler],
+    [key, handler],
   );
   useEffect(() => {
     window.addEventListener(event, callback);
