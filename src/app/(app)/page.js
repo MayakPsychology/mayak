@@ -1,9 +1,16 @@
-import { DistrictSearchSection, FAQSection, SearchSection, TherapiesSection } from '@components/MainPageSections';
+import {
+  DistrictSearchSection,
+  FAQSection,
+  GoalSection,
+  SearchSection,
+  TherapiesSection,
+} from '@components/MainPageSections';
 import { env } from '@/lib/env';
 import { prisma } from '@/lib/db';
 // Page metadata should contain
 // title - gets formatted into "%s | Маяк", %s is replaced by title,
 // description - short description of the page,
+
 export const metadata = {
   title: 'Головна сторінка',
   description: 'Пошук психологічної допомоги у м. Львів',
@@ -40,7 +47,7 @@ export default async function Page() {
       <SearchSection />
       <DistrictSearchSection className="my-8" />
       <TherapiesSection therapies={activeTherapies} />
-      <section>TBD goal section</section>
+      <GoalSection />
       <FAQSection faqs={activeFAQs} />
     </>
   );
