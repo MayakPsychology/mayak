@@ -11,7 +11,7 @@ export function useBodyScrollLock(locked, axis = 'xy') {
   if (axes[axis] === undefined) {
     throw Error('Invalid axis parameter must be x, y or xy');
   }
-  
+
   useEffect(() => {
     const clear = () => {
       document.body.classList.remove(OVERFLOW_SCROLL);

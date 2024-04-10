@@ -11,7 +11,7 @@ import { Feedback } from '@components/Feedback';
 import PropTypes from 'prop-types';
 import { DonateModal, donationDetailsPropTypes, DonationSection } from '@components/DonationSection';
 import { useKeyEvent } from '@hooks';
-import { KEY_TO_CLOSE_MODAL } from '@/lib/consts';
+import { isEscapeKey } from '@utils/dom';
 
 export function Header({ socialLinks, donationDetails }) {
   const { innerLinks } = siteNav;
@@ -31,7 +31,7 @@ export function Header({ socialLinks, donationDetails }) {
   }, [setMenuOpen]);
 
   useKeyEvent({
-    key: KEY_TO_CLOSE_MODAL,
+    key: isEscapeKey,
     handler: () => setMenuOpen(false),
     event: 'keydown',
   });

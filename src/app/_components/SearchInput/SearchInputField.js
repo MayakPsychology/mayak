@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { isEnterKey } from '@utils/dom';
 import { useFocus, useKeyEvent } from '@/app/_hooks';
 import { useSearchContext } from './SearchContext';
 import { SEARCH_MIN_QUERY_LENGTH } from './config';
@@ -9,7 +10,7 @@ export function SearchInputField() {
   const inputFocused = useFocus(inputRef);
 
   useKeyEvent({
-    key: 'Enter',
+    key: isEnterKey,
     handler: () => {
       if (inputFocused && query?.length >= SEARCH_MIN_QUERY_LENGTH) {
         submitSearch();

@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react';
 export function useKeyEvent({ key, handler, event = 'keypress' }) {
   const callback = useCallback(
     e => {
-      if (typeof key === 'function' ? key(event) : key === e.key) {
+      if (typeof key === 'function' ? key({ key: e.key }) : key === e.key) {
         handler();
       }
     },

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { cn } from '@utils/cn';
 import { motion } from 'framer-motion';
 import { useBodyScrollLock, useKeyEvent } from '@hooks';
-import { KEY_TO_CLOSE_MODAL } from '@/lib/consts';
+import { isEscapeKey } from '@utils/dom';
 import { ClientPortal } from '../ClientPortal';
 import { ModalCloseButton } from './ModalCloseButton';
 
@@ -19,7 +19,7 @@ export const Modal = ({
   layout = true,
 }) => {
   useKeyEvent({
-    key: KEY_TO_CLOSE_MODAL,
+    key: isEscapeKey,
     handler: onClose,
     event: 'keydown',
   });
