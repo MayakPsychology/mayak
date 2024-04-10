@@ -79,29 +79,24 @@ export const transformSupportFocuses = ({ focuses, focusesIds }) => {
   };
 };
 
-export const transformCreateData = ({
-  addresses,
-  supportFocuses,
-  socialLink,
-  workTime,
-  workingWith,
-  notWorkingWith,
-  ...rest
-}) => ({
-  ...rest,
-  ...socialLink,
-  clientsWorkingWith: {
-    connect: workingWith?.length ? toConnectList(workingWith) : undefined,
-  },
-  clientsNotWorkingWith: {
-    connect: notWorkingWith?.length ? toConnectList(notWorkingWith) : undefined,
-  },
-  addresses: {
-    create: addresses?.length ? transformAddresses({ addresses, type: 'create' }) : undefined,
-  },
-  supportFocuses: transformSupportFocuses({ focuses: supportFocuses, focusesIds: [] }),
-  workTime: { connectOrCreate: workTime?.length ? transformWorkTime(workTime) : undefined },
-});
+export const transformCreateData = ({ addresses, supportFocuses, socialLink, workTime, clients, ...rest }) => {
+  const { workingWith, notWorkingWith } = clients;
+  return {
+    ...rest,
+    ...socialLink,
+    clientsWorkingWith: {
+      connect: workingWith?.length ? toConnectList(workingWith) : undefined,
+    },
+    clientsNotWorkingWith: {
+      connect: notWorkingWith?.length ? toConnectList(notWorkingWith) : undefined,
+    },
+    addresses: {
+      create: addresses?.length ? transformAddresses({ addresses, type: 'create' }) : undefined,
+    },
+    supportFocuses: transformSupportFocuses({ focuses: supportFocuses, focusesIds: [] }),
+    workTime: { connectOrCreate: workTime?.length ? transformWorkTime(workTime) : undefined },
+  };
+};
 
 export const transformEditData = ({
   addresses,
@@ -111,6 +106,7 @@ export const transformEditData = ({
   formatOfWork,
   socialLink,
   workTime,
+  clients,
   ...rest
 }) => {
   const addressesToConnect = toConnectList(
@@ -123,6 +119,10 @@ export const transformEditData = ({
     addressesIds?.filter(addressId => !addressesToConnect.some(address => address.id === addressId)) ?? [];
   // if formatOfWork is ONLINE, we need to delete all connected addresses
   const addressesToDelete = formatOfWork !== FormatOfWork.ONLINE ? toConnectList(unselectedAddresses) : {};
+
+  const clientsWorkingWith = toConnectList(clients.workingWith);
+  const clientsNotWorkingWith = toConnectList(clients.notWorkingWith);
+
   return {
     ...rest,
     ...socialLink,
@@ -139,5 +139,15 @@ export const transformEditData = ({
       deleteMany: addressesToDelete,
     },
     supportFocuses: transformSupportFocuses({ focuses: supportFocuses, focusesIds: supportFocusesIds }),
+    clientsWorkingWith: {
+      set: [],
+      connect: clientsWorkingWith,
+    },
+    clientsWorkingWithIds: undefined,
+    clientsNotWorkingWith: {
+      set: [],
+      connect: clientsNotWorkingWith,
+    },
+    clientsNotWorkingWithIds: undefined,
   };
 };

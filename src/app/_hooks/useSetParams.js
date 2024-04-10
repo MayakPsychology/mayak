@@ -21,7 +21,7 @@ export function useSetParam(param) {
     } else {
       newParams.delete(param);
     }
-    router.push(`?${newParams.toString()}`);
+    router.replace(`?${newParams.toString()}`);
   };
   return { add, replace, remove };
 }
