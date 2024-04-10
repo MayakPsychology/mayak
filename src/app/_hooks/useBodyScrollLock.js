@@ -1,21 +1,17 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
+
+const axes = {
+  x: 'overflow-x-hidden',
+  y: 'overflow-y-hidden',
+  xy: 'overflow-hidden',
+};
+const OVERFLOW_SCROLL = 'overflow-scroll';
 
 export function useBodyScrollLock(locked, axis = 'xy') {
-  const axes = useMemo(
-    () => ({
-      x: 'overflow-x-hidden',
-      y: 'overflow-y-hidden',
-      xy: 'overflow-hidden',
-    }),
-    [],
-  );
-
   if (axes[axis] === undefined) {
     throw Error('Invalid axis parameter must be x, y or xy');
   }
-
-  const OVERFLOW_SCROLL = 'overflow-scroll';
-
+  
   useEffect(() => {
     const clear = () => {
       document.body.classList.remove(OVERFLOW_SCROLL);
@@ -30,5 +26,5 @@ export function useBodyScrollLock(locked, axis = 'xy') {
     }
 
     return clear;
-  }, [locked, axes, axis]);
+  }, [locked, axis]);
 }

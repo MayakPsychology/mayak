@@ -5,8 +5,6 @@ import PropTypes from 'prop-types';
 import { Modal } from '@components/Modal';
 import { useRouter } from 'next/navigation';
 import { cn } from '@utils/cn';
-import { useKeyPress } from '@hooks';
-import { KEY_TO_CLOSE_MODAL } from '@/lib/consts';
 
 export function CardModalWrapper({ children, className }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,9 +18,7 @@ export function CardModalWrapper({ children, className }) {
   // this is to ensure proper modal rendering
   useEffect(() => {
     setIsOpen(true);
-  }, []);
-
-  useKeyPress(KEY_TO_CLOSE_MODAL, handleClose);
+  }, [isOpen]);
 
   return (
     <Modal

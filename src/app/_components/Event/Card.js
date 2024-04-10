@@ -6,10 +6,8 @@ import { CalendarIcon, LocationIcon, PriceIcon, TimeIcon } from '@icons';
 import { Label } from '@components/Label';
 import { OverflownText } from '@components/OverflownText';
 import { EventLinkModal } from '@components/EventLinkModal';
-import { useKeyPress } from '@hooks';
 import { cn } from '@/utils/cn';
 import { parseDate } from '@/utils/parseDate';
-import { KEY_TO_CLOSE_MODAL } from '@/lib/consts';
 
 function ListItem({ icon, text, textColor, fontWeight }) {
   return (
@@ -46,10 +44,6 @@ function transformData(event) {
 
 export function EventCard({ event }) {
   const [isModalOpenOpen, setIsModalOpen] = useState(false);
-
-  useKeyPress(KEY_TO_CLOSE_MODAL, () => {
-    setIsModalOpen(false);
-  });
 
   const { title, organizerName, tags, priceText, locationText, date, time, locationLink, additionalLink } =
     transformData(event);

@@ -92,8 +92,12 @@ export function CardSpecialist({ specialist, className, extended = false }) {
         />
         {extended ? (
           <>
-            <ClientCategoryList id={id} isWorkWith clientCategories={clientsWorkingWith} />
-            <ClientCategoryList id={id} isWorkWith={false} clientCategories={clientsNotWorkingWith} />
+            <ClientCategoryList id={`working-with-${id}`} isWorkWith clientCategories={clientsWorkingWith} />
+            <ClientCategoryList
+              id={`not-working-with-${id}`}
+              isWorkWith={false}
+              clientCategories={clientsNotWorkingWith}
+            />
             <DetailsList
               className="border-t border-dashed border-t-gray-200 pt-4"
               details={{ addresses, description, supportFocuses }}

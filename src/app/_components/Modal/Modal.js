@@ -3,7 +3,8 @@
 import PropTypes from 'prop-types';
 import { cn } from '@utils/cn';
 import { motion } from 'framer-motion';
-import { useBodyScrollLock } from '@hooks';
+import { useBodyScrollLock, useKeyEvent } from '@hooks';
+import { KEY_TO_CLOSE_MODAL } from '@/lib/consts';
 import { ClientPortal } from '../ClientPortal';
 import { ModalCloseButton } from './ModalCloseButton';
 
@@ -17,6 +18,14 @@ export const Modal = ({
   isCloseButton = true,
   layout = true,
 }) => {
+  useKeyEvent({
+    key: KEY_TO_CLOSE_MODAL,
+    handler: onClose,
+    event: 'keydown',
+  });
+
+  useBodyScrollLock(isOpen);
+
   const blurBackground = <div className="fixed left-0 top-0 z-[55] h-full w-full backdrop-blur-sm" />;
 
   const motionData = {
@@ -36,8 +45,6 @@ export const Modal = ({
       transition: { duration: 0.2 },
     },
   };
-
-  useBodyScrollLock(isOpen);
 
   return (
     <ClientPortal selector="modal-root" show={isOpen}>

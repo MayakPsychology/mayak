@@ -10,7 +10,7 @@ import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';
 import PropTypes from 'prop-types';
 import { DonateModal, donationDetailsPropTypes, DonationSection } from '@components/DonationSection';
-import { useKeyPress } from '@hooks';
+import { useKeyEvent } from '@hooks';
 import { KEY_TO_CLOSE_MODAL } from '@/lib/consts';
 
 export function Header({ socialLinks, donationDetails }) {
@@ -30,6 +30,12 @@ export function Header({ socialLinks, donationDetails }) {
     setMenuOpen(state => !state);
   }, [setMenuOpen]);
 
+  useKeyEvent({
+    key: KEY_TO_CLOSE_MODAL,
+    handler: () => setMenuOpen(false),
+    event: 'keydown',
+  });
+
   const toggleFeedback = useCallback(() => {
     setFeedbackOpen(prevState => !prevState);
   }, [setFeedbackOpen]);
@@ -39,16 +45,6 @@ export function Header({ socialLinks, donationDetails }) {
   }, [setDonateModalOpen]);
 
   const showDonationDetails = donationDetails && donationDetails.isDonationEnabled;
-
-  useKeyPress(KEY_TO_CLOSE_MODAL, () => {
-    if (isMenuOpen) {
-      setMenuOpen(false);
-    } else if (isFeedbackOpen) {
-      setFeedbackOpen(false);
-    } else if (isDonateModalOpen) {
-      setDonateModalOpen(false);
-    }
-  });
 
   return (
     <header className="z-50">
@@ -77,7 +73,7 @@ export function Header({ socialLinks, donationDetails }) {
             className="h-9 w-[66px] transition-all lg:h-[74px] lg:w-[129px]"
           />
         </Link>
-        <div className={cn(flexCenter, 'hidden gap-6 lg:flex')}>
+        <div className={cn(flexCenter, 'ml-auto hidden gap-6 lg:flex')}>
           <div className="flex list-none gap-4 text-primary-700">
             <InnerLink
               items={innerLinks}
@@ -153,8 +149,12 @@ export function Header({ socialLinks, donationDetails }) {
         </div>
       </nav>
 
-      <Feedback isFeedbackOpen={isFeedbackOpen} onClose={toggleFeedback} />
-      <DonateModal isOpen={isDonateModalOpen} onClose={toggleDonateModal} donationDetails={donationDetails} />
+      <Feedback isFeedbackOpen={isFeedbackOpen} onClose={() => setFeedbackOpen(false)} />
+      <DonateModal
+        isOpen={isDonateModalOpen}
+        onClose={() => setDonateModalOpen(false)}
+        donationDetails={donationDetails}
+      />
     </header>
   );
 }

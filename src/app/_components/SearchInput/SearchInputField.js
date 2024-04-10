@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useFocus, useKeyPress } from '@/app/_hooks';
+import { useFocus, useKeyEvent } from '@/app/_hooks';
 import { useSearchContext } from './SearchContext';
 import { SEARCH_MIN_QUERY_LENGTH } from './config';
 
@@ -8,11 +8,14 @@ export function SearchInputField() {
   const inputRef = useRef(null);
   const inputFocused = useFocus(inputRef);
 
-  useKeyPress('Enter', () => {
-    if (inputFocused && query?.length >= SEARCH_MIN_QUERY_LENGTH) {
-      submitSearch();
-      inputRef.current.blur();
-    }
+  useKeyEvent({
+    key: 'Enter',
+    handler: () => {
+      if (inputFocused && query?.length >= SEARCH_MIN_QUERY_LENGTH) {
+        submitSearch();
+        inputRef.current.blur();
+      }
+    },
   });
 
   useEffect(() => {

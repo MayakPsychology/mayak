@@ -5,7 +5,7 @@ import { PillButton } from '@components/PillButton';
 import PropTypes from 'prop-types';
 import { linkItemPropType, SocialLinksList } from '@components/Links';
 
-export async function Footer({ socialLinks }) {
+export function Footer({ socialLinks }) {
   const { applicationLink, socialLinksList } = socialLinks;
 
   // Basic styles
