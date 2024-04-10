@@ -52,3 +52,7 @@
   backdrop-filter: blur(3px);
   width: max-content;
 }
+
+body {
+  overflow-x: hidden;
+}

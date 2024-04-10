@@ -7,7 +7,6 @@ import { CheckMark, Search } from '@icons';
 import { PillButton } from '@components/PillButton';
 import { Slide, Slider } from '@components/Slider';
 import { cn } from '@utils/cn';
-import { useBodyScrollLock } from '@/app/_hooks';
 
 const activeButtonStyles = 'pointer-events-none border-secondary-300 bg-secondary-300 font-semibold text-gray-900';
 
@@ -16,8 +15,6 @@ export function DistrictList({ list, className }) {
   const handleClick = index => {
     setSelected(index);
   };
-
-  useBodyScrollLock(true, 'x');
 
   return (
     <Slider slidesPerView="auto" className={cn('flex', className)}>
