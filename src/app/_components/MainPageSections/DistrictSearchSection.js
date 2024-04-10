@@ -12,12 +12,16 @@ export async function DistrictSearchSection({ className }) {
     .reduce((acc, district) => [...acc, district], [{ id: 'all-districts', name: 'Усі' }]);
 
   return (
-    <section className={cn('mx-auto max-w-max px-4 lg:min-w-[900px]', className)}>
-      <Heading type="h3" className="text-p4 font-bold uppercase text-primary-600">
-        Райони міста Львова
-      </Heading>
-      <DistrictList list={optionsList} className="mt-4" />
-      <MapLink enableAnimation={false} className="mx-auto my-6 mt-8 hidden max-w-max lg:flex" />
+    <section className={cn('px-4 lg:px-[80px]', className)}>
+      <div className="mx-auto max-w-[910px]">
+        <Heading type="h3" className="text-p4 font-bold uppercase text-primary-600">
+          Райони міста Львова
+        </Heading>
+        <div className="lg:*:w-[940px] xl:*:w-[1000px]">
+          <DistrictList list={optionsList} className="mx-auto mt-4" />
+          <MapLink enableAnimation={false} className="mx-auto my-6 mt-8 hidden max-w-max lg:flex" />
+        </div>
+      </div>
     </section>
   );
 }

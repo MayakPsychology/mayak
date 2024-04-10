@@ -20,13 +20,24 @@ function getPriceFilter(prices) {
   return prices.map(price => priceConditions[price] || parseDynamicPriceRange(price)).filter(price => price);
 }
 
+function parseNumericParam(param) {
+  let res;
+  if (Array.isArray(param)) {
+    res = param.map(val => parseInt(val, 10)).filter(val => Number.isInteger(val));
+  } else {
+    res = Number.isInteger(parseInt(param, 10)) ? [parseInt(param, 10)] : undefined;
+  }
+  return res;
+}
+
 export function createEntityFilter({ type, requests, format, districts, prices, query, searchType }) {
   const priceFilter = prices && getPriceFilter(prices);
   const therapyFilter = type && { type };
+  const requestType = parseNumericParam(requests);
   const requestFilter = (searchType === 'request' || requests) && {
     some: {
       name: searchType === 'request' && query && { contains: query, mode: 'insensitive' },
-      id: requests && { in: requests },
+      simpleId: requestType && { in: requestType },
     },
   };
   const formatOfWorkFilter = format && { in: [FormatOfWork.BOTH, format] };
@@ -58,11 +69,16 @@ export function createEntityFilter({ type, requests, format, districts, prices, 
 
 export function createSpecialistFilter(queryParams) {
   const sharedWhere = createEntityFilter(queryParams);
-  const { specializations } = queryParams;
+  const { specializations, specializationMethods } = queryParams;
+  const methods = parseNumericParam(specializationMethods);
+
   return {
     ...sharedWhere,
     specializations: specializations && {
       some: { id: { in: specializations } },
+    },
+    specializationMethods: methods && {
+      some: { simpleId: { in: methods } },
     },
   };
 }
@@ -82,13 +98,11 @@ export function createSearchEntryFilter(queryParams) {
   const { query, searchType } = queryParams;
   const specialistWhere = createSpecialistFilter(queryParams);
   const organizationWhere = createOrganizationFilter(queryParams);
-
   const defaultFilter = { OR: [{ specialist: specialistWhere }, { organization: organizationWhere }] };
 
   if (!query) {
     return defaultFilter;
   }
-
   switch (searchType) {
     case 'request': {
       return defaultFilter;

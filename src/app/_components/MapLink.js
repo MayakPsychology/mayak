@@ -39,7 +39,8 @@ export function MapLink({ mapMode = false, enableAnimation = true, className }) 
           icon={icon}
           variant="filled"
           colorVariant="orange"
-          className="z-10 flex items-center *:gap-0 md:*:gap-2"
+          forceShowIcon
+          className="z-10 flex items-center *:*:mr-0 *:gap-0 md:*:gap-2"
         >
           <span className="hidden md:block">{buttonText}</span>
         </PillButton>

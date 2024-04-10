@@ -101,7 +101,14 @@ export function Header({ socialLinks, donationDetails }) {
           )}
         >
           <div className={cn(flexBetween, 'w-full border-b-[1px] border-b-gray-300 bg-primary-100 px-4 py-4')}>
-            <Link href="/" aria-label="Reload main page on logo click" className={cn(basicLink, 'transition-all')}>
+            <Link
+              href="/"
+              aria-label="Reload main page on logo click"
+              className={cn(basicLink, 'transition-all')}
+              onClick={() => {
+                setMenuOpen(false);
+              }}
+            >
               <Logo
                 alt="Mayak logo"
                 aria-label="Mayak logo"
