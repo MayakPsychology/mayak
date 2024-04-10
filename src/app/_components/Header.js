@@ -11,6 +11,7 @@ import { Feedback } from '@components/Feedback';
 import PropTypes from 'prop-types';
 import { DonateModal, donationDetailsPropTypes, DonationSection } from '@components/DonationSection';
 import { useKeyPress } from '@hooks';
+import { KEY_TO_CLOSE_MODAL } from '@/lib/consts';
 
 export function Header({ socialLinks, donationDetails }) {
   const { innerLinks } = siteNav;
@@ -39,7 +40,7 @@ export function Header({ socialLinks, donationDetails }) {
 
   const showDonationDetails = donationDetails && donationDetails.isDonationEnabled;
 
-  useKeyPress('Escape', () => {
+  useKeyPress(KEY_TO_CLOSE_MODAL, () => {
     if (isMenuOpen) {
       setMenuOpen(false);
     } else if (isFeedbackOpen) {
