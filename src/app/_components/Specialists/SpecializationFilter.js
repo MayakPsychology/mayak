@@ -29,7 +29,7 @@ function SpecializationList() {
 
   if (isLoading) return <CircularProgress />;
 
-  if (!isLoading && !specializations?.length) return null;
+  if (!specializations?.length) return null;
 
   return (
     <>

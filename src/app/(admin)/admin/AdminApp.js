@@ -22,6 +22,8 @@ import {
   SpecialistsList,
 } from '@admin/components/ServiceProvider/Specialist';
 
+import { DonationDetailsList, DonateDetailsShow, DonationDetailsEdit } from '@admin/components/DonationDetails';
+
 import { authProvider } from './authProvider';
 import { ClientCategoryList } from './_components/ClientCategoriesType';
 import { ClientCategoryCreate } from './_components/ClientCategoriesType/Create';
@@ -114,6 +116,13 @@ export default function AdminPage() {
         show={ShowGuesser}
         edit={EditGuesser}
         create={ClientCategoryCreate}
+      />
+      <Resource
+        name={RESOURCES.donationDetails}
+        options={{ label: 'Реквізити для донатів' }}
+        list={DonationDetailsList}
+        show={DonateDetailsShow}
+        edit={DonationDetailsEdit}
       />
     </Admin>
   );
