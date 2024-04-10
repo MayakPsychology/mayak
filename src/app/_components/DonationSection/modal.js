@@ -115,7 +115,7 @@ export function DonateModal({ isOpen, onClose, donationDetails }) {
                   <div className="flex flex-col gap-5 p-1">
                     <DataSection label="Назва підприємства" text={enterpriceName} />
                     <DataSection label="IBAN" text={iban} />
-                    <DataSection label="Єдрпоу" text={enterpriseRegisterId.toString()} />
+                    <DataSection label="Єдрпоу" text={String(enterpriseRegisterId)} />
                     <DataSection label="Призначення платежу" text={paymentPurpose} />
                   </div>
                   {isQREnabled && (
