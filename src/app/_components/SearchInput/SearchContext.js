@@ -45,13 +45,20 @@ export function SearchProvider({ children }) {
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
     if (currentSearchType === searchInputTypeEnum.REQUEST) {
-      router.push(`/specialist?${mapMode}searchType=${searchInputTypeEnum.REQUEST}&query=${autoCompleteItem.title}`);
+      router.replace(`/specialist?${mapMode}searchType=${searchInputTypeEnum.REQUEST}&query=${autoCompleteItem.title}`);
     } else if (
       currentSearchType === searchInputTypeEnum.SPECIALIST ||
       currentSearchType === searchInputTypeEnum.ORGANIZATION
     ) {
-      router.push(`/specialist/${autoCompleteItem.id}?type=${currentSearchType}`);
+      router.replace(`/specialist/${autoCompleteItem.id}?type=${currentSearchType}`);
     }
+  }
+
+  function clearQuery() {
+    setQuery("");
+    setIsAutoCompleteOpen(false);
+    queryClient.cancelQueries({ queryKey: searchSyncKey });
+    router.replace(`/specialist?${mapMode}searchType=${currentSearchType}&query=`);
   }
 
   useEffect(() => {
@@ -65,6 +72,7 @@ export function SearchProvider({ children }) {
   return (
     <SearchContext.Provider
       value={{
+        clearQuery,
         currentConfig,
         query,
         debouncedQuery,

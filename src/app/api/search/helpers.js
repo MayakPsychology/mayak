@@ -48,7 +48,7 @@ export function createEntityFilter({ type, requests, format, districts, prices, 
       })),
     },
   };
-  const isSupportFocusesFilterExist = requests || type || priceFilter || query;
+  const isSupportFocusesFilterExist = requests || type || priceFilter || query || undefined;
   const supportFocusesFilter = isSupportFocusesFilterExist && {
     some: {
       AND: {
