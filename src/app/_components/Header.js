@@ -13,14 +13,14 @@ import { DonateModal, donationDetailsPropTypes, DonationSection } from '@compone
 import { useKeyEvent } from '@hooks';
 import { isEscapeKey } from '@utils/dom';
 
-export function Header({ socialLinks, donationDetails }) {
+const flexBetween = 'flex flex-row items-center justify-between';
+const flexCenter = 'flex flex-row items-center justify-center';
+const basicLink = 'no-underline list-none cursor-pointer';
+const listItemText = 'text-p2 font-bold';
+const listItemTextHover = 'text-primary-700 hover:text-primary-500';
+
+export function Header({ socialMediaLinksList, donationDetails }) {
   const { innerLinks } = siteNav;
-  //  Basic styles
-  const flexBetween = 'flex flex-row items-center justify-between';
-  const flexCenter = 'flex flex-row items-center justify-center';
-  const basicLink = 'no-underline list-none cursor-pointer';
-  const listItemText = 'text-p2 font-bold';
-  const listItemTextHover = 'text-primary-700 hover:text-primary-500';
 
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isFeedbackOpen, setFeedbackOpen] = useState(false);
@@ -80,7 +80,7 @@ export function Header({ socialLinks, donationDetails }) {
               className={cn(basicLink, listItemTextHover, listItemText, 'gap-4 px-3 py-1 transition-all')}
             />
           </div>
-          <SocialLinksList list={socialLinks} className="text-primary-700 hover:text-primary-500" />
+          <SocialLinksList list={socialMediaLinksList} className="text-primary-700 hover:text-primary-500" />
           <PillButton
             variant="outlined"
             colorVariant="blue"
@@ -144,7 +144,7 @@ export function Header({ socialLinks, donationDetails }) {
             </PillButton>
             <div className={cn(flexBetween, 'items-center')}>
               <p className="inline text-p4 text-primary-700 lg:hidden">Наші соціальні мережі:</p>
-              <SocialLinksList list={socialLinks} className="text-primary-700 hover:text-primary-500" />
+              <SocialLinksList list={socialMediaLinksList} className="text-primary-700 hover:text-primary-500" />
             </div>
           </div>
           {showDonationDetails && (
@@ -167,6 +167,6 @@ export function Header({ socialLinks, donationDetails }) {
 }
 
 Header.propTypes = {
-  socialLinks: PropTypes.arrayOf(linkItemPropType),
+  socialMediaLinksList: PropTypes.arrayOf(linkItemPropType),
   donationDetails: donationDetailsPropTypes,
 };
