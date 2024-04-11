@@ -4,15 +4,20 @@ import { FilterChip } from '@components/FilterChip';
 import AllFiltersModal from '@components/Specialists/Filters/AllFiltersModal';
 import useToggleState from '@/app/_hooks/useToggleState';
 import { filterDataPropTypes } from './propTypes';
-import { countAppliedFilters, specialistFiltersConfig } from './utils';
+import { countAppliedFilters, priceTypeEnum, specialistFiltersConfig } from './utils';
 
 export function AllFilters({ filterData }) {
   const [isOpen, { open, close }] = useToggleState(false);
 
   const searchParams = useSearchParams();
+
   const filtersAppliedCount = countAppliedFilters(
     Object.values(specialistFiltersConfig).map(({ filterKey }) => filterKey),
     searchParams,
+    {
+      filter: (key, value) =>
+        key === specialistFiltersConfig.price.filterKey.price ? value.filter(v => v === priceTypeEnum.FREE) : value,
+    },
   );
 
   return (

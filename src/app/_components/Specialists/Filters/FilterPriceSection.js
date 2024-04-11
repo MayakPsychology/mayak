@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { CheckBox } from '@components/CheckBox';
 import FilterSection from '@components/Specialists/Filters/FilterSection';
 import { cn } from '@/utils/cn';
-import { MAX_PRICE, MIN_PRICE, isValidRangePrice, specialistFiltersConfig } from './utils';
+import { MAX_PRICE, MIN_PRICE, isValidRangePrice, priceTypeEnum, specialistFiltersConfig } from './utils';
 
 function Input({ ...attrs }) {
   return (
@@ -19,7 +19,7 @@ function Input({ ...attrs }) {
 export default function FilterPriceSection({ className, filters, setFilter, toggleFilter }) {
   const [priceMin, setPriceMin] = useState(+filters.get(specialistFiltersConfig.price.filterKey.priceMin) || MIN_PRICE);
   const [priceMax, setPriceMax] = useState(+filters.get(specialistFiltersConfig.price.filterKey.priceMax) || MAX_PRICE);
-  const isFree = filters.getAll(specialistFiltersConfig.price.filterKey.price).includes('free');
+  const isFree = filters.getAll(specialistFiltersConfig.price.filterKey.price).includes(priceTypeEnum.FREE);
 
   useEffect(() => {
     // if valid price range set filter, otherwise reset filter
@@ -92,9 +92,9 @@ export default function FilterPriceSection({ className, filters, setFilter, togg
         </div>
         <CheckBox
           name="price"
-          value="free"
+          value={priceTypeEnum.FREE}
           checked={isFree}
-          onChange={() => toggleFilter(specialistFiltersConfig.price.filterKey.price, 'free')}
+          onChange={() => toggleFilter(specialistFiltersConfig.price.filterKey.price, priceTypeEnum.FREE)}
           text="Надають безкоштовні прийоми"
           classNames={{ labelText: 'text-p3' }}
         />

@@ -1,6 +1,6 @@
 import { CloseIcon } from '@icons/index';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { PillButton } from '@components/PillButton';
 import { Heading } from '@components/Typography';
@@ -18,7 +18,7 @@ import FilterOrganizationTypeSection from '@components/Specialists/Filters/Filte
 import { cn } from '@/utils/cn';
 import { useDebounce, useListEntriesCount } from '@/app/_hooks';
 import { filterDataPropTypes } from './propTypes';
-import { specialistFiltersConfig, specialistTypeEnum } from './utils';
+import { getInitialFilters, processFiltersBeforeApply, specialistFiltersConfig, specialistTypeEnum } from './utils';
 
 export default function AllFiltersModalContent({ onClose, filterData }) {
   const router = useRouter();
@@ -27,19 +27,10 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
   const initialSearchParamsRef = useRef(searchParams);
-  const [filters, setFilters] = useState(() => {
-    const newSearchParams = new URLSearchParams(searchParams);
-    const currentSpecialistType = newSearchParams.get(specialistFiltersConfig.specialistType.filterKey);
-    if (specialistFiltersConfig.specialistType.options.every(option => option.value !== currentSpecialistType)) {
-      newSearchParams.set(
-        specialistFiltersConfig.specialistType.filterKey,
-        specialistFiltersConfig.specialistType.options[0].value,
-      );
-    }
-    return newSearchParams;
-  });
+  const [filters, setFilters] = useState(getInitialFilters(searchParams));
 
-  const debouncedFilters = useDebounce(filters, 500);
+  const filtersToApply = useMemo(() => processFiltersBeforeApply(filters), [filters]);
+  const debouncedFilters = useDebounce(filtersToApply, 500);
   const { data } = useListEntriesCount(debouncedFilters);
   const totalCount = data?.data?.count;
 
@@ -88,17 +79,17 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
     });
   }, []);
 
-  const applyFiltersToURL = filtersToApply => {
-    if (searchParams.toString() === filtersToApply.toString()) {
+  const applyFiltersToURL = filtersToApplyToURL => {
+    if (searchParams.toString() === filtersToApplyToURL.toString()) {
       onClose();
     } else {
       setIsLoading(true);
-      router.push(`${pathname}?${filtersToApply}`);
+      router.push(`${pathname}?${filtersToApplyToURL}`);
     }
   };
 
   const apply = () => {
-    applyFiltersToURL(filters);
+    applyFiltersToURL(processFiltersBeforeApply(filters));
   };
 
   const reset = () => {
