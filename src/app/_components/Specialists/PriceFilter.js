@@ -7,7 +7,7 @@ import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSetParam } from '@hooks';
 import { useSearchParams } from 'next/navigation';
 import { useDebounceCallback } from '@/app/_hooks';
-import { DEBOUNCE_PERIOD } from '@/lib/consts';
+import { INPUT_DEBOUNCE } from '@/lib/consts';
 
 const priceVariants = {
   notSpecified: 'Не зазначено',
@@ -23,7 +23,7 @@ function PricesList({ pricesInUrl }) {
   const [selectedPrices, setSelectedPrices] = useState(pricesInUrl);
   const setParamDebounced = useDebounceCallback(prices => {
     priceParam.replace(prices);
-  }, DEBOUNCE_PERIOD);
+  }, INPUT_DEBOUNCE);
 
   const onChange = price => {
     const updatedPrices = selectedPrices.includes(price)

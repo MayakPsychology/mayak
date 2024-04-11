@@ -8,7 +8,7 @@ import { useListSpecialization, useSetParam } from '@hooks';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useDebounceCallback } from '@/app/_hooks';
-import { DEBOUNCE_PERIOD } from '@/lib/consts';
+import { INPUT_DEBOUNCE } from '@/lib/consts';
 
 function SpecializationList({ specializationsInUrl }) {
   const specializationParam = useSetParam('specialization');
@@ -17,7 +17,7 @@ function SpecializationList({ specializationsInUrl }) {
 
   const setParamDebounced = useDebounceCallback(districts => {
     specializationParam.replace(districts);
-  }, DEBOUNCE_PERIOD);
+  }, INPUT_DEBOUNCE);
 
   const onChange = specialization => {
     const updatedSpecializations = selectedSpecializations.includes(specialization)

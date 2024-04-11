@@ -8,7 +8,7 @@ import { useListDistrict, useSetParam } from '@hooks';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useDebounceCallback } from '@/app/_hooks';
-import { DEBOUNCE_PERIOD } from '@/lib/consts';
+import { INPUT_DEBOUNCE } from '@/lib/consts';
 
 function DistrictList({ districtsInUrl }) {
   const districtParam = useSetParam('district');
@@ -17,7 +17,7 @@ function DistrictList({ districtsInUrl }) {
 
   const setParamDebounced = useDebounceCallback(districts => {
     districtParam.replace(districts);
-  }, DEBOUNCE_PERIOD);
+  }, INPUT_DEBOUNCE);
 
   const onChange = district => {
     const updatedPrices = selectedDistricts.includes(district)
