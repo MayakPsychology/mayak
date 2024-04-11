@@ -8,6 +8,7 @@ import { useListSpecialization, useSetParam } from '@hooks';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useDebounceCallback } from '@/app/_hooks';
+import { DEBOUNCE_PERIOD } from '@/lib/consts';
 
 function SpecializationList({ specializationsInUrl }) {
   const specializationParam = useSetParam('specialization');
@@ -16,7 +17,7 @@ function SpecializationList({ specializationsInUrl }) {
 
   const setParamDebounced = useDebounceCallback(districts => {
     specializationParam.replace(districts);
-  }, 500);
+  }, DEBOUNCE_PERIOD);
 
   const onChange = specialization => {
     const updatedSpecializations = selectedSpecializations.includes(specialization)
@@ -49,11 +50,7 @@ function SpecializationList({ specializationsInUrl }) {
           );
         })}
       </ul>
-      <ClearFilterButton
-        clear={() => {
-          specializationParam.remove();
-        }}
-      />
+      <ClearFilterButton clear={() => specializationParam.remove()} />
     </>
   );
 }
@@ -63,11 +60,11 @@ SpecializationList.propTypes = {
 };
 
 export function SpecializationFilter() {
-  const specializationsInUrl = useSearchParams().getAll('specialization');
+  const specializationsInUrl = useSearchParams().getAll('specialization') || [];
 
   return (
-    <FilterBase filterText="Посада" count={specializationsInUrl?.length || 0}>
-      <SpecializationList specializationsInUrl={specializationsInUrl || []} />
+    <FilterBase filterText="Посада" count={specializationsInUrl.length}>
+      <SpecializationList specializationsInUrl={specializationsInUrl} />
     </FilterBase>
   );
 }

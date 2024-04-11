@@ -7,6 +7,7 @@ import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSetParam } from '@hooks';
 import { useSearchParams } from 'next/navigation';
 import { useDebounceCallback } from '@/app/_hooks';
+import { DEBOUNCE_PERIOD } from '@/lib/consts';
 
 const priceVariants = {
   notSpecified: 'Не зазначено',
@@ -22,7 +23,7 @@ function PricesList({ pricesInUrl }) {
   const [selectedPrices, setSelectedPrices] = useState(pricesInUrl);
   const setParamDebounced = useDebounceCallback(prices => {
     priceParam.replace(prices);
-  }, 500);
+  }, DEBOUNCE_PERIOD);
 
   const onChange = price => {
     const updatedPrices = selectedPrices.includes(price)
@@ -47,11 +48,7 @@ function PricesList({ pricesInUrl }) {
           </li>
         ))}
       </ul>
-      <ClearFilterButton
-        clear={() => {
-          priceParam.remove();
-        }}
-      />
+      <ClearFilterButton clear={() => priceParam.remove()} />
     </>
   );
 }
@@ -61,11 +58,11 @@ PricesList.propTypes = {
 };
 
 export function PriceFilter() {
-  const pricesInUrl = useSearchParams().getAll('price');
+  const pricesInUrl = useSearchParams().getAll('price') || [];
 
   return (
-    <FilterBase filterText="Ціна" count={pricesInUrl?.length || 0}>
-      <PricesList pricesInUrl={pricesInUrl || []} />
+    <FilterBase filterText="Ціна" count={pricesInUrl.length}>
+      <PricesList pricesInUrl={pricesInUrl} />
     </FilterBase>
   );
 }

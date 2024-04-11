@@ -8,6 +8,7 @@ import { useListDistrict, useSetParam } from '@hooks';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useDebounceCallback } from '@/app/_hooks';
+import { DEBOUNCE_PERIOD } from '@/lib/consts';
 
 function DistrictList({ districtsInUrl }) {
   const districtParam = useSetParam('district');
@@ -16,7 +17,7 @@ function DistrictList({ districtsInUrl }) {
 
   const setParamDebounced = useDebounceCallback(districts => {
     districtParam.replace(districts);
-  }, 500);
+  }, DEBOUNCE_PERIOD);
 
   const onChange = district => {
     const updatedPrices = selectedDistricts.includes(district)
@@ -49,11 +50,7 @@ function DistrictList({ districtsInUrl }) {
           );
         })}
       </ul>
-      <ClearFilterButton
-        clear={() => {
-          districtParam.remove();
-        }}
-      />
+      <ClearFilterButton clear={() => districtParam.remove()} />
     </>
   );
 }
@@ -63,11 +60,11 @@ DistrictList.propTypes = {
 };
 
 export function DistrictFilter() {
-  const districtsInUrl = useSearchParams().getAll('district');
+  const districtsInUrl = useSearchParams().getAll('district') || [];
 
   return (
-    <FilterBase filterText="Райони" count={districtsInUrl?.length || 0}>
-      <DistrictList districtsInUrl={districtsInUrl || []} />
+    <FilterBase filterText="Райони" count={districtsInUrl.length}>
+      <DistrictList districtsInUrl={districtsInUrl} />
     </FilterBase>
   );
 }

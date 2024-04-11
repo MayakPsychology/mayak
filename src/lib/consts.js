@@ -11,3 +11,4 @@ export const BASE_ERROR_MESSAGES = {
   429: 'Too Many Requests',
   500: 'Internal Server Error',
 };
+export const DEBOUNCE_PERIOD = 500;

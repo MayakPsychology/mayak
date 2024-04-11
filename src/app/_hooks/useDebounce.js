@@ -16,12 +16,10 @@ export function useDebounceCallback(fn, timeout) {
   const timeoutRef = useRef(null);
   return useCallback(
     (...args) => {
-      // Clear the current timeout, if any, to reset the debouncing timer.
       if (timeoutRef.current !== null) {
         clearTimeout(timeoutRef.current);
       }
 
-      // Set a new timeout to invoke the original function after the delay.
       timeoutRef.current = setTimeout(() => {
         fn(...args);
       }, timeout);
