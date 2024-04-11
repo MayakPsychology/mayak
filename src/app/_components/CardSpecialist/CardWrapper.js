@@ -25,7 +25,7 @@ export function CardWrapper({ children, className, id, type }) {
   return (
     <div
       className={cn(
-        'transition-all md:flex md:cursor-auto',
+        'transition-all md:grid md:cursor-auto md:grid-cols-[200px_auto]',
         hasClickHandler ? 'cursor-pointer' : 'cursor-default',
         className,
       )}

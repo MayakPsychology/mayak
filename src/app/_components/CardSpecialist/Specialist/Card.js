@@ -14,12 +14,18 @@ import { SpecialistTitle } from '@components/CardSpecialist/SpecialistTitle';
 import { SpecializationsPanel } from '@components/CardSpecialist/SpecializationsPanel';
 import { getContactsList, getLabelsList, getSpecialistSocials } from '@components/CardSpecialist/config';
 import { specialistPropType } from '@components/CardSpecialist/prop-types';
+import { Map } from '@components/Map';
+import { addressesToPoints } from '@utils/common';
+import { useSearchParams } from 'next/navigation';
 import { ClientCategoryList } from '../ClientCategoryList';
 import { WorkTime } from '../WorkTime';
 import { SpecialistChipLists } from './SpecialistChipLists';
 
 export function CardSpecialist({ specialist, className, extended = false }) {
   if (!specialist) throw new Error('Specialist is not found');
+
+  const params = useSearchParams();
+  const isOnSpecialistPage = params.get('type') === 'specialist';
 
   const {
     id,
@@ -59,6 +65,8 @@ export function CardSpecialist({ specialist, className, extended = false }) {
   const name = surname ? `${lastName} ${firstName} ${surname}` : `${lastName} ${firstName}`;
 
   const workTimeElement = !!workTime?.length && <WorkTime workTime={workTime} />;
+
+  const points = addressesToPoints(addresses);
 
   return (
     <CardWrapper className={className} id={id} type="specialist">
@@ -130,6 +138,16 @@ export function CardSpecialist({ specialist, className, extended = false }) {
             </Link>
           </>
         )}
+      </div>
+      <div className="col-span-2">
+        {extended || (isOnSpecialistPage && points?.length) ? (
+          <Map
+            points={points}
+            center={[points[0].latitude, points[0].longitude]}
+            zoom={13}
+            className="mt-5 h-[198px] w-full lg:h-[232px]"
+          />
+        ) : null}
       </div>
     </CardWrapper>
   );

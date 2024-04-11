@@ -15,11 +15,19 @@ import { AddressesList } from '@components/CardSpecialist/AddressesList';
 import { CardButton } from '@components/CardSpecialist/CardButton';
 import { WorkTime } from '@components/CardSpecialist/WorkTime';
 import { organizationPropType } from '@components/CardSpecialist/prop-types';
+import { addressesToPoints } from '@utils/common';
+import { Map } from '@components/Map';
+import { useSearchParams } from 'next/navigation';
 import { ClientCategoryList } from '../ClientCategoryList';
 import { OrganizationChipLists } from './OrganizationChipLists';
 import { OwnershipTypeTile } from './OwnershipTypeTile';
 
 export function CardOrganization({ organization, className, extended = false }) {
+  if (!organization) throw new Error('Organization is not found');
+
+  const params = useSearchParams();
+  const isOnOrganizationPage = params.get('type') === 'organization';
+
   const {
     id,
     name,
@@ -68,6 +76,8 @@ export function CardOrganization({ organization, className, extended = false }) 
     </>
   );
   const workTimeElement = !!workTime?.length && <WorkTime workTime={workTime} />;
+  const points = addressesToPoints(addresses);
+
   return (
     <CardWrapper className={className} id={id} type="organization">
       <div className="hidden max-w-[150px] md:block lg:max-w-[200px]">
@@ -139,6 +149,16 @@ export function CardOrganization({ organization, className, extended = false }) 
             </Link>
           </>
         )}
+      </div>
+      <div className="col-span-2 mt-5">
+        {extended || (isOnOrganizationPage && points?.length) ? (
+          <Map
+            points={points}
+            center={[points[0].latitude, points[0].longitude]}
+            zoom={13}
+            className="h-[198px] w-full lg:h-[232px]"
+          />
+        ) : null}
       </div>
     </CardWrapper>
   );
