@@ -18,7 +18,13 @@ import FilterOrganizationTypeSection from '@components/Specialists/Filters/Filte
 import { cn } from '@/utils/cn';
 import { useDebounce, useListEntriesCount } from '@/app/_hooks';
 import { filterDataPropTypes } from './propTypes';
-import { getInitialFilters, processFiltersBeforeApply, specialistFiltersConfig, specialistTypeEnum } from './utils';
+import {
+  getInitialFilters,
+  processFiltersBeforeApply,
+  specialistFiltersConfig,
+  specialistTypeEnum,
+  specialistFormatEnum,
+} from './utils';
 
 export default function AllFiltersModalContent({ onClose, filterData }) {
   const router = useRouter();
@@ -116,8 +122,22 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
   const selectedTherapy = filterData.therapies.find(therapy => therapy.type === selectedTherapyKey);
   const requests = selectedTherapy?.requests || [];
 
-  const selectedSpecialistType = filters.get(specialistFiltersConfig.specialistType.filterKey);
-  const isOrganization = selectedSpecialistType === specialistTypeEnum.ORGANIZATION;
+  const isOrganization = useMemo(() => {
+    const selectedSpecialistType = filters.get(specialistFiltersConfig.specialistType.filterKey);
+    return selectedSpecialistType === specialistTypeEnum.ORGANIZATION;
+  }, [filters]);
+
+  const isOnlyOnlineFormat = useMemo(() => {
+    const format = filters.getAll(specialistFiltersConfig.format.filterKey);
+    return format.toString() === specialistFormatEnum.ONLINE;
+  }, [filters]);
+
+  const hasDistrictFilter = useMemo(() => isOrganization || !isOnlyOnlineFormat, [isOrganization, isOnlyOnlineFormat]);
+
+  useEffect(() => {
+    setFilter(specialistFiltersConfig.district.filterKey, null);
+  }, [hasDistrictFilter, setFilter]);
+
   return (
     <>
       <div className="flex flex-none items-center px-4 md:relative md:px-6">
@@ -156,12 +176,14 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
             appendFilter={appendFilter}
           />
         )}
-        <FilterDistrictSection
-          className="px-4 md:px-0"
-          districts={filterData.districts}
-          filters={filters}
-          appendFilter={appendFilter}
-        />
+        {hasDistrictFilter && (
+          <FilterDistrictSection
+            className="px-4 md:px-0"
+            districts={filterData.districts}
+            filters={filters}
+            appendFilter={appendFilter}
+          />
+        )}
         <FilterPriceSection
           className="px-4 md:px-0"
           filters={filters}
