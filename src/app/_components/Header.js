@@ -5,21 +5,22 @@ import Link from 'next/link';
 import { BurgerIcon, HeaderCloseIcon, Logo } from '@icons';
 import siteNav from '@config/siteNav';
 import { cn } from '@utils/cn';
-import { useBodyScrollLock } from '@hooks';
-import { InnerLink, SocialLink } from '@components/Links';
+import { InnerLink, linkItemPropType, SocialLinksList } from '@components/Links';
 import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';
-import { DonateModal, DonationSection, donationDetailsPropTypes } from '@components/DonationSection';
+import PropTypes from 'prop-types';
+import { DonateModal, donationDetailsPropTypes, DonationSection } from '@components/DonationSection';
+import { useKeyEvent } from '@hooks';
+import { isEscapeKey } from '@utils/dom';
 
-export function Header({ donationDetails }) {
-  const { links, innerLinks } = siteNav;
+export function Header({ socialLinks, donationDetails }) {
+  const { innerLinks } = siteNav;
   //  Basic styles
   const flexBetween = 'flex flex-row items-center justify-between';
   const flexCenter = 'flex flex-row items-center justify-center';
   const basicLink = 'no-underline list-none cursor-pointer';
   const listItemText = 'text-p2 font-bold';
   const listItemTextHover = 'text-primary-700 hover:text-primary-500';
-  const iconColors = 'text-primary-700 hover:text-primary-500';
 
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isFeedbackOpen, setFeedbackOpen] = useState(false);
@@ -29,6 +30,12 @@ export function Header({ donationDetails }) {
     setMenuOpen(state => !state);
   }, [setMenuOpen]);
 
+  useKeyEvent({
+    key: isEscapeKey,
+    handler: () => setMenuOpen(false),
+    event: 'keydown',
+  });
+
   const toggleFeedback = useCallback(() => {
     setFeedbackOpen(prevState => !prevState);
   }, [setFeedbackOpen]);
@@ -36,8 +43,6 @@ export function Header({ donationDetails }) {
   const toggleDonateModal = useCallback(() => {
     setDonateModalOpen(prevState => !prevState);
   }, [setDonateModalOpen]);
-
-  useBodyScrollLock(isMenuOpen, 'y');
 
   const showDonationDetails = donationDetails && donationDetails.isDonationEnabled;
 
@@ -68,17 +73,14 @@ export function Header({ donationDetails }) {
             className="h-9 w-[66px] transition-all lg:h-[74px] lg:w-[129px]"
           />
         </Link>
-        <div className={cn(flexCenter, 'hidden gap-6 lg:flex')}>
+        <div className={cn(flexCenter, 'ml-auto hidden gap-6 lg:flex')}>
           <div className="flex list-none gap-4 text-primary-700">
             <InnerLink
               items={innerLinks}
               className={cn(basicLink, listItemTextHover, listItemText, 'gap-4 px-3 py-1 transition-all')}
             />
           </div>
-          <SocialLink
-            links={links}
-            className={cn(basicLink, iconColors, 'hover:color-primary-500 gap-6 transition-all hover:text-primary-500')}
-          />
+          <SocialLinksList list={socialLinks} className="text-primary-700 hover:text-primary-500" />
           <PillButton
             variant="outlined"
             colorVariant="blue"
@@ -89,7 +91,9 @@ export function Header({ donationDetails }) {
           </PillButton>
         </div>
         {/* Burger menu */}
-        <BurgerIcon className="block transition-all lg:hidden" onClick={toggleMenu} />
+        <span tabIndex={0}>
+          <BurgerIcon className="block transition-all lg:hidden" onClick={toggleMenu} />
+        </span>
         <div
           className={cn(
             'absolute inset-0 flex h-dvh w-dvw flex-col bg-other-black transition-all lg:hidden',
@@ -112,7 +116,9 @@ export function Header({ donationDetails }) {
                 className="h-[36px] w-[66px] lg:h-[74px] lg:w-[129px]"
               />
             </Link>
-            <HeaderCloseIcon onClick={toggleMenu} className="transition-all" />
+            <span tabIndex={0}>
+              <HeaderCloseIcon onClick={toggleMenu} className="transition-all" />
+            </span>
           </div>
           <div className="flex grow flex-col bg-other-white p-4">
             <div className="flex flex-col items-center">
@@ -138,14 +144,7 @@ export function Header({ donationDetails }) {
             </PillButton>
             <div className={cn(flexBetween, 'items-center')}>
               <p className="inline text-p4 text-primary-700 lg:hidden">Наші соціальні мережі:</p>
-              <SocialLink
-                links={links}
-                className={cn(
-                  basicLink,
-                  iconColors,
-                  'hover:color-primary-500 gap-4 transition-all hover:text-primary-500',
-                )}
-              />
+              <SocialLinksList list={socialLinks} className="text-primary-700 hover:text-primary-500" />
             </div>
           </div>
           {showDonationDetails && (
@@ -157,12 +156,17 @@ export function Header({ donationDetails }) {
         </div>
       </nav>
 
-      <Feedback isFeedbackOpen={isFeedbackOpen} onClose={toggleFeedback} />
-      <DonateModal isOpen={isDonateModalOpen} onClose={toggleDonateModal} donationDetails={donationDetails} />
+      <Feedback isFeedbackOpen={isFeedbackOpen} onClose={() => setFeedbackOpen(false)} />
+      <DonateModal
+        isOpen={isDonateModalOpen}
+        onClose={() => setDonateModalOpen(false)}
+        donationDetails={donationDetails}
+      />
     </header>
   );
 }
 
 Header.propTypes = {
+  socialLinks: PropTypes.arrayOf(linkItemPropType),
   donationDetails: donationDetailsPropTypes,
 };

@@ -1,6 +1,6 @@
 import { useNotify, useRedirect } from 'react-admin';
 
-export const useRedirectToList = ({ successMessage = 'Success', redirectPath }) => {
+export const useRedirectToList = ({ successMessage = 'Success', redirectPath, errorMessage = '' }) => {
   const notify = useNotify();
   const redirect = useRedirect();
 
@@ -10,7 +10,7 @@ export const useRedirectToList = ({ successMessage = 'Success', redirectPath }) 
   };
 
   const handleError = error => {
-    notify(error.message);
+    notify(errorMessage || error.message);
   };
   return { handleError, handleSuccess };
 };

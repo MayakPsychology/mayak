@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { CalendarIcon, PriceIcon, LocationIcon, TimeIcon } from '@icons';
+import { CalendarIcon, LocationIcon, PriceIcon, TimeIcon } from '@icons';
 import { Label } from '@components/Label';
 import { OverflownText } from '@components/OverflownText';
 import { EventLinkModal } from '@components/EventLinkModal';
@@ -44,6 +44,7 @@ function transformData(event) {
 
 export function EventCard({ event }) {
   const [isModalOpenOpen, setIsModalOpen] = useState(false);
+
   const { title, organizerName, tags, priceText, locationText, date, time, locationLink, additionalLink } =
     transformData(event);
   const checkPrice = priceText === 'Безкоштовно' ? priceText : `${priceText} грн`;
@@ -60,7 +61,12 @@ export function EventCard({ event }) {
   }
 
   const tagsElements = tags?.map(tag => (
-    <Label key={tag.name} className="bg-primary-100" textClassName="text-primary-600" text={tag.name} />
+    <Label
+      key={tag.name}
+      className="pointer-events-none bg-primary-100"
+      textClassName="text-primary-600"
+      text={tag.name}
+    />
   ));
   return (
     <div className="flex h-[310px] w-full flex-grow flex-col gap-4 self-stretch rounded-3xl border-2 border-gray-200 bg-other-white p-4">
@@ -69,7 +75,7 @@ export function EventCard({ event }) {
         <OverflownText className="w-[259px] truncate text-p3 font-bold text-primary-600" text={organizerName} />
       </div>
       {tagsElements.length === 0 && <div className="flex h-[25px] w-64 items-start gap-4" />}
-      <div className="flex w-64 items-start gap-4 overflow-hidden">{tagsElements}</div>
+      <ul className="flex items-start gap-4">{tagsElements}</ul>
       <hr className="border border-dashed border-gray-300" />
       <ul className="flex w-[259px] flex-col gap-4">
         <ListItem icon={<CalendarIcon />} textColor="text-secondary-400" fontWeight="font-bold" text={date} />

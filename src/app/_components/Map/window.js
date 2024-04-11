@@ -16,7 +16,7 @@ export default function MapWindow({ points, center, zoom, className }) {
       {points
         .filter(point => point.title)
         .map(({ title, latitude, longitude }) => (
-          <Marker position={[latitude, longitude]} key={title}>
+          <Marker position={[latitude, longitude]} key={`${latitude}-${longitude}`}>
             {title && <Popup>{title}</Popup>}
           </Marker>
         ))}

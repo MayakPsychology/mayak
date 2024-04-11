@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 
-export function MapLink({ mapMode = false, className }) {
+export function MapLink({ mapMode = false, enableAnimation = true, className }) {
   const searchParams = useSearchParams();
   const params = searchParams.toString();
   const restParams = params ? `&${params}` : '';
@@ -16,23 +16,30 @@ export function MapLink({ mapMode = false, className }) {
   const href = mapMode ? '/specialist' : `/specialist?mode=map${restParams}`;
   const icon = mapMode ? <List /> : <Map />;
 
+  const motionData = {
+    initial: {
+      scale: 0,
+    },
+    animate: {
+      scale: 1,
+    },
+    transition: {
+      type: 'spring',
+      stiffness: 260,
+      damping: 20,
+    },
+  };
+
+  const animationData = enableAnimation ? motionData : {};
+
   return (
-    <motion.div
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{
-        type: 'spring',
-        stiffness: 260,
-        damping: 20,
-      }}
-      className={className}
-    >
+    <motion.div {...animationData} className={className}>
       <Link href={href} aria-label={`Click to see specialist list${mapMode ? ' along with the map' : ''}`}>
         <PillButton
           icon={icon}
-          forceShowIcon
           variant="filled"
           colorVariant="orange"
+          forceShowIcon
           className="z-10 flex items-center *:*:mr-0 *:gap-0 md:*:gap-2"
         >
           <span className="hidden md:block">{buttonText}</span>
@@ -45,4 +52,5 @@ export function MapLink({ mapMode = false, className }) {
 MapLink.propTypes = {
   className: PropTypes.string,
   mapMode: PropTypes.bool,
+  enableAnimation: PropTypes.bool,
 };

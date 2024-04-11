@@ -3,6 +3,8 @@
 import PropTypes from 'prop-types';
 import { cn } from '@utils/cn';
 import { motion } from 'framer-motion';
+import { useBodyScrollLock, useKeyEvent } from '@hooks';
+import { isEscapeKey } from '@utils/dom';
 import { ClientPortal } from '../ClientPortal';
 import { ModalCloseButton } from './ModalCloseButton';
 
@@ -16,6 +18,14 @@ export const Modal = ({
   isCloseButton = true,
   layout = true,
 }) => {
+  useKeyEvent({
+    key: isEscapeKey,
+    handler: onClose,
+    event: 'keydown',
+  });
+
+  useBodyScrollLock(isOpen);
+
   const blurBackground = <div className="fixed left-0 top-0 z-[55] h-full w-full backdrop-blur-sm" />;
 
   const motionData = {
@@ -42,12 +52,13 @@ export const Modal = ({
         <>
           {isBlurBackground && blurBackground}
           <div
-            className="fixed left-0 top-0 z-[75] grid h-full w-full place-content-center overflow-y-scroll"
+            className="fixed bottom-0 left-0 top-0 z-[75] grid w-full place-content-center lg:top-1/2 lg:h-[75vh] lg:-translate-y-1/2"
             onClick={onClose}
           >
             <motion.div
               className={cn(
-                layout && 'z-[99] rounded-xl bg-other-white px-4 py-[18px] shadow-custom-2 md:p-6',
+                layout &&
+                  'z-[99] flex flex-col overflow-hidden rounded-xl bg-other-white px-4 py-[18px] shadow-custom-2 md:p-6',
                 className,
               )}
               onClick={e => {
@@ -62,7 +73,7 @@ export const Modal = ({
                   <ModalCloseButton onClose={onClose} />
                 </div>
               )}
-              {children}
+              <div className="mt-4 overflow-y-auto pr-5">{children}</div>
             </motion.div>
           </div>
         </>
