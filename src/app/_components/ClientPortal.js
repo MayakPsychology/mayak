@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
-import { AnimatePresence } from 'framer-motion';
 
 export const ClientPortal = ({ children, selector, show }) => {
   const ref = useRef(null);
@@ -11,7 +10,7 @@ export const ClientPortal = ({ children, selector, show }) => {
     ref.current = document.getElementById(selector);
   }, [selector]);
 
-  return show && ref.current ? createPortal(<AnimatePresence>{children}</AnimatePresence>, ref.current) : null;
+  return show && ref.current ? createPortal(children, ref.current) : null;
 };
 
 ClientPortal.propTypes = {

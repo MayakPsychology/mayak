@@ -22,7 +22,7 @@ export function CardModalWrapper({ children, className }) {
 
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen
       onClose={handleClose}
       className={cn(
         'rounded-b-none rounded-tl-3xl rounded-tr-3xl lg:static lg:mx-4 lg:h-auto lg:max-w-[1000px] lg:rounded-3xl lg:p-[50px]',

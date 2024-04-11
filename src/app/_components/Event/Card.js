@@ -93,7 +93,7 @@ export function EventCard({ event }) {
         </li>
       </ul>
 
-      <EventLinkModal isOpen={isModalOpenOpen} onClose={toggleModal} link={additionalLink?.link} />
+      <EventLinkModal isOpen={isModalOpenOpen} onClose={() => setIsModalOpen(false)} link={additionalLink?.link} />
     </div>
   );
 }
