@@ -18,14 +18,14 @@ export function Footer() {
   const iconColors = 'text-other-white hover:text-primary-400';
 
   return (
-    <footer className="text-white relative flex w-full flex-col overflow-hidden bg-primary-800 p-4 lg:px-20 lg:py-12">
+    <footer className="relative flex w-full flex-col overflow-hidden bg-primary-800 p-4 text-white lg:px-20 lg:py-12">
       <div className={cn(flexColCenter, flexBetweenMd, 'gap-4')}>
         <Link href="/" aria-label="Reload main page on logo click" className={cn(basicLink, 'transition-all')}>
           <WhiteLogo
             alt="Footer logo image"
             aria-label="Footer logo image"
             priority="true"
-            className="flex-no-shrink fill-current h-[36px] w-[66px] lg:h-[74px] lg:w-[129px]"
+            className="flex-no-shrink h-[36px] w-[66px] fill-current lg:h-[74px] lg:w-[129px]"
           />
         </Link>
         <div className={cn(flexColCenter, flexCenterMd, 'gap-2 py-3 text-other-white lg:gap-6')}>

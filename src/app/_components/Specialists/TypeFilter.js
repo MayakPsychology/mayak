@@ -1,36 +1,31 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CircularProgress } from '@mui/material';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
-import { useSetParam, useListTherapies } from '@hooks';
+import { useSetParam } from '@hooks';
 import { useSearchParams } from 'next/navigation';
+import PropTypes from 'prop-types';
+import { therapyFilterPropType } from '@components/Specialists/Filters/propTypes';
+import { specialistFiltersConfig } from '@components/Specialists/Filters/utils';
 
-function TypeList() {
-  const { data: therapies, isLoading } = useListTherapies();
-  const [selectedType, setSelectedType] = useState();
+function TypeList({ options, typeInUrl }) {
+  const [selectedType, setSelectedType] = useState(typeInUrl);
 
-  const searchParams = useSearchParams();
-  const { replace, remove } = useSetParam('type');
+  const { replace, remove } = useSetParam(specialistFiltersConfig.type.filterKey);
 
   const onChange = type => {
     replace(type);
   };
 
   useEffect(() => {
-    const typeInUrl = searchParams.get('type');
     setSelectedType(typeInUrl);
-  }, [searchParams]);
-
-  if (!isLoading && !therapies?.length) return null;
-
-  if (isLoading) return <CircularProgress />;
+  }, [typeInUrl]);
 
   return (
     <>
       <ul>
-        {therapies.map(therapy => {
+        {options.map(therapy => {
           const { type, title } = therapy;
           return (
             <li key={type} className="w-[280px] md:w-[300px]">
@@ -56,12 +51,21 @@ function TypeList() {
   );
 }
 
-export function TypeFilter() {
-  const typeInUrl = useSearchParams().get('type');
+TypeList.propTypes = {
+  options: PropTypes.arrayOf(therapyFilterPropType),
+  typeInUrl: PropTypes.string,
+};
+
+export function TypeFilter({ options }) {
+  const typeInUrl = useSearchParams().get(specialistFiltersConfig.type.filterKey);
 
   return (
     <FilterBase filterText="Тип" count={Number(!!typeInUrl)}>
-      <TypeList />
+      <TypeList options={options} typeInUrl={typeInUrl} />
     </FilterBase>
   );
 }
+
+TypeFilter.propTypes = {
+  options: PropTypes.arrayOf(therapyFilterPropType),
+};

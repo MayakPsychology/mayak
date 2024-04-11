@@ -1,15 +1,17 @@
 import _ from 'lodash';
 
-export const getProperEnding = count => {
+export const getProperEndingWithBase = (base, count) => {
   const lastDigit = count % 10;
   if (_.range(11, 15).includes(count)) {
-    return 'результатів';
+    return `${base}ів`;
   }
   if (_.range(2, 5).includes(lastDigit)) {
-    return 'результати';
+    return `${base}и`;
   }
   if (lastDigit === 1) {
-    return 'результат';
+    return base;
   }
-  return 'результатів';
+  return `${base}ів`;
 };
+
+export const getProperEnding = count => getProperEndingWithBase('результат', count);

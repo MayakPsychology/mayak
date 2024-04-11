@@ -1,18 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CircularProgress } from '@mui/material';
-import { useListDistrict, useSetParam } from '@hooks';
+import { useSetParam } from '@hooks';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSearchParams } from 'next/navigation';
+import PropTypes from 'prop-types';
+import { districtFilterPropType } from '@components/Specialists/Filters/propTypes';
+import { specialistFiltersConfig } from '@components/Specialists/Filters/utils';
 
-function DistrictList() {
-  const { data: districts, isLoading } = useListDistrict();
-  const [selectedDistricts, setSelectedDistricts] = useState();
+function DistrictList({ options, districtsInUrl }) {
+  const [selectedDistricts, setSelectedDistricts] = useState(districtsInUrl);
 
-  const searchParams = useSearchParams();
-  const { add, remove } = useSetParam('district');
+  const { add, remove } = useSetParam(specialistFiltersConfig.district.filterKey);
 
   const onChange = district => {
     if (selectedDistricts.includes(district)) {
@@ -23,18 +23,12 @@ function DistrictList() {
   };
 
   useEffect(() => {
-    const districtsInUrl = searchParams.getAll('district');
     setSelectedDistricts(districtsInUrl);
-  }, [searchParams]);
-
-  if (isLoading) return <CircularProgress />;
-
-  if (!isLoading && !districts?.length) return null;
-
+  }, [districtsInUrl]);
   return (
     <>
       <ul>
-        {districts.map(district => {
+        {options.map(district => {
           const { id, name } = district;
           return (
             <li key={id} className="w-[280px] md:w-[300px]">
@@ -59,12 +53,21 @@ function DistrictList() {
   );
 }
 
-export function DistrictFilter() {
-  const districtsInUrl = useSearchParams().getAll('district');
+DistrictList.propTypes = {
+  options: PropTypes.arrayOf(districtFilterPropType),
+  districtsInUrl: PropTypes.arrayOf(PropTypes.string),
+};
+
+export function DistrictFilter({ options }) {
+  const districtsInUrl = useSearchParams().getAll(specialistFiltersConfig.district.filterKey);
 
   return (
     <FilterBase filterText="Райони" count={districtsInUrl?.length || 0}>
-      <DistrictList />
+      <DistrictList options={options} districtsInUrl={districtsInUrl} />
     </FilterBase>
   );
 }
+
+DistrictFilter.propTypes = {
+  options: PropTypes.arrayOf(districtFilterPropType),
+};

@@ -41,6 +41,7 @@ export const handler = withErrorHandler(async req => {
     clientsNotWorkingWith: true,
   };
 
+  const takeFilter = params?.mode === 'map' ? totalCount : take;
   const searchEntries = await prisma.searchEntry.findMany({
     include: {
       specialist: {
@@ -64,7 +65,7 @@ export const handler = withErrorHandler(async req => {
     orderBy: {
       sortString: 'asc',
     },
-    take: params?.mode === 'map' ? totalCount : take,
+    take: takeFilter + 1,
     skip,
     ...(lastCursor && {
       skip: 1,
@@ -74,16 +75,19 @@ export const handler = withErrorHandler(async req => {
     }),
   });
 
-  const isNextPageExist = searchEntries.length === take;
-  const lastResult = searchEntries.slice(-1)[0];
-  const newCursor = lastResult?.id;
+  let nextPageEntry;
+  if (searchEntries.length > takeFilter) {
+    nextPageEntry = searchEntries.pop();
+  }
+  const hasNextPage = !!nextPageEntry;
 
+  const newCursor = hasNextPage ? searchEntries[take - 1].id : undefined;
   return NextResponse.json({
     data: searchEntries,
     metaData: {
       totalCount,
       lastCursor: newCursor,
-      hasNextPage: isNextPageExist,
+      hasNextPage,
     },
   });
 });

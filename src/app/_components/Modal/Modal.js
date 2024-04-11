@@ -15,6 +15,7 @@ export const Modal = ({
   isBlurBackground = true,
   isCloseButton = true,
   layout = true,
+  classNames,
 }) => {
   const blurBackground = <div className="fixed left-0 top-0 z-[55] h-full w-full backdrop-blur-sm" />;
 
@@ -42,7 +43,10 @@ export const Modal = ({
         <>
           {isBlurBackground && blurBackground}
           <div
-            className="fixed left-0 top-0 z-[75] grid h-full w-full place-content-center overflow-y-scroll"
+            className={cn(
+              'fixed left-0 top-0 z-[75] grid h-full w-full place-content-center overflow-y-scroll',
+              classNames?.container,
+            )}
             onClick={onClose}
           >
             <motion.div
@@ -80,4 +84,7 @@ Modal.propTypes = {
   children: PropTypes.node,
   title: PropTypes.string,
   className: PropTypes.string,
+  classNames: PropTypes.shape({
+    container: PropTypes.string,
+  }),
 };
