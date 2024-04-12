@@ -8,7 +8,10 @@ import { addressesToPoints } from '@/utils/common';
 export function CardOrganizationExtended({ organization, className }) {
   const points = addressesToPoints(organization.addresses);
   return (
-    <CardModalWrapper className="mt-10 w-full max-w-[1080px] lg:mt-0 lg:w-[1080px]" key={organization?.id}>
+    <CardModalWrapper
+      className="mt-10 w-full max-w-[1080px] pb-12 lg:mt-0 lg:w-[1080px] lg:pb-20"
+      key={organization?.id}
+    >
       <div className="flex flex-col gap-3 lg:gap-6">
         <CardOrganization organization={organization} className={className} extended />
         {points?.length ? (
