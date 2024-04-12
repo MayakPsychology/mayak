@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Footer } from '@components/Footer';
 import { Header } from '@components/Header';
 import { Hint } from '@components/Hint';
+import { getLinksList } from '@components/Links/linksActions';
 import { prisma } from '@/lib/db';
 
 export const metadata = {
@@ -15,13 +16,14 @@ export const metadata = {
 
 export default async function Layout({ children }) {
   const donationDetails = await prisma.donationDetails.findFirst();
+  const socialLinks = await getLinksList();
 
   return (
     <Hint>
       <div className="flex min-h-screen flex-col">
-        <Header donationDetails={donationDetails} />
+        <Header socialMediaLinksList={socialLinks.socialMediaLinksList} donationDetails={donationDetails} />
         <main className="relative flex-1">{children}</main>
-        <Footer />
+        <Footer socialLinks={socialLinks} />
       </div>
       <Toaster
         position="top-center"
