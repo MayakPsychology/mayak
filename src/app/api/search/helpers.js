@@ -135,10 +135,6 @@ export function createSearchSyncFilter(params) {
   const activeFilter = { isActive: true };
   const defaultFilter = { OR: [{ specialist: activeFilter }, { organization: activeFilter }] };
 
-  if (!query) {
-    return defaultFilter;
-  }
-
   switch (searchType) {
     case 'request':
       Object.assign(activeFilter, {
