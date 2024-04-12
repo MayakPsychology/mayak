@@ -14,15 +14,15 @@ import { SpecialistTitle } from '@components/CardSpecialist/SpecialistTitle';
 import { SpecializationsPanel } from '@components/CardSpecialist/SpecializationsPanel';
 import { getContactsList, getLabelsList, getSpecialistSocials } from '@components/CardSpecialist/config';
 import { specialistPropType } from '@components/CardSpecialist/prop-types';
-import { Map } from '@components/Map';
 import { addressesToPoints } from '@utils/common';
 import { useSearchParams } from 'next/navigation';
+import { Map } from '@components/Map';
 import { ClientCategoryList } from '../ClientCategoryList';
 import { WorkTime } from '../WorkTime';
 import { SpecialistChipLists } from './SpecialistChipLists';
 
 export function CardSpecialist({ specialist, className, extended = false }) {
-  if (!specialist) throw new Error('Specialist is not found');
+  // if (!specialist) throw new Error('Specialist is not found');
 
   const params = useSearchParams();
   const isOnSpecialistPage = params.get('type') === 'specialist';
@@ -140,7 +140,7 @@ export function CardSpecialist({ specialist, className, extended = false }) {
         )}
       </div>
       <div className="col-span-2">
-        {extended || (isOnSpecialistPage && points?.length) ? (
+        {(extended || isOnSpecialistPage) && points?.length ? (
           <Map
             points={points}
             center={[points[0].latitude, points[0].longitude]}

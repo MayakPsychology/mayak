@@ -151,7 +151,7 @@ export function CardOrganization({ organization, className, extended = false }) 
         )}
       </div>
       <div className="col-span-2 mt-5">
-        {extended || (isOnOrganizationPage && points?.length) ? (
+        {(extended || isOnOrganizationPage) && points?.length ? (
           <Map
             points={points}
             center={[points[0].latitude, points[0].longitude]}
