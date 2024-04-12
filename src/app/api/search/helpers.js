@@ -33,10 +33,8 @@ function getFormatFilter(format) {
   const formats = Array.isArray(format) ? format : [format];
   return formats.reduce(
     (acc, val) => {
-      if (val.toLowerCase() === 'offline') {
-        acc.push(FormatOfWork.OFFLINE);
-      } else if (val.toLowerCase() === 'online') {
-        acc.push(FormatOfWork.ONLINE);
+      if (FormatOfWork[val.toUpperCase()]) {
+        acc.push(FormatOfWork[val.toUpperCase()]);
       }
       return acc;
     },
