@@ -62,7 +62,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
   const clientsList = [...clientsWorkingWithList, ...clientsNotWorkingWithList];
   return (
     <CardWrapper className={className} id={id} type={type}>
-      <div className="flex w-full flex-col lg:hidden">
+      <div className="relative flex flex-col md:col-span-2 lg:hidden">
         <div className="relative mb-3 flex justify-between">
           <SpecializationsPanel
             specialistId={id}
@@ -81,7 +81,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
             {data.ownershipType && <OwnershipTypeTile ownershipType={data?.ownershipType} className="mt-1" />}
           </div>
         </div>
-        <BadgeList labels={labelsList} className={cn('mt mb-2 flex-wrap border-0', { hidden: !isBadgeList })} />
+        <BadgeList labels={labelsList} className={cn('mt-3 flex-wrap border-0', { hidden: !isBadgeList })} />
         <MethodList
           specializations={specializationsList}
           methods={methodsList}
@@ -96,7 +96,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
           <CardButton />
         </Link>
       </div>
-      <div className="hidden w-full lg:block">
+      <div className="hidden w-full lg:col-span-2 lg:block">
         <header className="relative flex items-stretch gap-2.5">
           <div className="w-[200px]">
             <ProfileImage gender={isOrganization ? undefined : data.gender} className="relative">
@@ -150,13 +150,11 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
             )}
 
             {isHoveredOn && (
-              <Link
-                href={`/specialist/${id}?type=${type}`}
-                scroll={false}
-                className="mt-4 hidden self-end md:inline-block"
-              >
-                <CardButton />
-              </Link>
+              <div className="mt-4 flex flex-1 items-end justify-end">
+                <Link href={`/specialist/${id}?type=${type}`} scroll={false} className="hidden md:inline-block">
+                  <CardButton />
+                </Link>
+              </div>
             )}
           </div>
         </header>

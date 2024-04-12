@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { usePaginatedEntries } from '@hooks';
 import { useSearchParams } from 'next/navigation';
@@ -12,6 +12,8 @@ import { MapLink } from '@components/MapLink';
 import { ShortCardWrapper } from '@components/CardSpecialist/ShortCardWrapper';
 import { getProperEnding } from '@components/Specialists/utils';
 import { NoMatches } from '@components/Specialists/NoMatches';
+import { addressesToPoints } from '@utils/common';
+import { Map } from '@components/Map';
 import Loading from '@/app/loading';
 
 import 'swiper/css/pagination';
@@ -34,6 +36,18 @@ export function SpecialistListWithMap({ mapMode, className }) {
   const { data, isLoading, isSuccess } = usePaginatedEntries(searchParams);
   const totalCount = data?.pages?.length && data.pages[0].metaData?.totalCount;
 
+  const [pointsList, setPointsList] = useState(null);
+
+  useEffect(() => {
+    const points = data?.pages[0]?.data
+      ?.map(entry => {
+        const entryData = entry.specialist ? entry.specialist : entry.organization;
+        return entryData?.addresses ? addressesToPoints(entryData?.addresses) : undefined;
+      })
+      ?.reduce((acc, curr) => acc.concat(curr), []);
+    setPointsList(points);
+  }, [data]);
+
   if (isLoading) return <Loading />;
 
   const isNoMatches = !isLoading && (!data?.pages?.length || totalCount === 0);
@@ -46,9 +60,8 @@ export function SpecialistListWithMap({ mapMode, className }) {
         <p className="hidden font-bold uppercase text-primary-600 md:block">{`Знайдено: ${totalCount} ${getProperEnding(totalCount)}`}</p>
       )}
       <div className="mt-5 lg:grid lg:h-[900px] lg:grid-cols-5 lg:grid-rows-1 lg:gap-2">
-        <div className="relative grid h-[500px] place-content-center rounded-3xl bg-primary-300 lg:col-span-2 lg:col-start-4 lg:h-full">
-          <span>Map</span>
-          <MapLink mapMode={mapMode} className="absolute bottom-auto left-3 top-3 translate-x-0" />
+        <div className="relative grid h-[500px] place-content-center overflow-hidden rounded-3xl lg:col-span-2 lg:col-start-4 lg:h-full">
+          {pointsList && <Map points={pointsList} className="absolute bottom-0 left-0 top-0 w-full" />}
         </div>
         <div className="block lg:hidden">
           <Slider
@@ -117,6 +130,7 @@ export function SpecialistListWithMap({ mapMode, className }) {
           </motion.ul>
         </LayoutGroup>
       </div>
+      <MapLink mapMode={mapMode} className="sticky bottom-20 z-[25] mx-auto my-10 hidden max-w-max lg:block" />
     </div>
   );
 }

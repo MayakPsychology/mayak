@@ -58,6 +58,7 @@ export function CardOrganization({ organization, className, extended = false }) 
 
   addresses.sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary));
   const addressPrimary = addresses[0];
+  const points = addressesToPoints(addresses);
   const contactsList = getContactsList({ phone, email, website });
   const labelsList = getLabelsList({
     yearsOfExperience: yearsOnMarket,
@@ -76,7 +77,6 @@ export function CardOrganization({ organization, className, extended = false }) 
     </>
   );
   const workTimeElement = !!workTime?.length && <WorkTime workTime={workTime} />;
-  const points = addressesToPoints(addresses);
 
   return (
     <CardWrapper className={className} id={id} type="organization">
@@ -152,12 +152,7 @@ export function CardOrganization({ organization, className, extended = false }) 
       </div>
       <div className="col-span-2 mt-5">
         {(extended || isOnOrganizationPage) && points?.length ? (
-          <Map
-            points={points}
-            center={[points[0].latitude, points[0].longitude]}
-            zoom={13}
-            className="h-[198px] w-full lg:h-[232px]"
-          />
+          <Map points={points} className="h-[198px] w-full lg:h-[232px]" />
         ) : null}
       </div>
     </CardWrapper>

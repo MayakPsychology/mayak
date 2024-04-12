@@ -8,7 +8,5 @@ export const mapPropTypes = {
       longitude: PropTypes.number.isRequired, // float
     }),
   ).isRequired,
-  center: PropTypes.arrayOf(PropTypes.number).isRequired,
-  zoom: PropTypes.number.isRequired,
   className: PropTypes.string,
 };

@@ -59,14 +59,12 @@ export function CardSpecialist({ specialist, className, extended = false }) {
   const specializationsList = specializations.map(s => s.name);
   addresses.sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary));
   const addressPrimary = addresses[0];
+  const points = addressesToPoints(addresses);
   const contactsList = getContactsList({ phone, email, website });
   const labelsList = getLabelsList({ yearsOfExperience, isFreeReception, formatOfWork, specialistType: 'specialist' });
   const socials = getSpecialistSocials({ instagram, facebook, tiktok, youtube, linkedin, viber, telegram });
   const name = surname ? `${lastName} ${firstName} ${surname}` : `${lastName} ${firstName}`;
-
   const workTimeElement = !!workTime?.length && <WorkTime workTime={workTime} />;
-
-  const points = addressesToPoints(addresses);
 
   return (
     <CardWrapper className={className} id={id} type="specialist">
@@ -141,12 +139,7 @@ export function CardSpecialist({ specialist, className, extended = false }) {
       </div>
       <div className="col-span-2">
         {(extended || isOnSpecialistPage) && points?.length ? (
-          <Map
-            points={points}
-            center={[points[0].latitude, points[0].longitude]}
-            zoom={13}
-            className="mt-5 h-[198px] w-full lg:h-[232px]"
-          />
+          <Map points={points} className="mt-5 h-[198px] w-full lg:h-[232px]" />
         ) : null}
       </div>
     </CardWrapper>
