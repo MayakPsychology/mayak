@@ -1,2 +1,2 @@
 export * from './InnerLink';
-export * from './SocialLink';
+export * from './SocialLinksList';

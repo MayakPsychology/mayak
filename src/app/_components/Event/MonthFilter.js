@@ -17,7 +17,7 @@ export function MonthFilter({ filteredMonths, handleClick, activeMonth }) {
         {filteredMonths.map((month, filteredIndex) => {
           const isSelected = activeMonth - 1 === month.index;
           return (
-            <Slide key={month.index} className="mr-3.5 !w-auto last:mr-0">
+            <Slide key={month.index} className="mr-3.5 !w-auto">
               <PillButton
                 variant="eventFilter"
                 colorVariant="semiorange"
@@ -48,5 +48,5 @@ MonthFilter.propTypes = {
     }),
   ),
   handleClick: PropTypes.func,
-  activeMonth: PropTypes.number,
+  activeMonth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };

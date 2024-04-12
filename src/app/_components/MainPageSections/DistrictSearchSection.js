@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { cn } from '@utils/cn';
 import { Heading } from '@components/Typography';
 import { DistrictList } from '@components/MainPageSections/DistrictList';
+import { MapLink } from '@components/MapLink';
 import { prisma } from '@/lib/db';
 
 export async function DistrictSearchSection({ className }) {
@@ -18,6 +19,7 @@ export async function DistrictSearchSection({ className }) {
         </Heading>
         <div className="lg:*:w-[940px] xl:*:w-[1000px]">
           <DistrictList list={optionsList} className="mx-auto mt-4" />
+          <MapLink enableAnimation={false} className="mx-auto my-6 mt-8 hidden max-w-max lg:flex" />
         </div>
       </div>
     </section>

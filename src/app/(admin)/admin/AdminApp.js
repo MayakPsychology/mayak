@@ -22,11 +22,12 @@ import {
   SpecialistsList,
 } from '@admin/components/ServiceProvider/Specialist';
 
+import { NavigationEdit, NavigationList } from '@admin/components/Navigation';
+import { ClientCategoryList } from '@admin/components/ClientCategoriesType';
+import { ClientCategoryCreate } from '@admin/components/ClientCategoriesType/Create';
 import { DonationDetailsList, DonateDetailsShow, DonationDetailsEdit } from '@admin/components/DonationDetails';
 
 import { authProvider } from './authProvider';
-import { ClientCategoryList } from './_components/ClientCategoriesType';
-import { ClientCategoryCreate } from './_components/ClientCategoriesType/Create';
 
 export default function AdminPage() {
   const data = dataProvider('/api/admin');
@@ -116,6 +117,12 @@ export default function AdminPage() {
         show={ShowGuesser}
         edit={EditGuesser}
         create={ClientCategoryCreate}
+      />
+      <Resource
+        name={RESOURCES.navigation}
+        options={{ label: 'Посилання' }}
+        list={NavigationList}
+        edit={NavigationEdit}
       />
       <Resource
         name={RESOURCES.donationDetails}

@@ -32,7 +32,7 @@ function DataSection({ label, text }) {
 
 DataSection.propTypes = {
   label: PropTypes.string,
-  text: PropTypes.string,
+  text: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 function PillLink({ href, children, className }) {
