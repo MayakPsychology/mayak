@@ -12,10 +12,10 @@ function ChipListItem({ id, title, tooltipText, iconClassName, containerClassNam
   return (
     <div
       data-tooltip-id={id}
-      className={cn('flex h-[24px] w-fit place-items-center gap-1 rounded-3xl px-3 py-1', containerClassName)}
+      className={cn('flex h-[24px] place-items-center gap-1 rounded-3xl px-3 py-1', containerClassName)}
     >
       <div className={cn(iconClassName)}>{icon}</div>
-      <span className={cn('w-full text-c3 font-medium', textClassName)} data-tooltip-id={id}>
+      <span className={cn('truncate text-c3 font-medium', textClassName)} data-tooltip-id={id}>
         {title}
       </span>
       {tooltipText && (
@@ -48,7 +48,7 @@ export function ChipList({ id, items, className }) {
     <div className={cn('flex flex-col gap-2', className)}>
       <TruncatedList
         alwaysShowTruncator
-        className={cn('flex flex-wrap gap-[8px]', expanded ? 'max-h-none' : 'max-h-14 md:max-h-6')}
+        className={cn('truncated-list flex flex-wrap gap-[8px]', expanded ? 'max-h-none' : 'max-h-14 md:max-h-6')}
         renderTruncator={({ hiddenItemsCount }) => {
           if (hiddenItemsCount > 0) {
             return (
