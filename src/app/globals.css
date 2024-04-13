@@ -57,3 +57,7 @@ html {
   backdrop-filter: blur(3px);
   width: max-content;
 }
+
+.truncated-list > li {
+  max-width: 100%
+}
