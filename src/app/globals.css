@@ -57,3 +57,8 @@ html {
   backdrop-filter: blur(3px);
   width: max-content;
 }
+
+.leaflet-div-icon {
+  border: 0 !important;
+  background-color: transparent !important;
+}

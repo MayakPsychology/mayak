@@ -48,3 +48,4 @@ export { default as Privat24 } from '@icons/privat24.svg';
 export { default as PayPal } from '@icons/paypal.svg';
 export { default as Group } from '@icons/group.svg';
 export { default as Compassion } from '@icons/compassion.svg';
+export { default as CustomMapMarker } from '@icons/map-marker.svg';

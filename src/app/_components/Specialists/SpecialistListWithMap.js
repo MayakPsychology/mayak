@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { usePaginatedEntries } from '@hooks';
 import { useSearchParams } from 'next/navigation';
@@ -22,12 +22,15 @@ import 'swiper/css/navigation';
 export function SpecialistListWithMap({ mapMode, className }) {
   const searchParams = useSearchParams();
   const [hoveredCardId, setHoveredCardId] = useState(null);
+  const [mapMarkerPopupOpen, setMapMarkerPopupOpen] = useState(null);
 
   const handleCardHover = id => {
+    if (mapMarkerPopupOpen) return;
     setHoveredCardId(id);
   };
 
   const handleCardLeave = () => {
+    if (mapMarkerPopupOpen) return;
     setHoveredCardId(null);
   };
 
@@ -41,12 +44,59 @@ export function SpecialistListWithMap({ mapMode, className }) {
   useEffect(() => {
     const points = data?.pages[0]?.data
       ?.map(entry => {
-        const entryData = entry.specialist ? entry.specialist : entry.organization;
-        return entryData?.addresses ? addressesToPoints(entryData?.addresses) : undefined;
+        const isOrganization = entry.organization;
+        const entryData = isOrganization ? entry.organization : entry.specialist;
+        const addressPrimary = entryData.addresses[0];
+
+        if (!addressPrimary) {
+          return [];
+        }
+
+        return addressesToPoints([addressPrimary]).map(address => ({
+          ...address,
+          specialistId: entryData.id,
+        }));
       })
       ?.reduce((acc, curr) => acc.concat(curr), []);
+
     setPointsList(points);
   }, [data]);
+
+  const ulRef = useRef(null);
+
+  const cashedLiItemHeightsList = useMemo(() => {
+    if (ulRef?.current) {
+      return Array.from(ulRef?.current.children).map(child => ({
+        id: child.getAttribute('id'),
+        height: child.clientHeight,
+      }));
+    }
+
+    return [];
+  }, [ulRef?.current, data]);
+
+  const handleActiveCard = specialistId => {
+    setHoveredCardId(specialistId);
+    setMapMarkerPopupOpen(!!specialistId);
+
+    const selectedLiIndex = cashedLiItemHeightsList?.findIndex(child => child.id === specialistId);
+    const slicedList = cashedLiItemHeightsList.slice(0, selectedLiIndex);
+    const height = slicedList.length
+      ? slicedList
+        .slice(0, selectedLiIndex)
+        .map(child => child.height)
+        .reduce((acc, cur) => cur + acc, 0)
+      : 0;
+
+    if (specialistId) {
+      // gap is required to compensate the distance between card items
+      const gap = 16;
+      ulRef.current.scrollTo({
+        top: height + slicedList.length * gap,
+        behavior: 'smooth',
+      });
+    }
+  };
 
   if (isLoading) return <Loading />;
 
@@ -61,7 +111,14 @@ export function SpecialistListWithMap({ mapMode, className }) {
       )}
       <div className="mt-5 lg:grid lg:h-[900px] lg:grid-cols-5 lg:grid-rows-1 lg:gap-2">
         <div className="relative grid h-[500px] place-content-center overflow-hidden rounded-3xl lg:col-span-2 lg:col-start-4 lg:h-full">
-          {pointsList && <Map points={pointsList} className="absolute bottom-0 left-0 top-0 w-full" />}
+          {pointsList && (
+            <Map
+              points={pointsList}
+              setActiveSpecialist={handleActiveCard}
+              activeSpecialistId={hoveredCardId}
+              className="absolute bottom-0 left-0 top-0 w-full"
+            />
+          )}
         </div>
         <div className="block lg:hidden">
           <Slider
@@ -101,7 +158,10 @@ export function SpecialistListWithMap({ mapMode, className }) {
         </div>
 
         <LayoutGroup>
-          <motion.ul className="hidden flex-col gap-4 overflow-scroll pr-5 lg:col-span-3 lg:row-start-1 lg:flex">
+          <motion.ul
+            className="hidden flex-col gap-4 overflow-scroll pr-5 lg:col-span-3 lg:row-start-1 lg:flex"
+            ref={ulRef}
+          >
             {isSuccess &&
               data.pages?.map(page =>
                 page.data?.map(entry => {

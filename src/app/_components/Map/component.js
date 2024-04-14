@@ -2,13 +2,21 @@ import dynamic from 'next/dynamic';
 import { cn } from '@utils/cn';
 import { mapPropTypes } from './prop-types';
 
-export function Map({ points, className }) {
-  const Window = dynamic(() => import('./window'), {
-    loading: () => <p className={cn('bg-gray-200', className)} />,
-    ssr: false,
-  });
+const Window = dynamic(() => import('./window'), {
+  ssr: false,
+});
 
-  return <Window points={points} className={className} />;
+export function Map({ points, activeSpecialistId = null, setActiveSpecialist = () => {}, className }) {
+  return (
+    <div className={cn('bg-gray-200', className)}>
+      <Window
+        points={points}
+        className={className}
+        setActiveSpecialist={setActiveSpecialist}
+        activeSpecialistId={activeSpecialistId}
+      />
+    </div>
+  );
 }
 
 Map.propTypes = mapPropTypes;

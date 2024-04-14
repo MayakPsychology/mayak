@@ -9,4 +9,6 @@ export const mapPropTypes = {
     }),
   ).isRequired,
   className: PropTypes.string,
+  activeSpecialistId: PropTypes.string,
+  setActiveSpecialist: PropTypes.func,
 };
