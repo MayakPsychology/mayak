@@ -47,34 +47,36 @@ export default function MapWindow({ points, activeSpecialistId, setActiveSpecial
     markerEventHandlers.popupclose();
   }, [matches]);
 
+  const markers = points
+    .filter(point => point.title)
+    .map(({ title, latitude, longitude, specialistId = null }, index) => (
+      <MapMarker
+        position={[latitude, longitude]}
+        key={`${latitude}-${longitude}`}
+        eventHandlers={{
+          click: () => markerEventHandlers.click({ specialistId, index }),
+          popupclose: () => markerEventHandlers.popupclose(),
+        }}
+        icon={styledMarkerIcon(
+          index === selectedMarker || specialistId === activeSpecialistId
+            ? 'text-secondary-400 scale-125'
+            : 'text-primary-500',
+        )}
+        map={mapRef}
+        isActive={specialistId === activeSpecialistId}
+        riseOnHover
+      >
+        {title}
+      </MapMarker>
+    ));
+
   return (
     <MapContainer bounds={bounds} scrollWheelZoom={false} className={className} ref={mapRef}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {points
-        .filter(point => point.title)
-        .map(({ title, latitude, longitude, specialistId = null }, index) => (
-          <MapMarker
-            position={[latitude, longitude]}
-            key={`${latitude}-${longitude}`}
-            eventHandlers={{
-              click: () => markerEventHandlers.click({ specialistId, index }),
-              popupclose: () => markerEventHandlers.popupclose(),
-            }}
-            icon={styledMarkerIcon(
-              index === selectedMarker || specialistId === activeSpecialistId
-                ? 'text-secondary-400 scale-125'
-                : 'text-primary-500',
-            )}
-            map={mapRef}
-            isActive={specialistId === activeSpecialistId}
-            riseOnHover
-          >
-            {title}
-          </MapMarker>
-        ))}
+      {markers}
     </MapContainer>
   );
 }

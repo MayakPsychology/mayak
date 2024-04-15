@@ -13,7 +13,7 @@ export function Slider({ swipeToIndex = 0, children, className, ...swiperProps }
   }, [swipeToIndex]);
 
   return (
-    <Swiper {...swiperProps} wrapperClass={className} ref={swiperRef} cssMode>
+    <Swiper {...swiperProps} wrapperClass={className} ref={swiperRef}>
       {children}
     </Swiper>
   );
