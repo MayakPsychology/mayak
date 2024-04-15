@@ -21,7 +21,7 @@ export default async function Layout({ children }) {
   return (
     <Hint>
       <div className="flex min-h-screen flex-col">
-        <Header socialLinks={socialLinks.socialMediaList} donationDetails={donationDetails} />
+        <Header socialMediaLinksList={socialLinks.socialMediaLinksList} donationDetails={donationDetails} />
         <main className="relative flex-1">{children}</main>
         <Footer socialLinks={socialLinks} />
       </div>
