@@ -1,4 +1,10 @@
-import { DistrictSearchSection, FAQSection, SearchSection, TherapiesSection } from '@components/MainPageSections';
+import {
+  DistrictSearchSection,
+  FAQSection,
+  SearchSection,
+  TherapiesSection,
+  GoalSection,
+} from '@components/MainPageSections';
 import { MapLink } from '@components/MapLink';
 import { env } from '@/lib/env';
 import { prisma } from '@/lib/db';
@@ -41,7 +47,7 @@ export default async function Page() {
       <SearchSection />
       <DistrictSearchSection className="my-8 lg:mb-[88px] lg:mt-8" />
       <TherapiesSection therapies={activeTherapies} />
-      <section>TBD goal section</section>
+      <GoalSection />
       <FAQSection faqs={activeFAQs} />
       <MapLink className="sticky bottom-20 z-[25] mx-auto my-6 max-w-max lg:hidden" />
     </>

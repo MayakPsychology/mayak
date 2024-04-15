@@ -75,7 +75,7 @@ export function CardSpecialist({ specialist, className, extended = false }) {
         <ContactsList truncate={!extended} specialistId={id} contacts={contactsList} className="mt-4" />
         {workTimeElement}
       </div>
-      <div className="flex w-[100%] max-w-full flex-col gap-4 overflow-hidden md:ml-4">
+      <div className="flex w-[100%] max-w-full flex-col gap-4 overflow-hidden">
         <header className="relative flex flex-row gap-2.5">
           <ProfileImage gender={gender} className="md:hidden">
             <SocialsList socials={socials} className="absolute bottom-4 hidden md:inline-block" />

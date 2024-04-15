@@ -70,7 +70,7 @@ export const Modal = ({
                     <ModalCloseButton onClose={onClose} />
                   </div>
                 )}
-                <div className="mt-4 overflow-y-auto pr-5">{children}</div>
+                <div className="mt-4 overflow-y-auto">{children}</div>
               </motion.div>
             </div>
           </>
