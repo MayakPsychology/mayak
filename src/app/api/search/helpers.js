@@ -118,7 +118,7 @@ export function createSpecialistFilter(queryParams) {
 
   return {
     ...sharedWhere,
-    gender: Gender[gender.toUpperCase()],
+    gender: Gender[(gender || '').toUpperCase()],
     specializations: specializations && {
       some: { id: { in: specializations } },
     },
