@@ -28,7 +28,10 @@ const styledMarkerIcon = colorClass =>
 
 export default function MapWindow({ points, activeSpecialistId, setActiveSpecialist, className }) {
   const [selectedMarker, setSelectedMarker] = useState(null);
-  const bounds = calculateMapBounds(points);
+  const bounds = calculateMapBounds(points) ?? [
+    [49.75826, 23.95324],
+    [49.93826, 24.12324],
+  ];
   const matches = useMediaQuery(`(max-width: ${screens.lg})`);
   const mapRef = useRef(null);
 

@@ -17,6 +17,7 @@ import { Map } from '@components/Map';
 import { useMediaQuery } from '@mui/material';
 import Loading from '@/app/loading';
 import { screens } from '@/app/styles/tailwind/ui';
+import { useWindowResize } from '@/app/_hooks/useWindowResize';
 
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
@@ -37,13 +38,33 @@ const sliderBreakpoints = {
   },
 };
 
+const getMappedPointsList = list =>
+  list
+    ?.map(entry => {
+      const isOrganization = entry.organization;
+      const entryData = isOrganization ? entry.organization : entry.specialist;
+      const addressPrimary = entryData.addresses[0];
+
+      if (!addressPrimary) {
+        return [];
+      }
+
+      return addressesToPoints([addressPrimary]).map(address => ({
+        ...address,
+        specialistId: entryData.id,
+      }));
+    })
+    ?.reduce((acc, curr) => acc.concat(curr), []);
+
 export function SpecialistListWithMap({ mapMode, className }) {
   const searchParams = useSearchParams();
   const [pointsList, setPointsList] = useState(null);
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const [mapMarkerPopupOpen, setMapMarkerPopupOpen] = useState(null);
-  const isLargeScreen = useMediaQuery(`(min-width: ${screens.lg})`);
   const [swiper, setSwiper] = useState(null);
+
+  const isLargeScreen = useMediaQuery(`(min-width: ${screens.lg})`);
+  const { width: screenWidth } = useWindowResize();
 
   const slideTo = index => {
     if (swiper) swiper.slideTo(index);
@@ -59,63 +80,50 @@ export function SpecialistListWithMap({ mapMode, className }) {
     setHoveredCardId(null);
   };
 
-  // const handleSwiperOnSlideChange = i => {
-  //   if (pointsList) {
-  //     const { specialistId } = pointsList.filter((point, index) => index === i)[0];
-  //     setHoveredCardId(specialistId);
-  //   }
-  // };
-
   const { data, isLoading, isSuccess } = usePaginatedEntries(searchParams);
   const totalCount = data?.pages?.length && data.pages[0].metaData?.totalCount;
 
   useEffect(() => {
-    const points = data?.pages[0]?.data
-      ?.map(entry => {
-        const isOrganization = entry.organization;
-        const entryData = isOrganization ? entry.organization : entry.specialist;
-        const addressPrimary = entryData.addresses[0];
-
-        if (!addressPrimary) {
-          return [];
-        }
-
-        return addressesToPoints([addressPrimary]).map(address => ({
-          ...address,
-          specialistId: entryData.id,
-        }));
-      })
-      ?.reduce((acc, curr) => acc.concat(curr), []);
-
+    const points = getMappedPointsList(data?.pages[0]?.data);
     setPointsList(points);
   }, [data]);
 
-  const ulRef = useRef(null);
+  const specialistCardsListRef = useRef(null);
 
-  const cashedLiItemHeightsList = useMemo(() => {
-    if (ulRef?.current) {
-      return Array.from(ulRef?.current.children).map(child => ({
-        id: child.getAttribute('id'),
-        height: child.clientHeight,
-      }));
+  const listItemHeights = useMemo(
+    () =>
+      specialistCardsListRef?.current
+        ? Array.from(specialistCardsListRef?.current.children).map(child => ({
+          id: child.getAttribute('id'),
+          height: child.clientHeight,
+        }))
+        : [],
+    [screenWidth, data],
+  );
+
+  useEffect(() => {
+    setHoveredCardId(null);
+    if (specialistCardsListRef?.current) {
+      specialistCardsListRef.current.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
     }
-
-    return [];
-  }, [ulRef?.current, data]);
+  }, [screenWidth, data]);
 
   const handleActiveCard = specialistId => {
     setHoveredCardId(specialistId);
     setMapMarkerPopupOpen(!!specialistId);
 
-    const selectedLiIndex = cashedLiItemHeightsList?.findIndex(child => child.id === specialistId);
+    const selectedListItemIndex = listItemHeights?.findIndex(child => child.id === specialistId);
 
-    if (!isLargeScreen && selectedLiIndex !== -1) {
-      slideTo(selectedLiIndex);
+    if (!isLargeScreen && selectedListItemIndex !== -1) {
+      slideTo(selectedListItemIndex);
     }
-    const slicedList = cashedLiItemHeightsList.slice(0, selectedLiIndex);
+    const slicedList = listItemHeights.slice(0, selectedListItemIndex);
     const height = slicedList.length
       ? slicedList
-        .slice(0, selectedLiIndex)
+        .slice(0, selectedListItemIndex)
         .map(child => child.height)
         .reduce((acc, cur) => cur + acc, 0)
       : 0;
@@ -123,11 +131,17 @@ export function SpecialistListWithMap({ mapMode, className }) {
     if (specialistId) {
       // gap is required to compensate the distance between card items
       const gap = 16;
-      ulRef.current.scrollTo({
+      specialistCardsListRef.current.scrollTo({
         top: height + slicedList.length * gap,
         behavior: 'smooth',
       });
     }
+  };
+
+  const handleOnSLideChange = ({ activeIndex, slides }) => {
+    const slideRef = slides[activeIndex];
+    const specialistId = slideRef.getAttribute('id');
+    setHoveredCardId(specialistId);
   };
 
   if (isLoading) return <Loading />;
@@ -161,12 +175,7 @@ export function SpecialistListWithMap({ mapMode, className }) {
             breakpoints={sliderBreakpoints}
             className="mb-10 mt-5 md:mb-12"
             onSwiper={setSwiper}
-            onSlideChange={swiperCore => {
-              const { activeIndex } = swiperCore;
-              const slideRef = swiperCore.slides[activeIndex];
-              const specialistId = slideRef.getAttribute('id');
-              setHoveredCardId(specialistId);
-            }}
+            onSlideChange={handleOnSLideChange}
           >
             {isSuccess &&
               data.pages?.map(page =>
@@ -186,7 +195,7 @@ export function SpecialistListWithMap({ mapMode, className }) {
         <LayoutGroup>
           <motion.ul
             className="hidden flex-col gap-4 overflow-scroll pr-5 lg:col-span-3 lg:row-start-1 lg:flex"
-            ref={ulRef}
+            ref={specialistCardsListRef}
           >
             {isSuccess &&
               data.pages?.map(page =>
@@ -202,7 +211,7 @@ export function SpecialistListWithMap({ mapMode, className }) {
                       key={entryData.id}
                       onMouseEnter={() => handleCardHover(entryData.id)}
                       onMouseLeave={handleCardLeave}
-                      className={cn({ 'mb-[500px]': index === page.data.length - 1 })}
+                      className={cn({ 'mb-[600px]': index === page.data.length - 1 })}
                     >
                       <ShortCardWrapper
                         data={entryData}
