@@ -1,16 +1,20 @@
 'use client';
 
 import { divIcon } from 'leaflet';
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import 'leaflet-defaulticon-compatibility';
-import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
+import { MapContainer, TileLayer } from 'react-leaflet';
 import { calculateMapBounds } from '@utils/leaflet';
 import ReactDOMServer from 'react-dom/server';
 import { CustomMapMarker as CustomMarker } from '@icons';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '@utils/cn';
+import { useMediaQuery } from '@mui/material';
+import { MapMarker } from '@components/Map/MapMarker';
+import { screens } from '@/app/styles/tailwind/ui';
 import { mapPropTypes } from './prop-types';
+
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-defaulticon-compatibility';
+import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 
 const styledMarkerIcon = colorClass =>
   divIcon({
@@ -25,6 +29,8 @@ const styledMarkerIcon = colorClass =>
 export default function MapWindow({ points, activeSpecialistId, setActiveSpecialist, className }) {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const bounds = calculateMapBounds(points);
+  const matches = useMediaQuery(`(max-width: ${screens.lg})`);
+  const mapRef = useRef(null);
 
   const markerEventHandlers = {
     click: ({ specialistId, index }) => {
@@ -37,8 +43,12 @@ export default function MapWindow({ points, activeSpecialistId, setActiveSpecial
     },
   };
 
+  useEffect(() => {
+    markerEventHandlers.popupclose();
+  }, [matches]);
+
   return (
-    <MapContainer bounds={bounds} scrollWheelZoom={false} className={className}>
+    <MapContainer bounds={bounds} scrollWheelZoom={false} className={className} ref={mapRef}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -46,7 +56,7 @@ export default function MapWindow({ points, activeSpecialistId, setActiveSpecial
       {points
         .filter(point => point.title)
         .map(({ title, latitude, longitude, specialistId = null }, index) => (
-          <Marker
+          <MapMarker
             position={[latitude, longitude]}
             key={`${latitude}-${longitude}`}
             eventHandlers={{
@@ -58,9 +68,12 @@ export default function MapWindow({ points, activeSpecialistId, setActiveSpecial
                 ? 'text-secondary-400 scale-125'
                 : 'text-primary-500',
             )}
+            map={mapRef}
+            isActive={specialistId === activeSpecialistId}
+            riseOnHover
           >
-            {title && <Popup>{title}</Popup>}
-          </Marker>
+            {title}
+          </MapMarker>
         ))}
     </MapContainer>
   );

@@ -14,15 +14,40 @@ import { getProperEnding } from '@components/Specialists/utils';
 import { NoMatches } from '@components/Specialists/NoMatches';
 import { addressesToPoints } from '@utils/common';
 import { Map } from '@components/Map';
+import { useMediaQuery } from '@mui/material';
 import Loading from '@/app/loading';
+import { screens } from '@/app/styles/tailwind/ui';
 
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
+const cardStyle = 'max-w-[900px] rounded-3xl border-2 border-gray-200 px-4 py-5 lg:mx-auto h-full';
+const sliderBreakpoints = {
+  360: {
+    slidesPerView: 1,
+    spaceBetween: 24,
+  },
+  640: {
+    slidesPerView: 1.25,
+    spaceBetween: 16,
+  },
+  768: {
+    slidesPerView: 1.5,
+    spaceBetween: 14,
+  },
+};
+
 export function SpecialistListWithMap({ mapMode, className }) {
   const searchParams = useSearchParams();
+  const [pointsList, setPointsList] = useState(null);
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const [mapMarkerPopupOpen, setMapMarkerPopupOpen] = useState(null);
+  const isLargeScreen = useMediaQuery(`(min-width: ${screens.lg})`);
+  const [swiper, setSwiper] = useState(null);
+
+  const slideTo = index => {
+    if (swiper) swiper.slideTo(index);
+  };
 
   const handleCardHover = id => {
     if (mapMarkerPopupOpen) return;
@@ -34,12 +59,15 @@ export function SpecialistListWithMap({ mapMode, className }) {
     setHoveredCardId(null);
   };
 
-  const cardStyle = 'max-w-[900px] rounded-3xl border-2 border-gray-200 px-4 py-5 lg:mx-auto h-full';
+  // const handleSwiperOnSlideChange = i => {
+  //   if (pointsList) {
+  //     const { specialistId } = pointsList.filter((point, index) => index === i)[0];
+  //     setHoveredCardId(specialistId);
+  //   }
+  // };
 
   const { data, isLoading, isSuccess } = usePaginatedEntries(searchParams);
   const totalCount = data?.pages?.length && data.pages[0].metaData?.totalCount;
-
-  const [pointsList, setPointsList] = useState(null);
 
   useEffect(() => {
     const points = data?.pages[0]?.data
@@ -80,6 +108,10 @@ export function SpecialistListWithMap({ mapMode, className }) {
     setMapMarkerPopupOpen(!!specialistId);
 
     const selectedLiIndex = cashedLiItemHeightsList?.findIndex(child => child.id === specialistId);
+
+    if (!isLargeScreen && selectedLiIndex !== -1) {
+      slideTo(selectedLiIndex);
+    }
     const slicedList = cashedLiItemHeightsList.slice(0, selectedLiIndex);
     const height = slicedList.length
       ? slicedList
@@ -109,8 +141,8 @@ export function SpecialistListWithMap({ mapMode, className }) {
       {totalCount && (
         <p className="hidden font-bold uppercase text-primary-600 md:block">{`Знайдено: ${totalCount} ${getProperEnding(totalCount)}`}</p>
       )}
-      <div className="mt-5 lg:grid lg:h-[900px] lg:grid-cols-5 lg:grid-rows-1 lg:gap-2">
-        <div className="relative grid h-[500px] place-content-center overflow-hidden rounded-3xl lg:col-span-2 lg:col-start-4 lg:h-full">
+      <div className="mt-5  lg:grid lg:h-[900px] lg:grid-cols-5 lg:grid-rows-1 lg:gap-2">
+        <div className="relative grid h-[500px] place-content-center overflow-hidden rounded-xl lg:col-span-2 lg:col-start-4 lg:h-full lg:rounded-3xl">
           {pointsList && (
             <Map
               points={pointsList}
@@ -126,21 +158,15 @@ export function SpecialistListWithMap({ mapMode, className }) {
               dynamicBullets: true,
             }}
             modules={[Pagination]}
-            breakpoints={{
-              360: {
-                slidesPerView: 1,
-                spaceBetween: 24,
-              },
-              640: {
-                slidesPerView: 1.25,
-                spaceBetween: 16,
-              },
-              768: {
-                slidesPerView: 1.5,
-                spaceBetween: 14,
-              },
-            }}
+            breakpoints={sliderBreakpoints}
             className="mb-10 mt-5 md:mb-12"
+            onSwiper={setSwiper}
+            onSlideChange={swiperCore => {
+              const { activeIndex } = swiperCore;
+              const slideRef = swiperCore.slides[activeIndex];
+              const specialistId = slideRef.getAttribute('id');
+              setHoveredCardId(specialistId);
+            }}
           >
             {isSuccess &&
               data.pages?.map(page =>
@@ -164,7 +190,7 @@ export function SpecialistListWithMap({ mapMode, className }) {
           >
             {isSuccess &&
               data.pages?.map(page =>
-                page.data?.map(entry => {
+                page.data?.map((entry, index) => {
                   const type = entry.organizationId ? 'organization' : 'specialist';
                   const entryData = entry[type];
 
@@ -176,6 +202,7 @@ export function SpecialistListWithMap({ mapMode, className }) {
                       key={entryData.id}
                       onMouseEnter={() => handleCardHover(entryData.id)}
                       onMouseLeave={handleCardLeave}
+                      className={cn({ 'mb-[500px]': index === page.data.length - 1 })}
                     >
                       <ShortCardWrapper
                         data={entryData}

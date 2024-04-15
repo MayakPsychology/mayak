@@ -67,7 +67,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
           <SpecializationsPanel
             specialistId={id}
             specializations={specializationsList}
-            extendedCardOpened={false}
+            extendedCardOpened
             className="text-c3 md:text-p4"
           />
         </div>
