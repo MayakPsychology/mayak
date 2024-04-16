@@ -22,7 +22,7 @@ import { WorkTime } from '../WorkTime';
 import { SpecialistChipLists } from './SpecialistChipLists';
 
 export function CardSpecialist({ specialist, className, extended = false }) {
-  // if (!specialist) throw new Error('Specialist is not found');
+  if (!specialist) throw new Error('Specialist is not found');
 
   const params = useSearchParams();
   const isOnSpecialistPage = params.get('type') === 'specialist';
@@ -139,7 +139,7 @@ export function CardSpecialist({ specialist, className, extended = false }) {
       </div>
       <div className="col-span-2">
         {(extended || isOnSpecialistPage) && points?.length ? (
-          <Map points={points} className="mt-5 h-[198px] w-full lg:h-[232px]" />
+          <Map points={points} className="mt-5 h-[200px] w-full lg:h-[300px]" />
         ) : null}
       </div>
     </CardWrapper>

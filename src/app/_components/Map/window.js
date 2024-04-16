@@ -52,7 +52,7 @@ export default function MapWindow({ points, activeSpecialistId, setActiveSpecial
 
   const markers = points
     .filter(point => point.title)
-    .map(({ title, latitude, longitude, specialistId = null }, index) => (
+    .map(({ title, latitude, longitude, specialistId = undefined }, index) => (
       <MapMarker
         position={[latitude, longitude]}
         key={`${latitude}-${longitude}`}

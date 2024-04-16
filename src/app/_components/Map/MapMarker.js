@@ -1,16 +1,20 @@
 import { useEffect, useRef } from 'react';
-import { Marker, Popup } from 'react-leaflet';
+import { Marker, Popup, useMap } from 'react-leaflet';
 import PropTypes from 'prop-types';
 
 export function MapMarker({ isActive, children, ...props }) {
   const markerRef = useRef();
 
+  const map = useMap();
+
   useEffect(() => {
     if (isActive) {
       markerRef.current.openPopup();
-    } else {
-      markerRef.current.closePopup();
     }
+
+    return () => {
+      map.closePopup();
+    };
   }, [isActive]);
 
   return (

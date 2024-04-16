@@ -152,7 +152,7 @@ export function CardOrganization({ organization, className, extended = false }) 
       </div>
       <div className="col-span-2 mt-5">
         {(extended || isOnOrganizationPage) && points?.length ? (
-          <Map points={points} className="h-[198px] w-full lg:h-[232px]" />
+          <Map points={points} className="h-[200px] w-full lg:h-[300px]" />
         ) : null}
       </div>
     </CardWrapper>
