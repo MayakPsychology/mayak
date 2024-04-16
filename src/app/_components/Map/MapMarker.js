@@ -7,12 +7,14 @@ export function MapMarker({ isActive, children, ...props }) {
 
   useEffect(() => {
     const marker = markerRef.current;
-    if (isActive) {
-      marker.openPopup();
-    } else {
-      marker.closePopup();
-    }
-
+    // marker.closePopup();
+    // if (isActive) {
+    //   marker.openPopup();
+    // }
+    // else {
+    //   marker.closePopup();
+    // }
+    //
     return () => {
       if (marker) {
         marker.closePopup();

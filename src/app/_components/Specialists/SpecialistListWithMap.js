@@ -43,13 +43,13 @@ const getMappedPointsList = list =>
     ?.map(entry => {
       const isOrganization = entry.organization;
       const entryData = isOrganization ? entry.organization : entry.specialist;
-      const addressPrimary = entryData.addresses[0];
+      // const addressPrimary = entryData.addresses[0];
+      //
+      // if (!addressPrimary) {
+      //   return [];
+      // }
 
-      if (!addressPrimary) {
-        return [];
-      }
-
-      return addressesToPoints([addressPrimary]).map(address => ({
+      return addressesToPoints(entryData.addresses).map(address => ({
         ...address,
         specialistId: entryData.id,
       }));
