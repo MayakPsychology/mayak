@@ -7,5 +7,6 @@
   "arrowParens": "avoid",
   "semi": true,
   "plugins": ["prettier-plugin-prisma", "prettier-plugin-tailwindcss"],
-  "tailwindConfig": "./tailwind.config.mjs"
+  "tailwindConfig": "./tailwind.config.mjs",
+  "endOfLine": "auto"
 }

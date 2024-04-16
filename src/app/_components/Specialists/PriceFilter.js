@@ -5,6 +5,8 @@ import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSetParam } from '@hooks';
 import { useSearchParams } from 'next/navigation';
+import PropTypes from 'prop-types';
+import { specialistFiltersConfig } from '@components/Specialists/Filters/utils';
 
 const priceVariants = {
   notSpecified: 'Не зазначено',
@@ -15,11 +17,10 @@ const priceVariants = {
   above1500: 'більше 1500 грн',
 };
 
-function PricesList() {
-  const [selectedPrices, setSelectedPrices] = useState([]);
+function PricesList({ pricesInUrl }) {
+  const [selectedPrices, setSelectedPrices] = useState(pricesInUrl);
 
-  const searchParams = useSearchParams();
-  const { add, remove } = useSetParam('price');
+  const { add, remove } = useSetParam(specialistFiltersConfig.price.filterKey.price);
 
   const onChange = price => {
     if (selectedPrices.includes(price)) {
@@ -30,9 +31,8 @@ function PricesList() {
   };
 
   useEffect(() => {
-    const pricesInUrl = searchParams.getAll('price');
     setSelectedPrices(pricesInUrl);
-  }, [searchParams]);
+  }, [pricesInUrl]);
 
   return (
     <>
@@ -58,12 +58,16 @@ function PricesList() {
   );
 }
 
+PricesList.propTypes = {
+  pricesInUrl: PropTypes.arrayOf(PropTypes.string),
+};
+
 export function PriceFilter() {
-  const pricesInUrl = useSearchParams().getAll('price');
+  const pricesInUrl = useSearchParams().getAll(specialistFiltersConfig.price.filterKey.price);
 
   return (
     <FilterBase filterText="Ціна" count={pricesInUrl?.length || 0}>
-      <PricesList />
+      <PricesList pricesInUrl={pricesInUrl} />
     </FilterBase>
   );
 }

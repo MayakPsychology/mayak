@@ -4,15 +4,16 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
+import { specialistFiltersConfig, specialistTypeEnum } from '@components/Specialists/Filters/utils';
 import { searchSyncKey, useDebounce, useSearchSync } from '@/app/_hooks';
-import { getSearchTypeConfig, SEARCH_DEBOUNCE_TIME_MS, SEARCH_MIN_QUERY_LENGTH, searchInputTypeEnum } from './config';
+import { getSearchTypeConfig, SEARCH_DEBOUNCE_TIME_MS, SEARCH_MIN_QUERY_LENGTH } from './config';
 
 const SearchContext = createContext();
 
 export function SearchProvider({ children }) {
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('query');
-  const searchTypeParam = searchParams.get('searchType');
+  const searchTypeParam = searchParams.get(specialistFiltersConfig.specialistType.filterKey);
   const mode = searchParams.get('mode');
   const [query, setQuery] = useState(queryParam || '');
   const [searchType, setSearchType] = useState(searchTypeParam || '');
@@ -33,22 +34,32 @@ export function SearchProvider({ children }) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const mapMode = mode ? 'mode=map&' : '';
-
   function submitSearch() {
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
-    router.push(`/specialist?${mapMode}searchType=${currentSearchType}&query=${query}`);
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set(specialistFiltersConfig.specialistType.filterKey, currentSearchType);
+    newSearchParams.set('query', query);
+
+    if (mode) {
+      newSearchParams.set('mode', 'map');
+    } else {
+      newSearchParams.delete('mode');
+    }
+    router.push(`/specialist?${newSearchParams.toString()}`);
   }
 
   function navigateToAutoCompleteItem(autoCompleteItem) {
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
-    if (currentSearchType === searchInputTypeEnum.REQUEST) {
-      router.push(`/specialist?${mapMode}searchType=${searchInputTypeEnum.REQUEST}&query=${autoCompleteItem.title}`);
+    if (currentSearchType === specialistTypeEnum.REQUEST) {
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set(specialistFiltersConfig.specialistType.filterKey, specialistTypeEnum.REQUEST);
+      newSearchParams.set('query', autoCompleteItem.title);
+      router.push(`/specialist?${newSearchParams.toString()}`);
     } else if (
-      currentSearchType === searchInputTypeEnum.SPECIALIST ||
-      currentSearchType === searchInputTypeEnum.ORGANIZATION
+      currentSearchType === specialistTypeEnum.SPECIALIST ||
+      currentSearchType === specialistTypeEnum.ORGANIZATION
     ) {
       router.push(`/specialist/${autoCompleteItem.id}?type=${currentSearchType}`);
     }

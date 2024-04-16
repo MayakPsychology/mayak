@@ -31,12 +31,12 @@ export function SpecialistListWithMap({ mapMode, className }) {
 
   const cardStyle = 'max-w-[900px] rounded-3xl border-2 border-gray-200 px-4 py-5 lg:mx-auto h-full';
 
-  const { data, isLoading, isSuccess } = usePaginatedEntries(searchParams);
+  const { data, isPending, isSuccess } = usePaginatedEntries(searchParams);
   const totalCount = data?.pages?.length && data.pages[0].metaData?.totalCount;
 
-  if (isLoading) return <Loading />;
+  if (isPending) return <Loading />;
 
-  const isNoMatches = !isLoading && (!data?.pages?.length || totalCount === 0);
+  const isNoMatches = !isPending && (!data?.pages?.length || totalCount === 0);
 
   if (isNoMatches) return <NoMatches />;
 

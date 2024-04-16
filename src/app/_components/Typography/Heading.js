@@ -7,6 +7,7 @@ const classes = {
   h2: 'text-h2',
   h3: 'text-h3',
   h4: 'text-h4',
+  h5: 'text-h4',
 };
 
 export function Heading({ children, type = 'h1', className }) {
@@ -21,6 +22,6 @@ export function Heading({ children, type = 'h1', className }) {
 
 Heading.propTypes = {
   children: PropTypes.node,
-  type: PropTypes.oneOf(['h1', 'h2', 'h3', 'h4']),
+  type: PropTypes.oneOf(['h1', 'h2', 'h3', 'h4', 'h5']),
   className: PropTypes.string,
 };

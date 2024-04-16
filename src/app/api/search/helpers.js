@@ -1,4 +1,4 @@
-import { FormatOfWork } from '@prisma/client';
+import { FormatOfWork, Gender } from '@prisma/client';
 import { getSearchParamsFromRequest } from '@/utils/getSearchParamsFromRequest';
 
 function parseDynamicPriceRange(price) {
@@ -57,7 +57,7 @@ function parseNumericParam(param) {
 
 export function createEntityFilter({
   type,
-  request,
+  requests,
   format,
   districts,
   prices,
@@ -69,10 +69,11 @@ export function createEntityFilter({
 }) {
   const priceFilter = (prices || (priceMin && priceMax)) && getPriceFilter(prices, priceMin, priceMax);
   const therapyFilter = type && { type };
-  const requestType = parseNumericParam(request);
+  const requestType = parseNumericParam(requests);
+
   const requestFilter = (searchType === 'request' || requestType) && {
     some: {
-      name: searchType === 'request' && query && { contains: query, mode: 'insensitive' },
+      name: searchType === 'request' && query ? { contains: query, mode: 'insensitive' } : undefined,
       simpleId: requestType && { in: requestType },
     },
   };
@@ -112,11 +113,12 @@ export function createEntityFilter({
 
 export function createSpecialistFilter(queryParams) {
   const sharedWhere = createEntityFilter(queryParams);
-  const { specializations, specializationMethods } = queryParams;
+  const { specializations, specializationMethods, gender } = queryParams;
   const methods = parseNumericParam(specializationMethods);
 
   return {
     ...sharedWhere,
+    gender: Gender[(gender || '').toUpperCase()],
     specializations: specializations && {
       some: { id: { in: specializations } },
     },
@@ -143,7 +145,7 @@ export function createSearchEntryFilter(queryParams) {
   const organizationWhere = createOrganizationFilter(queryParams);
   const defaultFilter = { OR: [{ specialist: specialistWhere }, { organization: organizationWhere }] };
 
-  if (!query) {
+  if (!searchType) {
     return defaultFilter;
   }
   switch (searchType) {
