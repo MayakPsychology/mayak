@@ -5,9 +5,10 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import { calculateMapBounds } from '@utils/leaflet';
 import ReactDOMServer from 'react-dom/server';
 import { CustomMapMarker as CustomMarker } from '@icons';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '@utils/cn';
 import { MapMarker } from '@components/Map/MapMarker';
+import { useWindowResize } from '@/app/_hooks/useWindowResize';
 import { mapPropTypes } from './prop-types';
 
 import 'leaflet/dist/leaflet.css';
@@ -26,6 +27,12 @@ const styledMarkerIcon = colorClass =>
 
 export default function MapWindow({ points, activeSpecialistId, setActiveSpecialist, className }) {
   const [selectedMarker, setSelectedMarker] = useState(null);
+  const { width: screenWidth } = useWindowResize();
+
+  useEffect(() => {
+    setSelectedMarker(null);
+  }, [screenWidth]);
+
   const bounds = calculateMapBounds(points) ?? [
     [49.75826, 23.95324],
     [49.93826, 24.12324],

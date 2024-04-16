@@ -6,11 +6,18 @@ export function MapMarker({ isActive, children, ...props }) {
   const markerRef = useRef();
 
   useEffect(() => {
+    const marker = markerRef.current;
     if (isActive) {
-      markerRef.current.openPopup();
+      marker.openPopup();
     } else {
-      markerRef.current.closePopup();
+      marker.closePopup();
     }
+
+    return () => {
+      if (marker) {
+        marker.closePopup();
+      }
+    };
   }, [isActive]);
 
   return (
