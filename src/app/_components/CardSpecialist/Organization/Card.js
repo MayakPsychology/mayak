@@ -15,9 +15,9 @@ import { AddressesList } from '@components/CardSpecialist/AddressesList';
 import { CardButton } from '@components/CardSpecialist/CardButton';
 import { WorkTime } from '@components/CardSpecialist/WorkTime';
 import { organizationPropType } from '@components/CardSpecialist/prop-types';
-import { addressesToPoints } from '@utils/common';
 import { Map } from '@components/Map';
 import { useSearchParams } from 'next/navigation';
+import { mapAddressesToPoints } from '@components/Specialists/utils';
 import { ClientCategoryList } from '../ClientCategoryList';
 import { OrganizationChipLists } from './OrganizationChipLists';
 import { OwnershipTypeTile } from './OwnershipTypeTile';
@@ -58,7 +58,7 @@ export function CardOrganization({ organization, className, extended = false }) 
 
   addresses.sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary));
   const addressPrimary = addresses[0];
-  const points = addressesToPoints(addresses);
+  const points = mapAddressesToPoints({ addressesList: addresses, specialistId: id });
   const contactsList = getContactsList({ phone, email, website });
   const labelsList = getLabelsList({
     yearsOfExperience: yearsOnMarket,

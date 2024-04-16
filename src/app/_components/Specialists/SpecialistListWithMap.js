@@ -10,9 +10,8 @@ import { LayoutGroup, motion } from 'framer-motion';
 import { cn } from '@utils/cn';
 import { MapLink } from '@components/MapLink';
 import { ShortCardWrapper } from '@components/CardSpecialist/ShortCardWrapper';
-import { getProperEnding } from '@components/Specialists/utils';
+import { getProperEnding, mapSpecialistsListIntoPointsList, sliderBreakpoints } from '@components/Specialists/utils';
 import { NoMatches } from '@components/Specialists/NoMatches';
-import { addressesToPoints } from '@utils/common';
 import { Map } from '@components/Map';
 import { useMediaQuery } from '@mui/material';
 import Loading from '@/app/loading';
@@ -23,38 +22,6 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
 const cardStyle = 'max-w-[900px] rounded-3xl border-2 border-gray-200 px-4 py-5 lg:mx-auto h-full';
-const sliderBreakpoints = {
-  360: {
-    slidesPerView: 1,
-    spaceBetween: 24,
-  },
-  640: {
-    slidesPerView: 1.25,
-    spaceBetween: 16,
-  },
-  768: {
-    slidesPerView: 1.5,
-    spaceBetween: 14,
-  },
-};
-
-const getMappedPointsList = list =>
-  list
-    ?.map(entry => {
-      const isOrganization = entry.organization;
-      const entryData = isOrganization ? entry.organization : entry.specialist;
-      // const addressPrimary = entryData.addresses[0];
-      //
-      // if (!addressPrimary) {
-      //   return [];
-      // }
-
-      return addressesToPoints(entryData.addresses).map(address => ({
-        ...address,
-        specialistId: entryData.id,
-      }));
-    })
-    ?.reduce((acc, curr) => acc.concat(curr), []);
 
 export function SpecialistListWithMap({ mapMode, className }) {
   const searchParams = useSearchParams();
@@ -85,7 +52,7 @@ export function SpecialistListWithMap({ mapMode, className }) {
   const totalCount = data?.pages?.length && data.pages[0].metaData?.totalCount;
 
   useEffect(() => {
-    const points = getMappedPointsList(data?.pages[0]?.data);
+    const points = mapSpecialistsListIntoPointsList(data?.pages[0]?.data);
     setPointsList(points);
   }, [data]);
 

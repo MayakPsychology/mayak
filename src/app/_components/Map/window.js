@@ -33,6 +33,7 @@ export default function MapWindow({ points, activeSpecialistId, setActiveSpecial
     setSelectedMarker(null);
   }, [screenWidth]);
 
+  // Provided no points, the map will display Lviv city
   const bounds = calculateMapBounds(points) ?? [
     [49.75826, 23.95324],
     [49.93826, 24.12324],
@@ -42,7 +43,7 @@ export default function MapWindow({ points, activeSpecialistId, setActiveSpecial
   const markerEventHandlers = {
     click: ({ specialistId, index }) => {
       setActiveSpecialist(specialistId);
-      setSelectedMarker(index);
+      setSelectedMarker(`${specialistId}-${index}`);
     },
     popupclose: () => {
       setActiveSpecialist(null);
@@ -52,26 +53,30 @@ export default function MapWindow({ points, activeSpecialistId, setActiveSpecial
 
   const markers = points
     .filter(point => point.title)
-    .map(({ title, latitude, longitude, specialistId = null }, index) => (
-      <MapMarker
-        position={[latitude, longitude]}
-        key={`${latitude}-${longitude}`}
-        eventHandlers={{
-          click: () => markerEventHandlers.click({ specialistId, index }),
-          popupclose: () => markerEventHandlers.popupclose(),
-        }}
-        icon={styledMarkerIcon(
-          index === selectedMarker || specialistId === activeSpecialistId
-            ? 'text-secondary-400 scale-125'
-            : 'text-primary-500',
-        )}
-        map={mapRef}
-        isActive={specialistId === activeSpecialistId}
-        riseOnHover
-      >
-        {title}
-      </MapMarker>
-    ));
+    .map(({ title, latitude, longitude, meta }) => {
+      const { specialistId, index } = meta;
+
+      return (
+        <MapMarker
+          position={[latitude, longitude]}
+          key={`${latitude}-${longitude}`}
+          eventHandlers={{
+            click: () => markerEventHandlers.click({ specialistId, index }),
+            popupclose: () => markerEventHandlers.popupclose(),
+          }}
+          icon={styledMarkerIcon(
+            index === selectedMarker || specialistId === activeSpecialistId
+              ? 'text-secondary-400 scale-125'
+              : 'text-primary-500',
+          )}
+          map={mapRef}
+          isActive={index === selectedMarker && specialistId === activeSpecialistId}
+          riseOnHover
+        >
+          {title}
+        </MapMarker>
+      );
+    });
 
   return (
     <MapContainer bounds={bounds} scrollWheelZoom={false} className={className} ref={mapRef}>

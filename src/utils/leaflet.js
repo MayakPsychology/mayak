@@ -1,30 +1,25 @@
 export const calculateMapBounds = points => {
-  let latitudes;
-  let longitudes;
+  if (!points.length) {
+    return [];
+  }
 
   const padding = 0.006;
 
-  if (!points.length) {
-    return null;
-  }
+  // Provided only one pair of latitude and longitude, use padding to simulate a rectangular are for mapping.
+  // This ensures constructing a valid bounding box for the map.
+  const pointsNormalized =
+    points.length >= 2
+      ? points
+      : [
+        { latitude: points[0].latitude - padding, longitude: points[0].longitude - padding },
+        { latitude: points[0].latitude + padding, longitude: points[0].longitude + padding },
+      ];
 
-  if (points.length === 1) {
-    latitudes = [points[0].latitude - padding, points[0].latitude + padding];
-    longitudes = [points[0].longitude - padding, points[0].longitude + padding];
-  }
-
-  if (points.length >= 2) {
-    latitudes = points.map(point => point.latitude);
-    longitudes = points.map(point => point.longitude);
-  }
-
-  const minLat = Math.min(...latitudes);
-  const minLng = Math.min(...longitudes);
-  const maxLat = Math.max(...latitudes);
-  const maxLng = Math.max(...longitudes);
+  const latitudes = pointsNormalized.map(point => point.latitude);
+  const longitudes = pointsNormalized.map(point => point.longitude);
 
   return [
-    [minLat, minLng],
-    [maxLat, maxLng],
+    [Math.min(...latitudes), Math.min(...longitudes)],
+    [Math.max(...latitudes), Math.max(...longitudes)],
   ];
 };
