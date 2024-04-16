@@ -6,9 +6,9 @@ const Window = dynamic(() => import('./window'), {
   ssr: false,
 });
 
-export function Map({ points, activeSpecialistId = null, setActiveSpecialist = () => {}, className }) {
+export function Map({ points, activeSpecialistId, setActiveSpecialist = () => {}, className }) {
   return (
-    <div className={cn('bg-gray-200', className)}>
+    <div className={cn('z-0 bg-gray-200', className)}>
       <Window
         points={points}
         className={className}

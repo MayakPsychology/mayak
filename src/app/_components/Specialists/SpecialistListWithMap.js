@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { usePaginatedEntries } from '@hooks';
 import { useSearchParams } from 'next/navigation';
@@ -62,6 +62,7 @@ export function SpecialistListWithMap({ mapMode, className }) {
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const [mapMarkerPopupOpen, setMapMarkerPopupOpen] = useState(null);
   const [swiper, setSwiper] = useState(null);
+  const [listItemHeightsList, setListItemHeightsList] = useState(null);
 
   const isLargeScreen = useMediaQuery(`(min-width: ${screens.lg})`);
   const { width: screenWidth } = useWindowResize();
@@ -90,37 +91,36 @@ export function SpecialistListWithMap({ mapMode, className }) {
 
   const specialistCardsListRef = useRef(null);
 
-  const listItemHeights = useMemo(
-    () =>
-      specialistCardsListRef?.current
-        ? Array.from(specialistCardsListRef?.current.children).map(child => ({
-          id: child.getAttribute('id'),
-          height: child.clientHeight,
-        }))
-        : [],
-    [screenWidth, data],
-  );
-
   useEffect(() => {
     setHoveredCardId(null);
+
     if (specialistCardsListRef?.current) {
       specialistCardsListRef.current.scrollTo({
         top: 0,
         behavior: 'smooth',
       });
     }
+
+    const heights = specialistCardsListRef?.current
+      ? Array.from(specialistCardsListRef?.current.children).map(child => ({
+        id: child.getAttribute('id'),
+        height: child.clientHeight,
+      }))
+      : [];
+    setListItemHeightsList(heights);
   }, [screenWidth, data]);
 
   const handleActiveCard = specialistId => {
     setHoveredCardId(specialistId);
     setMapMarkerPopupOpen(!!specialistId);
 
-    const selectedListItemIndex = listItemHeights?.findIndex(child => child.id === specialistId);
+    const selectedListItemIndex = listItemHeightsList?.findIndex(child => child.id === specialistId);
 
     if (!isLargeScreen && selectedListItemIndex !== -1) {
       slideTo(selectedListItemIndex);
     }
-    const slicedList = listItemHeights.slice(0, selectedListItemIndex);
+
+    const slicedList = listItemHeightsList.slice(0, selectedListItemIndex);
     const height = slicedList.length
       ? slicedList
         .slice(0, selectedListItemIndex)

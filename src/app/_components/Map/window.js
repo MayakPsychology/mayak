@@ -5,11 +5,9 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import { calculateMapBounds } from '@utils/leaflet';
 import ReactDOMServer from 'react-dom/server';
 import { CustomMapMarker as CustomMarker } from '@icons';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { cn } from '@utils/cn';
-import { useMediaQuery } from '@mui/material';
 import { MapMarker } from '@components/Map/MapMarker';
-import { screens } from '@/app/styles/tailwind/ui';
 import { mapPropTypes } from './prop-types';
 
 import 'leaflet/dist/leaflet.css';
@@ -32,7 +30,6 @@ export default function MapWindow({ points, activeSpecialistId, setActiveSpecial
     [49.75826, 23.95324],
     [49.93826, 24.12324],
   ];
-  const matches = useMediaQuery(`(max-width: ${screens.lg})`);
   const mapRef = useRef(null);
 
   const markerEventHandlers = {
@@ -46,13 +43,9 @@ export default function MapWindow({ points, activeSpecialistId, setActiveSpecial
     },
   };
 
-  useEffect(() => {
-    markerEventHandlers.popupclose();
-  }, [matches]);
-
   const markers = points
     .filter(point => point.title)
-    .map(({ title, latitude, longitude, specialistId = undefined }, index) => (
+    .map(({ title, latitude, longitude, specialistId = null }, index) => (
       <MapMarker
         position={[latitude, longitude]}
         key={`${latitude}-${longitude}`}
