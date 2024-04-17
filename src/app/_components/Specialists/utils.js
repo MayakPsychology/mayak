@@ -1,18 +1,18 @@
 import _ from 'lodash';
 import { addressesToPoints } from '@utils/common';
 
-export const getProperEnding = count => {
+export const getProperEndingWithBase = (base, count) => {
   const lastDigit = count % 10;
   if (_.range(11, 15).includes(count)) {
-    return 'результатів';
+    return `${base}ів`;
   }
   if (_.range(2, 5).includes(lastDigit)) {
-    return 'результати';
+    return `${base}и`;
   }
   if (lastDigit === 1) {
-    return 'результат';
+    return base;
   }
-  return 'результатів';
+  return `${base}ів`;
 };
 
 const concatenateArrays = (accumulator, current) => accumulator.concat(current);
@@ -61,3 +61,5 @@ export const sliderBreakpoints = {
     spaceBetween: 14,
   },
 };
+
+export const getProperEnding = count => getProperEndingWithBase('результат', count);

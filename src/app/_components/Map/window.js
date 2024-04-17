@@ -1,19 +1,25 @@
 'use client';
 
 import { divIcon } from 'leaflet';
-import { MapContainer, TileLayer } from 'react-leaflet';
-import { calculateMapBounds } from '@utils/leaflet';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import ReactDOMServer from 'react-dom/server';
 import { CustomMapMarker as CustomMarker } from '@icons';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@utils/cn';
 import { MapMarker } from '@components/Map/MapMarker';
+import PropTypes from 'prop-types';
+import { calculateMapBounds } from '@utils/leaflet';
 import { useWindowResize } from '@/app/_hooks/useWindowResize';
 import { mapPropTypes } from './prop-types';
 
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
+
+const LVIV_MAP_BOUNDS = [
+  [49.75826, 23.95324],
+  [49.93826, 24.12324],
+];
 
 const styledMarkerIcon = colorClass =>
   divIcon({
@@ -25,20 +31,31 @@ const styledMarkerIcon = colorClass =>
     popupAnchor: [-2, -40],
   });
 
+function SetBounds({ points, children }) {
+  const map = useMap();
+
+  useEffect(() => {
+    const calculatedBounds = calculateMapBounds(points);
+    const bounds = calculatedBounds.length >= 2 ? calculatedBounds : LVIV_MAP_BOUNDS;
+    map.fitBounds(bounds);
+  }, [map, points]);
+
+  return <>{children}</>;
+}
+
+SetBounds.propTypes = {
+  points: PropTypes.array,
+  children: PropTypes.node,
+};
+
 export default function MapWindow({ points, activeSpecialistId, setActiveSpecialist, className }) {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const { width: screenWidth } = useWindowResize();
+  const mapRef = useRef(null);
 
   useEffect(() => {
     setSelectedMarker(null);
   }, [screenWidth]);
-
-  // Provided no points, the map will display Lviv city
-  const bounds = calculateMapBounds(points) ?? [
-    [49.75826, 23.95324],
-    [49.93826, 24.12324],
-  ];
-  const mapRef = useRef(null);
 
   const markerEventHandlers = {
     click: ({ specialistId, index }) => {
@@ -79,12 +96,12 @@ export default function MapWindow({ points, activeSpecialistId, setActiveSpecial
     });
 
   return (
-    <MapContainer bounds={bounds} scrollWheelZoom={false} className={className} ref={mapRef}>
+    <MapContainer scrollWheelZoom={false} className={className} ref={mapRef}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {markers}
+      <SetBounds points={points}>{markers}</SetBounds>
     </MapContainer>
   );
 }

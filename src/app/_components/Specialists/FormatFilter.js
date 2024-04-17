@@ -5,48 +5,40 @@ import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSetParam } from '@hooks';
 import { useSearchParams } from 'next/navigation';
+import PropTypes from 'prop-types';
+import { specialistFiltersConfig } from '@components/Specialists/Filters/utils';
 
-const offline = 'OFFLINE';
-const online = 'ONLINE';
+function FormatList({ options, formatsInUrl }) {
+  const [selectedFormat, setSelectedFormat] = useState(formatsInUrl);
 
-function FormatList() {
-  const [selectedFormat, setSelectedFormat] = useState();
-
-  const searchParams = useSearchParams();
-  const { remove, replace } = useSetParam('format');
+  const { remove, add } = useSetParam(specialistFiltersConfig.format.filterKey);
 
   const onChange = format => {
-    replace(format);
+    if (formatsInUrl.includes(format)) {
+      remove(format);
+    } else {
+      add(format);
+    }
   };
 
   useEffect(() => {
-    const formatInUrl = searchParams.get('format');
-    setSelectedFormat(formatInUrl);
-  }, [searchParams]);
+    setSelectedFormat(formatsInUrl);
+  }, [formatsInUrl]);
 
   return (
     <>
       <ul>
-        <li className="w-[280px] md:w-[300px]">
-          <CheckBox
-            name={online}
-            value={online}
-            type="radio"
-            checked={selectedFormat === online}
-            onChange={() => onChange(online)}
-            text="Онлайн"
-          />
-        </li>
-        <li className="w-[280px] md:w-[300px]">
-          <CheckBox
-            name={offline}
-            value={offline}
-            checked={selectedFormat === offline}
-            type="radio"
-            onChange={() => onChange(offline)}
-            text="Офлайн"
-          />
-        </li>
+        {options.map(format => (
+          <li key={format.value} className="w-[280px] md:w-[300px]">
+            <CheckBox
+              name={format.value}
+              value={format.value}
+              checked={selectedFormat.includes(format.value)}
+              onChange={() => onChange(format.value)}
+              text={format.label}
+            />
+          </li>
+        ))}
       </ul>
       <ClearFilterButton
         clear={() => {
@@ -57,12 +49,22 @@ function FormatList() {
   );
 }
 
+FormatList.propTypes = {
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+    }),
+  ),
+  formatsInUrl: PropTypes.arrayOf(PropTypes.string),
+};
+
 export function FormatFilter() {
-  const formatInUrl = useSearchParams().get('format');
+  const formatsInUrl = useSearchParams().getAll(specialistFiltersConfig.format.filterKey);
 
   return (
-    <FilterBase filterText="Формат роботи" count={Number(!!formatInUrl)}>
-      <FormatList />
+    <FilterBase filterText="Формат роботи" count={Number(formatsInUrl.length)}>
+      <FormatList formatsInUrl={formatsInUrl} options={specialistFiltersConfig.format.options} />
     </FilterBase>
   );
 }

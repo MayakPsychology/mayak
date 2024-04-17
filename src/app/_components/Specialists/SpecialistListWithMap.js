@@ -48,7 +48,7 @@ export function SpecialistListWithMap({ mapMode, className }) {
     setHoveredCardId(null);
   };
 
-  const { data, isLoading, isSuccess } = usePaginatedEntries(searchParams);
+  const { data, isPending, isSuccess } = usePaginatedEntries(searchParams);
   const totalCount = data?.pages?.length && data.pages[0].metaData?.totalCount;
 
   useEffect(() => {
@@ -111,9 +111,9 @@ export function SpecialistListWithMap({ mapMode, className }) {
     setHoveredCardId(specialistId);
   };
 
-  if (isLoading) return <Loading />;
+  if (isPending) return <Loading />;
 
-  const isNoMatches = !isLoading && (!data?.pages?.length || totalCount === 0);
+  const isNoMatches = !isPending && (!data?.pages?.length || totalCount === 0);
 
   if (isNoMatches) return <NoMatches />;
 

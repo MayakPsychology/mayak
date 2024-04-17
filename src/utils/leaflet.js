@@ -3,7 +3,7 @@ export const calculateMapBounds = points => {
     return [];
   }
 
-  const padding = 0.006;
+  const padding = 0.002;
 
   // Provided only one pair of latitude and longitude, use padding to simulate a rectangular are for mapping.
   // This ensures constructing a valid bounding box for the map.
