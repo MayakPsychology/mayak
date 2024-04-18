@@ -15,7 +15,7 @@ export function SearchInput() {
     query,
     isSelectTypeOpen,
     isInputFocused,
-    setQuery,
+    clearQuery,
     setIsSelectTypeOpen,
     setIsAutoCompleteOpen,
     submitSearch,
@@ -60,13 +60,7 @@ export function SearchInput() {
         >
           <SearchIcon className={cn('group-focus-within:hidden', query && 'hidden')} />
           <SearchInputField />
-          <ClearSearchIcon
-            className={cn('hidden cursor-pointer', query && 'block')}
-            onClick={() => {
-              setQuery('');
-              setIsAutoCompleteOpen(false);
-            }}
-          />
+          <ClearSearchIcon className={cn('hidden cursor-pointer', query && 'block')} onClick={() => clearQuery()} />
           <SearchAutoCompleteDropDown />
         </div>
       </div>

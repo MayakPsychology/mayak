@@ -85,7 +85,7 @@ export function createEntityFilter({
       })),
     },
   };
-  const isSupportFocusesFilterExist = requestType || type || priceFilter || query;
+  const isSupportFocusesFilterExist = requestType || type || priceFilter || query || undefined;
   const supportFocusesFilter = isSupportFocusesFilterExist && {
     some: {
       AND: {

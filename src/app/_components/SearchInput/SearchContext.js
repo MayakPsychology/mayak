@@ -34,6 +34,8 @@ export function SearchProvider({ children }) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  const mapMode = mode ? 'mode=map&' : '';
+
   function submitSearch() {
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
@@ -56,13 +58,20 @@ export function SearchProvider({ children }) {
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.set(specialistFiltersConfig.specialistType.filterKey, specialistTypeEnum.REQUEST);
       newSearchParams.set('query', autoCompleteItem.title);
-      router.push(`/specialist?${newSearchParams.toString()}`);
+      router.replace(`/specialist?${newSearchParams.toString()}`);
     } else if (
       currentSearchType === specialistTypeEnum.SPECIALIST ||
       currentSearchType === specialistTypeEnum.ORGANIZATION
     ) {
-      router.push(`/specialist/${autoCompleteItem.id}?type=${currentSearchType}`);
+      router.replace(`/specialist/${autoCompleteItem.id}?type=${currentSearchType}`);
     }
+  }
+
+  function clearQuery() {
+    setQuery('');
+    setIsAutoCompleteOpen(false);
+    queryClient.cancelQueries({ queryKey: searchSyncKey });
+    router.replace(`/specialist?${mapMode}searchType=${currentSearchType}&query=`);
   }
 
   useEffect(() => {
@@ -76,6 +85,7 @@ export function SearchProvider({ children }) {
   return (
     <SearchContext.Provider
       value={{
+        clearQuery,
         currentConfig,
         query,
         debouncedQuery,
