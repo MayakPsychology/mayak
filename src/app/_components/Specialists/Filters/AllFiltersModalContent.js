@@ -113,7 +113,7 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
   };
 
   useEffect(() => {
-    if (searchParams.toString() !== initialSearchParamsRef.toString()) {
+    if (searchParams.toString() !== initialSearchParamsRef.current.toString()) {
       onClose();
     }
   }, [searchParams, onClose]);
