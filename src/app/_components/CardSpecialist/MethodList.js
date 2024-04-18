@@ -25,7 +25,10 @@ function makeCaption(specializations) {
 function Method({ id, title, description }) {
   return (
     <div className="grid h-[24px] w-fit place-items-center rounded-3xl bg-primary-100">
-      <span className="w-full px-3 py-1 text-c3 font-medium text-primary-600" data-tooltip-id={`method_tooltip_${id}`}>
+      <span
+        className="w-full truncate px-3 py-1 text-c3 font-medium text-primary-600"
+        data-tooltip-id={`method_tooltip_${id}`}
+      >
         {title}
       </span>
       <Tooltip

@@ -1,4 +1,4 @@
-import { FormatOfWork } from '@prisma/client';
+import { FormatOfWork, Gender } from '@prisma/client';
 import { getSearchParamsFromRequest } from '@/utils/getSearchParamsFromRequest';
 
 function parseDynamicPriceRange(price) {
@@ -9,7 +9,16 @@ function parseDynamicPriceRange(price) {
   return { AND: [gteFilter, ltFilter] };
 }
 
-function getPriceFilter(prices) {
+function getPriceFilter(prices, priceMin, priceMax) {
+  if (priceMin && priceMax) {
+    const priceBounds = `from${priceMin}to${priceMax}`;
+    if (Array.isArray(prices)) {
+      prices.push(priceBounds);
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      prices = prices ? [prices, priceBounds] : [priceBounds];
+    }
+  }
   const priceConditions = {
     notSpecified: { price: { equals: null } },
     free: { price: { equals: 0 } },
@@ -20,27 +29,55 @@ function getPriceFilter(prices) {
   return prices.map(price => priceConditions[price] || parseDynamicPriceRange(price)).filter(price => price);
 }
 
+function getFormatFilter(format) {
+  const formats = Array.isArray(format) ? format : [format];
+  return formats.reduce(
+    (acc, val) => {
+      if (FormatOfWork[val.toUpperCase()]) {
+        acc.push(FormatOfWork[val.toUpperCase()]);
+      }
+      return acc;
+    },
+    [FormatOfWork.BOTH],
+  );
+}
+
 function parseNumericParam(param) {
   let res;
   if (Array.isArray(param)) {
     res = param.map(val => parseInt(val, 10)).filter(val => Number.isInteger(val));
+    if (!res.length) {
+      res = undefined;
+    }
   } else {
     res = Number.isInteger(parseInt(param, 10)) ? [parseInt(param, 10)] : undefined;
   }
   return res;
 }
 
-export function createEntityFilter({ type, requests, format, districts, prices, query, searchType }) {
-  const priceFilter = prices && getPriceFilter(prices);
+export function createEntityFilter({
+  type,
+  requests,
+  format,
+  districts,
+  prices,
+  priceMin,
+  priceMax,
+  query,
+  searchType,
+  category,
+}) {
+  const priceFilter = (prices || (priceMin && priceMax)) && getPriceFilter(prices, priceMin, priceMax);
   const therapyFilter = type && { type };
   const requestType = parseNumericParam(requests);
-  const requestFilter = (searchType === 'request' || requests) && {
+
+  const requestFilter = (searchType === 'request' || requestType) && {
     some: {
-      name: searchType === 'request' && query && { contains: query, mode: 'insensitive' },
+      name: searchType === 'request' && query ? { contains: query, mode: 'insensitive' } : undefined,
       simpleId: requestType && { in: requestType },
     },
   };
-  const formatOfWorkFilter = format && { in: [FormatOfWork.BOTH, format] };
+  const formatOfWorkFilter = format && { in: getFormatFilter(format) };
   const addressesFilter = districts && {
     some: {
       OR: districts.map(id => ({
@@ -48,7 +85,7 @@ export function createEntityFilter({ type, requests, format, districts, prices, 
       })),
     },
   };
-  const isSupportFocusesFilterExist = requests || type || priceFilter || query || undefined;
+  const isSupportFocusesFilterExist = requestType || type || priceFilter || query || undefined;
   const supportFocusesFilter = isSupportFocusesFilterExist && {
     some: {
       AND: {
@@ -59,21 +96,29 @@ export function createEntityFilter({ type, requests, format, districts, prices, 
     },
   };
 
+  const categoryFilter = category && {
+    some: {
+      id: Array.isArray(category) ? { in: category } : category,
+    },
+  };
+
   return {
     isActive: true,
     supportFocuses: supportFocusesFilter,
     formatOfWork: formatOfWorkFilter,
     addresses: addressesFilter,
+    clientsWorkingWith: categoryFilter,
   };
 }
 
 export function createSpecialistFilter(queryParams) {
   const sharedWhere = createEntityFilter(queryParams);
-  const { specializations, specializationMethods } = queryParams;
+  const { specializations, specializationMethods, gender } = queryParams;
   const methods = parseNumericParam(specializationMethods);
 
   return {
     ...sharedWhere,
+    gender: Gender[(gender || '').toUpperCase()],
     specializations: specializations && {
       some: { id: { in: specializations } },
     },
@@ -100,7 +145,7 @@ export function createSearchEntryFilter(queryParams) {
   const organizationWhere = createOrganizationFilter(queryParams);
   const defaultFilter = { OR: [{ specialist: specialistWhere }, { organization: organizationWhere }] };
 
-  if (!query) {
+  if (!searchType) {
     return defaultFilter;
   }
   switch (searchType) {
@@ -134,10 +179,6 @@ export function createSearchSyncFilter(params) {
 
   const activeFilter = { isActive: true };
   const defaultFilter = { OR: [{ specialist: activeFilter }, { organization: activeFilter }] };
-
-  if (!query) {
-    return defaultFilter;
-  }
 
   switch (searchType) {
     case 'request':

@@ -3,7 +3,7 @@ import { PHONE_REGEX } from '../consts';
 import { string, boolean } from './utils';
 
 const SendFeedback = z.object({
-  name: string('Вкажіть Ваше Імʼя').min(1).max(128).zod,
+  name: string('Імʼя').min(1).max(128).zod,
   phone: string('Мобільний телефон').zod.refine(val => PHONE_REGEX.test(val), {
     message: 'Будь ласка введіть номер у форматі +380XXXXXXXXX',
   }),

@@ -14,7 +14,7 @@ export async function getLinksList() {
   const { APPLICATION } = NavigationUrl;
 
   return {
-    socialMediaList: data?.filter(({ title }) => title !== APPLICATION),
+    socialMediaLinksList: data?.filter(({ title }) => title !== APPLICATION),
     applicationLink: data?.filter(({ title }) => title === APPLICATION)[0],
   };
 }

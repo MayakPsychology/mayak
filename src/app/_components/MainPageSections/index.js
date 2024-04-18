@@ -4,3 +4,4 @@ export * from './TherapyCard';
 export * from './FAQCard';
 export * from './DistrictSearchSection';
 export * from './SearchSection';
+export * from './GoalSection';

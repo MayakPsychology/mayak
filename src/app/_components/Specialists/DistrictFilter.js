@@ -1,40 +1,40 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { CircularProgress } from '@mui/material';
+import { useSearchParams } from 'next/navigation';
 import { useListDistrict, useSetParam } from '@hooks';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
-import { useSearchParams } from 'next/navigation';
+import { useDebounceCallback } from '@/app/_hooks';
+import { INPUT_DEBOUNCE } from '@/lib/consts';
 
-function DistrictList() {
-  const { data: districts, isLoading } = useListDistrict();
-  const [selectedDistricts, setSelectedDistricts] = useState();
+function DistrictList({ districtsInUrl }) {
+  const districtParam = useSetParam('district');
+  const [selectedDistricts, setSelectedDistricts] = useState(districtsInUrl);
+  const { data: districtList, isLoading } = useListDistrict();
 
-  const searchParams = useSearchParams();
-  const { add, remove } = useSetParam('district');
+  const setParamDebounced = useDebounceCallback(districts => {
+    districtParam.replace(districts);
+  }, INPUT_DEBOUNCE);
 
   const onChange = district => {
-    if (selectedDistricts.includes(district)) {
-      remove(district);
-    } else {
-      add(district);
-    }
+    const updatedPrices = selectedDistricts.includes(district)
+      ? selectedDistricts.filter(it => it !== district)
+      : [...selectedDistricts, district];
+    setSelectedDistricts(updatedPrices);
+    setParamDebounced(updatedPrices);
   };
-
-  useEffect(() => {
-    const districtsInUrl = searchParams.getAll('district');
-    setSelectedDistricts(districtsInUrl);
-  }, [searchParams]);
 
   if (isLoading) return <CircularProgress />;
 
-  if (!isLoading && !districts?.length) return null;
+  if (!districtList?.length) return null;
 
   return (
     <>
       <ul>
-        {districts.map(district => {
+        {districtList.map(district => {
           const { id, name } = district;
           return (
             <li key={id} className="w-[280px] md:w-[300px]">
@@ -50,21 +50,21 @@ function DistrictList() {
           );
         })}
       </ul>
-      <ClearFilterButton
-        clear={() => {
-          remove();
-        }}
-      />
+      <ClearFilterButton clear={() => districtParam.remove()} />
     </>
   );
 }
 
+DistrictList.propTypes = {
+  districtsInUrl: PropTypes.arrayOf(PropTypes.string),
+};
+
 export function DistrictFilter() {
-  const districtsInUrl = useSearchParams().getAll('district');
+  const districtsInUrl = useSearchParams().getAll('district') || [];
 
   return (
-    <FilterBase filterText="Райони" count={districtsInUrl?.length || 0}>
-      <DistrictList />
+    <FilterBase filterText="Райони" count={districtsInUrl.length}>
+      <DistrictList districtsInUrl={districtsInUrl} />
     </FilterBase>
   );
 }
