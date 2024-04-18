@@ -48,6 +48,7 @@ export { default as Privat24 } from '@icons/privat24.svg';
 export { default as PayPal } from '@icons/paypal.svg';
 export { default as Group } from '@icons/group.svg';
 export { default as Compassion } from '@icons/compassion.svg';
+export { default as CustomMapMarker } from '@icons/map-marker.svg';
 export { default as Settings } from '@icons/settings.svg';
 export { default as TherapyFilterIndividual } from '@icons/therapy-filter-individual.svg';
 export { default as TherapyFilterBusiness } from '@icons/therapy-filter-business.svg';

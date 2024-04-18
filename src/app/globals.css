@@ -58,6 +58,11 @@ html {
   width: max-content;
 }
 
+.leaflet-div-icon {
+  border: 0 !important;
+  background-color: transparent !important;
+}
+
 .truncated-list > li {
   max-width: 100%;
 }
