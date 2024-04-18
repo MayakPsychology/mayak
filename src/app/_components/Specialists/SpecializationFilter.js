@@ -1,35 +1,40 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSetParam } from '@hooks';
+import PropTypes from 'prop-types';
+import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { CircularProgress } from '@mui/material';
+import { useListSpecialization, useSetParam } from '@hooks';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
-import { useSearchParams } from 'next/navigation';
-import PropTypes from 'prop-types';
-import { specializationFilterPropType } from '@components/Specialists/Filters/propTypes';
-import { specialistFiltersConfig } from '@components/Specialists/Filters/utils';
+import { useDebounceCallback } from '@/app/_hooks';
+import { INPUT_DEBOUNCE } from '@/lib/consts';
 
-function SpecializationList({ options, specializationsInUrl }) {
+function SpecializationList({ specializationsInUrl }) {
+  const specializationParam = useSetParam('specialization');
   const [selectedSpecializations, setSelectedSpecializations] = useState(specializationsInUrl);
+  const { data: specializationList, isLoading } = useListSpecialization();
 
-  const { add, remove } = useSetParam(specialistFiltersConfig.specialization.filterKey);
+  const setParamDebounced = useDebounceCallback(districts => {
+    specializationParam.replace(districts);
+  }, INPUT_DEBOUNCE);
 
   const onChange = specialization => {
-    if (selectedSpecializations.includes(specialization)) {
-      remove(specialization);
-    } else {
-      add(specialization);
-    }
+    const updatedSpecializations = selectedSpecializations.includes(specialization)
+      ? selectedSpecializations.filter(it => it !== specialization)
+      : [...selectedSpecializations, specialization];
+    setSelectedSpecializations(updatedSpecializations);
+    setParamDebounced(updatedSpecializations);
   };
 
-  useEffect(() => {
-    setSelectedSpecializations(specializationsInUrl);
-  }, [specializationsInUrl]);
+  if (isLoading) return <CircularProgress />;
+
+  if (!specializationList?.length) return null;
 
   return (
     <>
       <ul>
-        {options.map(specialization => {
+        {specializationList.map(specialization => {
           const { id, name } = specialization;
           return (
             <li key={id} className="w-[280px] md:w-[300px]">
@@ -45,30 +50,21 @@ function SpecializationList({ options, specializationsInUrl }) {
           );
         })}
       </ul>
-      <ClearFilterButton
-        clear={() => {
-          remove();
-        }}
-      />
+      <ClearFilterButton clear={() => specializationParam.remove()} />
     </>
   );
 }
 
 SpecializationList.propTypes = {
-  options: PropTypes.arrayOf(specializationFilterPropType),
   specializationsInUrl: PropTypes.arrayOf(PropTypes.string),
 };
 
-export function SpecializationFilter({ options }) {
-  const specializationsInUrl = useSearchParams().getAll(specialistFiltersConfig.specialization.filterKey);
+export function SpecializationFilter() {
+  const specializationsInUrl = useSearchParams().getAll('specialization') || [];
 
   return (
-    <FilterBase filterText="Посада" count={specializationsInUrl?.length || 0}>
-      <SpecializationList options={options} specializationsInUrl={specializationsInUrl} />
+    <FilterBase filterText="Посада" count={specializationsInUrl.length}>
+      <SpecializationList specializationsInUrl={specializationsInUrl} />
     </FilterBase>
   );
 }
-
-SpecializationFilter.propTypes = {
-  options: PropTypes.arrayOf(specializationFilterPropType),
-};

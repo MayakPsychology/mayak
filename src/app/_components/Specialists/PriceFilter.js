@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSetParam } from '@hooks';
 import { useSearchParams } from 'next/navigation';
-import PropTypes from 'prop-types';
-import { specialistFiltersConfig } from '@components/Specialists/Filters/utils';
+import { useDebounceCallback } from '@/app/_hooks';
+import { INPUT_DEBOUNCE } from '@/lib/consts';
 
 const priceVariants = {
   notSpecified: 'Не зазначено',
@@ -18,21 +19,19 @@ const priceVariants = {
 };
 
 function PricesList({ pricesInUrl }) {
+  const priceParam = useSetParam('price');
   const [selectedPrices, setSelectedPrices] = useState(pricesInUrl);
-
-  const { add, remove } = useSetParam(specialistFiltersConfig.price.filterKey.price);
+  const setParamDebounced = useDebounceCallback(prices => {
+    priceParam.replace(prices);
+  }, INPUT_DEBOUNCE);
 
   const onChange = price => {
-    if (selectedPrices.includes(price)) {
-      remove(price);
-    } else {
-      add(price);
-    }
+    const updatedPrices = selectedPrices.includes(price)
+      ? selectedPrices.filter(it => it !== price)
+      : [...selectedPrices, price];
+    setSelectedPrices(updatedPrices);
+    setParamDebounced(updatedPrices);
   };
-
-  useEffect(() => {
-    setSelectedPrices(pricesInUrl);
-  }, [pricesInUrl]);
 
   return (
     <>
@@ -49,11 +48,7 @@ function PricesList({ pricesInUrl }) {
           </li>
         ))}
       </ul>
-      <ClearFilterButton
-        clear={() => {
-          remove();
-        }}
-      />
+      <ClearFilterButton clear={() => priceParam.remove()} />
     </>
   );
 }
@@ -63,10 +58,10 @@ PricesList.propTypes = {
 };
 
 export function PriceFilter() {
-  const pricesInUrl = useSearchParams().getAll(specialistFiltersConfig.price.filterKey.price);
+  const pricesInUrl = useSearchParams().getAll('price') || [];
 
   return (
-    <FilterBase filterText="Ціна" count={pricesInUrl?.length || 0}>
+    <FilterBase filterText="Ціна" count={pricesInUrl.length}>
       <PricesList pricesInUrl={pricesInUrl} />
     </FilterBase>
   );
