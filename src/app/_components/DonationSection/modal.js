@@ -32,7 +32,7 @@ function DataSection({ label, text }) {
 
 DataSection.propTypes = {
   label: PropTypes.string,
-  text: PropTypes.string,
+  text: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 function PillLink({ href, children, className }) {
@@ -81,7 +81,7 @@ export function DonateModal({ isOpen, onClose, donationDetails }) {
       <div className="flex flex-col gap-9 p-1 md:p-0 lg:px-9 lg:pb-2">
         <div className="flex flex-col items-center gap-5">
           <div className="flex items-center">
-            <Paragraph type="p1" className="text-inherit text-center text-p1 font-bold lg:text-h3">
+            <Paragraph type="p1" className="text-center text-p1 font-bold text-inherit lg:text-h3">
               {title}
             </Paragraph>
           </div>
@@ -115,7 +115,7 @@ export function DonateModal({ isOpen, onClose, donationDetails }) {
                   <div className="flex flex-col gap-5 p-1">
                     <DataSection label="Назва підприємства" text={enterpriceName} />
                     <DataSection label="IBAN" text={iban} />
-                    <DataSection label="Єдрпоу" text={enterpriseRegisterId} />
+                    <DataSection label="Єдрпоу" text={String(enterpriseRegisterId)} />
                     <DataSection label="Призначення платежу" text={paymentPurpose} />
                   </div>
                   {isQREnabled && (

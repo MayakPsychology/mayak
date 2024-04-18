@@ -1,13 +1,21 @@
 import { z } from 'zod';
 
+function numberForm(value) {
+  const number = Number(String(value).at(-1));
+  if (Number.isNaN(number)) return '';
+  if (number === 1) return 'символ';
+  if (number > 1 && number < 5) return 'символи';
+  return 'символів';
+}
+
 export const errors = fieldName => ({
   required: `${fieldName} - обов'язкове поле`,
   nonEmpty: `${fieldName} - не може бути пустим`,
   format: expected => `${fieldName} - формат має бути ${expected}`,
   string: {
     type: `${fieldName} має бути рядком`,
-    min: length => `${fieldName} має містити не менше ніж ${length} символів`,
-    max: length => `${fieldName} має містити не більше ніж ${length} символів`,
+    min: length => `${fieldName} має містити не менше ніж ${length} ${numberForm(length)}`,
+    max: length => `${fieldName} має містити не більше ніж ${length} ${numberForm(length)}`,
   },
   date: {
     format: `${fieldName} - невірний формат дати`,

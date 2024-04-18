@@ -15,6 +15,7 @@ export function CheckBox({
   disabled = false,
   checked = false,
   children = null,
+  classNames,
   type = 'checkbox',
   variant = variants.default,
 }) {
@@ -63,7 +64,19 @@ export function CheckBox({
           <div className={cn(variant.textContainer.base, variant.textContainer.position)}>
             {text ? (
               <>
-                {text && <p className={cn(variant.text.base, disabled && variant.text.disabled)}>{text}</p>}
+                {text && (
+                  <p
+                    className={cn(
+                      variant.text.base,
+                      {
+                        [variant.text.disabled]: disabled,
+                      },
+                      classNames?.labelText,
+                    )}
+                  >
+                    {text}
+                  </p>
+                )}
                 {subText && <p className={cn(variant.subText.base, disabled && variant.subText.disabled)}>{subText}</p>}
               </>
             ) : (
@@ -87,6 +100,9 @@ CheckBox.propTypes = {
   checked: PropTypes.bool,
   isMultiChoice: PropTypes.bool,
   children: PropTypes.node,
+  classNames: PropTypes.shape({
+    labelText: PropTypes.string,
+  }),
   variant: PropTypes.shape({
     container: PropTypes.shape({
       base: PropTypes.string.isRequired,

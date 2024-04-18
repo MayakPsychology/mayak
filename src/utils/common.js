@@ -55,6 +55,7 @@ export const addressesToPoints = addresses =>
     latitude,
     longitude,
   })) ?? [];
+
 const weekDaySorter = {
   MON: 1,
   TUE: 2,

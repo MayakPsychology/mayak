@@ -45,6 +45,12 @@ enum WeekDay {
   SUN
 }
 
+enum NavigationUrl {
+  FACEBOOK
+  INSTAGRAM
+  APPLICATION
+}
+
 model Specialist {
   id                    String           @id @default(uuid()) @db.Uuid
   createdAt             DateTime         @default(now())
@@ -188,6 +194,7 @@ model Therapy {
 
 model Request {
   id             String         @id @default(uuid()) @db.Uuid
+  simpleId       Int            @default(autoincrement())
   createdAt      DateTime       @default(now())
   name           String         @unique
   supportFocuses SupportFocus[]
@@ -280,6 +287,7 @@ model Faq {
 
 model Method {
   id               String         @id @default(uuid()) @db.Uuid
+  simpleId         Int            @default(autoincrement())
   createdAt        DateTime       @default(now())
   title            String         @unique @db.VarChar(128)
   description      String?        @db.Text
@@ -313,6 +321,15 @@ model WorkTime {
 
   @@unique([weekDay, time, isDayOff])
   @@map("work_time")
+}
+
+model Navigation {
+  id        String        @id @default(uuid()) @db.Uuid
+  createdAt DateTime      @default(now())
+  title     NavigationUrl @unique
+  href      String        @db.Text
+
+  @@map("social_media")
 }
 
 model DonationDetails {

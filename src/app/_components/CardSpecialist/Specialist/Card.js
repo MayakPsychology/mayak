@@ -14,12 +14,18 @@ import { SpecialistTitle } from '@components/CardSpecialist/SpecialistTitle';
 import { SpecializationsPanel } from '@components/CardSpecialist/SpecializationsPanel';
 import { getContactsList, getLabelsList, getSpecialistSocials } from '@components/CardSpecialist/config';
 import { specialistPropType } from '@components/CardSpecialist/prop-types';
+import { useSearchParams } from 'next/navigation';
+import { Map } from '@components/Map';
+import { mapAddressesToPoints } from '@components/Specialists/utils';
 import { ClientCategoryList } from '../ClientCategoryList';
 import { WorkTime } from '../WorkTime';
 import { SpecialistChipLists } from './SpecialistChipLists';
 
 export function CardSpecialist({ specialist, className, extended = false }) {
   if (!specialist) throw new Error('Specialist is not found');
+
+  const params = useSearchParams();
+  const isOnSpecialistPage = params.get('type') === 'specialist';
 
   const {
     id,
@@ -53,11 +59,11 @@ export function CardSpecialist({ specialist, className, extended = false }) {
   const specializationsList = specializations.map(s => s.name);
   addresses.sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary));
   const addressPrimary = addresses[0];
+  const points = mapAddressesToPoints({ addressesList: addresses, specialistId: id });
   const contactsList = getContactsList({ phone, email, website });
   const labelsList = getLabelsList({ yearsOfExperience, isFreeReception, formatOfWork, specialistType: 'specialist' });
   const socials = getSpecialistSocials({ instagram, facebook, tiktok, youtube, linkedin, viber, telegram });
   const name = surname ? `${lastName} ${firstName} ${surname}` : `${lastName} ${firstName}`;
-
   const workTimeElement = !!workTime?.length && <WorkTime workTime={workTime} />;
 
   return (
@@ -69,7 +75,7 @@ export function CardSpecialist({ specialist, className, extended = false }) {
         <ContactsList truncate={!extended} specialistId={id} contacts={contactsList} className="mt-4" />
         {workTimeElement}
       </div>
-      <div className="flex w-[100%] max-w-full flex-col gap-4 overflow-hidden md:ml-4">
+      <div className="flex w-[100%] max-w-full flex-col gap-4 overflow-hidden">
         <header className="relative flex flex-row gap-2.5">
           <ProfileImage gender={gender} className="md:hidden">
             <SocialsList socials={socials} className="absolute bottom-4 hidden md:inline-block" />
@@ -92,8 +98,12 @@ export function CardSpecialist({ specialist, className, extended = false }) {
         />
         {extended ? (
           <>
-            <ClientCategoryList id={id} isWorkWith clientCategories={clientsWorkingWith} />
-            <ClientCategoryList id={id} isWorkWith={false} clientCategories={clientsNotWorkingWith} />
+            <ClientCategoryList id={`working-with-${id}`} isWorkWith clientCategories={clientsWorkingWith} />
+            <ClientCategoryList
+              id={`not-working-with-${id}`}
+              isWorkWith={false}
+              clientCategories={clientsNotWorkingWith}
+            />
             <DetailsList
               className="border-t border-dashed border-t-gray-200 pt-4"
               details={{ addresses, description, supportFocuses }}
@@ -126,6 +136,11 @@ export function CardSpecialist({ specialist, className, extended = false }) {
             </Link>
           </>
         )}
+      </div>
+      <div className="col-span-2">
+        {(extended || isOnSpecialistPage) && points?.length ? (
+          <Map points={points} className="mt-5 h-[200px] w-full lg:h-[300px]" />
+        ) : null}
       </div>
     </CardWrapper>
   );

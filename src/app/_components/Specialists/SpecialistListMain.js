@@ -18,7 +18,7 @@ export function SpecialistListMain({ mapMode, className }) {
 
   const { ref, inView } = useInView();
 
-  const { data, error, isLoading, hasNextPage, fetchNextPage, isSuccess } = usePaginatedEntries(searchParams);
+  const { data, error, isPending, hasNextPage, fetchNextPage, isSuccess } = usePaginatedEntries(searchParams);
   const totalCount = data?.pages?.length && data.pages[0].metaData?.totalCount;
 
   useEffect(() => {
@@ -31,9 +31,9 @@ export function SpecialistListMain({ mapMode, className }) {
 
   const cardStyle = 'my-6 rounded-3xl border-2 border-gray-200 px-4 py-5 md:p-10 lg:mx-auto';
 
-  if (isLoading) return <Loading />;
+  if (isPending) return <Loading />;
 
-  const isNoMatches = !isLoading && (!data?.pages?.length || totalCount === 0);
+  const isNoMatches = !isPending && (!data?.pages?.length || totalCount === 0);
 
   if (isNoMatches) return <NoMatches />;
 
@@ -57,14 +57,12 @@ export function SpecialistListMain({ mapMode, className }) {
               )),
             )}
 
-          {isLoading || (hasNextPage && <PaginationLoader innerRef={ref} />)}
+          {isPending || (hasNextPage && <PaginationLoader innerRef={ref} />)}
           {error && <div className="mt-10">{`An error has occurred: ${error.message}`}</div>}
         </>
       </ul>
       {!inView && (
-        <div className="sticky bottom-20 flex w-full justify-center ">
-          <MapLink mapMode={mapMode} className={cn({ hidden: mapMode })} />
-        </div>
+        <MapLink mapMode={mapMode} className={cn('sticky bottom-20 mx-auto my-6 max-w-max', { hidden: mapMode })} />
       )}
     </div>
   );

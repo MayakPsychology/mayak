@@ -6,3 +6,4 @@ export * from './TypeFilter';
 export * from './SpecializationFilter';
 export * from './PriceFilter';
 export * from './ClearFilterButton';
+export * from './Filters/AllFilters';

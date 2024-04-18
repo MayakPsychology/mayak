@@ -5,5 +5,5 @@ export * from './useOverflowChildren';
 export * from './useMediaQuery';
 export * from './useSetParams';
 export * from './useDebounce';
-export * from './useKeyPress';
+export * from './useKeyEvent';
 export * from './useFocus';

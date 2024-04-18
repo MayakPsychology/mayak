@@ -19,8 +19,8 @@ export function TextInputField({
   additionalContainerStyle = '',
 }) {
   const id = `textinput_${name}`;
-  const absoluteError = absolute ? 'absolute top-[45px] transition-transform' : '';
-  const absoluteLabel = absolute ? 'absolute bottom-[47px]' : '';
+  const absoluteError = absolute ? 'absolute top-[48px] transition-transform' : '';
+  const absoluteLabel = absolute ? 'absolute bottom-[49px]' : '';
 
   return (
     <div className={cn(`relative`, variant.mainContainer.base)}>

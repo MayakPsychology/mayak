@@ -71,27 +71,29 @@ export function Feedback({ isFeedbackOpen, onClose }) {
     <Modal isOpen={isFeedbackOpen} onClose={onClose} className="bg-primary-200">
       <div className="px-0 pt-0 md:px-[27px] lg:px-[54px]">
         {isFormOpen ? (
-          <form onSubmit={onSubmit} className="grid gap-y-6 lg:gap-y-7">
-            <h3 className="text-h4 font-bold lg:text-h3"> Хочете поділитись ідеями?</h3>
-            <p className="md:text-p3 lg:text-p2">Залиште свої контактні дані і ми зв’яжемось з Вами</p>
-            <TextInputField
-              value={name}
-              name="name"
-              onChange={e => setName(e.target.value)}
-              placeholder={`Прізвище та ім'я`}
-              error={validationErrors.name}
-              required
-              additionalContainerStyle="bg-other-white"
-            />
-            <TextInputField
-              value={phone}
-              name="phone"
-              onChange={e => setPhone(e.target.value)}
-              placeholder="Номер телефону"
-              error={validationErrors.phone}
-              required
-              additionalContainerStyle="bg-other-white"
-            />
+          <form onSubmit={onSubmit} className="grid gap-y-10 p-2 lg:gap-y-7">
+            <h3 className="text-center text-h4 font-bold lg:text-h3"> Хочете поділитись ідеями?</h3>
+            <p className="text-center md:text-p3 lg:text-p2">Залиште свої контактні дані і ми зв’яжемось з Вами</p>
+            <div className="flex flex-col gap-14 sm:gap-11 lg:gap-10">
+              <TextInputField
+                value={name}
+                name="name"
+                onChange={e => setName(e.target.value)}
+                placeholder={`Прізвище та ім'я`}
+                error={validationErrors.name}
+                required
+                additionalContainerStyle="bg-other-white"
+              />
+              <TextInputField
+                value={phone}
+                name="phone"
+                onChange={e => setPhone(e.target.value)}
+                placeholder="Номер телефону"
+                error={validationErrors.phone}
+                required
+                additionalContainerStyle="bg-other-white"
+              />
+            </div>
             <CheckBox
               onChange={() => setCallMe(prev => !prev)}
               checked={!isCallMe}
@@ -113,6 +115,7 @@ export function Feedback({ isFeedbackOpen, onClose }) {
               onChange={setMessage}
               maxLength={320}
               placeholder="Повідомлення"
+              required
               error={validationErrors.message}
             />
             <PillButton

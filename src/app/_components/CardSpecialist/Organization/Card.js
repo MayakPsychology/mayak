@@ -15,11 +15,19 @@ import { AddressesList } from '@components/CardSpecialist/AddressesList';
 import { CardButton } from '@components/CardSpecialist/CardButton';
 import { WorkTime } from '@components/CardSpecialist/WorkTime';
 import { organizationPropType } from '@components/CardSpecialist/prop-types';
+import { Map } from '@components/Map';
+import { useSearchParams } from 'next/navigation';
+import { mapAddressesToPoints } from '@components/Specialists/utils';
 import { ClientCategoryList } from '../ClientCategoryList';
 import { OrganizationChipLists } from './OrganizationChipLists';
 import { OwnershipTypeTile } from './OwnershipTypeTile';
 
 export function CardOrganization({ organization, className, extended = false }) {
+  if (!organization) throw new Error('Organization is not found');
+
+  const params = useSearchParams();
+  const isOnOrganizationPage = params.get('type') === 'organization';
+
   const {
     id,
     name,
@@ -50,6 +58,7 @@ export function CardOrganization({ organization, className, extended = false }) 
 
   addresses.sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary));
   const addressPrimary = addresses[0];
+  const points = mapAddressesToPoints({ addressesList: addresses, specialistId: id });
   const contactsList = getContactsList({ phone, email, website });
   const labelsList = getLabelsList({
     yearsOfExperience: yearsOnMarket,
@@ -68,6 +77,7 @@ export function CardOrganization({ organization, className, extended = false }) 
     </>
   );
   const workTimeElement = !!workTime?.length && <WorkTime workTime={workTime} />;
+
   return (
     <CardWrapper className={className} id={id} type="organization">
       <div className="hidden max-w-[150px] md:block lg:max-w-[200px]">
@@ -77,7 +87,7 @@ export function CardOrganization({ organization, className, extended = false }) 
         <ContactsList truncate={!extended} specialistId={id} contacts={contactsList} className="mt-4" />
         {workTimeElement}
       </div>
-      <div className="flex w-full max-w-full flex-col gap-4 overflow-hidden md:ml-4">
+      <div className="flex w-full max-w-full flex-col gap-4 overflow-hidden">
         <header className="relative flex flex-row gap-2.5">
           <ProfileImage className="md:hidden">
             <SocialsList socials={socials} className="absolute bottom-4 hidden md:inline-block" />
@@ -91,7 +101,7 @@ export function CardOrganization({ organization, className, extended = false }) 
                   extendedCardOpened={extended}
                 />
               </div>
-              <OwnershipTypeTile ownershipType={ownershipType} className="hidden md:block" />
+              <OwnershipTypeTile ownershipType={ownershipType} className="hidden self-start md:block" />
             </div>
             <SpecialistTitle id={id} truncate={!extended} name={name} className="mt-1 md:mt-1.5" />
             <OwnershipTypeTile ownershipType={ownershipType} className="mt-1 md:hidden" />
@@ -139,6 +149,11 @@ export function CardOrganization({ organization, className, extended = false }) 
             </Link>
           </>
         )}
+      </div>
+      <div className="col-span-2 mt-5">
+        {(extended || isOnOrganizationPage) && points?.length ? (
+          <Map points={points} className="h-[200px] w-full lg:h-[300px]" />
+        ) : null}
       </div>
     </CardWrapper>
   );
