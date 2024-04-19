@@ -50,7 +50,12 @@ function SpecializationList({ specializationsInUrl }) {
           );
         })}
       </ul>
-      <ClearFilterButton clear={() => specializationParam.remove()} />
+      <ClearFilterButton
+        clear={() => {
+          specializationParam.remove();
+          setSelectedSpecializations();
+        }}
+      />
     </>
   );
 }
