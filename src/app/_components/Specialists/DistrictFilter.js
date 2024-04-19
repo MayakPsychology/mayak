@@ -1,7 +1,7 @@
 'use client';
 
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import { useListDistrict, useSetParam } from '@hooks';
@@ -20,12 +20,16 @@ function DistrictList({ districtsInUrl }) {
   }, INPUT_DEBOUNCE);
 
   const onChange = district => {
-    const updatedPrices = selectedDistricts.includes(district)
+    const updatedDistricts = selectedDistricts.includes(district)
       ? selectedDistricts.filter(it => it !== district)
       : [...selectedDistricts, district];
-    setSelectedDistricts(updatedPrices);
-    setParamDebounced(updatedPrices);
+    setSelectedDistricts(updatedDistricts);
+    setParamDebounced(updatedDistricts);
   };
+
+  useEffect(() => {
+    setSelectedDistricts(districtsInUrl);
+  }, [districtsInUrl]);
 
   if (isLoading) return <CircularProgress />;
 
