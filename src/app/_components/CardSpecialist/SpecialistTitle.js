@@ -12,7 +12,7 @@ export function SpecialistTitle({ id, truncate, name, className }) {
         </h4>
       }
       hintContent={<div>{name}</div>}
-      hintEllipsisClassName="top-7"
+      hintEllipsisClassName="top-[3px]"
     />
   ) : (
     <h4 className={cn('text-p3 font-bold text-gray-700 lg:text-p1', className)}>{name}</h4>

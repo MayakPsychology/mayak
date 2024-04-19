@@ -92,18 +92,22 @@ export function CardOrganization({ organization, className, extended = false }) 
           <ProfileImage className="md:hidden">
             <SocialsList socials={socials} className="absolute bottom-4 hidden md:inline-block" />
           </ProfileImage>
-          <div className="w-full overflow-hidden">
-            <div className="flex justify-between gap-4">
-              <div className="flex w-full justify-between gap-4">
+          <div className="w-full">
+            <div className="flex w-full gap-4">
+              <div className="w-0 flex-grow">
                 <SpecializationsPanel
                   specialistId={id}
                   specializations={type.map(t => t.name)}
                   extendedCardOpened={extended}
                 />
               </div>
-              <OwnershipTypeTile ownershipType={ownershipType} className="hidden self-start md:block" />
+              <OwnershipTypeTile ownershipType={ownershipType} className="mr-0 hidden self-start md:block" />
             </div>
-            <SpecialistTitle id={id} truncate={!extended} name={name} className="mt-1 md:mt-1.5" />
+            <div className="flex w-full">
+              <div className="w-0 flex-grow">
+                <SpecialistTitle id={id} truncate={!extended} name={name} className="mt-1 md:mt-1.5" />
+              </div>
+            </div>
             <OwnershipTypeTile ownershipType={ownershipType} className="mt-1 md:hidden" />
           </div>
         </header>
