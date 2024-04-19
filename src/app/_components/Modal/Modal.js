@@ -17,6 +17,7 @@ export const Modal = ({
   isBlurBackground = true,
   isCloseButton = true,
   layout = true,
+  closeOnBackdropClick = true,
 }) => {
   useKeyEvent({
     key: isEscapeKey,
@@ -26,7 +27,14 @@ export const Modal = ({
 
   useBodyScrollLock(isOpen);
 
-  const blurBackground = <div className="fixed left-0 top-0 z-[55] h-full w-full backdrop-blur-sm" />;
+  const blurBackground = (
+    <div
+      className="fixed left-0 top-0 z-[55] h-full w-full backdrop-blur-sm"
+      onClick={() => {
+        if (closeOnBackdropClick) onClose();
+      }}
+    />
+  );
 
   return (
     <ClientPortal selector="modal-root" show={isOpen}>
@@ -36,7 +44,9 @@ export const Modal = ({
             {isBlurBackground && blurBackground}
             <div
               className="fixed bottom-0 left-0 top-0 z-[75] grid w-full place-content-center lg:top-1/2 lg:h-[75vh] lg:-translate-y-1/2"
-              onClick={onClose}
+              onClick={() => {
+                if (closeOnBackdropClick) onClose();
+              }}
             >
               <motion.div
                 className={cn(
@@ -89,4 +99,5 @@ Modal.propTypes = {
   children: PropTypes.node,
   title: PropTypes.string,
   className: PropTypes.string,
+  closeOnBackdropClick: PropTypes.bool,
 };
