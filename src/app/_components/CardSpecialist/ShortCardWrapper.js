@@ -131,7 +131,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
                 <MethodList
                   specializations={specializationsList}
                   methods={methodsList}
-                  className="max-w-[300px] border-0"
+                  className="border-0"
                   showCaption={false}
                 />
               )}
