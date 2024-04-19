@@ -14,7 +14,7 @@ export function Hint({ children }) {
   return <HintContext.Provider value={{ toggle, openName }}>{children}</HintContext.Provider>;
 }
 
-export function Show({ children, opens: opensWindowName }) {
+export function Show({ children, opens: opensWindowName, actions }) {
   const { toggle } = useContext(HintContext);
 
   // close hints when window is scrolled
@@ -33,14 +33,17 @@ export function Show({ children, opens: opensWindowName }) {
     onClick: e => {
       e.stopPropagation();
       toggle(opensWindowName);
+      if (actions?.onClick) actions.onClick(e);
     },
     onMouseEnter: e => {
       e.stopPropagation();
       toggle(opensWindowName);
+      if (actions?.onMouseEnter) actions.onMouseEnter(e);
     },
     onMouseLeave: e => {
       e.stopPropagation();
       toggle('');
+      if (actions?.onMouseLeave) actions.onMouseLeave(e);
     },
   });
 }
