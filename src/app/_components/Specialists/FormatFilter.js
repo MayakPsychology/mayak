@@ -1,29 +1,28 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
-import { useSetParam } from '@hooks';
+import { useDebounceCallback, useSetParam } from '@hooks';
 import { useSearchParams } from 'next/navigation';
 import PropTypes from 'prop-types';
 import { specialistFiltersConfig } from '@components/Specialists/Filters/utils';
+import { INPUT_DEBOUNCE } from '@/lib/consts';
 
 function FormatList({ options, formatsInUrl }) {
-  const [selectedFormat, setSelectedFormat] = useState(formatsInUrl);
-
-  const { remove, add } = useSetParam(specialistFiltersConfig.format.filterKey);
+  const formatParam = useSetParam(specialistFiltersConfig.format.filterKey);
+  const [selectedFormats, setSelectedPrices] = useState(formatsInUrl);
+  const setParamDebounced = useDebounceCallback(prices => {
+    formatParam.replace(prices);
+  }, INPUT_DEBOUNCE);
 
   const onChange = format => {
-    if (formatsInUrl.includes(format)) {
-      remove(format);
-    } else {
-      add(format);
-    }
+    const updatedFormats = selectedFormats.includes(format)
+      ? selectedFormats.filter(it => it !== format)
+      : [...selectedFormats, format];
+    setSelectedPrices(updatedFormats);
+    setParamDebounced(updatedFormats);
   };
-
-  useEffect(() => {
-    setSelectedFormat(formatsInUrl);
-  }, [formatsInUrl]);
 
   return (
     <>
@@ -33,7 +32,7 @@ function FormatList({ options, formatsInUrl }) {
             <CheckBox
               name={format.value}
               value={format.value}
-              checked={selectedFormat.includes(format.value)}
+              checked={selectedFormats.includes(format.value)}
               onChange={() => onChange(format.value)}
               text={format.label}
             />
@@ -42,7 +41,8 @@ function FormatList({ options, formatsInUrl }) {
       </ul>
       <ClearFilterButton
         clear={() => {
-          remove();
+          formatParam.remove();
+          setSelectedPrices([]);
         }}
       />
     </>
