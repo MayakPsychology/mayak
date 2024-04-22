@@ -80,13 +80,21 @@ export function CardSpecialist({ specialist, className, extended = false }) {
           <ProfileImage gender={gender} className="md:hidden">
             <SocialsList socials={socials} className="absolute bottom-4 hidden md:inline-block" />
           </ProfileImage>
-          <div className="max-w-full overflow-hidden">
-            <SpecializationsPanel
-              specialistId={id}
-              specializations={specializationsList}
-              extendedCardOpened={extended}
-            />
-            <SpecialistTitle id={id} truncate={!extended} name={name} className="mt-1.5" />
+          <div className="w-full">
+            <div className="flex w-full">
+              <div className="w-0 flex-grow">
+                <SpecializationsPanel
+                  specialistId={id}
+                  specializations={specializationsList}
+                  extendedCardOpened={extended}
+                />
+              </div>
+            </div>
+            <div className="flex w-full">
+              <div className="w-0 flex-grow">
+                <SpecialistTitle id={id} truncate={!extended} name={name} className="mt-1.5" />
+              </div>
+            </div>
           </div>
         </header>
         <BadgeList labels={labelsList} />

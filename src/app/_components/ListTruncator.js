@@ -7,21 +7,31 @@ import { cn } from '@utils/cn';
 
 let uniqueId = 0;
 
-export function ListTruncator({ id, content, hintContent, ellipsis, hintEllipsisClassName, hintWindowClassName }) {
+export function ListTruncator({
+  id,
+  content,
+  hintContent,
+  ellipsis,
+  hintEllipsisClassName,
+  hintWindowClassName,
+  onHintClick,
+}) {
   const { wrapperRef, containerRef, overflown } = useOverflow();
 
   uniqueId += 1;
   const hintId = `hint-for-${id}-${uniqueId}`;
 
   return (
-    <div ref={containerRef} className="max-w-full overflow-hidden">
-      <span ref={wrapperRef} className="relative inline-flex items-center gap-2">
-        {content}
-      </span>
+    <div ref={containerRef} className="relative max-w-full">
+      <div className="overflow-hidden">
+        <span ref={wrapperRef} className="relative inline-flex items-center gap-2 overflow-hidden">
+          {content}
+        </span>
+      </div>
 
       {overflown && (
         <>
-          <ShowHint opens={hintId}>
+          <ShowHint actions={{ onClick: onHintClick }} opens={hintId}>
             <div
               className={cn(
                 'absolute right-0 top-[-3px] flex w-full cursor-pointer select-none justify-end',
@@ -59,4 +69,5 @@ ListTruncator.propTypes = {
   ellipsis: PropTypes.node,
   hintWindowClassName: PropTypes.string,
   hintEllipsisClassName: PropTypes.string,
+  onHintClick: PropTypes.func,
 };

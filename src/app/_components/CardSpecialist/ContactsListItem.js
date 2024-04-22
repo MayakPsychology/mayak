@@ -59,6 +59,9 @@ export function ContactsListItem({ truncate, specialistId, contact }) {
           }
           hintContent={<ContactItem href={href} content={content} className="whitespace-normal break-words text-c4" />}
           hintWindowClassName="translate-x-full -right-2.5 top-0 z-[200] w-max"
+          onHintClick={() => {
+            if (href) window.open(href, '_blank');
+          }}
         />
       ) : (
         <InfoRow icon={icon}>
