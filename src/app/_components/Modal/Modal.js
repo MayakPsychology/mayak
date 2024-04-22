@@ -14,6 +14,7 @@ export const Modal = ({
   title,
   children,
   className,
+  classNames,
   isBlurBackground = true,
   isCloseButton = true,
   layout = true,
@@ -80,7 +81,7 @@ export const Modal = ({
                     <ModalCloseButton onClose={onClose} />
                   </div>
                 )}
-                <div className="mt-4 overflow-y-auto">{children}</div>
+                <div className={cn('mt-4', classNames.container)}>{children}</div>
               </motion.div>
             </div>
           </>
@@ -99,5 +100,9 @@ Modal.propTypes = {
   children: PropTypes.node,
   title: PropTypes.string,
   className: PropTypes.string,
+  classNames: PropTypes.shape({
+    container: PropTypes.string,
+  }),
   closeOnBackdropClick: PropTypes.bool,
+  scrollableY: PropTypes.bool,
 };

@@ -140,7 +140,7 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
 
   return (
     <>
-      <div className="flex flex-none items-center px-4 md:relative md:px-6">
+      <div className="flex w-full flex-none items-center justify-between px-4 md:relative md:px-6">
         <Heading type="h4" className="flex-1 text-center text-p2 font-bold text-gray-900">
           Фільтри
         </Heading>
@@ -153,7 +153,7 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
       </div>
       <ScrollableList
         key="scrollList"
-        className="my-4 flex flex-1 flex-col gap-5 border-b border-t border-gray-300 py-5 md:mt-[26px] md:gap-3 md:px-6 md:py-4"
+        className="my-4 flex h-full flex-1 flex-col gap-5 border-b border-t border-gray-300 py-5 md:mt-[26px] md:gap-3 md:px-6 md:py-4"
       >
         <div className="px-4 md:px-0">
           <Tabs
@@ -191,7 +191,7 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
           toggleFilter={toggleFilter}
         />
         <FilterFormatSection className="px-4 md:px-0" filters={filters} appendFilter={appendFilter} />
-        <FilterGenderSection className="px-4 md:px-0" filters={filters} setFilter={setFilter} />
+        {!isOrganization && <FilterGenderSection className="px-4 md:px-0" filters={filters} setFilter={setFilter} />}
         <FilterCategorySection
           className={cn('px-4 md:px-0', {
             'border-none pb-0': !isOrganization,
@@ -204,11 +204,11 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
           <FilterOrganizationTypeSection
             className="border-none px-4 pb-0 md:px-0"
             filters={filters}
-            appendFilter={setFilter}
+            setFilter={setFilter}
           />
         )}
       </ScrollableList>
-      <div className="flex flex-none items-center justify-between gap-2 px-4 md:px-6">
+      <div className="flex w-full flex-none items-center justify-between gap-2 px-4 md:px-6">
         <PillButton
           disabled={isLoading}
           variant="outlined"
