@@ -48,7 +48,12 @@ function PricesList({ pricesInUrl }) {
           </li>
         ))}
       </ul>
-      <ClearFilterButton clear={() => priceParam.remove()} />
+      <ClearFilterButton
+        clear={() => {
+          priceParam.remove();
+          setSelectedPrices([]);
+        }}
+      />
     </>
   );
 }

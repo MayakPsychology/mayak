@@ -20,11 +20,11 @@ function DistrictList({ districtsInUrl }) {
   }, INPUT_DEBOUNCE);
 
   const onChange = district => {
-    const updatedPrices = selectedDistricts.includes(district)
+    const updatedDistricts = selectedDistricts.includes(district)
       ? selectedDistricts.filter(it => it !== district)
       : [...selectedDistricts, district];
-    setSelectedDistricts(updatedPrices);
-    setParamDebounced(updatedPrices);
+    setSelectedDistricts(updatedDistricts);
+    setParamDebounced(updatedDistricts);
   };
 
   if (isLoading) return <CircularProgress />;
@@ -50,7 +50,12 @@ function DistrictList({ districtsInUrl }) {
           );
         })}
       </ul>
-      <ClearFilterButton clear={() => districtParam.remove()} />
+      <ClearFilterButton
+        clear={() => {
+          districtParam.remove();
+          setSelectedDistricts([]);
+        }}
+      />
     </>
   );
 }
