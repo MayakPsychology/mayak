@@ -1,2 +1,2 @@
 -- Create collation for ukrainian locale
-CREATE COLLATION ukrainian (provider = icu, locale = 'uk-UA');
+CREATE COLLATION IF NOT EXISTS  ukrainian (provider = icu, locale = 'uk-UA');

@@ -10,7 +10,7 @@ import { PillButton } from '@components/PillButton';
 import { Feedback } from '@components/Feedback';
 import PropTypes from 'prop-types';
 import { DonateModal, donationDetailsPropTypes, DonationSection } from '@components/DonationSection';
-import { useKeyEvent } from '@hooks';
+import { useBodyScrollLock, useKeyEvent } from '@hooks';
 import { isEscapeKey } from '@utils/dom';
 
 const flexBetween = 'flex flex-row items-center justify-between';
@@ -45,6 +45,8 @@ export function Header({ socialMediaLinksList, donationDetails }) {
   }, [setDonateModalOpen]);
 
   const showDonationDetails = donationDetails && donationDetails.isDonationEnabled;
+
+  useBodyScrollLock(isMenuOpen, 'y');
 
   return (
     <header className="z-50">
@@ -120,7 +122,7 @@ export function Header({ socialMediaLinksList, donationDetails }) {
               <HeaderCloseIcon onClick={toggleMenu} className="transition-all" />
             </span>
           </div>
-          <div className="flex grow flex-col bg-other-white p-4">
+          <div className="flex grow flex-col overflow-y-auto bg-other-white p-4">
             <div className="flex flex-col items-center">
               <InnerLink
                 items={innerLinks}
@@ -142,16 +144,18 @@ export function Header({ socialMediaLinksList, donationDetails }) {
             >
               Зворотній звʼязок
             </PillButton>
-            <div className={cn(flexBetween, 'items-center')}>
+            <div className={cn('mx-auto flex items-center gap-6')}>
               <p className="inline text-p4 text-primary-700 lg:hidden">Наші соціальні мережі:</p>
               <SocialLinksList list={socialMediaLinksList} className="text-primary-700 hover:text-primary-500" />
             </div>
           </div>
           {showDonationDetails && (
-            <DonationSection
-              onDonateClick={toggleDonateModal}
-              className="flex h-[100px] items-center justify-between gap-[8px] px-[16px] py-[6px] lg:hidden"
-            />
+            <div className="w-full bg-secondary-100">
+              <DonationSection
+                onDonateClick={toggleDonateModal}
+                className="mx-auto flex h-[100px] w-fit items-center justify-between gap-2 px-4 py-[6px] lg:hidden"
+              />
+            </div>
           )}
         </div>
       </nav>
