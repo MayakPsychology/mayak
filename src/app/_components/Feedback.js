@@ -68,7 +68,7 @@ export function Feedback({ isFeedbackOpen, onClose }) {
   }, [isFormOpen]);
 
   return (
-    <Modal isOpen={isFeedbackOpen} onClose={onClose} className="bg-primary-200">
+    <Modal isOpen={isFeedbackOpen} onClose={onClose} closeOnBackdropClick={false} className="bg-primary-200">
       <div className="px-0 pt-0 md:px-[27px] lg:px-[54px]">
         {isFormOpen ? (
           <form onSubmit={onSubmit} className="grid gap-y-10 p-2 lg:gap-y-7">
