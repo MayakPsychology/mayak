@@ -2,11 +2,14 @@
 
 import { ArrowIconDown, ArrowIconUp, Ellipse } from '@icons/index';
 import PropTypes from 'prop-types';
+import { forwardRef } from 'react';
 import { cn } from '@/utils/cn';
 
-export function FilterChip({ text, opened, count, onClick }) {
+// eslint-disable-next-line prefer-arrow-callback
+export const FilterChip = forwardRef(function FilterChip({ text, opened, count, onClick }, ref) {
   return (
     <div
+      ref={ref}
       onClick={onClick}
       className={cn(
         'group relative flex h-8 w-max cursor-pointer items-center justify-center gap-1 rounded-3xl border border-gray-700 px-3 py-1.5 hover:bg-gray-200',
@@ -21,7 +24,7 @@ export function FilterChip({ text, opened, count, onClick }) {
       {opened ? <ArrowIconDown /> : <ArrowIconUp />}
     </div>
   );
-}
+});
 
 FilterChip.propTypes = {
   text: PropTypes.string,
