@@ -1,7 +1,7 @@
 'use client';
 
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import { useListDistrict, useSetParam } from '@hooks';
@@ -26,6 +26,10 @@ function DistrictList({ districtsInUrl }) {
     setSelectedDistricts(updatedDistricts);
     setParamDebounced(updatedDistricts);
   };
+
+  useEffect(() => {
+    setSelectedDistricts(districtsInUrl);
+  }, [districtsInUrl]);
 
   if (isLoading) return <CircularProgress />;
 
