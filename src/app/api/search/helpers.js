@@ -130,9 +130,10 @@ export function createSpecialistFilter(queryParams) {
 
 export function createOrganizationFilter(queryParams) {
   const sharedWhere = createEntityFilter(queryParams);
-  const { specializations } = queryParams;
+  const { specializations, organizationType } = queryParams;
   return {
     ...sharedWhere,
+    ownershipType: organizationType,
     expertSpecializations: specializations && {
       some: { id: { in: specializations } },
     },
@@ -234,6 +235,7 @@ export function getSearchFilterQueryParams(req) {
       districts: undefined,
       requests: undefined,
       price: undefined,
+      organizationType: undefined,
     },
     params => ({
       ...params,
