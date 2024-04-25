@@ -14,7 +14,7 @@ export const Modal = ({
   title,
   children,
   className,
-  classNames,
+  classNames = {},
   isBlurBackground = true,
   isCloseButton = true,
   layout = true,
