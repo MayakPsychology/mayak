@@ -53,7 +53,7 @@ function SpecializationList({ specializationsInUrl }) {
       <ClearFilterButton
         clear={() => {
           specializationParam.remove();
-          setSelectedSpecializations();
+          setSelectedSpecializations([]);
         }}
       />
     </>

@@ -63,7 +63,7 @@ export function FormatFilter() {
   const formatsInUrl = useSearchParams().getAll(specialistFiltersConfig.format.filterKey);
 
   return (
-    <FilterBase filterText="Формат роботи" count={Number(formatsInUrl.length)} originFromRight>
+    <FilterBase filterText="Формат роботи" count={Number(formatsInUrl.length)}>
       <FormatList formatsInUrl={formatsInUrl} options={specialistFiltersConfig.format.options} />
     </FilterBase>
   );
