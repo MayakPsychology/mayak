@@ -1,4 +1,4 @@
-import { boxShadow, colors, screens, typography } from './ui';
+import { boxShadow, colors, screens, typography, backgroundImage } from './ui';
 
 const presets = {
   theme: {
@@ -7,6 +7,7 @@ const presets = {
     extend: {
       colors,
       boxShadow,
+      backgroundImage,
     },
   },
 };
