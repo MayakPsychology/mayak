@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { forwardRef } from 'react';
 
 export const TextArea = forwardRef(({ value, onChange, maxLength, placeholder, error, required = false }, ref) => {
-  const valueLength = String(value).length;
+  const valueLength = String(value ?? '').length;
   return (
     <div className="relative flex h-full flex-col gap-1">
       <textarea
