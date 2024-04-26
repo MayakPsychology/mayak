@@ -193,7 +193,7 @@ export function SpecialistListWithMap({ mapMode, className }) {
           </motion.ul>
         </LayoutGroup>
       </div>
-      <MapLink mapMode={mapMode} className="sticky bottom-20 z-[25] mx-auto my-10 hidden max-w-max lg:block" />
+      <MapLink mapMode={mapMode} className="sticky bottom-10 z-[25] mx-auto my-10 hidden max-w-max lg:block" />
     </div>
   );
 }

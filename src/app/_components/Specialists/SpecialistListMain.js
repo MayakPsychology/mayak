@@ -62,7 +62,7 @@ export function SpecialistListMain({ mapMode, className }) {
         </>
       </ul>
       {!inView && (
-        <MapLink mapMode={mapMode} className={cn('sticky bottom-20 mx-auto my-6 max-w-max', { hidden: mapMode })} />
+        <MapLink mapMode={mapMode} className={cn('sticky bottom-6 mx-auto my-6 max-w-max', { hidden: mapMode })} />
       )}
     </div>
   );

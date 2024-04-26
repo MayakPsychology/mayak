@@ -49,7 +49,7 @@ export default async function Page() {
       <TherapiesSection therapies={activeTherapies} />
       <GoalSection />
       <FAQSection faqs={activeFAQs} />
-      <MapLink className="sticky bottom-20 z-[25] mx-auto my-6 max-w-max lg:hidden" />
+      <MapLink className="sticky bottom-6 z-[25] mx-auto my-6 max-w-max lg:hidden" />
     </>
   );
 }
