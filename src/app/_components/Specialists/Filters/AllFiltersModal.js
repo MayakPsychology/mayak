@@ -10,7 +10,7 @@ export default function AllFiltersModal({ isOpen, onClose, filterData }) {
       onClose={onClose}
       layout
       isCloseButton={false}
-      className="flex max-h-full w-full max-w-[744px] flex-col overflow-hidden rounded-t-3xl bg-blue-100 px-0 md:px-0 md:pb-4"
+      className="flex max-h-full w-full max-w-[320px] md:max-w-[744px] flex-col overflow-hidden rounded-t-3xl bg-blue-100 px-0 md:px-0 md:pb-4"
       classNames={{ container: 'mt-2 relative flex flex-col justify-center items-center overflow-hidden' }}
       scrollableY={false}
     >
