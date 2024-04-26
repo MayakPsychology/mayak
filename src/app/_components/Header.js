@@ -7,7 +7,7 @@ import siteNav from '@config/siteNav';
 import { cn } from '@utils/cn';
 import { InnerLink, linkItemPropType, SocialLinksList } from '@components/Links';
 import { PillButton } from '@components/PillButton';
-import { Feedback } from '@components/Feedback';
+import FeedbackModal from '@components/Feedback';
 import PropTypes from 'prop-types';
 import { DonateModal, donationDetailsPropTypes, DonationSection } from '@components/DonationSection';
 import { useBodyScrollLock, useKeyEvent } from '@hooks';
@@ -160,7 +160,7 @@ export function Header({ socialMediaLinksList, donationDetails }) {
         </div>
       </nav>
 
-      <Feedback isFeedbackOpen={isFeedbackOpen} onClose={() => setFeedbackOpen(false)} />
+      <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setFeedbackOpen(false)} />
       <DonateModal
         isOpen={isDonateModalOpen}
         onClose={() => setDonateModalOpen(false)}

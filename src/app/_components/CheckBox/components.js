@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 import TickIcon from '@icons/tickIcon.svg';
 import RadionIcon from '@icons/radio.svg';
 import { cn } from '@utils/cn';
+import { forwardRef } from 'react';
 import { variants } from './styles';
 
-export function CheckBox({
+export const CheckBox = forwardRef(({
   value,
   onChange,
   name,
@@ -18,7 +19,7 @@ export function CheckBox({
   classNames,
   type = 'checkbox',
   variant = variants.default,
-}) {
+}, ref) => {
   const id = `${type}_${name}_${value}`;
 
   return (
@@ -41,6 +42,7 @@ export function CheckBox({
         type={type}
         checked={checked}
         disabled={disabled}
+        ref={ref}
       />
       <label
         className={cn(
@@ -87,12 +89,14 @@ export function CheckBox({
       </label>
     </div>
   );
-}
+})
+
+CheckBox.displayName = 'CheckBox'
 
 CheckBox.propTypes = {
-  value: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
+  value: PropTypes.string,
+  name: PropTypes.string,
+  onChange: PropTypes.func,
   text: PropTypes.string,
   type: PropTypes.string,
   subText: PropTypes.string,

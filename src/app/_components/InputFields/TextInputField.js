@@ -3,9 +3,10 @@
 import PropTypes from 'prop-types';
 import InputErrorIcon from '@icons/inputErrorIcon.svg';
 import { cn } from '@utils/cn';
+import { forwardRef } from 'react';
 import { variants } from './styles';
 
-export function TextInputField({
+export const TextInputField = forwardRef(({
   value,
   name,
   onChange,
@@ -17,7 +18,7 @@ export function TextInputField({
   variant = variants.default,
   absolute = true,
   additionalContainerStyle = '',
-}) {
+}, ref) => {
   const id = `textinput_${name}`;
   const absoluteError = absolute ? 'absolute top-[48px] transition-transform' : '';
   const absoluteLabel = absolute ? 'absolute bottom-[49px]' : '';
@@ -44,6 +45,7 @@ export function TextInputField({
           disabled={disabled}
           placeholder={`${placeholder}${required ? '*' : ''}`}
           required={required}
+          ref={ref}
         />
         {error && <InputErrorIcon className={cn(variant.errorIcon.base)} />}
       </div>
@@ -56,12 +58,14 @@ export function TextInputField({
       </label>
     </div>
   );
-}
+})
+
+TextInputField.displayName = 'TextInputField';
 
 TextInputField.propTypes = {
-  value: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
+  value: PropTypes.string,
+  name: PropTypes.string,
+  onChange: PropTypes.func,
   type: PropTypes.oneOf(['text', 'email', 'url', 'password', 'search', 'tel']),
   disabled: PropTypes.bool,
   placeholder: PropTypes.string,
