@@ -135,7 +135,9 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
   const hasDistrictFilter = useMemo(() => isOrganization || !isOnlyOnlineFormat, [isOrganization, isOnlyOnlineFormat]);
 
   useEffect(() => {
-    setFilter(specialistFiltersConfig.district.filterKey, null);
+    if (!hasDistrictFilter) {
+      setFilter(specialistFiltersConfig.district.filterKey, null);
+    }
   }, [hasDistrictFilter, setFilter]);
 
   return (
@@ -153,7 +155,7 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
       </div>
       <ScrollableList
         key="scrollList"
-        className="my-4 flex h-full flex-1 flex-col gap-5 border-b border-t border-gray-300 py-5 md:mt-[26px] md:gap-3 md:px-6 md:py-4"
+        className="w-full min-w-0 my-4 flex h-full flex-1 flex-col gap-5 border-b border-t border-gray-300 py-5 md:mt-[26px] md:gap-3 md:px-6 md:py-4"
       >
         <div className="px-4 md:px-0">
           <Tabs

@@ -1,13 +1,14 @@
 'use client';
 
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSetParam } from '@hooks';
 import { useSearchParams } from 'next/navigation';
 import { useDebounceCallback } from '@/app/_hooks';
 import { INPUT_DEBOUNCE } from '@/lib/consts';
+import { specialistFiltersConfig } from './Filters/utils';
 
 const priceVariants = {
   notSpecified: 'Не зазначено',
@@ -19,10 +20,26 @@ const priceVariants = {
 };
 
 function PricesList({ pricesInUrl }) {
-  const priceParam = useSetParam('price');
+  const priceParam = useSetParam(specialistFiltersConfig.price.filterKey.price);
+
   const [selectedPrices, setSelectedPrices] = useState(pricesInUrl);
+  useEffect(() => {
+    setSelectedPrices(pricesInUrl);
+  }, [pricesInUrl]);
+
   const setParamDebounced = useDebounceCallback(prices => {
-    priceParam.replace(prices);
+    priceParam.bulkUpdate({
+      [specialistFiltersConfig.price.filterKey.price]: {
+        method: 'replace',
+        value: prices
+      },
+      [specialistFiltersConfig.price.filterKey.priceMin]: {
+        method: 'remove',
+      },
+      [specialistFiltersConfig.price.filterKey.priceMax]: {
+        method: 'remove',
+      },
+    });
   }, INPUT_DEBOUNCE);
 
   const onChange = price => {

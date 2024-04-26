@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useDebounceCallback, useSetParam } from '@hooks';
@@ -12,6 +12,10 @@ import { INPUT_DEBOUNCE } from '@/lib/consts';
 function FormatList({ options, formatsInUrl }) {
   const formatParam = useSetParam(specialistFiltersConfig.format.filterKey);
   const [selectedFormats, setSelectedPrices] = useState(formatsInUrl);
+
+  useEffect(() => {
+    setSelectedPrices(formatsInUrl);
+  }, [formatsInUrl])
   const setParamDebounced = useDebounceCallback(prices => {
     formatParam.replace(prices);
   }, INPUT_DEBOUNCE);
@@ -60,8 +64,8 @@ FormatList.propTypes = {
 };
 
 export function FormatFilter() {
-  const formatsInUrl = useSearchParams().getAll(specialistFiltersConfig.format.filterKey);
-
+  const searchParams = useSearchParams();
+  const formatsInUrl = searchParams.getAll(specialistFiltersConfig.format.filterKey);
   return (
     <FilterBase filterText="Формат роботи" count={Number(formatsInUrl.length)}>
       <FormatList formatsInUrl={formatsInUrl} options={specialistFiltersConfig.format.options} />

@@ -2,7 +2,7 @@
 
 import PropTypes from 'prop-types';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useListSpecialization, useSetParam } from '@hooks';
 import { CheckBox } from '@components/CheckBox';
@@ -13,6 +13,9 @@ import { INPUT_DEBOUNCE } from '@/lib/consts';
 function SpecializationList({ specializationsInUrl }) {
   const specializationParam = useSetParam('specialization');
   const [selectedSpecializations, setSelectedSpecializations] = useState(specializationsInUrl);
+  useEffect(() => {
+    setSelectedSpecializations(specializationsInUrl);
+  }, [specializationsInUrl])
   const { data: specializationList, isLoading } = useListSpecialization();
 
   const setParamDebounced = useDebounceCallback(districts => {
