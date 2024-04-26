@@ -1,15 +1,12 @@
 import { Heading, Caption } from '@/app/_components/Typography';
 import { EventSection } from '@/app/_components/Event/EventSection';
-import { env } from '@/lib/env';
 
 export const metadata = {
   title: 'Події',
   description: 'Перелік доступних подій',
 };
 
-const { REVALIDATION_TIME } = env;
-
-export const revalidate = REVALIDATION_TIME;
+export const revalidate = 60 * 60 * 2;
 
 export default async function Page() {
   return (

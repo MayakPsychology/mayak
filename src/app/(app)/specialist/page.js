@@ -1,6 +1,5 @@
 import React from 'react';
 import { SpecialistListWrapper } from '@components/Specialists/SpecialistListWrapper';
-import { env } from '@/lib/env';
 import { getFilterData } from './actions';
 
 export const metadata = {
@@ -8,9 +7,7 @@ export const metadata = {
   description: 'Список доступних спеціалістів',
 };
 
-const { REVALIDATION_TIME } = env;
-
-export const revalidate = REVALIDATION_TIME;
+export const revalidate = 60 * 60 * 2;
 
 export default async function Page({ searchParams }) {
   const filterData = await getFilterData();

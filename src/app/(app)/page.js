@@ -5,8 +5,7 @@ import {
   TherapiesSection,
   GoalSection,
 } from '@components/MainPageSections';
-import { MapLink } from '@components/MapLink';
-import { env } from '@/lib/env';
+import { MapLinkButton } from '@components/MapLinkButton';
 import { prisma } from '@/lib/db';
 // Page metadata should contain
 // title - gets formatted into "%s | Маяк", %s is replaced by title,
@@ -16,7 +15,7 @@ export const metadata = {
   description: 'Пошук психологічної допомоги у м. Львів',
 };
 
-export const { REVALIDATION_TIME: revalidate } = env;
+export const revalidate = 60 * 60 * 2 // 2 hours
 
 export default async function Page() {
   const activeTherapies = await prisma.therapy.findMany({
@@ -49,7 +48,7 @@ export default async function Page() {
       <TherapiesSection therapies={activeTherapies} />
       <GoalSection />
       <FAQSection faqs={activeFAQs} />
-      <MapLink className="sticky bottom-6 z-[25] mx-auto my-6 max-w-max lg:hidden" />
+      <MapLinkButton className="sticky bottom-6 z-[25] mx-auto my-6 max-w-max lg:hidden" />
     </>
   );
 }

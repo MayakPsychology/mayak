@@ -8,7 +8,25 @@ import { specialistFiltersConfig, specialistTypeEnum } from '@components/Special
 import { searchSyncKey, useDebounce, useSearchSync } from '@/app/_hooks';
 import { getSearchTypeConfig, SEARCH_DEBOUNCE_TIME_MS, SEARCH_MIN_QUERY_LENGTH } from './config';
 
-const SearchContext = createContext();
+const SearchContext = createContext({
+  clearQuery: () => {},
+  currentConfig: {},
+  query: '',
+  debouncedQuery: '',
+  searchType: '',
+  isSelectTypeOpen: false,
+  isAutoCompleteOpen: false,
+  isInputFocused: false,
+  autoCompleteItems: [],
+  isAutoCompleteLoading: false,
+  setQuery: () => {},
+  setSearchType: () => {},
+  setIsSelectTypeOpen: () => {},
+  setIsAutoCompleteOpen: () => {},
+  setIsInputFocused: () => {},
+  submitSearch: () => {},
+  navigateToAutoCompleteItem: () => {},
+});
 
 export function SearchProvider({ children }) {
   const searchParams = useSearchParams();
@@ -111,7 +129,7 @@ export function SearchProvider({ children }) {
 
 export function useSearchContext() {
   const context = useContext(SearchContext);
-  if (context === undefined) throw new Error('SearchContext is used outside of provider');
+  if (context === undefined) console.error('SearchContext is used outside of provider');
   return context;
 }
 
