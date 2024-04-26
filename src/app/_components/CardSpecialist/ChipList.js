@@ -50,17 +50,17 @@ export function ChipList({ id, items, className }) {
         alwaysShowTruncator
         className={cn('truncated-list flex flex-wrap gap-[8px]', expanded ? 'max-h-none' : 'max-h-14 md:max-h-6')}
         renderTruncator={({ hiddenItemsCount }) => {
-          if (hiddenItemsCount > 0) {
-            return (
-              <span className="cursor-pointer text-c3 text-gray-900" onClick={() => setExpanded(true)}>
-                +{hiddenItemsCount}
-              </span>
-            );
-          }
           if (expanded) {
             return (
               <span className="cursor-pointer text-c3 text-gray-900" onClick={() => setExpanded(false)}>
                 Приховати
+              </span>
+            );
+          }
+          if (hiddenItemsCount > 0) {
+            return (
+              <span className="cursor-pointer text-c3 text-gray-900" onClick={() => setExpanded(true)}>
+                +{hiddenItemsCount}
               </span>
             );
           }
