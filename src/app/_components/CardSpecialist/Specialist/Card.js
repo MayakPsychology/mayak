@@ -15,9 +15,10 @@ import { SpecializationsPanel } from '@components/CardSpecialist/Specializations
 import { getContactsList, getLabelsList, getSpecialistSocials } from '@components/CardSpecialist/config';
 import { specialistPropType } from '@components/CardSpecialist/prop-types';
 import { Map } from '@components/Map';
-import { mapAddressesToPoints } from '@components/Specialists/utils';
+import { getSpecialistURL, mapAddressesToPoints } from '@components/Specialists/utils';
 import { ClientCategoryList } from '../ClientCategoryList';
 import { WorkTime } from '../WorkTime';
+import { specialistTypeEnum } from '../../Specialists/Filters/utils';
 import { SpecialistChipLists } from './SpecialistChipLists';
 
 export function CardSpecialist({ specialist, className, extended = false }) {
@@ -56,13 +57,18 @@ export function CardSpecialist({ specialist, className, extended = false }) {
   const addressPrimary = addresses[0];
   const points = mapAddressesToPoints({ addressesList: addresses, specialistId: id });
   const contactsList = getContactsList({ phone, email, website });
-  const labelsList = getLabelsList({ yearsOfExperience, isFreeReception, formatOfWork, specialistType: 'specialist' });
+  const labelsList = getLabelsList({ 
+    yearsOfExperience, 
+    isFreeReception, 
+    formatOfWork, 
+    specialistType: specialistTypeEnum.SPECIALIST
+  });
   const socials = getSpecialistSocials({ instagram, facebook, tiktok, youtube, linkedin, viber, telegram });
   const name = surname ? `${lastName} ${firstName} ${surname}` : `${lastName} ${firstName}`;
   const workTimeElement = !!workTime?.length && <WorkTime workTime={workTime} />;
 
   return (
-    <CardWrapper className={className} id={id} type="specialist">
+    <CardWrapper className={className} id={id} type={specialistTypeEnum.SPECIALIST} extended={extended}>
       <div className="hidden max-w-[150px] md:block lg:max-w-[200px]">
         <ProfileImage gender={gender} className="relative sm:w-[70px] md:max-w-[200px] lg:w-[200px]">
           <SocialsList socials={socials} className="absolute bottom-4" />
@@ -131,7 +137,7 @@ export function CardSpecialist({ specialist, className, extended = false }) {
               <AddressesList className="border-t pt-3 md:border-b md:py-3" addresses={[addressPrimary]} />
             )}
             <Link
-              href={`/specialist/${id}?type=specialist`}
+              href={getSpecialistURL({type: specialistTypeEnum.SPECIALIST, id})}
               scroll={false}
               className="mt-auto hidden self-end justify-self-end md:inline-block"
             >

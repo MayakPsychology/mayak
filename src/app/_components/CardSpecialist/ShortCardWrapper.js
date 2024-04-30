@@ -20,6 +20,7 @@ import { OwnershipTypeTile } from '@components/CardSpecialist/Organization/Owner
 import { OrganizationChipLists } from '@components/CardSpecialist/Organization/OrganizationChipLists';
 import { transformClientCategoryIntoChipListItem } from '@components/CardSpecialist/utils';
 import { cn } from '@utils/cn';
+import { getSpecialistURL } from '../Specialists/utils';
 
 const hiddenClassName = 'h-0 opacity-0 transition-opacity duration-300'
 const hiddenActiveClassName = '!h-auto !opacity-100'
@@ -91,7 +92,7 @@ export function ShortCardWrapper({ data, type, className, isHoveredOn }) {
           showCaption={false}
         />
         <Link
-          href={`/specialist/${id}?type=${type}`}
+          href={getSpecialistURL({type, id})}
           scroll={false}
           className="mt-auto hidden self-end justify-self-end md:inline-block"
         >
@@ -152,7 +153,7 @@ export function ShortCardWrapper({ data, type, className, isHoveredOn }) {
                 )
               }
               <div className="mt-4 flex flex-1 items-end justify-end">
-                <Link href={`/specialist/${id}?type=${type}`} scroll={false} className="hidden md:inline-block">
+                <Link href={getSpecialistURL({type, id})} scroll={false} className="hidden md:inline-block">
                   <CardButton />
                 </Link>
               </div>

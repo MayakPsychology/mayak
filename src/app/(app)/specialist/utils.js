@@ -33,3 +33,29 @@ export const getOrganizationById = async ({ id }) =>
     },
     include: organizationInclude,
   });
+
+export const getOrganizationsIds = async () => {
+  const organizations = await prisma.organization.findMany({
+    where: {
+      isActive: true,
+    },
+    select: {
+      id: true,
+    },
+  });
+  
+  return organizations.map(({ id }) => id);
+}
+
+export const getSpecialistsIds = async () => {
+  const specialists = await prisma.specialist.findMany({
+    where: {
+      isActive: true,
+    },
+    select: {
+      id: true,
+    },
+  });
+  
+  return specialists.map(({ id }) => id);
+}

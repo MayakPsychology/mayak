@@ -16,8 +16,9 @@ import { CardButton } from '@components/CardSpecialist/CardButton';
 import { WorkTime } from '@components/CardSpecialist/WorkTime';
 import { organizationPropType } from '@components/CardSpecialist/prop-types';
 import { Map } from '@components/Map';
-import { mapAddressesToPoints } from '@components/Specialists/utils';
+import { getSpecialistURL, mapAddressesToPoints } from '@components/Specialists/utils';
 import { ClientCategoryList } from '../ClientCategoryList';
+import { specialistTypeEnum } from '../../Specialists/Filters/utils';
 import { OrganizationChipLists } from './OrganizationChipLists';
 import { OwnershipTypeTile } from './OwnershipTypeTile';
 
@@ -61,7 +62,7 @@ export function CardOrganization({ organization, className, extended = false }) 
     isFreeReception,
     formatOfWork,
     isInclusiveSpace,
-    specialistType: 'organization',
+    specialistType: specialistTypeEnum.ORGANIZATION,
     extended,
   });
   const socials = getSpecialistSocials({ instagram, facebook, tiktok, youtube, linkedin, viber, telegram });
@@ -75,7 +76,7 @@ export function CardOrganization({ organization, className, extended = false }) 
   const workTimeElement = !!workTime?.length && <WorkTime workTime={workTime} />;
 
   return (
-    <CardWrapper className={className} id={id} type="organization">
+    <CardWrapper className={className} id={id} type={specialistTypeEnum.ORGANIZATION} extended={extended}>
       <div className="hidden max-w-[150px] md:block lg:max-w-[200px]">
         <ProfileImage className="relative sm:w-[70px] md:max-w-[200px] lg:w-[200px]">
           <SocialsList socials={socials} className="absolute bottom-4" />
@@ -141,7 +142,7 @@ export function CardOrganization({ organization, className, extended = false }) 
               <AddressesList className="border-t pt-3 md:border-b md:py-3" addresses={[addressPrimary]} />
             )}
             <Link
-              href={`/specialist/${id}?type=organization`}
+              href={getSpecialistURL({type: specialistTypeEnum.ORGANIZATION, id})}
               scroll={false}
               className="mt-auto hidden self-end justify-self-end md:inline-block"
             >

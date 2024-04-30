@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { specialistFiltersConfig, specialistTypeEnum } from '@components/Specialists/Filters/utils';
 import { searchSyncKey, useDebounce, useSearchSync } from '@/app/_hooks';
+import { getSpecialistURL } from '../Specialists/utils';
 import { getSearchTypeConfig, SEARCH_DEBOUNCE_TIME_MS, SEARCH_MIN_QUERY_LENGTH } from './config';
 
 const SearchContext = createContext({
@@ -79,7 +80,7 @@ export function SearchProvider({ children }) {
       currentSearchType === specialistTypeEnum.SPECIALIST ||
       currentSearchType === specialistTypeEnum.ORGANIZATION
     ) {
-      router.replace(`/specialist/${autoCompleteItem.id}?type=${currentSearchType}`);
+      router.replace(getSpecialistURL({type: currentSearchType, id: autoCompleteItem.id}));
     }
   }
 

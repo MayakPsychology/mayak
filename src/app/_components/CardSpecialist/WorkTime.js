@@ -36,7 +36,7 @@ export function WorkTime({ workTime, className, shortVersion = false }) {
               className={cn('flex items-start gap-2 text-c3 text-gray-700', { 'text-gray-500': day.isDayOff })}
               key={day.weekDay}
             >
-              <p>{day.weekDay}</p>
+              <p className='w-4'>{day.weekDay}</p>
               <p className="w-20 text-right">{day.isDayOff ? 'вихідний' : day.time}</p>
             </li>
           ))}

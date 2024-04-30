@@ -12,6 +12,16 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  async redirects() {
+    return [
+      // Basic redirect
+      {
+        source: '/organization',
+        destination: '/specialist',
+        permanent: true,
+      },
+    ]
+  },
   // Render SVG icons with @svgr/webpack
   webpack(config) {
     config.module.rules.push({

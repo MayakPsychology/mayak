@@ -14,7 +14,7 @@ export const metadata = {
   },
 };
 
-export default async function Layout({ children }) {
+export default async function Layout({ children, modal }) {
   const donationDetails = await prisma.donationDetails.findFirst();
   const socialLinks = await getLinksList();
 
@@ -25,6 +25,7 @@ export default async function Layout({ children }) {
         <main className="relative flex-1">{children}</main>
         <Footer socialLinks={socialLinks} />
       </div>
+      {modal}
       <Toaster
         position="top-center"
         gutter={12}
