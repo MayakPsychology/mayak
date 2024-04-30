@@ -7,7 +7,7 @@ import { PillButton } from '@components/PillButton';
 import { cn } from '@/utils/cn';
 
 const activeButtonStyles =
-  'pointer-events-none border-secondary-300 bg-secondary-300 focus:bg-secondary-300 font-semibold text-gray-900 focus:text-gray-900 focus:border-secondary-300';
+  'pointer-events-none !border-secondary-300 !bg-secondary-300 focus:bg-secondary-300 font-semibold text-gray-900 focus:text-gray-900 focus:border-secondary-300';
 
 export function MonthFilter({ filteredMonths, handleClick, activeMonth }) {
   const [swipeToIndex, setSwipeToIndex] = useState(0);
@@ -21,7 +21,9 @@ export function MonthFilter({ filteredMonths, handleClick, activeMonth }) {
               <PillButton
                 variant="eventFilter"
                 colorVariant="semiorange"
-                className={cn('*:gap-0', isSelected && activeButtonStyles)}
+                className={cn('*:gap-0', {
+                  [activeButtonStyles]: isSelected
+                })}
                 icon={isSelected ? <CheckMark /> : <Search />}
                 forceShowIcon={isSelected}
                 onClick={() => {

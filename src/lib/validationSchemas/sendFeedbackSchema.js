@@ -7,7 +7,7 @@ const SendFeedback = z.object({
   phone: string('Мобільний телефон').zod.refine(val => PHONE_REGEX.test(val), {
     message: 'Будь ласка введіть номер у форматі +380XXXXXXXXX',
   }),
-  callMe: boolean('Подзвоніть мені').zod,
+  callMe: boolean('Подзвоніть мені').zod.optional().default(false),
   email: string('Email').email().optional().zod,
   message: string('Повідомлення').min(5).max(320).zod,
 });

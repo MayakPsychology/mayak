@@ -42,7 +42,7 @@ export function SearchInput() {
         <div
           ref={searchTypeDropDownRef}
           className={cn(
-            'after:hidden after:h-[100%] after:w-[1px] after:rounded-full after:bg-gray-500 hover:after:bg-other-white/0 lg:after:block',
+            'cursor-pointer after:hidden after:h-[100%] after:w-[1px] after:rounded-full after:bg-gray-500 hover:after:bg-other-white/0 lg:after:block',
             'relative rounded-full border-[1px] border-gray-600 bg-gray-200 py-3 pl-6 hover:bg-gray-200 lg:flex lg:border-0 lg:bg-other-white/0',
             isSelectTypeOpen && 'bg-other-white',
           )}

@@ -30,7 +30,7 @@ export const Modal = ({
 
   const blurBackground = (
     <div
-      className="fixed left-0 top-0 z-[55] h-full w-full backdrop-blur-sm"
+      className="fixed left-0 top-0 z-[1300] h-full w-full backdrop-blur-sm"
       onClick={() => {
         if (closeOnBackdropClick) onClose();
       }}
@@ -44,7 +44,7 @@ export const Modal = ({
           <>
             {isBlurBackground && blurBackground}
             <div
-              className="fixed bottom-0 left-0 top-0 z-[75] grid w-full place-content-center lg:top-1/2 lg:h-[75vh] lg:-translate-y-1/2"
+              className="fixed bottom-0 left-0 top-0 z-[1300] grid w-full place-content-center lg:top-1/2 lg:h-[75vh] lg:-translate-y-1/2"
               onClick={() => {
                 if (closeOnBackdropClick) onClose();
               }}

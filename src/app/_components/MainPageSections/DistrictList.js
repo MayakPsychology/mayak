@@ -8,7 +8,7 @@ import { PillButton } from '@components/PillButton';
 import { Slide, Slider } from '@components/Slider';
 import { cn } from '@utils/cn';
 
-const activeButtonStyles = 'pointer-events-none border-secondary-300 bg-secondary-300 font-semibold text-gray-900';
+const activeButtonStyles = 'pointer-events-none !border-secondary-300 !bg-secondary-300 font-semibold text-gray-900';
 
 export function DistrictList({ list, className }) {
   const [selected, setSelected] = useState(0);
@@ -33,7 +33,9 @@ export function DistrictList({ list, className }) {
                 colorVariant="semiorange"
                 icon={isSelected ? <CheckMark /> : <Search />}
                 forceShowIcon={isSelected}
-                className={cn('*:gap-0', isSelected && activeButtonStyles)}
+                className={cn('*:gap-0', {
+                  [activeButtonStyles]: isSelected
+                })}
                 aria-label={`Click to see specialists related to the district ${name}`}
               >
                 {name}
