@@ -3,10 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { usePaginatedEntries } from '@hooks';
-import { useSearchParams } from 'next/navigation';
 import { Slide, Slider } from '@components/Slider';
 import { Pagination } from 'swiper/modules';
-import { LayoutGroup, motion } from 'framer-motion';
 import { cn } from '@utils/cn';
 import { MapLink } from '@components/MapLink';
 import { ShortCardWrapper } from '@components/CardSpecialist/ShortCardWrapper';
@@ -21,10 +19,9 @@ import { useWindowResize } from '@/app/_hooks/useWindowResize';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-const cardStyle = 'max-w-[900px] rounded-3xl border-2 border-gray-200 px-4 py-5 lg:mx-auto h-full';
+const cardStyle = 'max-w-[900px] rounded-3xl border-2 border-gray-200 px-4 py-5 lg:mx-auto';
 
-export function SpecialistListWithMap({ mapMode, className }) {
-  const searchParams = useSearchParams();
+export function SpecialistListWithMap({ mapMode, className, searchParams }) {
   const [pointsList, setPointsList] = useState(null);
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const [mapMarkerPopupOpen, setMapMarkerPopupOpen] = useState(null);
@@ -158,22 +155,18 @@ export function SpecialistListWithMap({ mapMode, className }) {
               )}
           </Slider>
         </div>
-
-        <LayoutGroup>
-          <motion.ul
-            className="hidden flex-col gap-4 overflow-scroll pr-5 lg:col-span-3 lg:row-start-1 lg:flex"
-            ref={specialistCardsListRef}
-          >
-            {isSuccess &&
+        <ul
+          className="hidden flex-col gap-4 overflow-y-scroll pr-5 lg:col-span-3 lg:row-start-1 lg:flex"
+          ref={specialistCardsListRef}
+        >
+          {isSuccess &&
               data.pages?.map(page =>
                 page.data?.map((entry, index) => {
                   const type = entry.organizationId ? 'organization' : 'specialist';
                   const entryData = entry[type];
 
                   return (
-                    <motion.li
-                      layout="position"
-                      transition={{ position: { duration: 0.6, type: 'spring' } }}
+                    <li
                       id={entryData.id}
                       key={entryData.id}
                       onMouseEnter={() => handleCardHover(entryData.id)}
@@ -186,12 +179,11 @@ export function SpecialistListWithMap({ mapMode, className }) {
                         className={cardStyle}
                         isHoveredOn={hoveredCardId === entryData.id}
                       />
-                    </motion.li>
+                    </li>
                   );
                 }),
               )}
-          </motion.ul>
-        </LayoutGroup>
+        </ul>
       </div>
       <MapLink mapMode={mapMode} className="sticky bottom-10 z-[25] mx-auto my-10 hidden max-w-max lg:block" />
     </div>
@@ -201,4 +193,5 @@ export function SpecialistListWithMap({ mapMode, className }) {
 SpecialistListWithMap.propTypes = {
   className: PropTypes.string,
   mapMode: PropTypes.bool,
+  searchParams: PropTypes.object.isRequired,
 };

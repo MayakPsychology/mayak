@@ -14,7 +14,6 @@ import { SpecialistTitle } from '@components/CardSpecialist/SpecialistTitle';
 import { SpecializationsPanel } from '@components/CardSpecialist/SpecializationsPanel';
 import { getContactsList, getLabelsList, getSpecialistSocials } from '@components/CardSpecialist/config';
 import { specialistPropType } from '@components/CardSpecialist/prop-types';
-import { useSearchParams } from 'next/navigation';
 import { Map } from '@components/Map';
 import { mapAddressesToPoints } from '@components/Specialists/utils';
 import { ClientCategoryList } from '../ClientCategoryList';
@@ -22,11 +21,7 @@ import { WorkTime } from '../WorkTime';
 import { SpecialistChipLists } from './SpecialistChipLists';
 
 export function CardSpecialist({ specialist, className, extended = false }) {
-  if (!specialist) throw new Error('Specialist is not found');
-
-  const params = useSearchParams();
-  const isOnSpecialistPage = params.get('type') === 'specialist';
-
+  if (!specialist) return null
   const {
     id,
     gender,
@@ -146,7 +141,7 @@ export function CardSpecialist({ specialist, className, extended = false }) {
         )}
       </div>
       <div className="col-span-2">
-        {(extended || isOnSpecialistPage) && points?.length ? (
+        {extended && points?.length ? (
           <Map points={points} className="mt-5 h-[200px] w-full lg:h-[300px]" />
         ) : null}
       </div>

@@ -3,7 +3,6 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
-import { useSearchParams } from 'next/navigation';
 import { useListDistrict, useSetParam } from '@hooks';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
@@ -68,8 +67,8 @@ DistrictList.propTypes = {
   districtsInUrl: PropTypes.arrayOf(PropTypes.string),
 };
 
-export function DistrictFilter() {
-  const districtsInUrl = useSearchParams().getAll('district') || [];
+export function DistrictFilter({searchParams}) {
+  const districtsInUrl = searchParams.getAll('district') || [];
 
   return (
     <FilterBase filterText="Райони" count={districtsInUrl.length}>
@@ -77,3 +76,7 @@ export function DistrictFilter() {
     </FilterBase>
   );
 }
+
+DistrictFilter.propTypes = {
+  searchParams: PropTypes.object.isRequired,
+};

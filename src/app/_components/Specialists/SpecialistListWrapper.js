@@ -9,19 +9,34 @@ import { Filters } from '@components/Specialists/Filters';
 import React from 'react';
 import { cn } from '@utils/cn';
 import { filterDataPropTypes } from '@components/Specialists/Filters/propTypes';
+import { ReadonlyURLSearchParams } from 'next/navigation';
+
+const toSearchParams = searchParams => {
+  const params = new URLSearchParams();
+  Object.entries(searchParams).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach(v => params.append(key, v));
+    } else {
+      params.set(key, value);
+    }
+  });
+  return params;
+}
 
 export function SpecialistListWrapper({ className, searchParams, filterData }) {
   const isMapMode = searchParams.mode === 'map';
+  const readonlySearchParams = new ReadonlyURLSearchParams(toSearchParams(searchParams));
+
   return (
     <section className={cn('mx-auto px-4 lg:max-w-[900px]', { 'lg:max-w-[1600px]': isMapMode }, className)}>
       <SearchProvider>
         <SearchInput />
       </SearchProvider>
-      <Filters filterData={filterData} />
+      <Filters filterData={filterData} searchParams={readonlySearchParams} />
       {isMapMode ? (
-        <SpecialistListWithMap mapMode={isMapMode} className="mt-6" />
+        <SpecialistListWithMap mapMode={isMapMode} className="mt-6" searchParams={readonlySearchParams} />
       ) : (
-        <SpecialistListMain mapMode={isMapMode} className="mx-auto mt-6" />
+        <SpecialistListMain mapMode={isMapMode} className="mx-auto mt-6" searchParams={readonlySearchParams} />
       )}
     </section>
   );

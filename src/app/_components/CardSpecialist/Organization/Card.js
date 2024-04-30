@@ -16,17 +16,13 @@ import { CardButton } from '@components/CardSpecialist/CardButton';
 import { WorkTime } from '@components/CardSpecialist/WorkTime';
 import { organizationPropType } from '@components/CardSpecialist/prop-types';
 import { Map } from '@components/Map';
-import { useSearchParams } from 'next/navigation';
 import { mapAddressesToPoints } from '@components/Specialists/utils';
 import { ClientCategoryList } from '../ClientCategoryList';
 import { OrganizationChipLists } from './OrganizationChipLists';
 import { OwnershipTypeTile } from './OwnershipTypeTile';
 
 export function CardOrganization({ organization, className, extended = false }) {
-  if (!organization) throw new Error('Organization is not found');
-
-  const params = useSearchParams();
-  const isOnOrganizationPage = params.get('type') === 'organization';
+  if (!organization) return null;
 
   const {
     id,
@@ -155,7 +151,7 @@ export function CardOrganization({ organization, className, extended = false }) 
         )}
       </div>
       <div className="col-span-2 mt-5">
-        {(extended || isOnOrganizationPage) && points?.length ? (
+        {extended && points?.length ? (
           <Map points={points} className="h-[200px] w-full lg:h-[300px]" />
         ) : null}
       </div>

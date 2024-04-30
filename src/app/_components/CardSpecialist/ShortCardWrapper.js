@@ -21,7 +21,9 @@ import { OrganizationChipLists } from '@components/CardSpecialist/Organization/O
 import { transformClientCategoryIntoChipListItem } from '@components/CardSpecialist/utils';
 import { cn } from '@utils/cn';
 
-export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
+const hiddenClassName = 'h-0 opacity-0 transition-opacity duration-300'
+const hiddenActiveClassName = '!h-auto !opacity-100'
+export function ShortCardWrapper({ data, type, className, isHoveredOn }) {
   const { id } = data;
 
   const isOrganization = type === 'organization';
@@ -61,7 +63,7 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
   );
   const clientsList = [...clientsWorkingWithList, ...clientsNotWorkingWithList];
   return (
-    <CardWrapper className={className} id={id} type={type}>
+    <CardWrapper className={cn(className, 'overflow-hidden')} id={id} type={type}>
       <div className="relative flex flex-col md:col-span-2 lg:hidden">
         <div className="relative mb-3 flex justify-between">
           <SpecializationsPanel
@@ -102,12 +104,12 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
             <ProfileImage gender={isOrganization ? undefined : data.gender} className="relative">
               <SocialsList socials={socials} className="absolute bottom-4" />
             </ProfileImage>
-            {isHoveredOn && (
-              <>
-                <ContactsList truncate={false} specialistId={id} contacts={contactsList} className="mt-4" />
-                {workTimeElement}
-              </>
-            )}
+            <div className={cn(hiddenClassName, {
+              [hiddenActiveClassName]: isHoveredOn,
+            })}>
+              <ContactsList truncate={false} specialistId={id} contacts={contactsList} className="mt-4" />
+              {workTimeElement}
+            </div>
           </div>
           <div className="flex w-full flex-col">
             <SpecializationsPanel
@@ -136,26 +138,25 @@ export function ShortCardWrapper({ data, type, isHoveredOn, className }) {
                 />
               )}
             </div>
-            {isHoveredOn && (
-              <>
-                <ChipList id={`${id}-clientCategories`} items={clientsList} className="mt-4" />
-              </>
-            )}
-            {isHoveredOn && addressPrimary && (
-              <AddressesList
-                showIcon
-                className="mb-3 mt-4 border-t pt-3 md:border-b md:py-3"
-                addresses={[addressPrimary]}
-              />
-            )}
-
-            {isHoveredOn && (
+            <div className={cn(hiddenClassName, {
+              [hiddenActiveClassName]: isHoveredOn,
+            })}>
+              <ChipList id={`${id}-clientCategories`} items={clientsList} className='mt-4' />
+              {
+                addressPrimary && (
+                  <AddressesList
+                    showIcon
+                    className="mb-3 mt-4 border-t pt-3 md:border-b md:py-3"
+                    addresses={[addressPrimary]}
+                  />
+                )
+              }
               <div className="mt-4 flex flex-1 items-end justify-end">
                 <Link href={`/specialist/${id}?type=${type}`} scroll={false} className="hidden md:inline-block">
                   <CardButton />
                 </Link>
               </div>
-            )}
+            </div>
           </div>
         </header>
       </div>

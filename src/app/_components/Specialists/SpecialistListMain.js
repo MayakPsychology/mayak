@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { CardOrganization, CardSpecialist } from '@components/CardSpecialist';
 import { useInView } from 'react-intersection-observer';
-import { useSearchParams } from 'next/navigation';
 import { getProperEnding } from '@components/Specialists/utils';
 import { MapLink } from '@components/MapLink';
 import { cn } from '@utils/cn';
@@ -13,9 +12,7 @@ import { NoMatches } from '@components/Specialists/NoMatches';
 import { usePaginatedEntries } from '@/app/_hooks';
 import Loading from '@/app/loading';
 
-export function SpecialistListMain({ mapMode, className }) {
-  const searchParams = useSearchParams();
-
+export function SpecialistListMain({ mapMode, className, searchParams }) {
   const { ref, inView } = useInView();
 
   const { data, error, isPending, hasNextPage, fetchNextPage, isSuccess } = usePaginatedEntries(searchParams);
@@ -71,4 +68,5 @@ export function SpecialistListMain({ mapMode, className }) {
 SpecialistListMain.propTypes = {
   className: PropTypes.string,
   mapMode: PropTypes.bool,
+  searchParams: PropTypes.object.isRequired,
 };

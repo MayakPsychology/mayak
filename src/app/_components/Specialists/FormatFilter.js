@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useDebounceCallback, useSetParam } from '@hooks';
-import { useSearchParams } from 'next/navigation';
 import PropTypes from 'prop-types';
 import { specialistFiltersConfig } from '@components/Specialists/Filters/utils';
 import { INPUT_DEBOUNCE } from '@/lib/consts';
@@ -63,8 +62,7 @@ FormatList.propTypes = {
   formatsInUrl: PropTypes.arrayOf(PropTypes.string),
 };
 
-export function FormatFilter() {
-  const searchParams = useSearchParams();
+export function FormatFilter({ searchParams }) {
   const formatsInUrl = searchParams.getAll(specialistFiltersConfig.format.filterKey);
   return (
     <FilterBase filterText="Формат роботи" count={Number(formatsInUrl.length)}>
@@ -72,3 +70,7 @@ export function FormatFilter() {
     </FilterBase>
   );
 }
+
+FormatFilter.propTypes = {
+  searchParams: PropTypes.object.isRequired,
+};

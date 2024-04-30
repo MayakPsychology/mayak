@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSetParam } from '@hooks';
-import { useSearchParams } from 'next/navigation';
 import PropTypes from 'prop-types';
 import { therapyFilterPropType } from '@components/Specialists/Filters/propTypes';
 import { specialistFiltersConfig } from '@components/Specialists/Filters/utils';
@@ -56,8 +55,8 @@ TypeList.propTypes = {
   typeInUrl: PropTypes.string,
 };
 
-export function TypeFilter({ options }) {
-  const typeInUrl = useSearchParams().get(specialistFiltersConfig.type.filterKey);
+export function TypeFilter({ options, searchParams }) {
+  const typeInUrl = searchParams.get(specialistFiltersConfig.type.filterKey);
 
   return (
     <FilterBase filterText="Тип" count={Number(!!typeInUrl)}>
@@ -68,4 +67,5 @@ export function TypeFilter({ options }) {
 
 TypeFilter.propTypes = {
   options: PropTypes.arrayOf(therapyFilterPropType),
+  searchParams: PropTypes.object.isRequired,
 };

@@ -1,7 +1,6 @@
 'use client';
 
 import PropTypes from 'prop-types';
-import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useListSpecialization, useSetParam } from '@hooks';
@@ -67,8 +66,8 @@ SpecializationList.propTypes = {
   specializationsInUrl: PropTypes.arrayOf(PropTypes.string),
 };
 
-export function SpecializationFilter() {
-  const specializationsInUrl = useSearchParams().getAll('specialization') || [];
+export function SpecializationFilter({searchParams}) {
+  const specializationsInUrl = searchParams.getAll('specialization') || [];
 
   return (
     <FilterBase filterText="Посада" count={specializationsInUrl.length}>
@@ -76,3 +75,7 @@ export function SpecializationFilter() {
     </FilterBase>
   );
 }
+
+SpecializationFilter.propTypes = {
+  searchParams: PropTypes.object.isRequired,
+};

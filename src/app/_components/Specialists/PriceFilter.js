@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { CheckBox } from '@components/CheckBox';
 import { ClearFilterButton, FilterBase } from '@components/Specialists';
 import { useSetParam } from '@hooks';
-import { useSearchParams } from 'next/navigation';
 import { useDebounceCallback } from '@/app/_hooks';
 import { INPUT_DEBOUNCE } from '@/lib/consts';
 import { specialistFiltersConfig } from './Filters/utils';
@@ -79,12 +78,16 @@ PricesList.propTypes = {
   pricesInUrl: PropTypes.arrayOf(PropTypes.string),
 };
 
-export function PriceFilter() {
-  const pricesInUrl = useSearchParams().getAll('price') || [];
+export function PriceFilter({ searchParams }) {
+  const pricesInUrl = searchParams.getAll('price') || [];
 
   return (
     <FilterBase filterText="Ціна" count={pricesInUrl.length}>
       <PricesList pricesInUrl={pricesInUrl} />
     </FilterBase>
   );
+}
+
+PriceFilter.propTypes = {
+  searchParams: PropTypes.object.isRequired,
 }
