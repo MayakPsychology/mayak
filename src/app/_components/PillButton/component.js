@@ -3,7 +3,16 @@ import { Paragraph } from '@components/Typography';
 import { cn } from '@/utils/cn';
 import { buttonColorVariant, buttonType } from './style';
 
-export function PillButton({ children, className, icon, variant, colorVariant, forceShowIcon, ...props }) {
+export function PillButton({
+  onIconTransitionEnd, 
+  children,
+  className, 
+  icon, 
+  variant, 
+  colorVariant,
+  forceShowIcon, 
+  ...props 
+}) {
   const buttonVariant = icon ? buttonType[variant]?.icon : buttonType[variant]?.regular || {};
   const buttonColor = buttonColorVariant[variant]?.[colorVariant] || {};
 
@@ -26,11 +35,13 @@ export function PillButton({ children, className, icon, variant, colorVariant, f
       <div className={cn(layoutStyle)}>
         {icon && (
           <div
-            className={cn(
-              forceShowIcon
-                ? 'mr-1 h-fit w-fit'
-                : 'h-fit w-fit max-w-0 scale-0 transition-all *:opacity-0 *:transition-all  group-hover:mr-1 group-hover:max-w-6 group-hover:scale-100 group-hover:*:opacity-100',
+            className={cn('h-fit w-fit transition-all group-hover:mr-1 group-hover:max-w-6 group-hover:scale-100 group-hover:opacity-100', 
+              {
+                'mr-1 max-w-6 scale-100 opacity-100': forceShowIcon,
+                'max-w-0 opacity-0 scale-0': !forceShowIcon,
+              }
             )}
+            onTransitionEnd={onIconTransitionEnd}
           >
             {icon}
           </div>
@@ -49,4 +60,5 @@ PillButton.propTypes = {
   className: PropTypes.string,
   icon: PropTypes.node,
   forceShowIcon: PropTypes.bool,
+  onIconTransitionEnd: PropTypes.func,
 };

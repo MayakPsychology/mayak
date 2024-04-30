@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import { Swiper } from 'swiper/react';
 import 'swiper/css';
-import { useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 export { SwiperSlide as Slide } from 'swiper/react';
 
-export function Slider({ swipeToIndex = 0, children, className, ...swiperProps }) {
+export const Slider = forwardRef(({ swipeToIndex = 0, children, className, ...swiperProps }, ref) => {
   const swiperRef = useRef(null);
+  useImperativeHandle(ref, () => swiperRef.current.swiper, []);
 
   useEffect(() => {
     swiperRef.current.swiper.slideTo(swipeToIndex);
@@ -17,7 +18,9 @@ export function Slider({ swipeToIndex = 0, children, className, ...swiperProps }
       {children}
     </Swiper>
   );
-}
+})
+
+Slider.displayName = 'Slider';
 
 Slider.propTypes = {
   swipeToIndex: PropTypes.number,

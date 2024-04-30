@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { CheckMark, Search } from '@icons';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { capitalize } from 'lodash';
 import { Slide, Slider } from '@components/Slider';
 import { PillButton } from '@components/PillButton';
@@ -11,9 +11,22 @@ const activeButtonStyles =
 
 export function MonthFilter({ filteredMonths, handleClick, activeMonth }) {
   const [swipeToIndex, setSwipeToIndex] = useState(0);
+  const sliderRef = useRef(null);
+
+  const widthNormalizedRef = useRef(false);
+  const onIconTransitionEnd = () => {
+    if (!widthNormalizedRef.current) {
+      sliderRef.current.updateSlides()
+      sliderRef.current.slideToClosest()
+      widthNormalizedRef.current = true;
+    }
+  }
+  const onSlideChange = () => {
+    widthNormalizedRef.current = false;
+  }
   return (
     <div className="flex w-fit max-w-full justify-start">
-      <Slider slidesPerView="auto" className="flex" swipeToIndex={swipeToIndex}>
+      <Slider slidesPerView="auto" className="flex" ref={sliderRef} swipeToIndex={swipeToIndex} onSlideChange={onSlideChange}>
         {filteredMonths.map((month, filteredIndex) => {
           const isSelected = activeMonth - 1 === month.index;
           return (
@@ -26,6 +39,7 @@ export function MonthFilter({ filteredMonths, handleClick, activeMonth }) {
                 })}
                 icon={isSelected ? <CheckMark /> : <Search />}
                 forceShowIcon={isSelected}
+                onIconTransitionEnd={onIconTransitionEnd}
                 onClick={() => {
                   handleClick(month.index + 1);
                   setSwipeToIndex(filteredIndex);
