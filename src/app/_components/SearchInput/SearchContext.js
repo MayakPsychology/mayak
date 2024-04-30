@@ -52,8 +52,6 @@ export function SearchProvider({ children }) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const mapMode = mode ? 'mode=map&' : '';
-
   function submitSearch() {
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
@@ -89,7 +87,10 @@ export function SearchProvider({ children }) {
     setQuery('');
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
-    router.replace(`/specialist?${mapMode}searchType=${currentSearchType}&query=`);
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete('query');
+    newSearchParams.delete(specialistFiltersConfig.specialistType.filterKey);
+    router.replace(`/specialist?${newSearchParams.toString()}`);
   }
 
   useEffect(() => {

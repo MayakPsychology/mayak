@@ -14,8 +14,16 @@ export function AllFilters({ filterData, searchParams }) {
     Object.values(specialistFiltersConfig).map(({ filterKey }) => filterKey),
     searchParams,
     {
-      filter: (key, value) =>
-        key === specialistFiltersConfig.price.filterKey.price ? value.filter(v => v === priceTypeEnum.FREE) : value,
+      filter: (key, value) => {
+        if (key === specialistFiltersConfig.price.filterKey.price) {
+          return value.filter(v => v === priceTypeEnum.FREE)
+        }
+        if (key === specialistFiltersConfig.specialistType.filterKey) {
+          return value.filter(v => specialistFiltersConfig.specialistType.options.find(o => o.value === v))
+        }
+
+        return value;
+      },
     },
   );
 
