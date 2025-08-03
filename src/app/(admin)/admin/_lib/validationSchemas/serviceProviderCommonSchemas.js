@@ -2,7 +2,6 @@ import { z } from 'zod';
 import { FormatOfWork } from '@prisma/client';
 import { MAX_NUM_SELECTED_SOCIAL_LINKS, WEEKDAYS_TRANSLATION } from '@admin/_lib/consts';
 import { isSpecifiedWorkTime } from '@admin/_utils/common';
-import { PHONE_REGEX } from '@/lib/consts';
 import { MESSAGES, zString, zUrl } from './common';
 
 // ------------------ COMMON SECTION ---------------------
@@ -73,11 +72,19 @@ export const serviceProviderCore = z.object({
     message: MESSAGES.unacceptableValue,
   }),
   isFreeReception: z.boolean(),
+
   phone: zString
     .refine(val => PHONE_REGEX.test(val), {
       message: 'Введіть номер телефону у міжнародному форматі',
     })
     .nullish(),
+
+  phone: z
+    .string()
+    .max(15, { message: 'Номер не повинен перевищувати 15 символів' })
+    .optional()
+    .or(z.literal('').transform(() => undefined))
+
   email: zString.email().nullish(),
   addressesIds: zString.array().nullish(),
   website: zString.url({ message: MESSAGES.unacceptableValue }).nullish(),
