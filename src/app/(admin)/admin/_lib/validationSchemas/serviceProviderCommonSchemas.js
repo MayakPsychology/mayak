@@ -75,7 +75,7 @@ export const serviceProviderCore = z.object({
   isFreeReception: z.boolean(),
   phone: zString
     .refine(val => PHONE_REGEX.test(val), {
-      message: 'Введіть номер телефона у форматі +380XXXXXXXXX',
+      message: 'Введіть номер телефону у міжнародному форматі',
     })
     .nullish(),
   email: zString.email().nullish(),
