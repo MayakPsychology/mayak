@@ -79,7 +79,7 @@ export const transformSupportFocuses = ({ focuses, focusesIds }) => {
   };
 };
 
-export const transformCreateData = ({ addresses, supportFocuses, socialLink, workTime, clients, ...rest }) => {
+export const transformCreateData = ({ addresses, supportFocuses, socialLink, workTime, clients = {}, ...rest }) => {
   const { workingWith, notWorkingWith } = clients;
   return {
     ...rest,

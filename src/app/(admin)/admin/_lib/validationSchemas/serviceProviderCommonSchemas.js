@@ -72,11 +72,19 @@ export const serviceProviderCore = z.object({
     message: MESSAGES.unacceptableValue,
   }),
   isFreeReception: z.boolean(),
+
+  phone: zString
+    .refine(val => PHONE_REGEX.test(val), {
+      message: 'Введіть номер телефону у міжнародному форматі',
+    })
+    .nullish(),
+
   phone: z
     .string()
     .max(15, { message: 'Номер не повинен перевищувати 15 символів' })
     .optional()
     .or(z.literal('').transform(() => undefined)),
+
   email: zString.email().nullish(),
   addressesIds: zString.array().nullish(),
   website: zString.url({ message: MESSAGES.unacceptableValue }).nullish(),
