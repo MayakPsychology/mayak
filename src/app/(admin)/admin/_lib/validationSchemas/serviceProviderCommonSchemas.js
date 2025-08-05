@@ -83,7 +83,7 @@ export const serviceProviderCore = z.object({
     .string()
     .max(15, { message: 'Номер не повинен перевищувати 15 символів' })
     .optional()
-    .or(z.literal('').transform(() => undefined))
+    .or(z.literal('').transform(() => undefined)),
 
   email: zString.email().nullish(),
   addressesIds: zString.array().nullish(),
