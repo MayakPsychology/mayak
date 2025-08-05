@@ -84,7 +84,20 @@ export function OrganizationShow() {
         </ArrayField>
         <BooleanField label="Безкоштовний прийом" source="isFreeReception" />
         <BooleanField label="Активна/неактивна" source="isActive" />
-        <TextField label="Опис" source="description" />
+        <FunctionField
+          source="description"
+          label="Опис"
+          render={record =>
+            record.description
+              ? record.description.split('\n').map((line, i) => (
+                <span key={i}>
+                  {line}
+                  <br />
+                </span>
+              ))
+              : '—'
+          }
+        />
         <TextField label="Номер телефону" source="phone" />
         <TextField source="email" />
         <TextField label="Вебсайт" source="website" />
