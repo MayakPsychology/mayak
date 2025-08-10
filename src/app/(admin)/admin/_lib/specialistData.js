@@ -45,13 +45,13 @@ export const SpecialistFormFields = {
     name: 'addresses',
     type: null,
     label: 'Адреси',
-    isRequired: true,
+    isRequired: false,
   },
   fullAddress: {
     name: 'fullAddress',
     type: 'text',
     label: 'Повна адреса',
-    isRequired: true,
+    isRequired: false,
   },
   nameOfClinic: {
     name: 'nameOfClinic',

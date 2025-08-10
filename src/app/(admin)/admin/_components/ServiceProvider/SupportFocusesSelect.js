@@ -16,7 +16,6 @@ import { RESOURCES } from '@admin/_lib/consts';
 import { useFormContext, useWatch } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { useCallback } from 'react';
-import { therapyPropType } from '@admin/_lib/specialistPropTypes';
 
 function SupportFocusesForm({ getSource, supportFocuses, selectedTherapies, requestsIds, loading }) {
   const { setValue } = useFormContext();
@@ -44,7 +43,6 @@ function SupportFocusesForm({ getSource, supportFocuses, selectedTherapies, requ
         source={getSource('therapy.id')}
         filter={{ id: { notIn: selectedTherapies } }}
         reference="Therapy"
-        validate={required()}
         fullWidth
       >
         <AutocompleteInput
@@ -57,6 +55,7 @@ function SupportFocusesForm({ getSource, supportFocuses, selectedTherapies, requ
           fullWidth
         />
       </ReferenceInput>
+
       <NumberInput fullWidth source={getSource('price')} label="Ціна для терапії від Х грн.год" />
       <ReferenceArrayInput
         source={getSource('requestsIds')}
@@ -79,7 +78,8 @@ function SupportFocusesForm({ getSource, supportFocuses, selectedTherapies, requ
 
 SupportFocusesForm.propTypes = {
   getSource: PropTypes.func,
-  supportFocuses: therapyPropType,
+  // supportFocuses: therapyPropType,
+  supportFocuses: PropTypes.object,
   selectedTherapies: PropTypes.arrayOf(PropTypes.string),
   requestsIds: PropTypes.arrayOf(PropTypes.string),
   loading: PropTypes.bool,

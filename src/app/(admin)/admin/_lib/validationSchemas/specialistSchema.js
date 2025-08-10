@@ -16,7 +16,7 @@ import { MESSAGES, zString } from './common';
 // ------------------ COMMON SECTION ---------------------
 
 const zSpecialistSchema = serviceProviderCore.extend({
-  surname: zStringWithMax.nullish(),
+  surname: zStringWithMax.optional(),
   gender: zString.refine(val => Object.values(Gender).includes(val), {
     message: MESSAGES.unacceptableValue,
     invalid_type_error: 'Неприпустиме значення',
@@ -43,8 +43,8 @@ const activeSpecialistSchema = restCreateProps.extend({
   supportFocuses: zSupportFocusSchema.array().min(1, {
     message: 'Необхідно обрати хоча б один тип терапії',
   }),
-  specializations: zStringArray,
-  specializationMethods: zString.array().default([]),
+  specializations: zStringArray.nullish().default([]),
+  specializationMethods: zString.array().default([]).nullish(),
   isActive: z.literal(true),
 });
 
@@ -78,11 +78,13 @@ const activeSpecialistEditSchema = restEditProps.extend({
   supportFocuses: zSupportFocusSchema.array().min(1, {
     message: 'Необхідно обрати хоча б один тип терапії',
   }),
-  specializationsIds: zStringArray,
-  specializationMethodsIds: z.object({
-    psychologist: z.string().array().nullish(),
-    psychotherapist: z.string().array().nullish(),
-  }),
+  specializationsIds: zStringArray.nullish().default([]),
+  specializationMethodsIds: z
+    .object({
+      psychologist: z.string().array().nullish().default([]),
+      psychotherapist: z.string().array().nullish().default([]),
+    })
+    .nullish(),
   isActive: z.literal(true),
 });
 
