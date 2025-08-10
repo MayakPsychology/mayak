@@ -20,7 +20,7 @@
     "@faker-js/faker": "^8.4.0",
     "@hookform/resolvers": "^3.3.4",
     "@mui/material": "^5.15.10",
-    "@prisma/client": "^5.9.1",
+    "@prisma/client": "^6.13.0",
     "@sentry/nextjs": "^7.110.1",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/forms": "^0.5.7",
@@ -86,6 +86,6 @@
     "prettier": "^3.2.4",
     "prettier-plugin-prisma": "^4.17.0",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "prisma": "5.9.1"
+    "prisma": "^6.13.0"
   }
 }

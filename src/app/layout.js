@@ -6,6 +6,8 @@ import { QueryContext } from './queryContext';
 import './globals.css';
 
 export const metadata = {
+  // metadataBase: new URL('http://localhost:3000'),
+
   title: {
     template: '%s | Маяк',
     default: 'Маяк',

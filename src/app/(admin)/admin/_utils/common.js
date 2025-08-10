@@ -106,7 +106,7 @@ export const transformEditData = ({
   formatOfWork,
   socialLink,
   workTime,
-  clients,
+  clients = { workingWith: [], notWorkingWith: [] }, // Provide default empty object if undefined
   ...rest
 }) => {
   const addressesToConnect = toConnectList(
@@ -120,8 +120,8 @@ export const transformEditData = ({
   // if formatOfWork is ONLINE, we need to delete all connected addresses
   const addressesToDelete = formatOfWork !== FormatOfWork.ONLINE ? toConnectList(unselectedAddresses) : {};
 
-  const clientsWorkingWith = toConnectList(clients.workingWith);
-  const clientsNotWorkingWith = toConnectList(clients.notWorkingWith);
+  const clientsWorkingWith = toConnectList(clients?.workingWith || []);
+  const clientsNotWorkingWith = toConnectList(clients?.notWorkingWith || []);
 
   return {
     ...rest,

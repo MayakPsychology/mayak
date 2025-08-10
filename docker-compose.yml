@@ -3,9 +3,9 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_USER: developer
-      POSTGRES_PASSWORD: dev_pass
-      POSTGRES_DB: mayak
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123123
+      POSTGRES_DB: mayak_local
     ports:
       - '5432:5432'
     volumes:
@@ -19,8 +19,8 @@ services:
       - '3000:3000'
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql://developer:dev_pass@postgres:5432/mayak?schema=public
-      - DATABASE_DIRECT_URL=postgresql://developer:dev_pass@postgres:5432/mayak?schema=public
+      - DATABASE_URL=postgresql://postgres:123123@localhost:5432/mayak_local?schema=public
+      - DATABASE_DIRECT_URL=postgresql://postgres:123123@localhost:5432/mayak_local?schema=public
       - REVALIDATION_TIME=10
     depends_on:
       - postgres
