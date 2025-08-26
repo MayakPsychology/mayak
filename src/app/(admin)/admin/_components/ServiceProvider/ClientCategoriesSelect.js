@@ -11,6 +11,8 @@ export function ClientCategoriesSelect({ type = FORM_TYPES.create }) {
   const clientsWorkingWithSource = type === FORM_TYPES.create ? 'clientsWorkingWith' : 'clientsWorkingWithIds';
   const clientsNotWorkingWithSource = type === FORM_TYPES.create ? 'clientsNotWorkingWith' : 'clientsNotWorkingWithIds';
 
+  const ensureArray = value => Array.isArray(value) ? value : [];
+
   const clientsDuplicationErrorMessage = errors?.clients ? errors?.clients.root.message : '';
   const displayError = errors?.clients && (
     <p className="my-1 text-c3 tracking-wide text-system-error">{clientsDuplicationErrorMessage}</p>
@@ -19,14 +21,28 @@ export function ClientCategoriesSelect({ type = FORM_TYPES.create }) {
   return (
     <>
       {displayError}
-      <ReferenceArrayInput source={clientsWorkingWithSource} reference="ClientCategory">
-        <AutocompleteArrayInput name="clients.workingWith" label="Працює з наступними клієнтами" optionText="name" />
+      <ReferenceArrayInput 
+        source={clientsWorkingWithSource} 
+        reference="ClientCategory"
+      >
+        <AutocompleteArrayInput 
+          name="clients.workingWith" 
+          label="Працює з наступними клієнтами" 
+          optionText="name" 
+        />
       </ReferenceArrayInput>
-      <ReferenceArrayInput source={clientsNotWorkingWithSource} reference="ClientCategory">
+      
+      <ReferenceArrayInput 
+        source={clientsNotWorkingWithSource} 
+        reference="ClientCategory"
+        defaultValue={[]}
+        transform={ensureArray}
+      >
         <AutocompleteArrayInput
           name="clients.notWorkingWith"
           label="НЕ працює з наступними клієнтами"
           optionText="name"
+          defaultValue={[]}
         />
       </ReferenceArrayInput>
     </>

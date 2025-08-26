@@ -8,6 +8,7 @@ import {
   Show,
   BooleanField,
   NumberField,
+  FunctionField,
 } from 'react-admin';
 
 export function TherapyShow() {
@@ -15,7 +16,20 @@ export function TherapyShow() {
     <Show>
       <SimpleShowLayout>
         <TextField label="Тип" source="title" />
-        <TextField label="Опис" source="description" />
+        <FunctionField
+          source="description"
+          label="Опис"
+          render={record =>
+            record.description
+              ? record.description.split('\n').map((line, i) => (
+                <span key={i}>
+                  {line}
+                  <br />
+                </span>
+              ))
+              : '—'
+          }
+        />
         <TextField label="Шлях до зображення" source="imagePath" />
         <NumberField label="Пріоритет" source="priority" />
         <NumberField label="Кількість запитів" source="_count.requests" />
