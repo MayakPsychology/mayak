@@ -6,7 +6,7 @@ const siteNav = {
     },
   ],
   innerLinks: [
-    { title: 'Спеціалісти', href: '/specialist' },
+    { title: 'Пошук допомоги', href: '/specialist' },
     { title: 'Події', href: '/event' },
   ],
 };
