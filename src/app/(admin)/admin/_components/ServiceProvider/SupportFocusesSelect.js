@@ -25,6 +25,11 @@ function SupportFocusesForm({ getSource, supportFocuses, selectedTherapies, requ
 
   const resetRequests = useCallback(
     (_, record) => {
+      if (!Array.isArray(supportFocuses)) {
+        console.warn('supportFocuses is not an array:', supportFocuses);
+        return;
+      }
+
       const newCuts = supportFocuses.map((focus, i) => {
         if (i !== therapyIndex) {
           return focus;
@@ -78,8 +83,7 @@ function SupportFocusesForm({ getSource, supportFocuses, selectedTherapies, requ
 
 SupportFocusesForm.propTypes = {
   getSource: PropTypes.func,
-  // supportFocuses: therapyPropType,
-  supportFocuses: PropTypes.object,
+  supportFocuses: PropTypes.array,
   selectedTherapies: PropTypes.arrayOf(PropTypes.string),
   requestsIds: PropTypes.arrayOf(PropTypes.string),
   loading: PropTypes.bool,
@@ -90,16 +94,26 @@ export function SupportFocusesSelect() {
 
   const supportFocuses = useWatch({ name: 'supportFocuses' });
 
-  const selectedTherapiesIds = supportFocuses?.map(focus => focus.therapy && focus.therapy.id).filter(Boolean) ?? [];
+  const safeSupportFocuses = Array.isArray(supportFocuses) ? supportFocuses : [];
+
+  const selectedTherapiesIds = safeSupportFocuses
+    .map(focus => focus?.therapy && focus.therapy.id)
+    .filter(Boolean) ?? [];
 
   const therapyRequestsIds = useCallback(
-    therapyId => therapiesList.find(therapy => therapy.id === therapyId)?.requests.map(request => request.id) || [],
+    therapyId => therapiesList?.find(therapy => therapy.id === therapyId)?.requests?.map(request => request.id) || [],
     [therapiesList],
   );
 
-  const selectedAllTerapies = supportFocuses?.length === therapiesList?.length;
+  const selectedAllTerapies = safeSupportFocuses.length === therapiesList?.length;
+  
   return (
-    <ArrayInput source="supportFocuses" isLoading={therapiesLoading} label="Типи терапій">
+    <ArrayInput 
+      source="supportFocuses" 
+      isLoading={therapiesLoading} 
+      label="Типи терапій"
+      defaultValue={[]}
+    >
       <SimpleFormIterator fullWidth disableReordering={true} disableAdd={selectedAllTerapies}>
         <FormDataConsumer>
           {({ scopedFormData, getSource }) => {
@@ -107,7 +121,7 @@ export function SupportFocusesSelect() {
             return (
               <SupportFocusesForm
                 getSource={getSource}
-                supportFocuses={supportFocuses}
+                supportFocuses={safeSupportFocuses}
                 selectedTherapies={selectedTherapiesIds}
                 requestsIds={therapyRequestsIds(scopedFormData?.therapy?.id || '')}
                 loading={therapiesLoading}
