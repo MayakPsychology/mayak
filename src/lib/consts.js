@@ -1,5 +1,5 @@
 export const LOGIN_URL = '/admin#/login';
-export const PHONE_REGEX = /^\+\d{6,15}$/;
+export const PHONE_REGEX = /^\+?[1-9]\d{0,14}$/;
 
 export const FAQ_PRIORITY_CHANGE_STEP = 1;
 export const BASE_ERROR_MESSAGES = {
