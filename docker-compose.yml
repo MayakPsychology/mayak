@@ -19,8 +19,8 @@ services:
       - '3000:3000'
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql://postgres:123123@localhost:5432/mayak_local?schema=public
-      - DATABASE_DIRECT_URL=postgresql://postgres:123123@localhost:5432/mayak_local?schema=public
+      - DATABASE_URL=postgresql://postgres:123123@postgres:5432/mayak_local?schema=public
+      - DATABASE_DIRECT_URL=postgresql://postgres:123123@postgres:5432/mayak_local?schema=public
       - REVALIDATION_TIME=10
     depends_on:
       - postgres
