@@ -2,18 +2,23 @@
 
 ### How to run migrations
 
-- for `docker` local setup - run `docker compose exec app npm run migrations`
-- for other database locations - run `npm run migrations`
+To apply existing migrations (for example, when setting up the project locally):
+
+- for `docker` local setup — run `docker compose exec app npx prisma migrate deploy`
+- for other setups — run `npx prisma migrate deploy`
 
 ### How to create a migration
 
-Change database schema and run `npm run migrations` - this will create migrations file if needed AND run newly created
-migrations on database.
+After changing the database schema, create and apply a new migration:
 
-Consider following when creating migration:
+- for `docker` local setup — run `docker compose exec app npm run migrations`
+- for other setups — run `npm run migrations`
 
-- using meaningful name
+Consider following when creating a migration:
+
+- use a meaningful name
 - separate dropping/creating tables and columns
+
 
 ### How to seed the database
 
@@ -53,29 +58,29 @@ Linting is enabled on pre-commit hook, and manually you can run it with `npm run
 
 ```
 wrong
-MID-12_add_cool_feature
+TASK-12_add_cool_feature
 
 wrong
-MID-12-add-cool-feature
+TASK-12-add-cool-feature
 
 correct
-MID-12_add-cool-feature
+TASK-12_add-cool-feature
 ```
 
 - commit should include ticket id in square brackets, following by space and meaningful description what was done
 
 ```
 wrong
-MID-12 add new linter rules for react
+TASK-12 add new linter rules for react
 
 wrong
-(MID-12) add new linter rules for react
+(TASK-12) add new linter rules for react
 
 wrong
-MID-12-add-new-linter-rules-for-react
+TASK-12-add-new-linter-rules-for-react
 
 correct
-[MID-12] add linter rules for react hooks
+[TASK-12] add linter rules for react hooks
 ```
 
 ## Deploy
