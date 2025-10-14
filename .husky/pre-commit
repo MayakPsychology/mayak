@@ -1,11 +1,1 @@
-#!/bin/sh
-set -e
-. "$(dirname "$0")/_/husky.sh"
-
-if command -v docker >/dev/null 2>&1 && docker compose ps app >/dev/null 2>&1; then
-  echo "🐳  Running lint-staged inside Docker container 'app'..."
-  docker compose exec -T app npx lint-staged
-else
-  echo "⚠️  Docker or 'app' service not available. Running lint-staged locally..."
-  npx lint-staged
-fi
+npx lint-staged

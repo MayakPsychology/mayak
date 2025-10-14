@@ -6,12 +6,12 @@ Copy `.env.example` to `.env` and populate it with missing/relevant environment 
 
 ### Docker
 
-1. `docker compose up -d`
-2. `docker compose exec app npx prisma migrate deploy`
+1. `docker compose up`
+2. (in separate shell) `docker compose run app npm exec migrations`
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Note: after installing new npm packages, rebuild the image with `docker compose up --build`
+Note: installing new packages require image re-build with `docker compose up --build`
 
 ### Local
 
