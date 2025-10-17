@@ -33,3 +33,11 @@ jobs:
 
       - name: Show Deployment URL
         run: echo "🌍 Deployed to $DEPLOYMENT_URL"
+      - name: Comment Preview URL on Pull Request
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: vercel-preview
+          message: |
+            ✅ **Vercel Preview Deployed!**
+            🔗 [Open Preview](${{ env.DEPLOYMENT_URL }})
