@@ -16,15 +16,28 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.11.0
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
+
       - name: Install dependencies
         run: npm install
+
       - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --prod --token=${{ secrets.DEV_VERCEL_TOKEN }}
-      - name: Get Deployment Logs
-        if: always()
+        id: deploy
         run: |
-          export DEPLOYMENT_URL=$(vercel ls --token=${{ secrets.DEV_VERCEL_TOKEN }} 2>/dev/null | grep -m 1 -o 'https:\/\/mayak-[a-zA-Z0-9-]\+\.vercel\.app')
-          echo "Deployment URL: $DEPLOYMENT_URL"
-          vercel logs $DEPLOYMENT_URL --token=${{ secrets.DEV_VERCEL_TOKEN }}
+          echo "🚀 Starting Vercel deployment..."
+          DEPLOY_URL=$(vercel deploy --prod --yes --token=${{ secrets.DEV_VERCEL_TOKEN }} | grep -o 'https://[^ ]*\.vercel\.app' | head -n 1)
+          echo "✅ Deployment URL: $DEPLOY_URL"
+          echo "DEPLOYMENT_URL=$DEPLOY_URL" >> $GITHUB_ENV
+
+      - name: Show Deployment URL
+        run: echo "🌍 Deployed to $DEPLOYMENT_URL"
+      - name: Comment Preview URL on Pull Request
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: vercel-preview
+          message: |
+            ✅ **Vercel Preview Deployed!**
+            🔗 [Open Preview](${{ env.DEPLOYMENT_URL }})

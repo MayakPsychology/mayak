@@ -14,7 +14,7 @@ import { DetailsEditSpec } from './DetailsEditSpec';
 
 export function SpecialistEdit() {
   const { data: specializationsData } = useGetList(RESOURCES.specialization);
-  const handleTransform = ({ specializationsIds, specializationMethodsIds, ...rest }) => {
+  const handleTransform = ({ specializationsIds, specializationMethodsIds, socialLink, ...rest }) => {
     const selectedSpecializationNamesList = specializationsIds.map(id => {
       const specializationData = specializationsData.find(s => s.id === id);
       return specializationData.name.toLowerCase();
@@ -25,10 +25,12 @@ export function SpecialistEdit() {
     const psychotherapistMethodsList = selectedSpecializationNamesList.includes(PSYCHOTHERAPIST.toLowerCase())
       ? specializationMethodsIds.psychotherapist
       : [];
+    
+    const flattenedSocialLinks = socialLink ? { ...socialLink } : {};
 
     return transformSpecialistEditData({
-      rest,
       ...rest,
+      ...flattenedSocialLinks,
       specializationsIds,
       specializationMethodsIds: {
         psychologist: psychologistMethodsList,

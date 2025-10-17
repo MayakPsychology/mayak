@@ -3,15 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "preinstall": "npx typesync",
+    "preinstall": "if [ \"$VERCEL\" != \"1\" ]; then npx typesync; fi",
     "postinstall": "prisma generate",
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
     "migrations": "prisma migrate dev",
     "migrations:reset": "prisma migrate reset",
-    "seed": "node prisma/seedProd.mjs && node prisma/seedDev.mjs",
     "seed:prod": "node prisma/seedProd.mjs",
+    "seed:dev": "node prisma/seedDev.mjs",
+    "seed": "if [ \"$VERCEL_ENV\" = \"production\" ]; then npm run seed:prod; else npm run seed:dev; fi",
     "lint": "eslint --ext .js,.mjs .",
     "lint:fix": "prettier --write . && eslint --ext .js,.mjs --fix .",
     "prepare": "husky"
