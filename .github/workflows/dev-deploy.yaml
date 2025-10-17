@@ -20,11 +20,21 @@ jobs:
         run: npm install --global vercel@latest
       - name: Install dependencies
         run: npm install
+      - name: Install jq (JSON parser)
+        run: sudo apt-get install -y jq
       - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --prod --token=${{ secrets.DEV_VERCEL_TOKEN }}
-      - name: Get Deployment Logs
-        if: always()
+        id: deploy
         run: |
-          export DEPLOYMENT_URL=$(vercel ls --token=${{ secrets.DEV_VERCEL_TOKEN }} 2>/dev/null | grep -m 1 -o 'https:\/\/mayak-[a-zA-Z0-9-]\+\.vercel\.app')
-          echo "Deployment URL: $DEPLOYMENT_URL"
-          vercel logs $DEPLOYMENT_URL --token=${{ secrets.DEV_VERCEL_TOKEN }}
+          echo "🚀 Starting Vercel deployment..."
+          DEPLOY_OUTPUT=$(vercel deploy --prod --yes --token=${{ secrets.DEV_VERCEL_TOKEN }} --json)
+          echo "$DEPLOY_OUTPUT"
+
+          # Витягуємо URL з JSON-відповіді
+          DEPLOYMENT_URL=$(echo "$DEPLOY_OUTPUT" | jq -r '.url')
+          echo "✅ Deployment URL: https://$DEPLOYMENT_URL"
+
+          # Зберігаємо у змінні середовища для наступних кроків
+          echo "DEPLOYMENT_URL=https://$DEPLOYMENT_URL" >> $GITHUB_ENV
+
+      - name: Show Deployment URL
+        run: echo "🌍 Deployed to $DEPLOYMENT_URL"
