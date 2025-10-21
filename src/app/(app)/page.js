@@ -15,7 +15,7 @@ export const metadata = {
   description: 'Пошук психологічної допомоги у м. Львів',
 };
 
-export const revalidate = 60 * 60 * 2 // 2 hours
+export const revalidate = Number(process.env.REVALIDATION_TIME ?? 7200) // 2 hours
 
 export default async function Page() {
   const activeTherapies = await prisma.therapy.findMany({

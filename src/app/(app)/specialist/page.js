@@ -7,7 +7,7 @@ export const metadata = {
   description: 'Список доступних спеціалістів',
 };
 
-export const revalidate = 60 * 60 * 2;
+export const revalidate = Number(process.env.REVALIDATION_TIME ?? 7200);
 
 // eslint-disable-next-line react/prop-types
 export default async function Page({ searchParams }) {
