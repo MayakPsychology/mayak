@@ -1,5 +1,6 @@
+✅ Оновлений .husky/pre-push
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+set -e
 
 branch=$(git symbolic-ref --short HEAD)
 
