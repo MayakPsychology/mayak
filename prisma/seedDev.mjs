@@ -128,7 +128,7 @@ function randomSpecialist({ districts, specializations, therapies, clientCategor
     };
   }
 
-  const phoneRegexp = '^\+?\d{6,15}$';
+  const phoneRegexp = '^\\+?\\d{6,15}$';
 
   const socialMediaLinks = generateSocialMediaLinks();
 
@@ -186,7 +186,7 @@ function randomOrganization({ therapies, districts, organizationTypes, expertSpe
         .map((_, i) => randomAddress(districts, i === 0)),
     };
   }
-  const phoneRegexp = '^\+?\d{6,15}$';
+  const phoneRegexp = '^\\+?\\d{6,15}$';
   const socialMediaLinks = generateSocialMediaLinks();
 
   const { clientsWorkingWith, clientsNotWorkingWith } = setClientCategories(clientCategories);
