@@ -14,6 +14,7 @@ export function useSearchSync(query, searchType, minQueryLength = 1) {
     enabled: query.length >= minQueryLength,
   });
   return {
+    // eslint-disable-next-line @tanstack/query/no-rest-destructuring 
     ...hookProps,
     data: hookProps.data?.data,
   };
