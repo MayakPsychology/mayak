@@ -83,7 +83,6 @@ export const serviceProviderCore = z.object({
     .optional()
     .or(z.literal('').transform(() => undefined))
     .nullish(),
-  
 
   email: zString.email().nullish(),
   addressesIds: zString.array().nullish(),
@@ -99,6 +98,7 @@ export const serviceProviderCore = z.object({
       viber: zUrl.nullish(),
       telegram: zUrl.nullish(),
     })
+    .default({})
     .refine(
       links => {
         const numLinks = Object.values(links).filter(link => link)?.length;
