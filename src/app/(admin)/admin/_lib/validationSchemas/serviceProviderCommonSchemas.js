@@ -114,6 +114,7 @@ export const serviceProviderCore = z.object({
       workingWith: z.string().array().default([]),
       notWorkingWith: z.string().array().default([]),
     })
+    .default({})
     .refine(
       clients => {
         const hasDuplicates = clients.workingWith.some(item => clients.notWorkingWith.includes(item));
