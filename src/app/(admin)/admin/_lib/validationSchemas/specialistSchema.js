@@ -16,7 +16,7 @@ import { MESSAGES, zString } from './common';
 // ------------------ COMMON SECTION ---------------------
 
 const zSpecialistSchema = serviceProviderCore.extend({
-  surname: zStringWithMax.optional(),
+  surname: zStringWithMax.nullish(),
   gender: zString.refine(val => Object.values(Gender).includes(val), {
     message: MESSAGES.unacceptableValue,
     invalid_type_error: 'Неприпустиме значення',
