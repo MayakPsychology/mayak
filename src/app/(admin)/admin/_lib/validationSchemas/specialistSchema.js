@@ -7,9 +7,9 @@ import {
   zCreateAddressSchema,
   zEditAddressSchema,
   zSupportFocusSchema,
-  zInteger,
   zStringArray,
   zStringWithMax,
+  zYearsNumber,
 } from './serviceProviderCommonSchemas';
 import { MESSAGES, zString } from './common';
 
@@ -21,7 +21,7 @@ const zSpecialistSchema = serviceProviderCore.extend({
     message: MESSAGES.unacceptableValue,
     invalid_type_error: 'Неприпустиме значення',
   }),
-  yearsOfExperience: zInteger,
+  yearsOfExperience: zYearsNumber,
   description: zString,
 });
 

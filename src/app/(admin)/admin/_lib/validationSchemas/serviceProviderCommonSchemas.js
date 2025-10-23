@@ -31,6 +31,17 @@ export const zInteger = z.preprocess(
     }),
 );
 
+export const zYearsNumber = z.preprocess(
+  val => (val == null ? undefined : val),
+  z
+    .number({
+      required_error: MESSAGES.requiredField,
+      invalid_type_error: MESSAGES.unacceptableValue,
+    })
+    .refine(val => Number.isFinite(val) && val >= 0.5, { message: 'Число має бути не менше 0.5' })
+    .refine(val => Number.isInteger(val * 2)),
+);
+
 export const zWorkTimeSchema = z
   .array(
     z

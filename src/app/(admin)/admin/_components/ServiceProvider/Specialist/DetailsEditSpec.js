@@ -14,7 +14,15 @@ export function DetailsEditSpec({ className }) {
     <FormFieldWrapper title="Деталі" className={className}>
       <div className="flex w-full flex-col md:flex-row md:gap-6 [&>*]:flex-grow">
         <GenderSelect label="Стать" validate={unnecessaryForDraft} />
-        <NumberInput name="yearsOfExperience" source="yearsOfExperience" label="Роки стажу" min="0" />
+        <NumberInput
+          name="yearsOfExperience"
+          source="yearsOfExperience"
+          label="Роки стажу"
+          type="number"
+          validate={unnecessaryForDraft}
+          min="0.5"
+          step={0.5}
+        />
         <FormatOfWorkSelect label="Формат роботи" validate={unnecessaryForDraft} className="flex-1" />
       </div>
     </FormFieldWrapper>
