@@ -15,15 +15,21 @@ export const zStringArray = zString.array().min(1, {
   message: MESSAGES.requiredField,
 });
 
-export const zInteger = z
-  .number({
-    required_error: MESSAGES.requiredField,
-    invalid_type_error: MESSAGES.unacceptableValue,
-  })
-  .nonnegative({
-    message: 'Число має бути не менше 0',
-  })
-  .nullish();
+export const zInteger = z.preprocess(
+  val => (val == null ? undefined : val),
+  z
+    .number({
+      required_error: MESSAGES.requiredField,
+      invalid_type_error: MESSAGES.unacceptableValue,
+    })
+    .int({
+      message: 'Значення має бути цілим числом',
+    })
+    .finite({ message: MESSAGES.unacceptableValue })
+    .nonnegative({
+      message: 'Число має бути не менше 0',
+    }),
+);
 
 export const zWorkTimeSchema = z
   .array(

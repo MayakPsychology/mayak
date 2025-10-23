@@ -22,7 +22,7 @@ const zSpecialistSchema = serviceProviderCore.extend({
     invalid_type_error: 'Неприпустиме значення',
   }),
   yearsOfExperience: zInteger,
-  description: zString.nullish(),
+  description: zString,
 });
 
 // ------------------ CREATE SECTION ---------------------
