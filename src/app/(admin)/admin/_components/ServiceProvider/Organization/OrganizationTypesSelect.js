@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { AutocompleteArrayInput, ReferenceArrayInput, SelectArrayInput, useGetList } from 'react-admin';
+import { AutocompleteArrayInput, ReferenceArrayInput, required, SelectArrayInput, useGetList } from 'react-admin';
 import { FORM_TYPES, RESOURCES } from '@admin/_lib/consts';
 
 export function OrganizationTypesSelect({ label, type = FORM_TYPES.create, ...props }) {
@@ -15,11 +15,19 @@ export function OrganizationTypesSelect({ label, type = FORM_TYPES.create, ...pr
           isLoading={typesLoading}
           choices={typesList}
           fullWidth
+          validate={required()}
           {...props}
         />
       ) : (
         <ReferenceArrayInput source="organizationTypesIds" reference="OrganizationType">
-          <AutocompleteArrayInput fullWidth label={label} optionValue="id" optionText="name" {...props} />
+          <AutocompleteArrayInput
+            fullWidth
+            label={label}
+            optionValue="id"
+            optionText="name"
+            validate={required()}
+            {...props}
+          />
         </ReferenceArrayInput>
       )}
     </>

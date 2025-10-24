@@ -32,9 +32,14 @@ const createDefaultProps = z.object({
 });
 
 const activeOrganizationSchema = restCreateProps.extend({
-  ownershipType: z.enum(['PRIVATE', 'GOVERNMENT']),
+  addresses: zCreateAddressSchema.array().nullish(),
+  ownershipType: z
+    .enum(['PRIVATE', 'GOVERNMENT'])
+    .or(z.literal(''))
+    .refine(val => val !== '', { message: MESSAGES.requiredField })
+    .default(''),
   isInclusiveSpace: z.boolean(),
-  expertSpecializations: zStringArray,
+  expertSpecializations: zStringArray.default([]),
   supportFocuses: zSupportFocusSchema.array().min(1, {
     message: 'Необхідно обрати хоча б один тип терапії',
   }),
@@ -47,9 +52,14 @@ const draftOrganizationSchema = restCreateProps.partial().extend({
   supportFocuses: zSupportFocusSchema.array().nullish(),
   type: zStringArray.nullish().default([]),
   addresses: zCreateAddressSchema.array().nullish(),
-  ownershipType: z.enum(['PRIVATE', 'GOVERNMENT']).nullish(),
+  ownershipType: z
+    .enum(['PRIVATE', 'GOVERNMENT'])
+    .or(z.literal(''))
+    .refine(val => val !== '', { message: MESSAGES.requiredField })
+    .nullish()
+    .default(''),
   isInclusiveSpace: z.boolean(),
-  expertSpecializations: zStringArray.nullish(),
+  expertSpecializations: zStringArray.nullish().default([]),
   isActive: z.literal(false),
 });
 
@@ -79,7 +89,11 @@ const activeOrganizationEditSchema = restEditProps.extend({
   }),
   organizationTypesIds: zStringArray.default([]),
   expertSpecializationIds: zStringArray.default([]),
-  ownershipType: z.enum(['PRIVATE', 'GOVERNMENT']),
+  ownershipType: z
+    .enum(['PRIVATE', 'GOVERNMENT'])
+    .or(z.literal(''))
+    .refine(val => val !== '', { message: MESSAGES.requiredField })
+    .default(''),
   isInclusiveSpace: z.boolean(),
   description: zString,
   isActive: z.literal(true),
@@ -93,7 +107,12 @@ const draftOrganizationEditSchema = restEditProps.partial().extend({
   formatOfWork: zString.nullish(),
   isActive: z.literal(false),
   expertSpecializationIds: zStringArray.nullish(),
-  ownershipType: z.enum(['PRIVATE', 'GOVERNMENT']).nullish(),
+  ownershipType: z
+    .enum(['PRIVATE', 'GOVERNMENT'])
+    .or(z.literal(''))
+    .refine(val => val !== '', { message: MESSAGES.requiredField })
+    .nullish()
+    .default(''),
   isInclusiveSpace: z.boolean(),
 });
 

@@ -60,7 +60,7 @@ model Specialist {
   specializations       Specialization[]
   specializationMethods Method[]
   gender                Gender?
-  yearsOfExperience     Int?             @db.SmallInt
+  yearsOfExperience     Float?           @db.Real
   formatOfWork          FormatOfWork?
   addresses             Address[]
   workTime              WorkTime[]

@@ -27,6 +27,7 @@ export function GeneralInfoEditOrg({ type = FORM_TYPES.create }) {
         type={type}
         label="Спеціалізації працівників"
         fullWidth
+        validate={unnecessaryForDraft}
       />
     </FormFieldWrapper>
   );
