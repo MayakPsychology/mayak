@@ -5,14 +5,22 @@ function createSearchEntryExtension(prisma, type) {
   return async ({ args }) => {
     const isOrganization = type === RESOURCES.organization;
     const sortString = isOrganization ? args.data.name : getSpecialistFullName(args.data);
-    const searchEntry = await prisma.searchEntry.create({
+
+    const entity = await prisma[isOrganization ? 'organization' : 'specialist'].create({
+      data: args.data,
+      select: args.select || {},
+    });
+
+    await prisma.searchEntry.create({
       data: {
         sortString,
-        ...(isOrganization ? { organization: { create: args.data } } : { specialist: { create: args.data } }),
+        ...(isOrganization
+          ? { organization: { connect: { id: entity.id } } }
+          : { specialist: { connect: { id: entity.id } } }),
       },
-      select: isOrganization ? { organization: args.select || {} } : { specialist: args.select || {} },
     });
-    return isOrganization ? searchEntry.organization : searchEntry.specialist;
+
+    return entity;
   };
 }
 
