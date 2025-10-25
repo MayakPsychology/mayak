@@ -6,9 +6,11 @@ function createSearchEntryExtension(prisma, type) {
     const isOrganization = type === RESOURCES.organization;
     const sortString = isOrganization ? args.data.name : getSpecialistFullName(args.data);
 
+    const hasSelect = args.select && Object.keys(args.select).length > 0;
+
     const entity = await prisma[isOrganization ? 'organization' : 'specialist'].create({
       data: args.data,
-      select: args.select || {},
+      ...(hasSelect ? { select: args.select } : {}),
     });
 
     await prisma.searchEntry.create({
