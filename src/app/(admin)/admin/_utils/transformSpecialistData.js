@@ -1,17 +1,23 @@
-import { toConnectList, transformCreateData } from '@admin/_utils/common';
+import { toConnectList, transformCreateData, transformEditData } from '@admin/_utils/common';
 
 const mapIdArrayToIdObjects = idList => idList.map(id => ({ id }));
 
-export const transformSpecialistData = ({ specializations, specializationMethods, ...rest }) => {
-  const base = transformCreateData(rest);
+export const transformSpecialistData = (input, { isEdit = false } = {}) => {
+  const { specializations, specializationsIds, specializationMethods, specializationMethodsIds, ...rest } = input;
+
+  // get method and spec Ids
+  const specIds = specializations || specializationsIds || [];
+  const methodIds = specializationMethods || [].concat(...Object.values(specializationMethodsIds || {}));
+
+  // call edit or create function
+  const base = isEdit ? transformEditData(rest) : transformCreateData(rest);
 
   return {
     ...base,
-    specializations: {
-      connect: specializations?.length ? toConnectList(specializations) : undefined,
-    },
-    specializationMethods: {
-      connect: specializationMethods?.length ? mapIdArrayToIdObjects(specializationMethods) : undefined,
-    },
+    specializations: isEdit ? { set: [], connect: toConnectList(specIds) } : { connect: toConnectList(specIds) },
+
+    specializationMethods: isEdit
+      ? { set: [], connect: mapIdArrayToIdObjects(methodIds) }
+      : { connect: mapIdArrayToIdObjects(methodIds) },
   };
 };
