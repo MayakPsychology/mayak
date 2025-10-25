@@ -8,8 +8,18 @@ function createSearchEntryExtension(prisma, type) {
 
     const hasSelect = args.select && Object.keys(args.select).length > 0;
 
+    const cleanData = Object.fromEntries(
+      // eslint-disable-next-line no-unused-vars
+      Object.entries(args.data).filter(([_, value]) => {
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+          return Object.keys(value).length > 0;
+        }
+        return value !== undefined && value !== null;
+      }),
+    );
+
     const entity = await prisma[isOrganization ? 'organization' : 'specialist'].create({
-      data: args.data,
+      data: cleanData,
       ...(hasSelect ? { select: args.select } : {}),
     });
 
@@ -22,6 +32,7 @@ function createSearchEntryExtension(prisma, type) {
       },
     });
 
+    // 5️⃣ Повертаємо створену сутність
     return entity;
   };
 }
