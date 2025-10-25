@@ -4,12 +4,15 @@ import { getSpecialistFullName } from '@/utils/getSpecialistFullName.mjs';
 function createSearchEntryExtension(prisma, type) {
   return async ({ args }) => {
     const isOrganization = type === RESOURCES.organization;
-    const { data, select = {} } = args;
+    const { data, select } = args;
+
+    const hasValidSelect = select && typeof select === 'object' && Object.keys(select).length > 0;
+    const selectPayload = hasValidSelect ? { select } : {};
 
     return await prisma.$transaction(async tx => {
       const createdEntity = isOrganization
-        ? await tx.organization.create({ data, select })
-        : await tx.specialist.create({ data, select });
+        ? await tx.organization.create({ data, ...selectPayload })
+        : await tx.specialist.create({ data, ...selectPayload });
 
       const sortString = isOrganization ? createdEntity.name : getSpecialistFullName(createdEntity);
 
