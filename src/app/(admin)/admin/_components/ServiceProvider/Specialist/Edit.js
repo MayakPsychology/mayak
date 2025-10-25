@@ -1,46 +1,47 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Edit, SimpleForm, TextInput, useGetList } from 'react-admin';
 import { specialistEditValidationSchema } from '@admin/_lib/validationSchemas/specialistSchema';
-import { transformSpecialistEditData } from '@admin/_utils/transformSpecialistEditData';
 import { ActivationForm } from '@admin/components/ServiceProvider/ActivationForm';
 import { ServicesForm } from '@admin/components/ServiceProvider/ServicesForm';
 import { AddressesForm } from '@admin/components/ServiceProvider/AddressesForm';
+import { useRedirectToList } from '@admin/components/ServiceProvider/hooks';
 import { ContactsList } from '@admin/components/ContactsList';
 import { SocialLinks } from '@admin/components/ServiceProvider/SocialLinks';
-import { PSYCHOLOGIST, PSYCHOTHERAPIST, RESOURCES } from '@admin/_lib/consts';
+import { RESOURCES, SUCCESS_NOTIFICATIONS } from '@admin/_lib/consts';
 import { WorkTimeForm } from '@admin/components/ServiceProvider/WorkTimeForm';
+import { filterMethodsBySpecializations } from '@admin/_utils/filterMethodsBySpecializations';
+import { transformSpecialistData } from '@admin/_utils/transformSpecialistData';
 import { GeneralInfoEditSpec } from './GeneralInfoEditSpec';
 import { DetailsEditSpec } from './DetailsEditSpec';
 
 export function SpecialistEdit() {
   const { data: specializationsData } = useGetList(RESOURCES.specialization);
-  const handleTransform = ({ specializationsIds, specializationMethodsIds, socialLink, ...rest }) => {
-    const selectedSpecializationNamesList = specializationsIds.map(id => {
-      const specializationData = specializationsData.find(s => s.id === id);
-      return specializationData.name.toLowerCase();
-    });
-    const psychologistMethodsList = selectedSpecializationNamesList.includes(PSYCHOLOGIST.toLowerCase())
-      ? specializationMethodsIds.psychologist
-      : [];
-    const psychotherapistMethodsList = selectedSpecializationNamesList.includes(PSYCHOTHERAPIST.toLowerCase())
-      ? specializationMethodsIds.psychotherapist
-      : [];
-    
-    const flattenedSocialLinks = socialLink ? { ...socialLink } : {};
 
-    return transformSpecialistEditData({
-      ...rest,
-      ...flattenedSocialLinks,
-      specializationsIds,
-      specializationMethodsIds: {
-        psychologist: psychologistMethodsList,
-        psychotherapist: psychotherapistMethodsList,
+  const { handleError, handleSuccess } = useRedirectToList({
+    successMessage: SUCCESS_NOTIFICATIONS.updated,
+    redirectPath: `/${RESOURCES.specialist}`,
+  });
+
+  const handleTransform = data =>
+    transformSpecialistData(
+      {
+        ...data,
+        specializationMethods: filterMethodsBySpecializations(
+          data.specializationsIds,
+          data.specializationMethodsIds,
+          specializationsData,
+        ),
       },
-    });
-  };
+      { isEdit: true },
+    );
 
   return (
-    <Edit title="Редагувати дані спеціаліста" transform={handleTransform} mutationMode="pessimistic">
+    <Edit
+      title="Редагувати дані спеціаліста"
+      transform={handleTransform}
+      mutationMode="pessimistic"
+      mutationOptions={{ onSuccess: handleSuccess, onError: handleError }}
+    >
       <SimpleForm mode="all" reValidateMode="onChange" resolver={zodResolver(specialistEditValidationSchema)}>
         <GeneralInfoEditSpec type="edit" />
         <DetailsEditSpec />
