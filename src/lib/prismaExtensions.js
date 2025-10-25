@@ -4,36 +4,25 @@ import { getSpecialistFullName } from '@/utils/getSpecialistFullName.mjs';
 function createSearchEntryExtension(prisma, type) {
   return async ({ args }) => {
     const isOrganization = type === RESOURCES.organization;
-    const sortString = isOrganization ? args.data.name : getSpecialistFullName(args.data);
+    const { data, select = {} } = args;
 
-    const hasSelect = args.select && Object.keys(args.select).length > 0;
+    return await prisma.$transaction(async tx => {
+      const createdEntity = isOrganization
+        ? await tx.organization.create({ data, select })
+        : await tx.specialist.create({ data, select });
 
-    const cleanData = Object.fromEntries(
-      // eslint-disable-next-line no-unused-vars
-      Object.entries(args.data).filter(([_, value]) => {
-        if (value && typeof value === 'object' && !Array.isArray(value)) {
-          return Object.keys(value).length > 0;
-        }
-        return value !== undefined && value !== null;
-      }),
-    );
+      const sortString = isOrganization ? createdEntity.name : getSpecialistFullName(createdEntity);
 
-    const entity = await prisma[isOrganization ? 'organization' : 'specialist'].create({
-      data: cleanData,
-      ...(hasSelect ? { select: args.select } : {}),
+      await tx.searchEntry.create({
+        data: {
+          sortString,
+          organizationId: isOrganization ? createdEntity.id : undefined,
+          specialistId: !isOrganization ? createdEntity.id : undefined,
+        },
+      });
+
+      return createdEntity;
     });
-
-    await prisma.searchEntry.create({
-      data: {
-        sortString,
-        ...(isOrganization
-          ? { organization: { connect: { id: entity.id } } }
-          : { specialist: { connect: { id: entity.id } } }),
-      },
-    });
-
-    // 5️⃣ Повертаємо створену сутність
-    return entity;
   };
 }
 
