@@ -49,29 +49,39 @@ function getFocusesToDelete(focuses, focusesIds = []) {
   return toConnectList(focusesIds.filter(cutId => !focuses?.some(focus => focus.id === cutId) ?? true));
 }
 
-function buildFocusUpdate(focus) {
-  const requestsConnect = toConnectList(focus.requestsIds);
-  const hasRequests = Array.isArray(requestsConnect) && requestsConnect.length > 0;
-
-  return {
-    where: { id: focus.id },
-    data: {
-      price: focus.price,
-      therapy: { connect: { id: focus.therapy.id } },
-      ...(hasRequests && { requests: { set: [], connect: requestsConnect } }),
-    },
-  };
-}
-
 function buildFocusCreate(focus) {
   const requestsConnect = toConnectList(focus.requestsIds);
   const hasRequests = Array.isArray(requestsConnect) && requestsConnect.length > 0;
 
-  return {
+  const result = {
     price: focus.price,
     therapy: { connect: { id: focus.therapy.id } },
-    ...(hasRequests && { requests: { connect: requestsConnect } }),
   };
+
+  if (hasRequests) {
+    result.requests = { connect: requestsConnect };
+  }
+
+  return result;
+}
+
+function buildFocusUpdate(focus) {
+  const requestsConnect = toConnectList(focus.requestsIds);
+  const hasRequests = Array.isArray(requestsConnect) && requestsConnect.length > 0;
+
+  const result = {
+    where: { id: focus.id },
+    data: {
+      price: focus.price,
+      therapy: { connect: { id: focus.therapy.id } },
+    },
+  };
+
+  if (hasRequests) {
+    result.data.requests = { set: [], connect: requestsConnect };
+  }
+
+  return result;
 }
 
 export const transformSupportFocuses = ({ focuses, focusesIds }) => {
