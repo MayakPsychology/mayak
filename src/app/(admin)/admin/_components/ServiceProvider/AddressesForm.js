@@ -11,10 +11,10 @@ import {
   TextInput,
   useGetList,
 } from 'react-admin';
+import PropTypes from 'prop-types';
 import { Stack } from '@mui/material';
 import { FormatOfWork } from '@prisma/client';
 import { FORM_TYPES, RESOURCES } from '@admin/_lib/consts';
-import PropTypes from 'prop-types';
 import { FormFieldWrapper } from '@admin/components/FormFieldWrapper';
 import { districtPropType } from '@/app/(admin)/admin/_lib/specialistPropTypes';
 import Loading from '@/app/loading';
@@ -76,8 +76,18 @@ function AddressForm({ getSource, districts, type, readOnly = false }) {
         </ReferenceInput>
       )}
       <Stack direction="row" gap="10px">
-        <CoordinateInput label="Широта точки" source={getSource('latitude')} readOnly={readOnly} />
-        <CoordinateInput label="Довгота точки" source={getSource('longitude')} readOnly={readOnly} />
+        <CoordinateInput
+          label="Широта точки"
+          source={getSource('latitude')}
+          readOnly={readOnly}
+          validate={required()}
+        />
+        <CoordinateInput
+          label="Довгота точки"
+          source={getSource('longitude')}
+          readOnly={readOnly}
+          validate={required()}
+        />
       </Stack>
     </>
   );
@@ -114,8 +124,8 @@ export function AddressesForm({ type = FORM_TYPES.create, label, className }) {
             <>
               {!formatOfWork && <HelperText>Оберіть формат роботи</HelperText>}
               {onlineOnly && <HelperText>Спеціаліст працює тільки онлайн</HelperText>}
-              {!onlineOnly && (
-                <ArrayInput source="addresses" label="">
+              {formatOfWork && !onlineOnly && (
+                <ArrayInput source="addresses" label="Адреси" validate={required()}>
                   <SimpleFormIterator inline disableReordering fullWidth disableAdd={disabled}>
                     <FormDataConsumer>
                       {({ scopedFormData, getSource }) => {

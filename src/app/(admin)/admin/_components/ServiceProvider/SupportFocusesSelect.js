@@ -96,9 +96,8 @@ export function SupportFocusesSelect() {
 
   const safeSupportFocuses = Array.isArray(supportFocuses) ? supportFocuses : [];
 
-  const selectedTherapiesIds = safeSupportFocuses
-    .map(focus => focus?.therapy && focus.therapy.id)
-    .filter(Boolean) ?? [];
+  const selectedTherapiesIds =
+    safeSupportFocuses.map(focus => focus?.therapy && focus.therapy.id).filter(Boolean) ?? [];
 
   const therapyRequestsIds = useCallback(
     therapyId => therapiesList?.find(therapy => therapy.id === therapyId)?.requests?.map(request => request.id) || [],
@@ -106,13 +105,14 @@ export function SupportFocusesSelect() {
   );
 
   const selectedAllTerapies = safeSupportFocuses.length === therapiesList?.length;
-  
+
   return (
-    <ArrayInput 
-      source="supportFocuses" 
-      isLoading={therapiesLoading} 
+    <ArrayInput
+      source="supportFocuses"
+      isLoading={therapiesLoading}
       label="Типи терапій"
       defaultValue={[]}
+      validate={required()}
     >
       <SimpleFormIterator fullWidth disableReordering={true} disableAdd={selectedAllTerapies}>
         <FormDataConsumer>
