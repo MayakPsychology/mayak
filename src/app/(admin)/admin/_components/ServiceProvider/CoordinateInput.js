@@ -6,7 +6,7 @@ function parseCoordinate(value) {
   return number || value;
 }
 
-export function CoordinateInput({ label, source, readOnly = false }) {
+export function CoordinateInput({ label, source, validate, readOnly = false }) {
   return (
     <TextInput
       InputProps={{
@@ -15,6 +15,7 @@ export function CoordinateInput({ label, source, readOnly = false }) {
       parse={parseCoordinate}
       label={label}
       source={source}
+      validate={validate}
     />
   );
 }
@@ -23,4 +24,5 @@ CoordinateInput.propTypes = {
   label: PropTypes.string,
   source: PropTypes.string,
   readOnly: PropTypes.bool,
+  validate: PropTypes.oneOfType([PropTypes.func, PropTypes.array]),
 };
