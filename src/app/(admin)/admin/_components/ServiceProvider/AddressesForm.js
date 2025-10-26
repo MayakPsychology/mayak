@@ -124,8 +124,8 @@ export function AddressesForm({ type = FORM_TYPES.create, label, className }) {
             <>
               {!formatOfWork && <HelperText>Оберіть формат роботи</HelperText>}
               {onlineOnly && <HelperText>Спеціаліст працює тільки онлайн</HelperText>}
-              {!onlineOnly && (
-                <ArrayInput source="addresses" label="">
+              {formatOfWork && !onlineOnly && (
+                <ArrayInput source="addresses" label="Адреси" validate={required()}>
                   <SimpleFormIterator inline disableReordering fullWidth disableAdd={disabled}>
                     <FormDataConsumer>
                       {({ scopedFormData, getSource }) => {
