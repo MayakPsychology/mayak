@@ -1,12 +1,11 @@
-import { useWatch } from 'react-hook-form';
 import PropTypes from 'prop-types';
-import { BooleanInput, required } from 'react-admin';
+import { BooleanInput } from 'react-admin';
 import { FormFieldWrapper } from '@admin/components/FormFieldWrapper';
 import { SupportFocusesSelect } from './SupportFocusesSelect';
+import { useActiveRequired } from './hooks/useActiveRequired';
 
-export function ServicesForm({ label }) {
-  const isActive = useWatch({ name: 'isActive' });
-  const unnecessaryForDraft = isActive && required();
+export function ServicesForm({ validate, label }) {
+  const { requiredIfActive } = useActiveRequired();
 
   return (
     <FormFieldWrapper title={label}>
@@ -16,7 +15,7 @@ export function ServicesForm({ label }) {
         source="isFreeReception"
         label="Безкоштовний прийом"
         className="mt-8 w-full"
-        validate={unnecessaryForDraft}
+        validate={validate || requiredIfActive}
       />
     </FormFieldWrapper>
   );

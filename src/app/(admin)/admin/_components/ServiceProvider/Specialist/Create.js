@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Create, required, SimpleForm } from 'react-admin';
+import { Create, SimpleForm } from 'react-admin';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RESOURCES, SUCCESS_NOTIFICATIONS } from '@admin/_lib/consts';
 import { specialistCreateValidationSchema } from '@admin/_lib/validationSchemas/specialistSchema';
@@ -35,7 +35,7 @@ export function SpecialistCreate() {
         <AddressesForm label="Адреси надання послуг" />
         <WorkTimeForm />
         <ServicesForm label="Послуги" />
-        <DescriptionEdit validate={required()} />
+        <DescriptionEdit />
         <ContactsList />
         <SocialLinks />
         <ActivationForm label="Активувати/деактивувати спеціаліста" />
