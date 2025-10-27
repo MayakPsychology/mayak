@@ -16,6 +16,7 @@ import { MESSAGES, zString } from './common';
 
 const zOrganizationSchema = serviceProviderCore.extend({
   yearsOnMarket: zInteger,
+  description: zString,
 });
 
 // ------------------ CREATE SECTION ---------------------
@@ -44,7 +45,6 @@ const activeOrganizationSchema = restCreateProps.extend({
     message: 'Необхідно обрати хоча б один тип терапії',
   }),
   type: zStringArray.default([]),
-  description: zString,
   isActive: z.literal(true),
 });
 
@@ -60,6 +60,7 @@ const draftOrganizationSchema = restCreateProps.partial().extend({
     .default(''),
   isInclusiveSpace: z.boolean(),
   expertSpecializations: zStringArray.nullish().default([]),
+  description: zString.nullish(),
   isActive: z.literal(false),
 });
 
@@ -95,7 +96,6 @@ const activeOrganizationEditSchema = restEditProps.extend({
     .refine(val => val !== '', { message: MESSAGES.requiredField })
     .default(''),
   isInclusiveSpace: z.boolean(),
-  description: zString,
   isActive: z.literal(true),
   clientsWorkingWithIds: z.string().array().default([]),
   clientsNotWorkingWithIds: z.string().array().default([]),
@@ -114,6 +114,7 @@ const draftOrganizationEditSchema = restEditProps.partial().extend({
     .nullish()
     .default(''),
   isInclusiveSpace: z.boolean(),
+  description: zString.nullish(),
 });
 
 const organizationSchemaEditUnion = z.discriminatedUnion('isActive', [

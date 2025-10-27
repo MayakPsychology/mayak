@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Edit, required, SimpleForm, useGetList } from 'react-admin';
+import { Edit, SimpleForm, useGetList } from 'react-admin';
 import { specialistEditValidationSchema } from '@admin/_lib/validationSchemas/specialistSchema';
 import { transformSpecialistEditData } from '@admin/_utils/transformSpecialistEditData';
 import { ActivationForm } from '@admin/components/ServiceProvider/ActivationForm';
@@ -48,7 +48,7 @@ export function SpecialistEdit() {
         <AddressesForm type="edit" label="Адреси надання послуг" />
         <WorkTimeForm />
         <ServicesForm type="edit" label="Послуги" />
-        <DescriptionEdit validate={required()} />
+        <DescriptionEdit />
         <ContactsList />
         <SocialLinks />
         <ActivationForm label="Активувати/деактивувати спеціаліста" />
