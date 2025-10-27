@@ -53,6 +53,7 @@ const draftSpecialistSchema = restCreateProps.partial().extend({
   addresses: zCreateAddressSchema.array().nullish(),
   specializations: zStringArray.nullish(),
   specializationMethods: zString.array().default([]).nullish(),
+  description: zString.nullish(),
   isActive: z.literal(false),
 });
 
@@ -98,6 +99,7 @@ const draftSpecialistEditSchema = restEditProps.partial().extend({
       psychotherapist: z.string().array().nullish(),
     })
     .nullish(),
+  description: zString.nullish(),
   isActive: z.literal(false),
 });
 

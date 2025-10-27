@@ -60,6 +60,7 @@ const draftOrganizationSchema = restCreateProps.partial().extend({
     .default(''),
   isInclusiveSpace: z.boolean(),
   expertSpecializations: zStringArray.nullish().default([]),
+  description: zString.nullish(),
   isActive: z.literal(false),
 });
 
@@ -113,6 +114,7 @@ const draftOrganizationEditSchema = restEditProps.partial().extend({
     .nullish()
     .default(''),
   isInclusiveSpace: z.boolean(),
+  description: zString.nullish(),
 });
 
 const organizationSchemaEditUnion = z.discriminatedUnion('isActive', [
