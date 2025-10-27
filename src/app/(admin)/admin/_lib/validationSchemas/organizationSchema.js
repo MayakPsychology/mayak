@@ -16,6 +16,7 @@ import { MESSAGES, zString } from './common';
 
 const zOrganizationSchema = serviceProviderCore.extend({
   yearsOnMarket: zInteger,
+  description: zString,
 });
 
 // ------------------ CREATE SECTION ---------------------
@@ -44,7 +45,6 @@ const activeOrganizationSchema = restCreateProps.extend({
     message: 'Необхідно обрати хоча б один тип терапії',
   }),
   type: zStringArray.default([]),
-  description: zString,
   isActive: z.literal(true),
 });
 
@@ -95,7 +95,6 @@ const activeOrganizationEditSchema = restEditProps.extend({
     .refine(val => val !== '', { message: MESSAGES.requiredField })
     .default(''),
   isInclusiveSpace: z.boolean(),
-  description: zString,
   isActive: z.literal(true),
   clientsWorkingWithIds: z.string().array().default([]),
   clientsNotWorkingWithIds: z.string().array().default([]),
