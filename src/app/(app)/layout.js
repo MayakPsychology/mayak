@@ -46,4 +46,5 @@ export default async function Layout({ children, modal }) {
 
 Layout.propTypes = {
   children: PropTypes.node.isRequired,
+  modal: PropTypes.node,
 };

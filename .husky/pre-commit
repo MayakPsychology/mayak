@@ -1,11 +1,14 @@
 #!/bin/sh
 set -e
-. "$(dirname "$0")/_/husky.sh"
 
+# 🐳 Run lint-staged either in Docker or locally
 if command -v docker >/dev/null 2>&1 && docker compose ps app >/dev/null 2>&1; then
   echo "🐳  Running lint-staged inside Docker container 'app'..."
-  docker compose exec -T app npx lint-staged
+  docker compose exec -T app npx lint-staged || {
+    echo "⚠️  Fallback: running lint-staged locally (no .git inside container)"
+    npx lint-staged
+  }
 else
-  echo "⚠️  Docker or 'app' service not available. Running lint-staged locally..."
+  echo "⚠️  Docker or service 'app' not available, running lint-staged locally..."
   npx lint-staged
 fi

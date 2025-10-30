@@ -1,4 +1,4 @@
-import { Edit, SimpleForm, required } from 'react-admin';
+import { Edit, SimpleForm } from 'react-admin';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { organizationEditValidationSchema } from '@admin/_lib/validationSchemas/organizationSchema';
 import { transformOrganizationEditData } from '@admin/_utils/transformOrganizationEditData';
@@ -21,7 +21,7 @@ export function OrganizationEdit() {
         <AddressesForm label="Адреси надання послуг" type="edit" />
         <WorkTimeForm />
         <ServicesForm label="Послуги" />
-        <DescriptionEdit validate={required()} />
+        <DescriptionEdit />
         <ContactsList />
         <SocialLinks />
         <ActivationForm label="Активувати/деактивувати організацію" />

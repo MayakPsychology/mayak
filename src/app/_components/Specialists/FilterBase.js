@@ -41,6 +41,7 @@ export function FilterBase({ count, children, filterText, originFromRight = fals
     return () => {
       observer.unobserve(node);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterRef.current]);
 
   return (

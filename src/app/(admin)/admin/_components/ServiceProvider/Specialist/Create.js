@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Create, SimpleForm, TextInput } from 'react-admin';
+import { Create, SimpleForm } from 'react-admin';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RESOURCES, SUCCESS_NOTIFICATIONS } from '@admin/_lib/consts';
 import { specialistCreateValidationSchema } from '@admin/_lib/validationSchemas/specialistSchema';
 import { ActivationForm } from '@admin/components/ServiceProvider/ActivationForm';
 import { ServicesForm } from '@admin/components/ServiceProvider/ServicesForm';
 import { AddressesForm } from '@admin/components/ServiceProvider/AddressesForm';
+import { DescriptionEdit } from '@admin/components/ServiceProvider/DescriptionEdit';
 import { useRedirectToList } from '@admin/components/ServiceProvider/hooks';
 import { ContactsList } from '@admin/components/ContactsList';
 import { SocialLinks } from '@admin/components/ServiceProvider/SocialLinks';
@@ -34,7 +35,7 @@ export function SpecialistCreate() {
         <AddressesForm label="Адреси надання послуг" />
         <WorkTimeForm />
         <ServicesForm label="Послуги" />
-        <TextInput name="description" source="description" label="Опис" fullWidth multiline />
+        <DescriptionEdit />
         <ContactsList />
         <SocialLinks />
         <ActivationForm label="Активувати/деактивувати спеціаліста" />

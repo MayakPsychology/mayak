@@ -7,22 +7,22 @@ import {
   zCreateAddressSchema,
   zEditAddressSchema,
   zSupportFocusSchema,
-  zInteger,
   zStringArray,
   zStringWithMax,
+  zYearsNumber,
 } from './serviceProviderCommonSchemas';
 import { MESSAGES, zString } from './common';
 
 // ------------------ COMMON SECTION ---------------------
 
 const zSpecialistSchema = serviceProviderCore.extend({
-  surname: zStringWithMax.optional(),
+  surname: zStringWithMax.nullish(),
   gender: zString.refine(val => Object.values(Gender).includes(val), {
     message: MESSAGES.unacceptableValue,
     invalid_type_error: 'Неприпустиме значення',
   }),
-  yearsOfExperience: zInteger,
-  description: zString.nullish(),
+  yearsOfExperience: zYearsNumber,
+  description: zString,
 });
 
 // ------------------ CREATE SECTION ---------------------
@@ -53,6 +53,7 @@ const draftSpecialistSchema = restCreateProps.partial().extend({
   addresses: zCreateAddressSchema.array().nullish(),
   specializations: zStringArray.nullish(),
   specializationMethods: zString.array().default([]).nullish(),
+  description: zString.nullish(),
   isActive: z.literal(false),
 });
 
@@ -98,6 +99,7 @@ const draftSpecialistEditSchema = restEditProps.partial().extend({
       psychotherapist: z.string().array().nullish(),
     })
     .nullish(),
+  description: zString.nullish(),
   isActive: z.literal(false),
 });
 

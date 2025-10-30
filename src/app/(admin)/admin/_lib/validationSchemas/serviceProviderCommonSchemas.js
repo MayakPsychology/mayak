@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { FormatOfWork } from '@prisma/client';
 import { MAX_NUM_SELECTED_SOCIAL_LINKS, WEEKDAYS_TRANSLATION } from '@admin/_lib/consts';
 import { isSpecifiedWorkTime } from '@admin/_utils/common';
+import { PHONE_REGEX } from '@/lib/consts';
 import { MESSAGES, zString, zUrl } from './common';
 
 // ------------------ COMMON SECTION ---------------------
@@ -14,15 +15,32 @@ export const zStringArray = zString.array().min(1, {
   message: MESSAGES.requiredField,
 });
 
-export const zInteger = z
-  .number({
-    required_error: MESSAGES.requiredField,
-    invalid_type_error: MESSAGES.unacceptableValue,
-  })
-  .nonnegative({
-    message: 'Число має бути не менше 0',
-  })
-  .nullish();
+export const zInteger = z.preprocess(
+  val => (val == null ? undefined : val),
+  z
+    .number({
+      required_error: MESSAGES.requiredField,
+      invalid_type_error: MESSAGES.unacceptableValue,
+    })
+    .int({
+      message: 'Значення має бути цілим числом',
+    })
+    .finite({ message: MESSAGES.unacceptableValue })
+    .nonnegative({
+      message: 'Число має бути не менше 0',
+    }),
+);
+
+export const zYearsNumber = z.preprocess(
+  val => (val == null ? undefined : val),
+  z
+    .number({
+      required_error: MESSAGES.requiredField,
+      invalid_type_error: MESSAGES.unacceptableValue,
+    })
+    .refine(val => Number.isFinite(val) && val >= 0.5, { message: 'Число має бути не менше 0.5' })
+    .refine(val => Number.isInteger(val * 2)),
+);
 
 export const zWorkTimeSchema = z
   .array(
@@ -73,17 +91,15 @@ export const serviceProviderCore = z.object({
   }),
   isFreeReception: z.boolean(),
 
-  phone: zString
-    .refine(val => PHONE_REGEX.test(val), {
-      message: 'Введіть номер телефону у міжнародному форматі',
-    })
-    .nullish(),
-
   phone: z
     .string()
     .max(15, { message: 'Номер не повинен перевищувати 15 символів' })
+    .refine(val => !val || PHONE_REGEX.test(val), {
+      message: 'Введіть номер телефону у міжнародному форматі',
+    })
     .optional()
-    .or(z.literal('').transform(() => undefined)),
+    .or(z.literal('').transform(() => undefined))
+    .nullish(),
 
   email: zString.email().nullish(),
   addressesIds: zString.array().nullish(),
@@ -99,6 +115,7 @@ export const serviceProviderCore = z.object({
       viber: zUrl.nullish(),
       telegram: zUrl.nullish(),
     })
+    .default({})
     .refine(
       links => {
         const numLinks = Object.values(links).filter(link => link)?.length;
@@ -114,6 +131,7 @@ export const serviceProviderCore = z.object({
       workingWith: z.string().array().default([]),
       notWorkingWith: z.string().array().default([]),
     })
+    .default({})
     .refine(
       clients => {
         const hasDuplicates = clients.workingWith.some(item => clients.notWorkingWith.includes(item));

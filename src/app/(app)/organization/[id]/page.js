@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { CardOrganization } from '@/app/_components/CardSpecialist';
 import { getOrganizationById, getOrganizationsIds } from '@/app/(app)/specialist/utils';
 
@@ -26,4 +27,8 @@ export default async function Page({ params }) {
   const cardStyle = 'mx-auto my-6 max-w-[900px] px-4 md:my-10 lg:px-0';
   const organization = await getOrganizationById({ id });
   return <CardOrganization organization={organization} extended className={cardStyle} />;
+}
+
+Page.propTypes = {
+  params: PropTypes.shape({id: PropTypes.string})
 }
