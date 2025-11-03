@@ -4,6 +4,7 @@ import { cn } from '@utils/cn';
 import { PillButton } from '@components/PillButton';
 import PropTypes from 'prop-types';
 import { linkItemPropType, SocialLinksList } from '@components/Links';
+import ROUTES from '../config/routes';
 
 const flexBetweenMd = 'lg:inline-flex lg:flex-row lg:items-center lg:justify-between';
 const flexCenter = 'inline-flex flex-row items-center justify-center';
@@ -14,7 +15,7 @@ const basicLink = 'no-underline list-none cursor-pointer';
 const iconColors = 'text-other-white hover:text-primary-400';
 
 export function Footer({ socialLinks }) {
-  const { applicationLink, socialMediaLinksList } = socialLinks;
+  const { socialMediaLinksList } = socialLinks;
 
   return (
     <footer className="relative flex w-full flex-col overflow-hidden bg-primary-800 p-4 text-white lg:px-20 lg:py-12">
@@ -28,15 +29,13 @@ export function Footer({ socialLinks }) {
           />
         </Link>
         <div className={cn(flexColCenter, flexCenterMd, 'gap-2 py-3 text-other-white lg:gap-6')}>
-          <p className="text-p4 font-bold text-other-white lg:text-p1">Ставай нашим партнером</p>
           <Link
-            href={applicationLink?.href ?? '#'}
-            rel="noopener noreferrer"
-            target="_blank"
+            scroll={false}
+            href={ROUTES.APPLY}
             aria-label="Send your application as a specialist to join the community"
           >
             <PillButton variant="outlined" colorVariant="white" aria-label="Click to fill application form">
-              Залишити заявку
+              Стати партнером
             </PillButton>
           </Link>
         </div>
