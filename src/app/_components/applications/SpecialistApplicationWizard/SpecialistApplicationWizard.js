@@ -2,6 +2,7 @@
 
 import { FormProvider, useForm } from 'react-hook-form';
 import { PillButton } from '../../PillButton';
+import { Step1 } from './Step1';
 
 const specialistDefaultValues = {
   firstName: '',
@@ -30,7 +31,7 @@ export function SpecialistApplicationWizard() {
         <form
         // onSubmit={methods.handleSubmit(onSubmit)}
         >
-          {/* Step1 */}
+          <Step1 />
           {/* Step2 */}
           {/* Step3 */}
           {/* Step4 */}
