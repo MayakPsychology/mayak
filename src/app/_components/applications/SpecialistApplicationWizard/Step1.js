@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { DescriptionField } from '../_shared/fields';
 import { DistrictsGroup, AdressesGroup } from '../_shared/field-groups';
 import { SpecialistGeneralInfo } from './field-groups';
 
@@ -10,6 +11,7 @@ export function Step1() {
       <SpecialistGeneralInfo />
       <DistrictsGroup />
       <AdressesGroup />
+      <DescriptionField />
     </div>
   );
 }
