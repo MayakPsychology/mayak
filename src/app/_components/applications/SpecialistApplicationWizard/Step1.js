@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { DescriptionField } from '../_shared/fields';
-import { DistrictsGroup, AdressesGroup } from '../_shared/field-groups';
+import { DistrictsGroup, AdressesGroup, ContactsGroup, SocialLinksGroup } from '../_shared/field-groups';
 import { SpecialistGeneralInfo } from './field-groups';
 
 export function Step1() {
@@ -11,6 +11,8 @@ export function Step1() {
       <SpecialistGeneralInfo />
       <DistrictsGroup />
       <AdressesGroup />
+      <ContactsGroup />
+      <SocialLinksGroup />
       <DescriptionField />
     </div>
   );
