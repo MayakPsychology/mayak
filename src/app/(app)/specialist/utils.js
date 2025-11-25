@@ -43,9 +43,9 @@ export const getOrganizationsIds = async () => {
       id: true,
     },
   });
-  
+
   return organizations.map(({ id }) => id);
-}
+};
 
 export const getSpecialistsIds = async () => {
   const specialists = await prisma.specialist.findMany({
@@ -56,6 +56,15 @@ export const getSpecialistsIds = async () => {
       id: true,
     },
   });
-  
+
   return specialists.map(({ id }) => id);
-}
+};
+
+export const getSpecDictionaries = async () => {
+  const [clientCategories, specializations, specializationMethods] = await Promise.all([
+    prisma.clientCategory.findMany(),
+    prisma.specialization.findMany(),
+    prisma.method.findMany(),
+  ]);
+  return { clientCategories, specializations, specializationMethods };
+};
