@@ -59,3 +59,12 @@ export const getSpecialistsIds = async () => {
 
   return specialists.map(({ id }) => id);
 };
+
+export const getSpecDictionaries = async () => {
+  const [clientCategories, specializations, specializationMethods] = await Promise.all([
+    prisma.clientCategory.findMany(),
+    prisma.specialization.findMany(),
+    prisma.method.findMany(),
+  ]);
+  return { clientCategories, specializations, specializationMethods };
+};
