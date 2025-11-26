@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import PropTypes from 'prop-types';
 import { PillButton } from '../../PillButton';
 import { Step1 } from './Step1';
 import { Step2 } from './Step2';
@@ -32,9 +33,12 @@ const specialistDefaultValues = {
   clientsWorkingWithAdditional: '',
   clientsNotWorkingWith: [],
   clientsNotWorkingWithAdditional: '',
+  specializations: [],
+  specializationMethods: [],
 };
 
-export function SpecialistApplicationWizard() {
+export function SpecialistApplicationWizard({ dicts }) {
+  const { clientCategories } = dicts;
   const [step, setStep] = useState(1);
   const methods = useForm({
     defaultValues: specialistDefaultValues,
@@ -51,8 +55,8 @@ export function SpecialistApplicationWizard() {
         // onSubmit={methods.handleSubmit(onSubmit)}
         >
           {step === 1 && <Step1 />}
-          {step === 2 && <Step2 />}
-          {/* Step3 */}
+          {step === 2 && <Step2 clientCategories={clientCategories} />}
+
           {/* Step4 */}
           <div className="flex justify-between">
             <PillButton
@@ -83,3 +87,11 @@ export function SpecialistApplicationWizard() {
     </div>
   );
 }
+
+SpecialistApplicationWizard.propTypes = {
+  dicts: PropTypes.shape({
+    clientCategories: PropTypes.array.isRequired,
+    // specializations: PropTypes.array.isRequired,
+    // specializationMethods: PropTypes.array.isRequired,
+  }).isRequired,
+};
