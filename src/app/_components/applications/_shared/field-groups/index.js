@@ -4,3 +4,4 @@ export * from './ContactsGroup';
 export * from './SocialLinksGroup';
 export * from './WorkTimeGroup';
 export * from './ClientCategoriesGroup';
+export * from './ClientsPreferences';
