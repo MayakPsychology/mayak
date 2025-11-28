@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { PillButton } from '../../PillButton';
 import { Step1 } from './Step1';
 import { Step2 } from './Step2';
+import { Step3 } from './Step3';
 
 const specialistDefaultValues = {
   firstName: '',
@@ -38,7 +39,7 @@ const specialistDefaultValues = {
 };
 
 export function SpecialistApplicationWizard({ dicts }) {
-  const { clientCategories } = dicts;
+  const { clientCategories, specializations, specializationMethods } = dicts;
   const [step, setStep] = useState(1);
   const methods = useForm({
     defaultValues: specialistDefaultValues,
@@ -56,6 +57,7 @@ export function SpecialistApplicationWizard({ dicts }) {
         >
           {step === 1 && <Step1 />}
           {step === 2 && <Step2 clientCategories={clientCategories} />}
+          {step === 3 && <Step3 specializations={specializations} specializationMethods={specializationMethods} />}
 
           {/* Step4 */}
           <div className="flex justify-between">
@@ -91,7 +93,7 @@ export function SpecialistApplicationWizard({ dicts }) {
 SpecialistApplicationWizard.propTypes = {
   dicts: PropTypes.shape({
     clientCategories: PropTypes.array.isRequired,
-    // specializations: PropTypes.array.isRequired,
-    // specializationMethods: PropTypes.array.isRequired,
+    specializations: PropTypes.array.isRequired,
+    specializationMethods: PropTypes.array.isRequired,
   }).isRequired,
 };
