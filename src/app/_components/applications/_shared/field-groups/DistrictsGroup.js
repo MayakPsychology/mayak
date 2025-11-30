@@ -33,9 +33,10 @@ export function DistrictsGroup() {
             <div>
               {districtsChoicesList?.map(district => (
                 <CheckBox
-                  ref={field.ref}
                   type="checkbox"
-                  key={district.id}
+                  ref={field.ref}
+                  key={`district-${district.id}`}
+                  name={`district-${district.id}`}
                   value={district.id}
                   text={district.name}
                   checked={selected.includes(district.id) ?? false}
