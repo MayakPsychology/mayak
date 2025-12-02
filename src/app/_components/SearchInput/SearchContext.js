@@ -15,11 +15,16 @@ const SearchContext = createContext({
   query: '',
   debouncedQuery: '',
   searchType: '',
+  selectedTags: [],
   isSelectTypeOpen: false,
   isAutoCompleteOpen: false,
   isInputFocused: false,
   autoCompleteItems: [],
   isAutoCompleteLoading: false,
+  setSelectedTags: () => {},
+  addTags: () => {},
+  removeTags: () => {},
+  clearTags: () => {},
   setQuery: () => {},
   setSearchType: () => {},
   setIsSelectTypeOpen: () => {},
@@ -39,6 +44,43 @@ export function SearchProvider({ children }) {
   const [isSelectTypeOpen, setIsSelectTypeOpen] = useState(false);
   const [isAutoCompleteOpen, setIsAutoCompleteOpen] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  function addTags(item) {
+    setSelectedTags(prev => {
+      const exsist = prev.some(tag => tag.id === item.id);
+      return exsist ? prev : [...prev, { id: item.id, title: item.title }];
+    });
+    setQuery('');
+    setIsAutoCompleteOpen(false);
+  }
+
+  function removeTags(id) {
+    setSelectedTags(prev => {
+      const updated = prev.filter(tag => tag.id !== id);
+
+      const newQuery = updated.map(t => t.title).join(', ');
+
+      const newSearchParams = new URLSearchParams(searchParams);
+
+      if (newQuery.length > 0) {
+        newSearchParams.set('query', newQuery);
+      } else {
+        newSearchParams.delete('query');
+      }
+
+      router.replace(`/specialist?${newSearchParams.toString()}`);
+
+      return updated;
+    });
+  }
+
+  function clearTags() {
+    setSelectedTags([]);
+  }
 
   const currentConfig = useMemo(() => getSearchTypeConfig(searchType), [searchType]);
   const { searchType: currentSearchType } = currentConfig;
@@ -50,21 +92,31 @@ export function SearchProvider({ children }) {
     SEARCH_MIN_QUERY_LENGTH,
   );
 
-  const queryClient = useQueryClient();
-  const router = useRouter();
-
   function submitSearch() {
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
+
     const newSearchParams = new URLSearchParams(searchParams);
+
+    const tagTitles = selectedTags.map(tag => tag.title);
+    const textPart = query.trim();
+
+    const combinedQuery = [...tagTitles, textPart].filter(Boolean).join(', ');
+
+    if (combinedQuery.length > 0) {
+      newSearchParams.set('query', combinedQuery);
+    } else {
+      newSearchParams.delete('query');
+    }
+
     newSearchParams.set(specialistFiltersConfig.specialistType.filterKey, currentSearchType);
-    newSearchParams.set('query', query);
 
     if (mode) {
       newSearchParams.set('mode', 'map');
     } else {
       newSearchParams.delete('mode');
     }
+
     router.push(`/specialist?${newSearchParams.toString()}`);
   }
 
@@ -80,7 +132,7 @@ export function SearchProvider({ children }) {
       currentSearchType === specialistTypeEnum.SPECIALIST ||
       currentSearchType === specialistTypeEnum.ORGANIZATION
     ) {
-      router.replace(getSpecialistURL({type: currentSearchType, id: autoCompleteItem.id}));
+      router.replace(getSpecialistURL({ type: currentSearchType, id: autoCompleteItem.id }));
     }
   }
 
@@ -95,7 +147,20 @@ export function SearchProvider({ children }) {
   }
 
   useEffect(() => {
-    setQuery(queryParam || '');
+    if (!queryParam) {
+      setSelectedTags([]);
+      setQuery('');
+      return;
+    }
+
+    const tagTitles = queryParam
+      .split(',')
+      .map(t => t.trim())
+      .filter(Boolean);
+
+    setSelectedTags(tagTitles.map(title => ({ id: title, title })));
+
+    setQuery('');
   }, [queryParam]);
 
   useEffect(() => {
@@ -115,6 +180,10 @@ export function SearchProvider({ children }) {
         isInputFocused,
         autoCompleteItems,
         isAutoCompleteLoading,
+        selectedTags,
+        clearTags,
+        addTags,
+        removeTags,
         setQuery,
         setSearchType,
         setIsSelectTypeOpen,
