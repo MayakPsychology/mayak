@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { CircularProgress } from '@mui/material';
+import { specialistTypeEnum } from '../Specialists/Filters/utils';
 import { OverlayContainer } from './OverlayContainer';
 import { OverlayList } from './OverlayList';
 import { useSearchContext } from './SearchContext';
@@ -13,6 +14,8 @@ export function SearchAutoCompleteDropDown() {
     isAutoCompleteOpen,
     isAutoCompleteLoading,
     navigateToAutoCompleteItem,
+    addTags,
+    currentConfig,
   } = useSearchContext();
   const [listOverflown, setListOverflown] = useState(false);
 
@@ -37,7 +40,11 @@ export function SearchAutoCompleteDropDown() {
                   ...item,
                   onClick: e => {
                     e.stopPropagation();
-                    navigateToAutoCompleteItem(item);
+                    if (currentConfig.searchType === specialistTypeEnum.REQUEST) {
+                      addTags(item);
+                    } else {
+                      navigateToAutoCompleteItem(item);
+                    }
                   },
                 }))}
                 onItemsOverflow={onItemsOverflow}

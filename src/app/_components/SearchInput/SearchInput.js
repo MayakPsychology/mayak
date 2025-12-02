@@ -15,7 +15,9 @@ export function SearchInput() {
     query,
     isSelectTypeOpen,
     isInputFocused,
+    selectedTags,
     clearQuery,
+    clearTags,
     setIsSelectTypeOpen,
     setIsAutoCompleteOpen,
     submitSearch,
@@ -38,11 +40,11 @@ export function SearchInput() {
 
   return (
     <div className="flex w-full flex-col gap-4 lg:flex-row">
-      <div className="flex grow flex-col gap-4 rounded-full lg:flex-row lg:gap-0 lg:border-[1px] lg:border-gray-600 lg:bg-gray-100">
+      <div className="flex grow flex-col gap-4 rounded-full lg:flex-row lg:gap-0 lg:border-[1px] lg:border-gray-600 lg:bg-gray-100 ">
         <div
           ref={searchTypeDropDownRef}
           className={cn(
-            'cursor-pointer after:hidden after:h-[100%] after:w-[1px] after:rounded-full after:bg-gray-500 hover:after:bg-other-white/0 lg:after:block',
+            'cursor-pointer after:hidden after:h-[100%] after:w-[1px] after:rounded-full after:bg-gray-500 hover:after:bg-other-white/0 lg:after:block ',
             'relative rounded-full border-[1px] border-gray-600 bg-gray-200 py-3 pl-6 hover:bg-gray-200 lg:flex lg:border-0 lg:bg-other-white/0',
             isSelectTypeOpen && 'bg-other-white',
           )}
@@ -56,11 +58,25 @@ export function SearchInput() {
         </div>
         <div
           ref={autoCompleteRef}
-          className="group relative flex grow items-center gap-2 rounded-full border-[1px] border-gray-600 px-4 py-3 lg:border-0 lg:bg-other-white/0"
+          className=" relative flex  grow items-center gap-2 rounded-full border-[1px] border-gray-600 pl-4 pr-[18px] lg:border-0 lg:bg-other-white/0 "
         >
-          <SearchIcon className={cn('group-focus-within:hidden', query && 'hidden')} />
-          <SearchInputField />
-          <ClearSearchIcon className={cn('hidden cursor-pointer', query && 'block')} onClick={() => clearQuery()} />
+          <SearchIcon className={cn('group-focus-within:hidden', (query || selectedTags.length > 0) && 'hidden')} />
+          <div
+            className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent overlay-scrollbar  w-full 
+  min-w-0 overflow-x-auto
+  overflow-y-hidden
+  whitespace-nowrap py-2 pb-[2px]
+  lg:max-w-[515px]"
+          >
+            <SearchInputField />
+          </div>
+          <ClearSearchIcon
+            className={cn('hidden cursor-pointer', query || selectedTags.length > 0)}
+            onClick={() => {
+              clearQuery();
+              clearTags();
+            }}
+          />
           <SearchAutoCompleteDropDown />
         </div>
       </div>
