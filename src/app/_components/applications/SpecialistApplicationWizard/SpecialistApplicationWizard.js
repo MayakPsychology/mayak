@@ -3,43 +3,14 @@
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
+import { specialistDefaultValues } from '@/app/config/application/specialistData';
 import { PillButton } from '../../PillButton';
 import { Step1 } from './Step1';
 import { Step2 } from './Step2';
 import { Step3 } from './Step3';
 
-const specialistDefaultValues = {
-  firstName: '',
-  lastName: '',
-  secondName: '',
-  gender: '',
-  formatOfWork: '',
-  phone: '',
-  email: '',
-  website: '',
-  districtIds: [],
-  addresses: '',
-  yearsOfExperience: '',
-  isFreeReception: false,
-  workTime: [],
-  socialLinks: {
-    instagram: '',
-    facebook: '',
-    telegram: '',
-    youtube: '',
-    tiktok: '',
-  },
-  description: '',
-  clientsWorkingWith: [],
-  clientsWorkingWithAdditional: '',
-  clientsNotWorkingWith: [],
-  clientsNotWorkingWithAdditional: '',
-  specializations: [],
-  specializationMethods: [],
-};
-
 export function SpecialistApplicationWizard({ dicts }) {
-  const { clientCategories, specializations, specializationMethods } = dicts;
+  const { clientCategories, specializations, specializationMethods, districts } = dicts;
   const [step, setStep] = useState(1);
   const methods = useForm({
     defaultValues: specialistDefaultValues,
@@ -55,7 +26,7 @@ export function SpecialistApplicationWizard({ dicts }) {
         <form
         // onSubmit={methods.handleSubmit(onSubmit)}
         >
-          {step === 1 && <Step1 />}
+          {step === 1 && <Step1 districts={districts} />}
           {step === 2 && <Step2 clientCategories={clientCategories} />}
           {step === 3 && <Step3 specializations={specializations} specializationMethods={specializationMethods} />}
 
@@ -92,6 +63,7 @@ export function SpecialistApplicationWizard({ dicts }) {
 
 SpecialistApplicationWizard.propTypes = {
   dicts: PropTypes.shape({
+    districts: PropTypes.array.isRequired,
     clientCategories: PropTypes.array.isRequired,
     specializations: PropTypes.array.isRequired,
     specializationMethods: PropTypes.array.isRequired,
