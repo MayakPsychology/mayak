@@ -1,5 +1,5 @@
 import React from 'react';
-import { SpecialistApplicationWizard } from '@/app/_components/applications/SpecialistApplicationWizard';
+import { SpecialistApplicationWizard } from '@/app/_components/applications/specialist';
 import { getSpecDictionaries } from '../../specialist/utils';
 
 export default async function AddNewSpecialistPage() {

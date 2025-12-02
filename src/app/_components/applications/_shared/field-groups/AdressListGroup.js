@@ -13,8 +13,8 @@ export function AdressListGroup({ districts }) {
   return (
     <ul>
       {fields.map((filed, index) => (
-        <li key={index} className="mb-4">
-          <AdressGroup key={filed.id} districts={districts} {...register} index={index} />
+        <li key={filed.id} className="mb-4">
+          <AdressGroup districts={districts} {...register} index={index} />
         </li>
       ))}
       <div className="flex gap-3">

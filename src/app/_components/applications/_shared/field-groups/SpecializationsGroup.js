@@ -5,7 +5,7 @@ import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 import { Controller, useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { CheckBox } from '@/app/_components/CheckBox';
-import { SpecializationMethods } from '../../SpecialistApplicationWizard/field-groups';
+import { SpecializationMethods } from '../../specialist/field-groups';
 
 export function SpecializationsGroup({ specializations, specializationMethods }) {
   const {

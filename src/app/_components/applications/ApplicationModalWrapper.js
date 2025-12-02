@@ -24,10 +24,7 @@ export function ApplicationModalWrapper({ children, className }) {
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      className={cn(
-        'rounded-b-none rounded-tl-3xl rounded-tr-3xl lg:static lg:mx-4 lg:h-auto lg:max-w-[1000px] lg:rounded-3xl lg:p-[50px]',
-        className,
-      )}
+      className={cn('w-full max-w-[744px] lg:rounded-3xl lg:p-[50px]', className)}
     >
       {children}
     </Modal>

@@ -1,5 +1,4 @@
 export * from './DistrictsGroup';
-export * from './DistrictSelectGroup';
 export * from './AdressListGroup';
 export * from './AdressGroup';
 export * from './ContactsGroup';
