@@ -1,30 +1,40 @@
-import React from 'react';
-import { WEEKDAYS_TRANSLATION } from '@/app/(admin)/admin/_lib/consts';
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import { TextInputField } from '@/app/_components/InputFields';
+import { WEEKDAYS_TRANSLATION } from '@/app/(admin)/admin/_lib/consts';
 
 export function WorkTimeGroup() {
+  const { register, control } = useFormContext();
+  const { fields } = useFieldArray({
+    name: 'workTime',
+  });
+
   return (
     <fieldset>
       <legend className="text-lg mb-4 font-semibold">Графік роботи</legend>
       <div>
-        {Object.values(WEEKDAYS_TRANSLATION).map(weekDay => (
-          <div key={weekDay} className="mb-4 grid grid-cols-1 gap-16 sm:grid-cols-3">
-            <div>{weekDay}</div>
+        {fields.map((field, index) => (
+          <div key={field.id} className="mb-4 grid grid-cols-1 gap-16 sm:grid-cols-3">
             <TextInputField
-              width="full"
-              type="text"
-              text="Час роботи"
-              name={`workTime.${weekDay}.time`}
-              placeholder="Час роботи"
+              {...register(`workTime.${index}.weekDay`)}
+              value={field.weekDay}
+              placeholder={WEEKDAYS_TRANSLATION[field.weekDay]}
+              readOnly
             />
-            <select
-              name={`workTime.${weekDay}.isDayOff`}
-              className="w-full rounded border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="">Оберіть статус</option>
-              <option value="true">Вихідний</option>
-              <option value="false">Робочий</option>
-            </select>
+            <TextInputField {...register(`workTime.${index}.time`)} placeholder="Час роботи" />
+            <Controller
+              name={`workTime.${index}.isDayOff`}
+              control={control}
+              render={({ field: ctrlField }) => (
+                <select
+                  {...ctrlField}
+                  onChange={e => ctrlField.onChange(e.target.value === 'true')}
+                  className="gap-3 rounded-full border-[1px] border-gray-600 px-4 py-3 text-p4 focus-within:border-primary-500 md:text-p3"
+                >
+                  <option value="true">Вихідний</option>
+                  <option value="false">Робочий</option>
+                </select>
+              )}
+            />
           </div>
         ))}
       </div>

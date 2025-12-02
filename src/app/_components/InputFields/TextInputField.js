@@ -20,6 +20,7 @@ export const TextInputField = forwardRef(
       variant = variants.default,
       absolute = true,
       additionalContainerStyle = '',
+      ...inputProps
     },
     ref,
   ) => {
@@ -50,6 +51,7 @@ export const TextInputField = forwardRef(
             placeholder={`${placeholder}${required ? '*' : ''}`}
             required={required}
             ref={ref}
+            {...inputProps}
           />
           {error && <InputErrorIcon className={cn(variant.errorIcon.base)} />}
         </div>
