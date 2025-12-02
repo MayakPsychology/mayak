@@ -6,59 +6,66 @@ import { cn } from '@utils/cn';
 import { forwardRef } from 'react';
 import { variants } from './styles';
 
-export const TextInputField = forwardRef(({
-  value,
-  name,
-  onChange,
-  type = 'text',
-  disabled = false,
-  placeholder = '',
-  error = '',
-  required = false,
-  variant = variants.default,
-  absolute = true,
-  additionalContainerStyle = '',
-}, ref) => {
-  const id = `textinput_${name}`;
-  const absoluteError = absolute ? 'absolute top-[48px] transition-transform' : '';
-  const absoluteLabel = absolute ? 'absolute bottom-[49px]' : '';
+export const TextInputField = forwardRef(
+  (
+    {
+      value,
+      name,
+      onChange,
+      type = 'text',
+      disabled = false,
+      placeholder = '',
+      error = '',
+      required = false,
+      variant = variants.default,
+      absolute = true,
+      additionalContainerStyle = '',
+      ...inputProps
+    },
+    ref,
+  ) => {
+    const id = `textinput_${name}`;
+    const absoluteError = absolute ? 'absolute top-[48px] transition-transform' : '';
+    const absoluteLabel = absolute ? 'absolute bottom-[49px]' : '';
 
-  return (
-    <div className={cn(`relative`, variant.mainContainer.base)}>
-      {error && <p className={cn(absoluteError, variant.errorParagraph.base)}>{error}</p>}
-      <div
-        className={cn(
-          variant.inputContainer.base,
-          variant.inputContainer.style,
-          variant.inputContainer.focusWithin,
-          error && variant.inputContainer.error,
-          additionalContainerStyle,
-        )}
-      >
-        <input
-          className={cn(variant.input.base, variant.input.focus, variant.input.style, error && variant.input.error)}
-          id={id}
-          type={type}
-          name={name}
-          value={value}
-          onChange={onChange}
-          disabled={disabled}
-          placeholder={`${placeholder}${required ? '*' : ''}`}
-          required={required}
-          ref={ref}
-        />
-        {error && <InputErrorIcon className={cn(variant.errorIcon.base)} />}
+    return (
+      <div className={cn(`relative`, variant.mainContainer.base)}>
+        {error && <p className={cn(absoluteError, variant.errorParagraph.base)}>{error}</p>}
+        <div
+          className={cn(
+            variant.inputContainer.base,
+            variant.inputContainer.style,
+            variant.inputContainer.focusWithin,
+            error && variant.inputContainer.error,
+            additionalContainerStyle,
+          )}
+        >
+          <input
+            className={cn(variant.input.base, variant.input.focus, variant.input.style, error && variant.input.error)}
+            id={id}
+            type={type}
+            name={name}
+            value={value}
+            onChange={onChange}
+            disabled={disabled}
+            placeholder={`${placeholder}${required ? '*' : ''}`}
+            required={required}
+            ref={ref}
+            {...inputProps}
+          />
+          {error && <InputErrorIcon className={cn(variant.errorIcon.base)} />}
+        </div>
+
+        <label
+          className={cn(variant.label.base, variant.label.stateful, absoluteLabel, error && variant.label.error)}
+          htmlFor={id}
+        >
+          {placeholder}
+        </label>
       </div>
-
-      <label
-        className={cn(variant.label.base, variant.label.stateful, absoluteLabel, error && variant.label.error)}
-        htmlFor={id}
-      >
-        {placeholder}
-      </label>
-    </div>
-  );
-})
+    );
+  },
+);
 
 TextInputField.displayName = 'TextInputField';
 
