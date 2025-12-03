@@ -39,4 +39,11 @@ export const specialistDefaultValues = {
   clientsNotWorkingWithAdditional: '',
   specializations: [],
   specializationMethods: [],
+  supportFocuses: [
+    {
+      therapyId: '',
+      requestsIds: [],
+      price: 0,
+    },
+  ],
 };
