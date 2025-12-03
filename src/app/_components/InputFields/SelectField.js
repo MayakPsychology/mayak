@@ -54,7 +54,7 @@ export const SelectField = forwardRef(
             </option>
             {options.map(opt => (
               <option key={opt.id ?? opt.value} value={opt.id ?? opt.value}>
-                {opt.name ?? opt.label}
+                {opt.name ?? opt.label ?? opt.title}
               </option>
             ))}
           </select>
