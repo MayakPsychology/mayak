@@ -61,11 +61,13 @@ export const getSpecialistsIds = async () => {
 };
 
 export const getSpecDictionaries = async () => {
-  const [clientCategories, specializations, specializationMethods, districts] = await Promise.all([
+  const [clientCategories, specializations, specializationMethods, districts, therapies, requests] = await Promise.all([
     prisma.clientCategory.findMany(),
     prisma.specialization.findMany(),
     prisma.method.findMany(),
     prisma.district.findMany(),
+    prisma.therapy.findMany(),
+    prisma.request.findMany(),
   ]);
-  return { clientCategories, specializations, specializationMethods, districts };
+  return { clientCategories, specializations, specializationMethods, districts, therapies, requests };
 };
