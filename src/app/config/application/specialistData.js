@@ -1,47 +1,49 @@
 const { WEEKDAYS_TRANSLATION } = require('@/app/(admin)/admin/_lib/consts');
 
-const weekDaysArray = Object.entries(WEEKDAYS_TRANSLATION);
+const weekDays = Object.values(WEEKDAYS_TRANSLATION);
 export const specialistDefaultValues = {
   firstName: '',
   lastName: '',
-  secondName: '',
-  gender: '',
-  formatOfWork: '',
-  phone: '',
-  email: '',
-  website: '',
+  surname: '',
+  yearsOfExperience: null,
+  gender: null,
+  formatOfWork: null, // вказати за замувочуванням
+  phone: null,
+  email: null,
+  website: null,
   addresses: [
     {
       isPrimary: false,
-      fullAddress: '',
-      nameOfClinic: '',
-      districtId: [],
+      fullAddress: null,
+      nameOfClinic: null,
+      district: [],
     },
   ],
-  yearsOfExperience: '',
   isFreeReception: false,
-  workTime: weekDaysArray.map(([value]) => ({
-    weekDay: value,
-    time: '',
+  workTime: weekDays.map(weekDay => ({
+    weekDay,
+    time: null,
     isDayOff: true,
   })),
-  socialLinks: {
-    instagram: '',
-    facebook: '',
-    telegram: '',
-    youtube: '',
-    tiktok: '',
+  socialLink: {
+    instagram: null,
+    facebook: null,
+    telegram: null,
+    linkedin: null,
+    youtube: null,
+    tiktok: null,
+    viber: null,
   },
-  description: '',
-  clientsWorkingWith: [],
-  clientsWorkingWithAdditional: '',
-  clientsNotWorkingWith: [],
-  clientsNotWorkingWithAdditional: '',
+  description: null,
+  clients: {
+    workingWith: [],
+    notWorkingWith: [],
+  },
   specializations: [],
   specializationMethods: [],
   supportFocuses: [
     {
-      therapyId: '',
+      therapy: {},
       requestsIds: [],
       price: 0,
     },
