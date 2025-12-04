@@ -25,41 +25,37 @@ export function SpecialistGeneralInfo() {
         {...register('firstName')}
         placeholder="Ім'я"
         error={errors?.firstName?.message}
-        required
         additionalContainerStyle="bg-other-white"
       />
       <TextInputField
-        {...register('secondName')}
+        {...register('surname')}
         placeholder="По-батькові"
-        error={errors?.secondName?.message}
-        required
+        error={errors?.surname?.message}
         additionalContainerStyle="bg-other-white"
       />
       <TextInputField
         {...register('lastName')}
         placeholder="Прізвище"
         error={errors?.lastName?.message}
-        required
         additionalContainerStyle="bg-other-white"
       />
 
       {/* Experience (years) */}
       <TextInputField
-        {...register('experience')}
+        {...register('yearsOfExperience')}
         placeholder="Стаж роботи"
         type="number"
         min={0}
         step={0.5}
-        error={errors?.experience?.message}
-        required
+        error={errors?.yearsOfExperience?.message}
         additionalContainerStyle="bg-other-white"
       />
 
       {/* Gender choice */}
-      <fieldset>
-        <legend className="text-base mb-2 block font-medium">
+      <div>
+        <h3 className="text-base mb-2 block font-medium">
           Ваша стать <span className="text-red-500">*</span>
-        </legend>
+        </h3>
 
         <Controller
           name="gender"
@@ -80,13 +76,18 @@ export function SpecialistGeneralInfo() {
             </div>
           )}
         />
-      </fieldset>
+        {errors.gender && (
+          <p className="ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4">
+            {errors.gender.message}
+          </p>
+        )}
+      </div>
 
       {/* Format of work */}
-      <fieldset>
-        <legend className="text-base mb-2 block font-medium">
+      <div>
+        <h3 className="text-base mb-2 block font-medium">
           Формат роботи <span className="text-red-500">*</span>
-        </legend>
+        </h3>
 
         <Controller
           name="formatOfWork"
@@ -109,7 +110,12 @@ export function SpecialistGeneralInfo() {
             </div>
           )}
         />
-      </fieldset>
+        {errors.formatOfWork && (
+          <p className="ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4">
+            {errors.formatOfWork.message}
+          </p>
+        )}
+      </div>
     </>
   );
 }
