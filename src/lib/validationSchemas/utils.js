@@ -24,6 +24,13 @@ export const errors = fieldName => ({
   boolean: {
     format: `${fieldName} - має бути булевим значенням`,
   },
+  number: {
+    type: `${fieldName} має бути числом`,
+    min: value => `${fieldName} має бути не менше ${value}`,
+    max: value => `${fieldName} має бути не більше ${value}`,
+    integer: `${fieldName} має бути цілим числом`,
+    halfStep: `${fieldName} має бути кратне 0.5`,
+  },
 });
 
 export const string = (
@@ -66,4 +73,39 @@ export const boolean = (
 
 export const array = (fieldName, itemSchema) => ({
   zod: z.array(itemSchema, { required_error: errors(fieldName).required }),
+});
+
+export const number = (
+  fieldName,
+  schema = z.preprocess(
+    val => (val == null ? undefined : Number(val)), // преобразуем null/строку в число
+    z.number({
+      required_error: errors(fieldName).required,
+      invalid_type_error: errors(fieldName).number?.format ?? `${fieldName} має бути числом`,
+    }),
+  ),
+) => ({
+  min: minValue =>
+    number(
+      fieldName,
+      schema.refine(val => val >= minValue, { message: errors(fieldName).number.min(minValue) }),
+    ),
+  max: maxValue =>
+    number(
+      fieldName,
+      schema.refine(val => val <= maxValue, { message: errors(fieldName).number.max(maxValue) }),
+    ),
+  integer: () =>
+    number(
+      fieldName,
+      schema.refine(val => Number.isInteger(val), { message: errors(fieldName).number.integer }),
+    ),
+  halfStep: () =>
+    number(
+      fieldName,
+      schema.refine(val => Number.isInteger(val * 2), { message: errors(fieldName).number.halfStep }),
+    ),
+  optional: () => number(fieldName, schema.optional()),
+  nullish: () => number(fieldName, schema.nullish()),
+  zod: schema,
 });
