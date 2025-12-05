@@ -16,6 +16,7 @@ export const TextInputField = forwardRef(
       disabled = false,
       placeholder = '',
       error = '',
+      hasError = false,
       required = false,
       variant = variants.default,
       absolute = true,
@@ -37,6 +38,7 @@ export const TextInputField = forwardRef(
             variant.inputContainer.style,
             variant.inputContainer.focusWithin,
             error && variant.inputContainer.error,
+            hasError && variant.inputContainer.error,
             additionalContainerStyle,
           )}
         >
@@ -53,11 +55,16 @@ export const TextInputField = forwardRef(
             ref={ref}
             {...inputProps}
           />
-          {error && <InputErrorIcon className={cn(variant.errorIcon.base)} />}
+          {(error || hasError) && <InputErrorIcon className={cn(variant.errorIcon.base)} />}
         </div>
 
         <label
-          className={cn(variant.label.base, variant.label.stateful, absoluteLabel, error && variant.label.error)}
+          className={cn(
+            variant.label.base,
+            variant.label.stateful,
+            absoluteLabel,
+            (error || hasError) && variant.label.error,
+          )}
           htmlFor={id}
         >
           {placeholder}
@@ -77,6 +84,7 @@ TextInputField.propTypes = {
   disabled: PropTypes.bool,
   placeholder: PropTypes.string,
   error: PropTypes.string,
+  hasError: PropTypes.bool,
   required: PropTypes.bool,
   absolute: PropTypes.bool,
   additionalContainerStyle: PropTypes.string,
