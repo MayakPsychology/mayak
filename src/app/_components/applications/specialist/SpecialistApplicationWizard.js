@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { specialistDefaultValues } from '@/app/config/application/specialistData';
+import { specialistApplicationSchema } from '@/lib/validationSchemas/applications/specialistApplicationSchema';
 import { PillButton } from '../../PillButton';
 import { Step1 } from './Step1';
 import { Step2 } from './Step2';
@@ -17,6 +19,7 @@ export function SpecialistApplicationWizard({ dicts }) {
   const methods = useForm({
     defaultValues: specialistDefaultValues,
     mode: 'onChange',
+    resolver: zodResolver(specialistApplicationSchema),
   });
   const onSubmit = data => {
     // eslint-disable-next-line no-console
@@ -55,9 +58,7 @@ export function SpecialistApplicationWizard({ dicts }) {
               Далі
             </PillButton>
           </div>
-          <PillButton type="submit" onClick={methods.handleSubmit(onSubmit)}>
-            Submit
-          </PillButton>
+          <PillButton type="submit">Submit</PillButton>
         </form>
       </FormProvider>
     </div>
