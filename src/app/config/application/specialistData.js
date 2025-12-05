@@ -11,14 +11,7 @@ export const specialistDefaultValues = {
   phone: null,
   email: null,
   website: null,
-  addresses: [
-    {
-      isPrimary: false,
-      fullAddress: null,
-      nameOfClinic: null,
-      district: [],
-    },
-  ],
+  addresses: [],
   isFreeReception: false,
   workTime: weekDays.map(weekDay => ({
     weekDay,
