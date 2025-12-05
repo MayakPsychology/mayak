@@ -1,6 +1,13 @@
-import z from 'zod';
+import { z } from 'zod';
 import { FormatOfWork, Gender } from '@prisma/client';
-import { string, number } from '@/lib/validationSchemas/utils';
+import { string, number, boolean, array } from '@/lib/validationSchemas/utils';
+
+const zCreateAddressSchema = z.object({
+  fullAddress: string('Адреса').min(2).max(128).zod,
+  district: string('Район').min(2).max(128).zod,
+  nameOfClinic: string('Назва клініки').min(2).max(128).emptyToNull().zod,
+  isPrimary: boolean('Основна').zod,
+});
 
 export const specialistApplicationSchema = z.object({
   firstName: string("Ім'я").min(2).max(128).zod,
@@ -15,4 +22,5 @@ export const specialistApplicationSchema = z.object({
     required_error: 'Оберіть формат роботи',
     invalid_type_error: 'Оберіть формат роботи',
   }),
+  addresses: array('Адреси', zCreateAddressSchema).zod,
 });

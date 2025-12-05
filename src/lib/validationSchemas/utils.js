@@ -47,6 +47,17 @@ export const string = (
   email: () => string(fieldName, schema.email()),
   nullish: () => string(fieldName, schema.nullish()),
   optional: () => string(fieldName, schema.optional()),
+  emptyToNull: () =>
+    string(
+      fieldName,
+      z.preprocess(val => {
+        if (typeof val === 'string') {
+          const trimmed = val.trim();
+          return trimmed === '' ? null : trimmed;
+        }
+        return val;
+      }, schema.nullish()),
+    ),
   zod: schema,
 });
 
