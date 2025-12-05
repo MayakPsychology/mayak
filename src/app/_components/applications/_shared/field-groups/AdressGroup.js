@@ -25,19 +25,18 @@ export function AdressGroup({ districts, index }) {
       <TextInputField
         {...register(`addresses.${index}.fullAddress`)}
         placeholder="Повна адреса (Вулиця, номер будинку, поверх, кабінет)"
-        error={errors?.fullAdress?.message}
-        required
+        error={errors?.addresses?.[index]?.fullAddress?.message}
       />
       <TextInputField
         {...register(`addresses.${index}.nameOfClinic`)}
         placeholder="Назва клініки"
-        error={errors?.nameOfClinic?.message}
+        error={errors?.addresses?.[index]?.nameOfClinic?.message}
       />
       <SelectField
-        {...register(`addresses.${index}.districtId`)}
+        {...register(`addresses.${index}.district`)}
         options={districts}
         placeholder="Район"
-        error={errors.districtId?.message}
+        error={errors.addresses?.[index]?.district?.message}
       />
     </div>
   );
