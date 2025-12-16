@@ -65,12 +65,11 @@ export function SocialLinksGroup() {
       {Object.values(socialLinks).map(socialLink => (
         <div key={socialLink.name} className="mb-4 flex flex-col gap-1.5">
           <TextInputField
-            {...register(socialLink.name)}
+            {...register(`socialLink.${socialLink.name}`)}
             label={socialLink.label}
             type={socialLink.type}
             placeholder={socialLink.label}
-            error={errors?.[socialLink.name]?.message}
-            required={socialLink.isRequired}
+            error={errors?.socialLink?.[socialLink.name]?.message}
             additionalContainerStyle="bg-other-white"
           />
         </div>
