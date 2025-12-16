@@ -16,7 +16,13 @@ export function DescriptionField() {
         name="description"
         control={control}
         render={({ field }) => (
-          <TextArea {...field} maxLength={320} placeholder="Ваша відповідь" required error={errors?.message?.message} />
+          <TextArea
+            {...field}
+            maxLength={320}
+            placeholder="Ваша відповідь"
+            required
+            error={errors?.description?.message}
+          />
         )}
       />
     </div>

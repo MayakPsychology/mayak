@@ -2,9 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 import { CheckBox } from '@/app/_components/CheckBox';
-import { TextInputField } from '@/app/_components/InputFields';
 
-export function ClientCategoriesGroup({ clientCategories, title, name, additionalName, error }) {
+export function ClientCategoriesGroup({ clientCategories, title, name, error }) {
   const {
     control,
     formState: { errors },
@@ -51,7 +50,7 @@ export function ClientCategoriesGroup({ clientCategories, title, name, additiona
         }}
       />
 
-      <Controller
+      {/* <Controller
         name={additionalName || 'additionalCategory'}
         control={control}
         render={({ field }) => (
@@ -63,7 +62,7 @@ export function ClientCategoriesGroup({ clientCategories, title, name, additiona
             additionalContainerStyle="bg-other-white"
           />
         )}
-      />
+      /> */}
     </div>
   );
 }
