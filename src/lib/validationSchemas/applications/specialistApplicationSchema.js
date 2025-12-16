@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { FormatOfWork, Gender } from '@prisma/client';
 import { WEEKDAYS_TRANSLATION } from '@/app/(admin)/admin/_lib/consts';
 import { string, number, boolean, array } from '@/lib/validationSchemas/utils';
+import { PHONE_REGEX } from '@/lib/consts';
 
 export const zCreateAddressSchema = z.object({
   fullAddress: string('Адреса').min(2).max(128).zod,
@@ -36,7 +37,7 @@ export const specialistApplicationSchema = z.object({
   firstName: string("Ім'я").min(2).max(128).zod,
   lastName: string('Прізвище').min(2).max(128).zod,
   surname: string('По-батькові').min(2).max(128).zod,
-  yearsOfExperience: number('Стаж роботи').min(1).max(30).halfStep().zod,
+  yearsOfExperience: number('Стаж роботи').min(0.5).halfStep().zod,
   gender: z.enum(Object.values(Gender), {
     required_error: 'Оберіть стать',
     invalid_type_error: 'Оберіть стать',
@@ -47,4 +48,12 @@ export const specialistApplicationSchema = z.object({
   }),
   addresses: array('Адреси', zCreateAddressSchema).zod,
   workTime: array('Адреси', zWorkDaySchema).zod,
+  email: string('Пошта').email().emptyToNull().zod,
+  website: string('Веб сторінка').url().emptyToNull().zod,
+  phone: string('Телефон')
+    .emptyToNull()
+    .nullish()
+    .zod.refine(val => !val || PHONE_REGEX.test(val), {
+      message: 'Введіть номер телефону у міжнародному форматі',
+    }),
 });
