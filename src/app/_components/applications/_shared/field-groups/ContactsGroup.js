@@ -30,6 +30,7 @@ export function ContactsGroup() {
     register,
     formState: { errors },
   } = useFormContext();
+
   return (
     <fieldset>
       <legend className="text-base mb-2 block font-medium">Контактна інформація</legend>
@@ -42,7 +43,6 @@ export function ContactsGroup() {
             type={contact.type}
             placeholder={contact.label}
             error={errors?.[contact.name]?.message}
-            required={contact.isRequired}
             additionalContainerStyle="bg-other-white"
           />
         </div>
