@@ -31,6 +31,12 @@ export const errors = fieldName => ({
     integer: `${fieldName} має бути цілим числом`,
     halfStep: `${fieldName} має бути кратне 0.5`,
   },
+  email: {
+    format: `${fieldName} - невірний формат пошти`,
+  },
+  url: {
+    format: `${fieldName} - невірний формат веб-адреси`,
+  },
 });
 
 export const string = (
@@ -44,8 +50,10 @@ export const string = (
 ) => ({
   min: minLength => string(fieldName, schema.min(minLength, { message: errors(fieldName).string.min(minLength) })),
   max: maxLength => string(fieldName, schema.max(maxLength, { message: errors(fieldName).string.max(maxLength) })),
-  email: () => string(fieldName, schema.email()),
+  email: () => string(fieldName, schema.email({ message: errors(fieldName).email.format })),
+  url: () => string(fieldName, schema.url({ message: errors(fieldName).url.format })),
   nullish: () => string(fieldName, schema.nullish()),
+  nullable: () => string(fieldName, schema.nullable()),
   optional: () => string(fieldName, schema.optional()),
   emptyToNull: () =>
     string(
@@ -120,3 +128,19 @@ export const number = (
   nullish: () => number(fieldName, schema.nullish()),
   zod: schema,
 });
+
+export const regexField = (fieldName, regex, expectedFormat, required = false) => {
+  let base = string(fieldName).nullable();
+
+  const message = errors(fieldName).format(expectedFormat);
+
+  if (required) {
+    base = base.zod
+      .refine(val => val !== null && val.trim() !== '', { message: errors(fieldName).nonEmpty })
+      .refine(val => regex.test(val), { message });
+  } else {
+    base = base.zod.refine(val => !val || regex.test(val), { message });
+  }
+
+  return base;
+};

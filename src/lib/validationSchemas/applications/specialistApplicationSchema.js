@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { FormatOfWork, Gender } from '@prisma/client';
 import { WEEKDAYS_TRANSLATION } from '@/app/(admin)/admin/_lib/consts';
-import { string, number, boolean, array } from '@/lib/validationSchemas/utils';
-import { PHONE_REGEX } from '@/lib/consts';
+import { string, number, boolean, array, regexField } from '@/lib/validationSchemas/utils';
+import { MESSENGER_REGEX, PHONE_REGEX, SOCIAL_REGEX } from '@/lib/consts';
 
 export const zCreateAddressSchema = z.object({
   fullAddress: string('Адреса').min(2).max(128).zod,
@@ -33,6 +33,16 @@ export const zWorkDaySchema = z
     }
   });
 
+export const zSosialLinkSchema = z.object({
+  instagram: regexField('Instagram', SOCIAL_REGEX.INSTAGRAM, 'instagram.com/username'),
+  facebook: regexField('Facebook', SOCIAL_REGEX.FACEBOOK, 'facebook.com/username'),
+  linkedin: regexField('LinkedIn', SOCIAL_REGEX.LINKEDIN, 'linkedin.com/in/username'),
+  youtube: regexField('YouTube', SOCIAL_REGEX.YOUTUBE, 'youtube.com/@username'),
+  tiktok: regexField('TikTok', SOCIAL_REGEX.TIKTOK, 'tiktok.com/@username'),
+  telegram: regexField('Telegram', MESSENGER_REGEX.TELEGRAM, 'telegram.me/username'),
+  viber: regexField('Viber', MESSENGER_REGEX.VIBER, 'Невірний формат посилання'),
+});
+
 export const specialistApplicationSchema = z.object({
   firstName: string("Ім'я").min(2).max(128).zod,
   lastName: string('Прізвище').min(2).max(128).zod,
@@ -50,10 +60,6 @@ export const specialistApplicationSchema = z.object({
   workTime: array('Адреси', zWorkDaySchema).zod,
   email: string('Пошта').email().emptyToNull().zod,
   website: string('Веб сторінка').url().emptyToNull().zod,
-  phone: string('Телефон')
-    .emptyToNull()
-    .nullish()
-    .zod.refine(val => !val || PHONE_REGEX.test(val), {
-      message: 'Введіть номер телефону у міжнародному форматі',
-    }),
+  phone: regexField('Телефон', PHONE_REGEX, 'Введіть номер телефону у міжнародному форматі'),
+  socialLink: zSosialLinkSchema,
 });
