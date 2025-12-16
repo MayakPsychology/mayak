@@ -43,6 +43,23 @@ export const zSosialLinkSchema = z.object({
   viber: regexField('Viber', MESSENGER_REGEX.VIBER, 'Невірний формат посилання'),
 });
 
+export const zClientsSchema = z
+  .object({
+    workingWith: z.string().array().default([]),
+    notWorkingWith: z.string().array().default([]),
+  })
+  .superRefine((clients, ctx) => {
+    const hasDuplicates = clients.workingWith.some(item => clients.notWorkingWith.includes(item));
+
+    if (hasDuplicates) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Категорія клієнта може бути вибрана лише один раз. Перевірте, чи не дублюються поля.',
+        path: ['root'],
+      });
+    }
+  });
+
 export const specialistApplicationSchema = z.object({
   firstName: string("Ім'я").min(2).max(128).zod,
   lastName: string('Прізвище').min(2).max(128).zod,
@@ -62,4 +79,8 @@ export const specialistApplicationSchema = z.object({
   website: string('Веб сторінка').url().emptyToNull().zod,
   phone: regexField('Телефон', PHONE_REGEX, 'Введіть номер телефону у міжнародному форматі'),
   socialLink: zSosialLinkSchema,
+  description: string('Опис').min(10).max(5000).zod,
+  clients: zClientsSchema,
+  // specializations: array('Спеціалізації', string('Спеціалізація').min(2).max(128)).zod,
+  // specializationMethods: array('Методи спеціалізації', string('Метод спеціалізації').min(2).max(128)).zod,
 });
