@@ -86,9 +86,19 @@ export const boolean = (
   zod: schema,
 });
 
-export const array = (fieldName, itemSchema) => ({
-  zod: z.array(itemSchema, { required_error: errors(fieldName).required }),
-});
+export const array = (fieldName, itemSchema, options) => {
+  let schema = z.array(itemSchema, { required_error: errors(fieldName).required });
+
+  if (options?.min) {
+    schema = schema.min(options.min, {
+      message: options?.message,
+    });
+  }
+
+  return {
+    zod: schema,
+  };
+};
 
 export const number = (
   fieldName,
