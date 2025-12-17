@@ -7,7 +7,7 @@ import { MESSENGER_REGEX, PHONE_REGEX, SOCIAL_REGEX } from '@/lib/consts';
 export const zCreateAddressSchema = z.object({
   fullAddress: string('Адреса').min(2).max(128).zod,
   district: string('Район').min(2).max(128).zod,
-  nameOfClinic: string('Назва клініки').min(2).max(128).emptyToNull().zod,
+  nameOfClinic: string('Назва клініки').min(2).max(128).optional().zod,
   isPrimary: boolean('Основна').zod,
 });
 
@@ -61,9 +61,9 @@ export const zClientsSchema = z
   });
 
 export const specialistApplicationSchema = z.object({
-  firstName: string("Ім'я").min(2).max(128).zod,
-  lastName: string('Прізвище').min(2).max(128).zod,
-  surname: string('По-батькові').min(2).max(128).zod,
+  firstName: string("Ім'я").min(2).max(64).zod,
+  lastName: string('Прізвище').min(2).max(64).zod,
+  surname: string('По-батькові').min(2).max(64).optional().zod,
   yearsOfExperience: number('Стаж роботи').min(0.5).halfStep().zod,
   gender: z.enum(Object.values(Gender), {
     required_error: 'Оберіть стать',
@@ -75,12 +75,10 @@ export const specialistApplicationSchema = z.object({
   }),
   addresses: array('Адреси', zCreateAddressSchema).zod,
   workTime: array('Адреси', zWorkDaySchema).zod,
-  email: string('Пошта').email().emptyToNull().zod,
-  website: string('Веб сторінка').url().emptyToNull().zod,
+  email: string('Пошта').email().optional().zod,
+  website: string('Веб сторінка').url().optional().zod,
   phone: regexField('Телефон', PHONE_REGEX, 'Введіть номер телефону у міжнародному форматі'),
   socialLink: zSosialLinkSchema,
   description: string('Опис').min(10).max(5000).zod,
   clients: zClientsSchema,
-  // specializations: array('Спеціалізації', string('Спеціалізація').min(2).max(128)).zod,
-  // specializationMethods: array('Методи спеціалізації', string('Метод спеціалізації').min(2).max(128)).zod,
 });
