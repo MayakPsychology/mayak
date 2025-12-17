@@ -12,6 +12,7 @@ export function SpecializationsGroup({ specializations, specializationMethods })
     control,
     formState: { errors },
   } = useFormContext();
+  const errorMessage = errors?.specializations?.message;
 
   const [expanded, setExpanded] = useState({});
   const toggle = id => setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
@@ -67,6 +68,10 @@ export function SpecializationsGroup({ specializations, specializationMethods })
                   </div>
                 );
               })}
+
+              {errorMessage && (
+                <p className="ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4">{errorMessage}</p>
+              )}
             </div>
           );
         }}

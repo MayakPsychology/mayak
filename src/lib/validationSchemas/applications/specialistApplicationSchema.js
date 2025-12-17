@@ -81,4 +81,8 @@ export const specialistApplicationSchema = z.object({
   socialLink: zSosialLinkSchema,
   description: string('Опис').min(10).max(5000).zod,
   clients: zClientsSchema,
+  specializations: array('Спеціалізації', string('Спеціалізація').zod, {
+    min: 1,
+    message: 'Потрібно обрати щонайменше 1 спеціалізацію',
+  }).zod,
 });
