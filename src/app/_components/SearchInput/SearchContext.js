@@ -9,83 +9,61 @@ import { searchSyncKey, useDebounce, useSearchSync } from '@/app/_hooks';
 import { getSpecialistURL } from '../Specialists/utils';
 import { getSearchTypeConfig, SEARCH_DEBOUNCE_TIME_MS, SEARCH_MIN_QUERY_LENGTH } from './config';
 
-const SearchContext = createContext({
-  clearQuery: () => {},
-  currentConfig: {},
-  query: '',
-  debouncedQuery: '',
-  searchType: '',
-  selectedTags: [],
-  isSelectTypeOpen: false,
-  isAutoCompleteOpen: false,
-  isInputFocused: false,
-  autoCompleteItems: [],
-  isAutoCompleteLoading: false,
-  setSelectedTags: () => {},
-  addTags: () => {},
-  removeTags: () => {},
-  clearTags: () => {},
-  setQuery: () => {},
-  setSearchType: () => {},
-  setIsSelectTypeOpen: () => {},
-  setIsAutoCompleteOpen: () => {},
-  setIsInputFocused: () => {},
-  submitSearch: () => {},
-  navigateToAutoCompleteItem: () => {},
-});
+const SearchContext = createContext({});
 
 export function SearchProvider({ children }) {
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('query');
   const searchTypeParam = searchParams.get(specialistFiltersConfig.specialistType.filterKey);
   const mode = searchParams.get('mode');
-  const [query, setQuery] = useState(queryParam || '');
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const [query, setQuery] = useState('');
   const [searchType, setSearchType] = useState(searchTypeParam || '');
   const [isSelectTypeOpen, setIsSelectTypeOpen] = useState(false);
   const [isAutoCompleteOpen, setIsAutoCompleteOpen] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const [selectedTags, setSelectedTags] = useState([]);
 
-  const queryClient = useQueryClient();
-  const router = useRouter();
+  const [selectedTags, setSelectedTags] = useState([]);
 
   function addTags(item) {
     setSelectedTags(prev => {
-      const exsist = prev.some(tag => tag.id === item.id);
-      return exsist ? prev : [...prev, { id: item.id, title: item.title }];
+      const exists = prev.some(tag => tag.id === item.id);
+      return exists ? prev : [...prev, { id: item.id, title: item.title }];
     });
     setQuery('');
     setIsAutoCompleteOpen(false);
   }
 
   function removeTags(id) {
-    setSelectedTags(prev => {
-      const updated = prev.filter(tag => tag.id !== id);
-
-      const newQuery = updated.map(t => t.title).join(', ');
-
-      const newSearchParams = new URLSearchParams(searchParams);
-
-      if (newQuery.length > 0) {
-        newSearchParams.set('query', newQuery);
-      } else {
-        newSearchParams.delete('query');
-      }
-
-      router.replace(`/specialist?${newSearchParams.toString()}`);
-
-      return updated;
-    });
+    setSelectedTags(prev => prev.filter(tag => tag.id !== id));
   }
 
   function clearTags() {
     setSelectedTags([]);
   }
 
+  useEffect(() => {
+    const tagTitles = selectedTags.map(tag => tag.title);
+    const newQuery = tagTitles.join(', ');
+
+    const newParams = new URLSearchParams(searchParams);
+
+    if (newQuery) {
+      newParams.set('query', newQuery);
+    } else {
+      newParams.delete('query');
+    }
+
+    router.replace(`/specialist?${newParams.toString()}`);
+  }, [selectedTags]);
+
   const currentConfig = useMemo(() => getSearchTypeConfig(searchType), [searchType]);
   const { searchType: currentSearchType } = currentConfig;
 
   const debouncedQuery = useDebounce(query, SEARCH_DEBOUNCE_TIME_MS);
+
   const { data: autoCompleteItems, isLoading: isAutoCompleteLoading } = useSearchSync(
     debouncedQuery,
     currentSearchType,
@@ -96,42 +74,42 @@ export function SearchProvider({ children }) {
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
 
-    const newSearchParams = new URLSearchParams(searchParams);
-
     const tagTitles = selectedTags.map(tag => tag.title);
     const textPart = query.trim();
-
     const combinedQuery = [...tagTitles, textPart].filter(Boolean).join(', ');
 
+    const newParams = new URLSearchParams(searchParams);
+
     if (combinedQuery.length > 0) {
-      newSearchParams.set('query', combinedQuery);
+      newParams.set('query', combinedQuery);
     } else {
-      newSearchParams.delete('query');
+      newParams.delete('query');
     }
 
-    newSearchParams.set(specialistFiltersConfig.specialistType.filterKey, currentSearchType);
+    newParams.set(specialistFiltersConfig.specialistType.filterKey, currentSearchType);
 
     if (mode) {
-      newSearchParams.set('mode', 'map');
+      newParams.set('mode', 'map');
     } else {
-      newSearchParams.delete('mode');
+      newParams.delete('mode');
     }
 
-    router.push(`/specialist?${newSearchParams.toString()}`);
+    router.push(`/specialist?${newParams.toString()}`);
   }
 
   function navigateToAutoCompleteItem(autoCompleteItem) {
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
+
     if (currentSearchType === specialistTypeEnum.REQUEST) {
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set(specialistFiltersConfig.specialistType.filterKey, specialistTypeEnum.REQUEST);
-      newSearchParams.set('query', autoCompleteItem.title);
-      router.replace(`/specialist?${newSearchParams.toString()}`);
-    } else if (
-      currentSearchType === specialistTypeEnum.SPECIALIST ||
-      currentSearchType === specialistTypeEnum.ORGANIZATION
-    ) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set(specialistFiltersConfig.specialistType.filterKey, specialistTypeEnum.REQUEST);
+      newParams.set('query', autoCompleteItem.title);
+      router.replace(`/specialist?${newParams.toString()}`);
+      return;
+    }
+
+    if (currentSearchType === specialistTypeEnum.SPECIALIST || currentSearchType === specialistTypeEnum.ORGANIZATION) {
       router.replace(getSpecialistURL({ type: currentSearchType, id: autoCompleteItem.id }));
     }
   }
@@ -140,32 +118,45 @@ export function SearchProvider({ children }) {
     setQuery('');
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.delete('query');
-    newSearchParams.delete(specialistFiltersConfig.specialistType.filterKey);
-    router.replace(`/specialist?${newSearchParams.toString()}`);
+
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('query');
+    newParams.delete(specialistFiltersConfig.specialistType.filterKey);
+
+    router.replace(`/specialist?${newParams.toString()}`);
   }
 
   useEffect(() => {
-    if (!queryParam) {
-      setSelectedTags([]);
-      setQuery('');
+    if (queryParam === null) return;
+    if (queryParam === '') {
+      if (selectedTags.length > 0) setSelectedTags([]);
       return;
     }
+    const tagTitles = [
+      ...new Set(
+        queryParam
+          .split(',')
+          .map(t => t.trim())
+          .filter(Boolean),
+      ),
+    ];
 
-    const tagTitles = queryParam
-      .split(',')
-      .map(t => t.trim())
-      .filter(Boolean);
+    const prevTitles = selectedTags
+      .map(t => t.title)
+      .sort()
+      .join(',');
+    const newTitles = tagTitles.sort().join(',');
+
+    if (prevTitles === newTitles) return;
 
     setSelectedTags(tagTitles.map(title => ({ id: title, title })));
-
-    setQuery('');
-  }, [queryParam]);
+  }, [queryParam, selectedTags]);
 
   useEffect(() => {
-    setSearchType(searchTypeParam || '');
-  }, [searchTypeParam]);
+    if (searchTypeParam !== searchType) {
+      setSearchType(searchTypeParam || '');
+    }
+  }, [searchTypeParam, searchType]);
 
   return (
     <SearchContext.Provider

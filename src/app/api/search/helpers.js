@@ -139,37 +139,76 @@ export function createOrganizationFilter(queryParams) {
     },
   };
 }
-
 export function createSearchEntryFilter(queryParams) {
   const { query, searchType } = queryParams;
+
   const specialistWhere = createSpecialistFilter(queryParams);
   const organizationWhere = createOrganizationFilter(queryParams);
   const defaultFilter = { OR: [{ specialist: specialistWhere }, { organization: organizationWhere }] };
 
-  if (!searchType) {
+  if (!searchType || !query) {
     return defaultFilter;
   }
+
+  const terms = query
+    ?.split(',')
+    .map(t => t.trim())
+    .filter(Boolean);
+
   switch (searchType) {
-    case 'request': {
+    case 'request':
       return defaultFilter;
-    }
 
     case 'specialist':
+      if (!terms?.length) {
+        return {
+          sortString: {
+            contains: query,
+            mode: 'insensitive',
+          },
+          specialist: specialistWhere,
+        };
+      }
+
       return {
-        sortString: {
-          contains: query,
-          mode: 'insensitive',
-        },
-        specialist: specialistWhere,
+        AND: [
+          specialistWhere,
+          {
+            OR: terms.map(term => ({
+              sortString: {
+                contains: term,
+                mode: 'insensitive',
+              },
+            })),
+          },
+        ],
       };
+
     case 'organization':
+      if (!terms?.length) {
+        return {
+          sortString: {
+            contains: query,
+            mode: 'insensitive',
+          },
+          organization: organizationWhere,
+        };
+      }
+
       return {
-        sortString: {
-          contains: query,
-          mode: 'insensitive',
-        },
-        organization: organizationWhere,
+        AND: [
+          organizationWhere,
+          {
+            OR: terms.map(term => ({
+              sortString: {
+                contains: term,
+                mode: 'insensitive',
+              },
+            })),
+          },
+        ],
       };
+
     default:
       return defaultFilter;
   }
@@ -179,42 +218,81 @@ export function createSearchSyncFilter(params) {
   const { query, searchType } = params;
 
   const activeFilter = { isActive: true };
-  const defaultFilter = { OR: [{ specialist: activeFilter }, { organization: activeFilter }] };
+  const defaultFilter = {
+    OR: [{ specialist: activeFilter }, { organization: activeFilter }],
+  };
+
+  if (!query) {
+    return defaultFilter;
+  }
+
+  const terms = query
+    .split(',')
+    .map(t => t.trim())
+    .filter(Boolean);
 
   switch (searchType) {
     case 'request':
-      Object.assign(activeFilter, {
-        ...activeFilter,
+      return {
+        ...defaultFilter,
         supportFocuses: {
           some: {
             requests: {
               some: {
-                name: {
-                  contains: query,
-                  mode: 'insensitive',
-                },
+                OR: terms.map(term => ({
+                  name: {
+                    contains: term,
+                    mode: 'insensitive',
+                  },
+                })),
               },
             },
           },
         },
-      });
-      return defaultFilter;
+      };
+
     case 'specialist':
+      if (!terms.length) {
+        return {
+          sortString: {
+            contains: query,
+            mode: 'insensitive',
+          },
+          specialist: activeFilter,
+        };
+      }
+
       return {
-        sortString: {
-          contains: query,
-          mode: 'insensitive',
-        },
         specialist: activeFilter,
+        OR: terms.map(term => ({
+          sortString: {
+            contains: term,
+            mode: 'insensitive',
+          },
+        })),
       };
+
     case 'organization':
+      if (!terms.length) {
+        return {
+          sortString: {
+            contains: query,
+            mode: 'insensitive',
+          },
+          organization: activeFilter,
+        };
+      }
+
       return {
-        sortString: {
-          contains: query,
-          mode: 'insensitive',
-        },
         organization: activeFilter,
+        OR: terms.map(term => ({
+          sortString: {
+            contains: term,
+            mode: 'insensitive',
+          },
+        })),
       };
+
     default:
       return defaultFilter;
   }
