@@ -10,6 +10,8 @@ export function SpecializationMethods({ specializationId, specializationMethods 
     formState: { errors },
   } = useFormContext();
 
+  const errorMessage = errors?.specializationMethods?.message;
+
   if (methods.length === 0) return null;
 
   return (
@@ -49,6 +51,9 @@ export function SpecializationMethods({ specializationId, specializationMethods 
           );
         }}
       />
+      {errorMessage && (
+        <p className="ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4">{errorMessage}</p>
+      )}
     </fieldset>
   );
 }
