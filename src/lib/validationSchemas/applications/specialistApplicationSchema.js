@@ -60,6 +60,13 @@ export const zClientsSchema = z
     }
   });
 
+export const zSupportFocusSchema = z.object({
+  id: string().optional().zod,
+  price: number('Ціна').min(0).nullish().optional().zod,
+  therapy: string('Терапія').zod,
+  requestsIds: array('Запити', string().zod, { min: 1, message: 'Необхідно обрати хоча б один запит' }).zod,
+});
+
 export const specialistApplicationSchema = z.object({
   firstName: string("Ім'я").min(2).max(64).zod,
   lastName: string('Прізвище').min(2).max(64).zod,
@@ -86,4 +93,8 @@ export const specialistApplicationSchema = z.object({
     message: 'Потрібно обрати щонайменше 1 спеціалізацію',
   }).zod,
   specializationMethods: array('Методи спеціалізації', string('Метод спеціалізації').zod).zod,
+  supportFocuses: array('Напрямки підтримки', zSupportFocusSchema, {
+    min: 1,
+    message: 'Необхідно обрати хоча б один тип терапії',
+  }).zod,
 });

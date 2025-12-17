@@ -36,9 +36,9 @@ export const specialistDefaultValues = {
   specializationMethods: [],
   supportFocuses: [
     {
-      therapy: {},
+      therapy: null,
       requestsIds: [],
-      price: 0,
+      price: null,
     },
   ],
 };
