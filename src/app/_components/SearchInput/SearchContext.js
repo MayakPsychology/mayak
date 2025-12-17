@@ -150,7 +150,7 @@ export function SearchProvider({ children }) {
     if (prevTitles === newTitles) return;
 
     setSelectedTags(tagTitles.map(title => ({ id: title, title })));
-  }, [queryParam, selectedTags]);
+  }, [queryParam]);
 
   useEffect(() => {
     if (searchTypeParam !== searchType) {
