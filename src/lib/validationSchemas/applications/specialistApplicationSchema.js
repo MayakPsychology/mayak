@@ -85,4 +85,5 @@ export const specialistApplicationSchema = z.object({
     min: 1,
     message: 'Потрібно обрати щонайменше 1 спеціалізацію',
   }).zod,
+  specializationMethods: array('Методи спеціалізації', string('Метод спеціалізації').zod).zod,
 });
