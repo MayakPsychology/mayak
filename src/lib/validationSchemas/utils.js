@@ -54,17 +54,13 @@ export const string = (
   url: () => string(fieldName, schema.url({ message: errors(fieldName).url.format })),
   nullish: () => string(fieldName, schema.nullish()),
   nullable: () => string(fieldName, schema.nullable()),
-  optional: () => string(fieldName, schema.optional()),
-  emptyToNull: () =>
+  optional: () =>
     string(
       fieldName,
       z.preprocess(val => {
-        if (typeof val === 'string') {
-          const trimmed = val.trim();
-          return trimmed === '' ? null : trimmed;
-        }
+        if (val === '' || val === null) return undefined;
         return val;
-      }, schema.nullish()),
+      }, schema.optional()),
     ),
   zod: schema,
 });
