@@ -143,6 +143,7 @@ export function SearchProvider({ children }) {
     if (prevTitles === newTitles) return;
 
     setSelectedTags(tagTitles.map(title => ({ id: title, title })));
+    setQuery('');
   }, [queryParam]);
 
   useEffect(() => {
