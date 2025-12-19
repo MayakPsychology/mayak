@@ -44,21 +44,6 @@ export function SearchProvider({ children }) {
     setSelectedTags([]);
   }
 
-  useEffect(() => {
-    const tagTitles = selectedTags.map(tag => tag.title);
-    const newQuery = tagTitles.join(', ');
-
-    const newParams = new URLSearchParams(searchParams);
-
-    if (newQuery) {
-      newParams.set('query', newQuery);
-    } else {
-      newParams.delete('query');
-    }
-
-    router.replace(`/specialist?${newParams.toString()}`);
-  }, [selectedTags]);
-
   const currentConfig = useMemo(() => getSearchTypeConfig(searchType), [searchType]);
   const { searchType: currentSearchType } = currentConfig;
 
@@ -105,12 +90,20 @@ export function SearchProvider({ children }) {
       const newParams = new URLSearchParams(searchParams);
       newParams.set(specialistFiltersConfig.specialistType.filterKey, specialistTypeEnum.REQUEST);
       newParams.set('query', autoCompleteItem.title);
-      router.replace(`/specialist?${newParams.toString()}`);
+
+      setTimeout(() => {
+        router.replace(`/specialist?${newParams.toString()}`);
+      }, 0);
+
       return;
     }
 
     if (currentSearchType === specialistTypeEnum.SPECIALIST || currentSearchType === specialistTypeEnum.ORGANIZATION) {
-      router.replace(getSpecialistURL({ type: currentSearchType, id: autoCompleteItem.id }));
+      const url = getSpecialistURL({ type: currentSearchType, id: autoCompleteItem.id });
+
+      setTimeout(() => {
+        router.replace(url);
+      }, 0);
     }
   }
 
@@ -157,6 +150,25 @@ export function SearchProvider({ children }) {
       setSelectedTags([]);
     }
   }, [searchType]);
+
+  useEffect(() => {
+    const tagTitles = selectedTags.map(tag => tag.title);
+    const newQuery = tagTitles.join(', ');
+
+    const newParams = new URLSearchParams(searchParams);
+
+    if (newQuery) newParams.set('query', newQuery);
+    else newParams.delete('query');
+
+    const next = newParams.toString();
+    const current = searchParams.toString();
+
+    if (next === current) return;
+
+    setTimeout(() => {
+      router.replace(`/specialist?${next}`);
+    }, 0);
+  }, [selectedTags]);
 
   return (
     <SearchContext.Provider
