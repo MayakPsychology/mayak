@@ -29,7 +29,7 @@ export function SearchProvider({ children }) {
 
   function addTags(item) {
     setSelectedTags(prev => {
-      const exists = prev.some(tag => tag.id === item.id);
+      const exists = prev.some(tag => tag.title === item.title);
       return exists ? prev : [...prev, { id: item.id, title: item.title }];
     });
     setQuery('');
@@ -153,10 +153,10 @@ export function SearchProvider({ children }) {
   }, [queryParam]);
 
   useEffect(() => {
-    if (searchTypeParam !== searchType) {
-      setSearchType(searchTypeParam || '');
+    if (searchType !== specialistTypeEnum.REQUEST && selectedTags.length > 0) {
+      setSelectedTags([]);
     }
-  }, [searchTypeParam, searchType]);
+  }, [searchType]);
 
   return (
     <SearchContext.Provider

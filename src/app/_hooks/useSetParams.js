@@ -29,7 +29,7 @@ export function useSetParam(param) {
       if (method === 'replace') replace(value, key);
       if (method === 'remove') remove(value, key);
     });
-  }
+  };
 
   return { add, replace, set: replace, remove, bulkUpdate };
 }

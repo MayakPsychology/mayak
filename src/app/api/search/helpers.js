@@ -144,70 +144,110 @@ export function createSearchEntryFilter(queryParams) {
 
   const specialistWhere = createSpecialistFilter(queryParams);
   const organizationWhere = createOrganizationFilter(queryParams);
-  const defaultFilter = { OR: [{ specialist: specialistWhere }, { organization: organizationWhere }] };
 
-  if (!searchType || !query) {
+  const defaultFilter = {
+    OR: [{ specialist: specialistWhere }, { organization: organizationWhere }],
+  };
+
+  if (!query || !searchType) {
     return defaultFilter;
   }
 
   const terms = query
-    ?.split(',')
+    .split(',')
     .map(t => t.trim())
     .filter(Boolean);
 
   switch (searchType) {
-    case 'request':
-      return defaultFilter;
+    /* ======================
+       REQUEST (KEY FIX)
+    ====================== */
+    case 'request': {
+      if (!terms.length) return defaultFilter;
 
-    case 'specialist':
-      if (!terms?.length) {
-        return {
-          sortString: {
-            contains: query,
-            mode: 'insensitive',
-          },
-          specialist: specialistWhere,
-        };
+      return {
+        AND: terms.map(term => ({
+          OR: [
+            {
+              specialist: {
+                ...specialistWhere,
+                supportFocuses: {
+                  some: {
+                    requests: {
+                      some: {
+                        name: {
+                          contains: term,
+                          mode: 'insensitive',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            {
+              organization: {
+                ...organizationWhere,
+                supportFocuses: {
+                  some: {
+                    requests: {
+                      some: {
+                        name: {
+                          contains: term,
+                          mode: 'insensitive',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        })),
+      };
+    }
+
+    /* ======================
+       SPECIALIST
+    ====================== */
+    case 'specialist': {
+      if (!terms.length) {
+        return { specialist: specialistWhere };
       }
 
       return {
         AND: [
           specialistWhere,
-          {
-            OR: terms.map(term => ({
-              sortString: {
-                contains: term,
-                mode: 'insensitive',
-              },
-            })),
-          },
+          ...terms.map(term => ({
+            sortString: {
+              contains: term,
+              mode: 'insensitive',
+            },
+          })),
         ],
       };
+    }
 
-    case 'organization':
-      if (!terms?.length) {
-        return {
-          sortString: {
-            contains: query,
-            mode: 'insensitive',
-          },
-          organization: organizationWhere,
-        };
+    /* ======================
+       ORGANIZATION
+    ====================== */
+    case 'organization': {
+      if (!terms.length) {
+        return { organization: organizationWhere };
       }
 
       return {
         AND: [
           organizationWhere,
-          {
-            OR: terms.map(term => ({
-              sortString: {
-                contains: term,
-                mode: 'insensitive',
-              },
-            })),
-          },
+          ...terms.map(term => ({
+            sortString: {
+              contains: term,
+              mode: 'insensitive',
+            },
+          })),
         ],
       };
+    }
 
     default:
       return defaultFilter;
