@@ -97,4 +97,5 @@ export const specialistApplicationSchema = z.object({
     min: 1,
     message: 'Необхідно обрати хоча б один тип терапії',
   }).zod,
+  isFreeReception: boolean('Безкоштовний прийом').zod,
 });

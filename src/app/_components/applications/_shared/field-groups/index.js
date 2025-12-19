@@ -7,3 +7,4 @@ export * from './WorkTimeGroup';
 export * from './ClientCategoriesGroup';
 export * from './ClientsPreferences';
 export * from './SpecializationsGroup';
+export * from './SupportFocuses';
