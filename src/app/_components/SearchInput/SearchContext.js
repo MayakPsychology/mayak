@@ -102,7 +102,7 @@ export function SearchProvider({ children }) {
       const url = getSpecialistURL({ type: currentSearchType, id: autoCompleteItem.id });
 
       setTimeout(() => {
-        router.replace(url);
+        router.push(url);
       }, 0);
     }
   }
@@ -128,7 +128,7 @@ export function SearchProvider({ children }) {
     const tagTitles = [
       ...new Set(
         queryParam
-          .split(',')
+          .split(/,(?![^()]*\))/)
           .map(t => t.trim())
           .filter(Boolean),
       ),

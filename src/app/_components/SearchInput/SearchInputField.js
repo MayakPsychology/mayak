@@ -87,7 +87,8 @@ export function SearchInputField() {
         placeholder={currentConfig.placeholder}
         value={query}
         onChange={e => {
-          setQuery(e.target.value);
+          const value = e.target.value.replace(/['’]/g, 'ʼ');
+          setQuery(value);
         }}
       />
     </div>
