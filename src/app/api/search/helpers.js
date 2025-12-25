@@ -21,7 +21,6 @@ function getPriceFilter(prices, priceMin, priceMax) {
   }
   const priceConditions = {
     notSpecified: { price: { equals: null } },
-    free: { price: { equals: 0 } },
     below500: { AND: [{ price: { gt: 0 } }, { price: { lt: 500 } }] },
     above1500: { price: { gte: 1500 } },
   };
@@ -55,6 +54,7 @@ function parseNumericParam(param) {
   return res;
 }
 
+/* eslint-disable sonarjs/cognitive-complexity */
 export function createEntityFilter({
   type,
   requests,
@@ -88,11 +88,11 @@ export function createEntityFilter({
   const isSupportFocusesFilterExist = requestType || type || priceFilter || query || undefined;
   const supportFocusesFilter = isSupportFocusesFilterExist && {
     some: {
-      AND: {
-        therapy: therapyFilter,
-        requests: requestFilter,
-        OR: priceFilter,
-      },
+      AND: [
+        therapyFilter && { therapy: therapyFilter },
+        requestFilter && { requests: requestFilter },
+        priceFilter && { OR: priceFilter },
+      ].filter(Boolean),
     },
   };
 
@@ -110,14 +110,17 @@ export function createEntityFilter({
     clientsWorkingWith: categoryFilter,
   };
 }
+/* eslint-enable sonarjs/cognitive-complexity */
 
 export function createSpecialistFilter(queryParams) {
+  const { isFree } = queryParams;
   const sharedWhere = createEntityFilter(queryParams);
   const { specializations, specializationMethods, gender } = queryParams;
   const methods = parseNumericParam(specializationMethods);
 
   return {
     ...sharedWhere,
+    ...(isFree === true && { isFreeReception: true }),
     gender: Gender[(gender || '').toUpperCase()],
     specializations: specializations && {
       some: { id: { in: specializations } },
@@ -129,16 +132,19 @@ export function createSpecialistFilter(queryParams) {
 }
 
 export function createOrganizationFilter(queryParams) {
+  const { isFree } = queryParams;
   const sharedWhere = createEntityFilter(queryParams);
   const { specializations, organizationType } = queryParams;
   return {
     ...sharedWhere,
+    ...(isFree === true && { isFreeReception: true }),
     ownershipType: organizationType,
     expertSpecializations: specializations && {
       some: { id: { in: specializations } },
     },
   };
 }
+
 export function createSearchEntryFilter(queryParams) {
   const { query, searchType } = queryParams;
 
@@ -159,9 +165,6 @@ export function createSearchEntryFilter(queryParams) {
     .filter(Boolean);
 
   switch (searchType) {
-    /* ======================
-       REQUEST (KEY FIX)
-    ====================== */
     case 'request': {
       if (!terms.length) return defaultFilter;
 
@@ -206,10 +209,6 @@ export function createSearchEntryFilter(queryParams) {
         })),
       };
     }
-
-    /* ======================
-       SPECIALIST
-    ====================== */
     case 'specialist': {
       if (!terms.length) {
         return { specialist: specialistWhere };
@@ -227,10 +226,6 @@ export function createSearchEntryFilter(queryParams) {
         ],
       };
     }
-
-    /* ======================
-       ORGANIZATION
-    ====================== */
     case 'organization': {
       if (!terms.length) {
         return { organization: organizationWhere };
@@ -354,17 +349,38 @@ export function getSearchFilterQueryParams(req) {
       requests: undefined,
       price: undefined,
       organizationType: undefined,
+      isFree: undefined,
     },
-    params => ({
-      ...params,
-      districts: typeof params.district === 'string' ? [params.district] : params.district,
-      district: undefined,
-      requests: typeof params.request === 'string' ? [params.request] : params.request,
-      request: undefined,
-      specializations: typeof params.specialization === 'string' ? [params.specialization] : params.specialization,
-      specialization: undefined,
-      prices: typeof params.price === 'string' ? [params.price] : params.price,
-      price: typeof params.price === 'string' ? [params.price] : params.price,
-    }),
+    params => {
+      const isFree = params.price === 'free' || (Array.isArray(params.price) && params.price.includes('free'));
+
+      let normalizedPrices;
+
+      if (Array.isArray(params.price)) {
+        normalizedPrices = params.price.filter(p => p !== 'free');
+      } else if (params.price === 'free') {
+        normalizedPrices = undefined;
+      } else {
+        normalizedPrices = params.price;
+      }
+
+      return {
+        ...params,
+
+        districts: typeof params.district === 'string' ? [params.district] : params.district,
+        district: undefined,
+
+        requests: typeof params.request === 'string' ? [params.request] : params.request,
+        request: undefined,
+
+        specializations: typeof params.specialization === 'string' ? [params.specialization] : params.specialization,
+        specialization: undefined,
+
+        prices: typeof normalizedPrices === 'string' ? [normalizedPrices] : normalizedPrices,
+        price: typeof normalizedPrices === 'string' ? [normalizedPrices] : normalizedPrices,
+
+        isFree: isFree || undefined,
+      };
+    },
   );
 }
