@@ -21,7 +21,6 @@ function getPriceFilter(prices, priceMin, priceMax) {
   }
   const priceConditions = {
     notSpecified: { price: { equals: null } },
-    free: { price: { equals: 0 } },
     below500: { AND: [{ price: { gt: 0 } }, { price: { lt: 500 } }] },
     above1500: { price: { gte: 1500 } },
   };
@@ -55,6 +54,7 @@ function parseNumericParam(param) {
   return res;
 }
 
+/* eslint-disable sonarjs/cognitive-complexity */
 export function createEntityFilter({
   type,
   requests,
@@ -88,11 +88,11 @@ export function createEntityFilter({
   const isSupportFocusesFilterExist = requestType || type || priceFilter || query || undefined;
   const supportFocusesFilter = isSupportFocusesFilterExist && {
     some: {
-      AND: {
-        therapy: therapyFilter,
-        requests: requestFilter,
-        OR: priceFilter,
-      },
+      AND: [
+        therapyFilter && { therapy: therapyFilter },
+        requestFilter && { requests: requestFilter },
+        priceFilter && { OR: priceFilter },
+      ].filter(Boolean),
     },
   };
 
@@ -110,14 +110,17 @@ export function createEntityFilter({
     clientsWorkingWith: categoryFilter,
   };
 }
+/* eslint-enable sonarjs/cognitive-complexity */
 
 export function createSpecialistFilter(queryParams) {
+  const { isFree } = queryParams;
   const sharedWhere = createEntityFilter(queryParams);
   const { specializations, specializationMethods, gender } = queryParams;
   const methods = parseNumericParam(specializationMethods);
 
   return {
     ...sharedWhere,
+    ...(isFree === true && { isFreeReception: true }),
     gender: Gender[(gender || '').toUpperCase()],
     specializations: specializations && {
       some: { id: { in: specializations } },
@@ -129,10 +132,12 @@ export function createSpecialistFilter(queryParams) {
 }
 
 export function createOrganizationFilter(queryParams) {
+  const { isFree } = queryParams;
   const sharedWhere = createEntityFilter(queryParams);
   const { specializations, organizationType } = queryParams;
   return {
     ...sharedWhere,
+    ...(isFree === true && { isFreeReception: true }),
     ownershipType: organizationType,
     expertSpecializations: specializations && {
       some: { id: { in: specializations } },
@@ -142,34 +147,103 @@ export function createOrganizationFilter(queryParams) {
 
 export function createSearchEntryFilter(queryParams) {
   const { query, searchType } = queryParams;
+
   const specialistWhere = createSpecialistFilter(queryParams);
   const organizationWhere = createOrganizationFilter(queryParams);
-  const defaultFilter = { OR: [{ specialist: specialistWhere }, { organization: organizationWhere }] };
 
-  if (!searchType) {
+  const defaultFilter = {
+    OR: [{ specialist: specialistWhere }, { organization: organizationWhere }],
+  };
+
+  if (!query || !searchType) {
     return defaultFilter;
   }
+
+  const terms = query
+    .split(',')
+    .map(t => t.trim())
+    .filter(Boolean);
+
   switch (searchType) {
     case 'request': {
-      return defaultFilter;
+      if (!terms.length) return defaultFilter;
+
+      return {
+        AND: terms.map(term => ({
+          OR: [
+            {
+              specialist: {
+                ...specialistWhere,
+                supportFocuses: {
+                  some: {
+                    requests: {
+                      some: {
+                        name: {
+                          contains: term,
+                          mode: 'insensitive',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            {
+              organization: {
+                ...organizationWhere,
+                supportFocuses: {
+                  some: {
+                    requests: {
+                      some: {
+                        name: {
+                          contains: term,
+                          mode: 'insensitive',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        })),
+      };
+    }
+    case 'specialist': {
+      if (!terms.length) {
+        return { specialist: specialistWhere };
+      }
+
+      return {
+        AND: [
+          specialistWhere,
+          ...terms.map(term => ({
+            sortString: {
+              contains: term,
+              mode: 'insensitive',
+            },
+          })),
+        ],
+      };
+    }
+    case 'organization': {
+      if (!terms.length) {
+        return { organization: organizationWhere };
+      }
+
+      return {
+        AND: [
+          organizationWhere,
+          ...terms.map(term => ({
+            sortString: {
+              contains: term,
+              mode: 'insensitive',
+            },
+          })),
+        ],
+      };
     }
 
-    case 'specialist':
-      return {
-        sortString: {
-          contains: query,
-          mode: 'insensitive',
-        },
-        specialist: specialistWhere,
-      };
-    case 'organization':
-      return {
-        sortString: {
-          contains: query,
-          mode: 'insensitive',
-        },
-        organization: organizationWhere,
-      };
     default:
       return defaultFilter;
   }
@@ -179,42 +253,81 @@ export function createSearchSyncFilter(params) {
   const { query, searchType } = params;
 
   const activeFilter = { isActive: true };
-  const defaultFilter = { OR: [{ specialist: activeFilter }, { organization: activeFilter }] };
+  const defaultFilter = {
+    OR: [{ specialist: activeFilter }, { organization: activeFilter }],
+  };
+
+  if (!query) {
+    return defaultFilter;
+  }
+
+  const terms = query
+    .split(',')
+    .map(t => t.trim())
+    .filter(Boolean);
 
   switch (searchType) {
     case 'request':
-      Object.assign(activeFilter, {
-        ...activeFilter,
+      return {
+        ...defaultFilter,
         supportFocuses: {
           some: {
             requests: {
               some: {
-                name: {
-                  contains: query,
-                  mode: 'insensitive',
-                },
+                OR: terms.map(term => ({
+                  name: {
+                    contains: term,
+                    mode: 'insensitive',
+                  },
+                })),
               },
             },
           },
         },
-      });
-      return defaultFilter;
+      };
+
     case 'specialist':
+      if (!terms.length) {
+        return {
+          sortString: {
+            contains: query,
+            mode: 'insensitive',
+          },
+          specialist: activeFilter,
+        };
+      }
+
       return {
-        sortString: {
-          contains: query,
-          mode: 'insensitive',
-        },
         specialist: activeFilter,
+        OR: terms.map(term => ({
+          sortString: {
+            contains: term,
+            mode: 'insensitive',
+          },
+        })),
       };
+
     case 'organization':
+      if (!terms.length) {
+        return {
+          sortString: {
+            contains: query,
+            mode: 'insensitive',
+          },
+          organization: activeFilter,
+        };
+      }
+
       return {
-        sortString: {
-          contains: query,
-          mode: 'insensitive',
-        },
         organization: activeFilter,
+        OR: terms.map(term => ({
+          sortString: {
+            contains: term,
+            mode: 'insensitive',
+          },
+        })),
       };
+
     default:
       return defaultFilter;
   }
@@ -236,17 +349,38 @@ export function getSearchFilterQueryParams(req) {
       requests: undefined,
       price: undefined,
       organizationType: undefined,
+      isFree: undefined,
     },
-    params => ({
-      ...params,
-      districts: typeof params.district === 'string' ? [params.district] : params.district,
-      district: undefined,
-      requests: typeof params.request === 'string' ? [params.request] : params.request,
-      request: undefined,
-      specializations: typeof params.specialization === 'string' ? [params.specialization] : params.specialization,
-      specialization: undefined,
-      prices: typeof params.price === 'string' ? [params.price] : params.price,
-      price: typeof params.price === 'string' ? [params.price] : params.price,
-    }),
+    params => {
+      const isFree = params.price === 'free' || (Array.isArray(params.price) && params.price.includes('free'));
+
+      let normalizedPrices;
+
+      if (Array.isArray(params.price)) {
+        normalizedPrices = params.price.filter(p => p !== 'free');
+      } else if (params.price === 'free') {
+        normalizedPrices = undefined;
+      } else {
+        normalizedPrices = params.price;
+      }
+
+      return {
+        ...params,
+
+        districts: typeof params.district === 'string' ? [params.district] : params.district,
+        district: undefined,
+
+        requests: typeof params.request === 'string' ? [params.request] : params.request,
+        request: undefined,
+
+        specializations: typeof params.specialization === 'string' ? [params.specialization] : params.specialization,
+        specialization: undefined,
+
+        prices: typeof normalizedPrices === 'string' ? [normalizedPrices] : normalizedPrices,
+        price: typeof normalizedPrices === 'string' ? [normalizedPrices] : normalizedPrices,
+
+        isFree: isFree || undefined,
+      };
+    },
   );
 }

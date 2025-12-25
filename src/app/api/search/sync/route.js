@@ -8,7 +8,11 @@ import { createSearchSyncFilter } from '../helpers';
 export const handler = withErrorHandler(async req => {
   const params = getSearchParamsFromRequest(req, { searchType: 'request', query: undefined });
   const { searchType, query } = params;
-
+  const terms =
+    query
+      ?.split(',')
+      .map(q => q.trim())
+      .filter(Boolean) || [];
   const searchSyncFilter = createSearchSyncFilter(params);
 
   const searchTypeFindAndMap = {
@@ -58,7 +62,24 @@ export const handler = withErrorHandler(async req => {
   }
 
   const syncItems = await searchTypeFindAndMap[searchType].find();
-  const mappedSyncItems = syncItems.map(searchTypeFindAndMap[searchType].map);
+
+  if (searchType !== 'specialist' || terms.lenght === 0) {
+    const mappedSyncItems = syncItems.map(searchTypeFindAndMap[searchType].map);
+
+    return NextResponse.json({
+      data: mappedSyncItems,
+    });
+  }
+
+  const ranked = syncItems
+    .map(item => ({
+      ...item,
+      score: terms.filter(term => item.sortString?.toLowerCase().includes(term.toLowerCase())).length,
+    }))
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  const mappedSyncItems = ranked.map(searchTypeFindAndMap[searchType].map);
 
   return NextResponse.json({
     data: mappedSyncItems,
