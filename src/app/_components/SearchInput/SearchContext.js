@@ -99,6 +99,7 @@ export function SearchProvider({ children }) {
     }
 
     if (currentSearchType === specialistTypeEnum.SPECIALIST || currentSearchType === specialistTypeEnum.ORGANIZATION) {
+      setQuery(autoCompleteItem.title);
       const url = getSpecialistURL({ type: currentSearchType, id: autoCompleteItem.id });
 
       setTimeout(() => {
@@ -153,6 +154,8 @@ export function SearchProvider({ children }) {
   }, [searchType]);
 
   useEffect(() => {
+    if (searchType !== specialistTypeEnum.REQUEST) return;
+
     const tagTitles = selectedTags.map(tag => tag.title);
     const newQuery = tagTitles.join(', ');
 
@@ -160,6 +163,8 @@ export function SearchProvider({ children }) {
 
     if (newQuery) newParams.set('query', newQuery);
     else newParams.delete('query');
+
+    newParams.set(specialistFiltersConfig.specialistType.filterKey, specialistTypeEnum.REQUEST);
 
     const next = newParams.toString();
     const current = searchParams.toString();
@@ -169,7 +174,28 @@ export function SearchProvider({ children }) {
     setTimeout(() => {
       router.replace(`/specialist?${next}`);
     }, 0);
-  }, [selectedTags]);
+  }, [selectedTags, searchType]);
+
+  useEffect(() => {
+    if (!searchTypeParam) return;
+
+    if (searchTypeParam !== searchType) {
+      setSearchType(searchTypeParam);
+    }
+  }, [searchTypeParam]);
+
+  useEffect(() => {
+    if (!searchType) return;
+
+    const current = searchParams.get(specialistFiltersConfig.specialistType.filterKey);
+
+    if (current === searchType) return;
+
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set(specialistFiltersConfig.specialistType.filterKey, searchType);
+
+    router.replace(`/specialist?${newParams.toString()}`);
+  }, [searchType]);
 
   return (
     <SearchContext.Provider

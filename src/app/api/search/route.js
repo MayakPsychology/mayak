@@ -43,9 +43,6 @@ export const handler = withErrorHandler(async req => {
     clientsNotWorkingWith: true,
   };
 
-  /* ======================================================
-     ✅ FREE FILTER → ENTITY LEVEL (Specialist / Organization)
-     ====================================================== */
   if (params.isFree === true) {
     const specialistWhere = createSpecialistFilter(params);
     const organizationWhere = createOrganizationFilter(params);
@@ -103,9 +100,6 @@ export const handler = withErrorHandler(async req => {
     });
   }
 
-  /* ======================================================
-     🔽 DEFAULT SEARCH (SearchEntry – text search, ranking)
-     ====================================================== */
   const searchEntryFilter = createSearchEntryFilter(params);
   const totalCount = await prisma.searchEntry.count({
     where: searchEntryFilter,

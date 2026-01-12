@@ -1,10 +1,34 @@
-import { useCallback, useState } from 'react';
+'use client';
+
+import { useCallback, useMemo, useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { specialistTypeEnum } from '../Specialists/Filters/utils';
 import { OverlayContainer } from './OverlayContainer';
 import { OverlayList } from './OverlayList';
 import { useSearchContext } from './SearchContext';
 import { SEARCH_MIN_QUERY_LENGTH } from './config';
+
+function normalize(value = '') {
+  return value
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getLastToken(query = '') {
+  const tokens = normalize(query).split(' ');
+  return tokens[tokens.length - 1] || '';
+}
+
+function matchesAutocomplete(query, title) {
+  const lastToken = getLastToken(query);
+  if (!lastToken) return true;
+
+  const titleTokens = normalize(title).split(' ');
+
+  return titleTokens.some(tt => tt.startsWith(lastToken));
+}
 
 export function SearchAutoCompleteDropDown() {
   const {
@@ -17,11 +41,18 @@ export function SearchAutoCompleteDropDown() {
     addTags,
     currentConfig,
   } = useSearchContext();
+
   const [listOverflown, setListOverflown] = useState(false);
 
   const onItemsOverflow = useCallback(state => {
     setListOverflown(state);
   }, []);
+
+  const filteredItems = useMemo(() => {
+    if (!autoCompleteItems) return [];
+
+    return autoCompleteItems.filter(item => matchesAutocomplete(debouncedQuery, item.title));
+  }, [autoCompleteItems, debouncedQuery]);
 
   return (
     <OverlayContainer isOpen={isAutoCompleteOpen} className="left-0 top-[58px] z-[4999]">
@@ -32,23 +63,25 @@ export function SearchAutoCompleteDropDown() {
               <CircularProgress />
             </div>
           )}
+
           {!isAutoCompleteLoading && (
             <>
               <OverlayList
                 maxItemCount={5}
-                listItems={autoCompleteItems?.map(item => ({
+                listItems={filteredItems.map(item => ({
                   ...item,
                   onClick: e => {
                     e.stopPropagation();
                     if (currentConfig.searchType === specialistTypeEnum.REQUEST) {
                       addTags(item);
-                    } else {
-                      navigateToAutoCompleteItem(item);
+                      return;
                     }
+                    navigateToAutoCompleteItem(item);
                   },
                 }))}
                 onItemsOverflow={onItemsOverflow}
               />
+
               {listOverflown && (
                 <button
                   className="rounded-full bg-primary-200 p-2 pl-8 font-bold text-primary-800 hover:bg-primary-300"
@@ -61,12 +94,13 @@ export function SearchAutoCompleteDropDown() {
                   Показати всі результати
                 </button>
               )}
-              {autoCompleteItems?.length === 0 && <p className="px-6 py-2">Нічого не знайдено</p>}
+
+              {filteredItems.length === 0 && <p className="px-6 py-2 opacity-70">Нічого не знайдено</p>}
             </>
           )}
         </>
       ) : (
-        <p className="p-2 pl-8">Продовжуйте вводити запит</p>
+        <p className="p-2 pl-8 opacity-70">Продовжуйте вводити запит</p>
       )}
     </OverlayContainer>
   );

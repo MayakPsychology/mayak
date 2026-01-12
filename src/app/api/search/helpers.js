@@ -151,114 +151,13 @@ export function createSearchEntryFilter(queryParams) {
   const specialistWhere = createSpecialistFilter(queryParams);
   const organizationWhere = createOrganizationFilter(queryParams);
 
-  const defaultFilter = {
-    OR: [{ specialist: specialistWhere }, { organization: organizationWhere }],
-  };
-
-  if (!query || !searchType) {
-    return defaultFilter;
-  }
-
-  const terms = query
-    .split(',')
-    .map(t => t.trim())
-    .filter(Boolean);
-
-  switch (searchType) {
-    case 'request': {
-      if (!terms.length) return defaultFilter;
-
-      return {
-        AND: terms.map(term => ({
-          OR: [
-            {
-              specialist: {
-                ...specialistWhere,
-                supportFocuses: {
-                  some: {
-                    requests: {
-                      some: {
-                        name: {
-                          contains: term,
-                          mode: 'insensitive',
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            {
-              organization: {
-                ...organizationWhere,
-                supportFocuses: {
-                  some: {
-                    requests: {
-                      some: {
-                        name: {
-                          contains: term,
-                          mode: 'insensitive',
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          ],
-        })),
-      };
-    }
-    case 'specialist': {
-      if (!terms.length) {
-        return { specialist: specialistWhere };
-      }
-
-      return {
-        AND: [
-          specialistWhere,
-          ...terms.map(term => ({
-            sortString: {
-              contains: term,
-              mode: 'insensitive',
-            },
-          })),
-        ],
-      };
-    }
-    case 'organization': {
-      if (!terms.length) {
-        return { organization: organizationWhere };
-      }
-
-      return {
-        AND: [
-          organizationWhere,
-          ...terms.map(term => ({
-            sortString: {
-              contains: term,
-              mode: 'insensitive',
-            },
-          })),
-        ],
-      };
-    }
-
-    default:
-      return defaultFilter;
-  }
-}
-
-export function createSearchSyncFilter(params) {
-  const { query, searchType } = params;
-
-  const activeFilter = { isActive: true };
-  const defaultFilter = {
-    OR: [{ specialist: activeFilter }, { organization: activeFilter }],
-  };
-
   if (!query) {
-    return defaultFilter;
+    if (searchType === 'specialist') return { specialist: specialistWhere };
+    if (searchType === 'organization') return { organization: organizationWhere };
+
+    return {
+      OR: [{ specialist: specialistWhere }, { organization: organizationWhere }],
+    };
   }
 
   const terms = query
@@ -269,34 +168,101 @@ export function createSearchSyncFilter(params) {
   switch (searchType) {
     case 'request':
       return {
-        ...defaultFilter,
-        supportFocuses: {
-          some: {
-            requests: {
-              some: {
-                OR: terms.map(term => ({
-                  name: {
-                    contains: term,
-                    mode: 'insensitive',
+        OR: [
+          {
+            specialist: {
+              ...specialistWhere,
+              supportFocuses: {
+                some: {
+                  requests: {
+                    some: {
+                      OR: terms.map(term => ({
+                        name: {
+                          contains: term,
+                          mode: 'insensitive',
+                        },
+                      })),
+                    },
                   },
-                })),
+                },
               },
             },
           },
-        },
+          {
+            organization: {
+              ...organizationWhere,
+              supportFocuses: {
+                some: {
+                  requests: {
+                    some: {
+                      OR: terms.map(term => ({
+                        name: {
+                          contains: term,
+                          mode: 'insensitive',
+                        },
+                      })),
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
       };
 
     case 'specialist':
-      if (!terms.length) {
-        return {
-          sortString: {
-            contains: query,
-            mode: 'insensitive',
-          },
-          specialist: activeFilter,
-        };
-      }
+      return {
+        specialist: {
+          ...specialistWhere,
+          AND: terms.map(term => ({
+            sortString: {
+              contains: term,
+              mode: 'insensitive',
+            },
+          })),
+        },
+      };
 
+    case 'organization':
+      return {
+        organization: {
+          ...organizationWhere,
+          AND: terms.map(term => ({
+            sortString: {
+              contains: term,
+              mode: 'insensitive',
+            },
+          })),
+        },
+      };
+
+    default:
+      return {
+        OR: [{ specialist: specialistWhere }, { organization: organizationWhere }],
+      };
+  }
+}
+
+export function createSearchSyncFilter(params) {
+  const { query, searchType } = params;
+  const activeFilter = { isActive: true };
+
+  if (!query || query.length < 3) {
+    if (searchType === 'specialist') return { specialist: activeFilter };
+    if (searchType === 'organization') return { organization: activeFilter };
+
+    return {
+      OR: [{ specialist: activeFilter }, { organization: activeFilter }],
+    };
+  }
+
+  const terms = query
+    .toLowerCase()
+    .split(/[^\p{L}\p{N}]+/gu)
+    .filter(Boolean);
+
+  switch (searchType) {
+    case 'specialist':
       return {
         specialist: activeFilter,
         OR: terms.map(term => ({
@@ -308,16 +274,6 @@ export function createSearchSyncFilter(params) {
       };
 
     case 'organization':
-      if (!terms.length) {
-        return {
-          sortString: {
-            contains: query,
-            mode: 'insensitive',
-          },
-          organization: activeFilter,
-        };
-      }
-
       return {
         organization: activeFilter,
         OR: terms.map(term => ({
@@ -328,8 +284,54 @@ export function createSearchSyncFilter(params) {
         })),
       };
 
+    case 'request':
+      return {
+        OR: [
+          {
+            specialist: {
+              isActive: true,
+              supportFocuses: {
+                some: {
+                  requests: {
+                    some: {
+                      OR: terms.map(term => ({
+                        name: {
+                          contains: term,
+                          mode: 'insensitive',
+                        },
+                      })),
+                    },
+                  },
+                },
+              },
+            },
+          },
+          {
+            organization: {
+              isActive: true,
+              supportFocuses: {
+                some: {
+                  requests: {
+                    some: {
+                      OR: terms.map(term => ({
+                        name: {
+                          contains: term,
+                          mode: 'insensitive',
+                        },
+                      })),
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+      };
+
     default:
-      return defaultFilter;
+      return {
+        OR: [{ specialist: activeFilter }, { organization: activeFilter }],
+      };
   }
 }
 
