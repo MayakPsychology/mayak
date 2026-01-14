@@ -1,25 +1,25 @@
 'use client';
 
+import React from 'react';
 import PropTypes from 'prop-types';
-import { SpecializationsGroup } from '../_shared/field-groups';
+import { ClientsPreferences } from '../_shared/field-groups';
 
-export function Step3({ specializations, specializationMethods }) {
+export function Step3({ clientCategories }) {
   return (
-    <div>
-      <h2 className="mb-1">Про себе як спеціаліста</h2>
+    <fieldset className="flex w-full flex-col gap-14 sm:gap-11 lg:w-full lg:max-w-none lg:gap-10">
+      <legend className="mb-1">Крок 3: Специфіка Вашої роботи як спеціаліста/-ки</legend>
       <p className="mb-4">
         У цьому підрозділі будуть питання, які стосуються специфіки та особливостей послуг, які Ви надаєте.
       </p>
-      <p className="mb-10">
+      <p>
         Звертаємо увагу, що вказана Вами інформація у цьому підрозділі після обробки адміністраторами буде висвітлена на
         сайті.
       </p>
-      <SpecializationsGroup specializations={specializations} specializationMethods={specializationMethods} />
-    </div>
+      <ClientsPreferences clientCategories={clientCategories} />
+    </fieldset>
   );
 }
 
 Step3.propTypes = {
-  specializations: PropTypes.array.isRequired,
-  specializationMethods: PropTypes.array.isRequired,
+  clientCategories: PropTypes.array.isRequired,
 };

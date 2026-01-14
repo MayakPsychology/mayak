@@ -11,6 +11,7 @@ import { Step1 } from './Step1';
 import { Step2 } from './Step2';
 import { Step3 } from './Step3';
 import { Step4 } from './Step4';
+import { Step5 } from './Step5';
 
 export function SpecialistApplicationWizard({ dicts }) {
   const { clientCategories, specializations, specializationMethods, districts, therapies, requests } = dicts;
@@ -34,10 +35,11 @@ export function SpecialistApplicationWizard({ dicts }) {
 
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          {step === 1 && <Step1 districts={districts} />}
-          {step === 2 && <Step2 clientCategories={clientCategories} />}
-          {step === 3 && <Step3 specializations={specializations} specializationMethods={specializationMethods} />}
-          {step === 4 && <Step4 therapies={therapies} requests={requests} />}
+          {step === 1 && <Step1 />}
+          {step === 2 && <Step2 districts={districts} />}
+          {step === 3 && <Step3 clientCategories={clientCategories} />}
+          {step === 4 && <Step4 specializations={specializations} specializationMethods={specializationMethods} />}
+          {step === 5 && <Step5 therapies={therapies} requests={requests} />}
 
           {/* Step4 */}
           <div className="flex justify-between">

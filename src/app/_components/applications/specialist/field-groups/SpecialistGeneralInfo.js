@@ -1,6 +1,6 @@
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { FormatOfWork, Gender } from '@prisma/client';
+import { Gender } from '@prisma/client';
 import { FormTranslations } from '@/app/(admin)/admin/_lib/translations';
 import { getChoicesList } from '@/app/(admin)/admin/_utils/common';
 import { CheckBox } from '@/app/_components/CheckBox';
@@ -16,11 +16,9 @@ export function SpecialistGeneralInfo() {
   // gender choices list
   const genderChoicesList = getChoicesList(Object.values(Gender), FormTranslations.gender);
 
-  // format of work choices list
-  const formatOfWorkChoicesList = getChoicesList(Object.values(FormatOfWork), FormTranslations.formatOfWork);
-
   return (
     <>
+      <h3 className="text-base mb-2 block font-medium">Як до Вас звертатись *</h3>
       <TextInputField
         {...register('firstName')}
         placeholder="Ім'я"
@@ -79,40 +77,6 @@ export function SpecialistGeneralInfo() {
         {errors.gender && (
           <p className="ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4">
             {errors.gender.message}
-          </p>
-        )}
-      </div>
-
-      {/* Format of work */}
-      <div>
-        <h3 className="text-base mb-2 block font-medium">
-          Формат роботи <span className="text-red-500">*</span>
-        </h3>
-
-        <Controller
-          name="formatOfWork"
-          control={control}
-          render={({ field }) => (
-            <div>
-              {formatOfWorkChoicesList.map(formatOfWork => (
-                <CheckBox
-                  ref={field.ref}
-                  lable="Ваша стать"
-                  type="radio"
-                  key={formatOfWork.id}
-                  value={formatOfWork.id}
-                  text={formatOfWork.name}
-                  checked={field.value === formatOfWork.id}
-                  onBlur={field.onBlur}
-                  onChange={() => field.onChange(formatOfWork.id)}
-                />
-              ))}
-            </div>
-          )}
-        />
-        {errors.formatOfWork && (
-          <p className="ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4">
-            {errors.formatOfWork.message}
           </p>
         )}
       </div>

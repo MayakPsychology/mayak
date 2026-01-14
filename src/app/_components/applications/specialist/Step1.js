@@ -3,19 +3,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { DescriptionField } from '../_shared/fields';
-import { AdressListGroup, ContactsGroup, SocialLinksGroup, WorkTimeGroup } from '../_shared/field-groups';
+import { ContactsGroup, SocialLinksGroup } from '../_shared/field-groups';
 import { SpecialistGeneralInfo } from './field-groups';
 
-export function Step1({ districts }) {
+export function Step1() {
   return (
-    <div className="flex w-full flex-col gap-14 sm:gap-11 lg:w-full lg:max-w-none lg:gap-10">
+    <fieldset className="flex w-full flex-col gap-14 sm:gap-11 lg:w-full lg:max-w-none lg:gap-10">
+      <legend>Крок 1: Персональні дані</legend>
+      <p>
+        Звертаємо увагу, що вказана Вами інформація у цьому підрозділі після обробки адміністраторами буде висвітлена на
+        сайті.
+      </p>
       <SpecialistGeneralInfo />
-      <AdressListGroup districts={districts} />
-      <WorkTimeGroup />
       <ContactsGroup />
       <SocialLinksGroup />
       <DescriptionField />
-    </div>
+    </fieldset>
   );
 }
 
