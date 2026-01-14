@@ -5,7 +5,7 @@ import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 import { Controller, useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { CheckBox } from '@/app/_components/CheckBox';
-import { SpecializationMethods } from '../../specialist/field-groups';
+import { SpecializationAdditionalInfo, SpecializationMethods } from '../../specialist/field-groups';
 
 export function SpecializationsGroup({ specializations, specializationMethods }) {
   const {
@@ -63,7 +63,13 @@ export function SpecializationsGroup({ specializations, specializationMethods })
                       )}
                     </div>
                     {isSelected && expanded[spec.id] && (
-                      <SpecializationMethods specializationId={spec.id} specializationMethods={specializationMethods} />
+                      <>
+                        <SpecializationMethods
+                          specializationId={spec.id}
+                          specializationMethods={specializationMethods}
+                        />
+                        <SpecializationAdditionalInfo specialization={spec.id} />{' '}
+                      </>
                     )}
                   </div>
                 );
@@ -84,3 +90,10 @@ SpecializationsGroup.propTypes = {
   specializations: PropTypes.array.isRequired,
   specializationMethods: PropTypes.array.isRequired,
 };
+
+// TODO Aditional fields to be added later:
+// `professionalDevelopment`
+// `personalTherapy`
+// `supervisionExperience`
+// `degreeDocument`
+// `additionalDocuments`;
