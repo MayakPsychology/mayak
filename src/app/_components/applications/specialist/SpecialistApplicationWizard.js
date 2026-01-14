@@ -29,17 +29,21 @@ export function SpecialistApplicationWizard({ dicts }) {
     console.log(data);
   };
 
+  const steps = [
+    { id: 1, component: <Step1 /> },
+    { id: 2, component: <Step2 districts={districts} /> },
+    { id: 3, component: <Step3 clientCategories={clientCategories} /> },
+    { id: 4, component: <Step4 specializations={specializations} specializationMethods={specializationMethods} /> },
+    { id: 5, component: <Step5 therapies={therapies} requests={requests} /> },
+  ];
+
   return (
     <div>
       <p>Specialist Wizard Component</p>
 
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          {step === 1 && <Step1 />}
-          {step === 2 && <Step2 districts={districts} />}
-          {step === 3 && <Step3 clientCategories={clientCategories} />}
-          {step === 4 && <Step4 specializations={specializations} specializationMethods={specializationMethods} />}
-          {step === 5 && <Step5 therapies={therapies} requests={requests} />}
+          {steps.find(s => s.id === step)?.component}
 
           {/* Step4 */}
           <div className="flex justify-between">
@@ -47,20 +51,23 @@ export function SpecialistApplicationWizard({ dicts }) {
               variant="outlined"
               colorVariant="blue"
               aria-label="Click to go to the previous step"
-              onClick={() => setStep(step - 1)}
+              onClick={() => setStep(prev => Math.max(prev - 1))}
             >
               Назад
             </PillButton>
-            <PillButton
-              variant="filled"
-              colorVariant="blue"
-              aria-label="Click to go to the next step"
-              onClick={() => setStep(step + 1)}
-            >
-              Далі
-            </PillButton>
+            {step < steps.length ? (
+              <PillButton
+                variant="filled"
+                colorVariant="blue"
+                aria-label="Click to go to the next step"
+                onClick={() => setStep(prev => Math.min(prev + 1, steps.length))}
+              >
+                Далі
+              </PillButton>
+            ) : (
+              <PillButton type="submit">Submit</PillButton>
+            )}
           </div>
-          <PillButton type="submit">Submit</PillButton>
         </form>
       </FormProvider>
     </div>
