@@ -187,14 +187,21 @@ export function SearchProvider({ children }) {
   useEffect(() => {
     if (!searchType) return;
 
-    const current = searchParams.get(specialistFiltersConfig.specialistType.filterKey);
-
-    if (current === searchType) return;
-
     const newParams = new URLSearchParams(searchParams);
+
+    newParams.delete('query');
+
     newParams.set(specialistFiltersConfig.specialistType.filterKey, searchType);
 
-    router.replace(`/specialist?${newParams.toString()}`);
+    if (query !== '') setQuery('');
+    if (selectedTags.length > 0) setSelectedTags([]);
+
+    const next = newParams.toString();
+    const current = searchParams.toString();
+
+    if (next === current) return;
+
+    router.replace(`/specialist?${next}`);
   }, [searchType]);
 
   return (
