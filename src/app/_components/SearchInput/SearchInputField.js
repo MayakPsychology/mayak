@@ -18,7 +18,7 @@ export function SearchInputField() {
     removeTags,
   } = useSearchContext();
 
-  const inputRef = useRef < HTMLInputElement || null;
+  const inputRef = useRef(null);
   const inputFocused = useFocus(inputRef);
 
   const shouldRenderTags = currentConfig.searchType === specialistTypeEnum.REQUEST;
