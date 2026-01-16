@@ -49,7 +49,7 @@ export const handler = withErrorHandler(async req => {
 
     const results = [];
 
-    if (!params.searchType || params.searchType === 'specialist') {
+    if (!params.searchType || params.searchType === 'specialist' || params.searchType === 'request') {
       const specialists = await prisma.specialist.findMany({
         where: specialistWhere,
         include: {
@@ -70,7 +70,7 @@ export const handler = withErrorHandler(async req => {
       );
     }
 
-    if (!params.searchType || params.searchType === 'organization') {
+    if (!params.searchType || params.searchType === 'organization' || params.searchType === 'request') {
       const organizations = await prisma.organization.findMany({
         where: organizationWhere,
         include: {
