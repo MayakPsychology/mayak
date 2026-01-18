@@ -18,6 +18,7 @@ export function SpecialistApplicationWizard({ dicts }) {
 
   const [step, setStep] = useState(1);
   const methods = useForm({
+    // shouldUnregister: false,
     defaultValues: specialistDefaultValues,
     mode: 'onChange',
     resolver: zodResolver(specialistApplicationSchema),

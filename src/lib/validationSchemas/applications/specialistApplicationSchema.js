@@ -67,6 +67,14 @@ export const zSupportFocusSchema = z.object({
   requestsIds: array('Запити', string().zod, { min: 1, message: 'Необхідно обрати хоча б один запит' }).zod,
 });
 
+const zSpecializationAdditionalInfoSchema = z.object({
+  specializationId: z.string().uuid(),
+  specialization: string('Спеціалізація').zod,
+  professionalDevelopment: string('Професійний розвиток').min(10).max(1000).zod,
+  personalTherapy: string('Досвід').min(10).max(1000).zod,
+  supervisionExperience: string('Супервізії та інтервізії').min(10).max(1000).zod,
+});
+
 export const specialistApplicationSchema = z.object({
   firstName: string("Ім'я").min(2).max(64).zod,
   lastName: string('Прізвище').min(2).max(64).zod,
@@ -98,4 +106,5 @@ export const specialistApplicationSchema = z.object({
     message: 'Необхідно обрати хоча б один тип терапії',
   }).zod,
   isFreeReception: boolean('Безкоштовний прийом').zod,
+  specializationAdditionalInfo: array('Додаткова інформація', zSpecializationAdditionalInfoSchema).zod,
 });

@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { CheckBox } from '@/app/_components/CheckBox';
+import { additionalInfoDefaultValue } from '@/app/config/application';
 import { SpecializationAdditionalInfo, SpecializationMethods } from '../../specialist/field-groups';
 
 export function SpecializationsGroup({ specializations, specializationMethods }) {
@@ -14,9 +15,15 @@ export function SpecializationsGroup({ specializations, specializationMethods })
   } = useFormContext();
   const errorMessage = errors?.specializations?.message;
 
+  const { fields, append, remove } = useFieldArray({
+    name: 'specializationAdditionalInfo',
+    control,
+  });
+
   const [expanded, setExpanded] = useState({});
   const toggle = id => setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
 
+  const getIndex = specId => fields.findIndex(field => field.specializationId === specId);
   return (
     <fieldset>
       <legend className="text-base mb-2 block font-medium">
@@ -32,6 +39,7 @@ export function SpecializationsGroup({ specializations, specializationMethods })
             <div>
               {specializations?.map(spec => {
                 const isSelected = selected.includes(spec.id);
+                const index = getIndex(spec.id);
                 return (
                   <div key={`specialization-${spec.id}`}>
                     <div className="flex items-center justify-between">
@@ -45,10 +53,21 @@ export function SpecializationsGroup({ specializations, specializationMethods })
                         error={errors?.specializations?.message}
                         onBlur={field.onBlur}
                         onChange={e => {
+                          const currentIndex = getIndex(spec.id);
                           if (e.target.checked) {
                             field.onChange([...selected, spec.id]);
+                            if (currentIndex === -1) {
+                              append({
+                                ...additionalInfoDefaultValue,
+                                specializationId: spec.id,
+                                specialization: spec.name,
+                              });
+                            }
                           } else {
                             field.onChange(selected.filter(id => id !== spec.id));
+                            if (currentIndex !== -1) {
+                              remove(index);
+                            }
                           }
                         }}
                       />
@@ -62,13 +81,13 @@ export function SpecializationsGroup({ specializations, specializationMethods })
                         </button>
                       )}
                     </div>
-                    {isSelected && expanded[spec.id] && (
+                    {isSelected && expanded[spec.id] && index !== -1 && (
                       <>
                         <SpecializationMethods
                           specializationId={spec.id}
                           specializationMethods={specializationMethods}
                         />
-                        <SpecializationAdditionalInfo specialization={spec.id} />{' '}
+                        <SpecializationAdditionalInfo specialization={spec.id} index={index} />{' '}
                       </>
                     )}
                   </div>

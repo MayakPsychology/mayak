@@ -1,7 +1,7 @@
 'use client';
 
 import PropTypes from 'prop-types';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { TextArea } from '@/app/_components/TextArea';
 
 export const FIELD_TEXTS = {
@@ -102,38 +102,56 @@ export const FIELD_TEXTS = {
   },
 };
 
-export function SpecializationAdditionalInfo({ specialization }) {
+export function SpecializationAdditionalInfo({ specialization, index }) {
   const texts = FIELD_TEXTS[specialization];
   const {
-    register,
+    control,
     formState: { errors },
   } = useFormContext();
 
-  if (!texts) return null;
+  if (!texts || index == null || index < 0) return null;
   return (
     <>
       <label>{texts.professionalDevelopment.label}</label>
       <p>{texts.professionalDevelopment.description}</p>
-      <TextArea
-        {...register('professionalDevelopment')}
-        placeholder="Ваша відповідь"
-        error={errors?.professionalDevelopment?.message}
+      <Controller
+        name={`specializationAdditionalInfo.${index}.professionalDevelopment`}
+        control={control}
+        render={({ field }) => (
+          <TextArea
+            {...field}
+            placeholder="Професійний розвиток"
+            error={errors?.specializationAdditionalInfo?.[index]?.professionalDevelopment?.message}
+          />
+        )}
       />
 
       <label>{texts.personalTherapy.label}</label>
       <p>{texts.personalTherapy.description}</p>
-      <TextArea
-        {...register('personalTherapy')}
-        placeholder="Ваша відповідь"
-        error={errors?.personalTherapy?.message}
+      <Controller
+        name={`specializationAdditionalInfo.${index}.personalTherapy`}
+        control={control}
+        render={({ field }) => (
+          <TextArea
+            {...field}
+            placeholder="Особиста психотерапія"
+            error={errors?.specializationAdditionalInfo?.[index]?.personalTherapy?.message}
+          />
+        )}
       />
 
       <label>{texts.supervisionExperience.label}</label>
       <p>{texts.supervisionExperience.description}</p>
-      <TextArea
-        {...register('supervisionExperience')}
-        placeholder="Ваша відповідь"
-        error={errors?.supervisionExperience?.message}
+      <Controller
+        name={`specializationAdditionalInfo.${index}.supervisionExperience`}
+        control={control}
+        render={({ field }) => (
+          <TextArea
+            {...field}
+            placeholder="Супервізії та інтервізії"
+            error={errors?.specializationAdditionalInfo?.[index]?.supervisionExperience?.message}
+          />
+        )}
       />
 
       {/* <FileUpload name="degreeDocument" label={texts.degreeDocument.label} /> */}
@@ -145,4 +163,5 @@ export function SpecializationAdditionalInfo({ specialization }) {
 
 SpecializationAdditionalInfo.propTypes = {
   specialization: PropTypes.string,
+  index: PropTypes.number,
 };

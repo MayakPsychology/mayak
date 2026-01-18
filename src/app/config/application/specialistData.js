@@ -34,5 +34,19 @@ export const specialistDefaultValues = {
   },
   specializations: [],
   specializationMethods: [],
+  specializationAdditionalInfo: [],
   supportFocuses: [],
+  professionalDevelopment: '',
+  personalTherapy: '',
+  supervisionExperience: '',
+};
+
+export const additionalInfoDefaultValue = {
+  specialization: '',
+  specializationId: '',
+  professionalDevelopment: '',
+  personalTherapy: '',
+  supervisionExperience: '',
+  // degreeDocument: [],
+  // additionalDocuments: [],
 };
