@@ -1,17 +1,37 @@
 import { faker } from '@faker-js/faker';
 import { NavigationUrl, PrismaClient } from '@prisma/client';
 import { getSpecialistFullName } from '../src/utils/getSpecialistFullName.mjs';
+import {
+  districts,
+  organizationTypes,
+  psychologyMethods,
+  psychotherapyMethods,
+  requests,
+  specializations,
+  therapies,
+  clientCategories,
+  donationDetails,
+} from './data.mjs';
 
 function getFullAddress() {
-  const street = faker.location.streetAddress();
+  const street = faker.location.streetAddress().substring(0, 30); // Conservative truncation
   const streetNumber = faker.number.int({ min: 1, max: 100 });
-  const floor = faker.number.int({ min: 1, max: 100 });
-  const room = faker.number.int({ min: 1, max: 100 });
-  return `вул. ${street} ${streetNumber}, поверх ${floor}, кабінет ${room}`;
+  const floor = faker.number.int({ min: 1, max: 10 });
+  const room = faker.number.int({ min: 1, max: 50 });
+  const fullAddr = `вул. ${street} ${streetNumber}, поверх ${floor}, кабінет ${room}`;
+  return fullAddr.substring(0, 120); // Ensure it fits in 128 char limit with margin
 }
 
 function nullable(value) {
   return Date.now() % 2 === 0 ? value : null;
+}
+
+function nullableTruncated(generator, maxLength) {
+  if (Date.now() % 2 === 0) {
+    const value = generator();
+    return value ? value.substring(0, maxLength) : null;
+  }
+  return null;
 }
 
 function randomUndefined(value) {
@@ -30,7 +50,8 @@ function uniqueObjectsWithId(instances) {
 }
 
 function randomAddress(districts, isPrimary) {
-  const randomNameOfClinic = `Клініка ${faker.company.name()}`;
+  const companyName = faker.company.name().substring(0, 200); // Truncate company name first
+  const randomNameOfClinic = `Клініка ${companyName}`.substring(0, 250); // Then truncate full string
   const randomDistricts = faker.helpers.arrayElement(districts).id; // returns random object from districts array
 
   // among coordinates of Lviv city
@@ -128,7 +149,12 @@ function randomSpecialist({ districts, specializations, therapies, clientCategor
     };
   }
 
-  const phoneRegexp = /^\+?\d{6,15}$/;
+  const generatePhone = () => {
+    const hasPlus = faker.datatype.boolean();
+    const digitCount = faker.number.int({ min: 6, max: 13 });
+    const digits = faker.string.numeric(digitCount);
+    return hasPlus ? `+${digits}` : digits;
+  };
 
   const socialMediaLinks = generateSocialMediaLinks();
 
@@ -148,9 +174,9 @@ function randomSpecialist({ districts, specializations, therapies, clientCategor
       connect: specializationMethodsIds,
     },
     // take name of corresponding gender
-    firstName: faker.person.firstName(gender.toLowerCase()),
-    lastName: faker.person.lastName(),
-    surname: nullable(faker.person.lastName()),
+    firstName: faker.person.firstName(gender.toLowerCase()).substring(0, 60),
+    lastName: faker.person.lastName().substring(0, 60),
+    surname: nullableTruncated(() => faker.person.lastName(), 60),
     gender,
     workTime: randomUndefined(randomWorkTime()),
     yearsOfExperience: faker.number.int({ min: 1, max: 30 }),
@@ -162,8 +188,8 @@ function randomSpecialist({ districts, specializations, therapies, clientCategor
     },
     isFreeReception: faker.datatype.boolean(),
     isActive: faker.datatype.boolean(),
-    phone: nullable(faker.helpers.fromRegExp(phoneRegexp)),
-    email: nullable(faker.internet.email()),
+    phone: nullable(generatePhone()),
+    email: nullableTruncated(() => faker.internet.email(), 320),
     website: nullable(faker.internet.url()),
     description: faker.lorem.paragraph(),
     ...socialMediaLinks,
@@ -186,13 +212,20 @@ function randomOrganization({ therapies, districts, organizationTypes, expertSpe
         .map((_, i) => randomAddress(districts, i === 0)),
     };
   }
-  const phoneRegexp = /^\+?\d{6,15}$/;
+
+  const generatePhone = () => {
+    const hasPlus = faker.datatype.boolean();
+    const digitCount = faker.number.int({ min: 6, max: 13 });
+    const digits = faker.string.numeric(digitCount);
+    return hasPlus ? `+${digits}` : digits;
+  };
+
   const socialMediaLinks = generateSocialMediaLinks();
 
   const { clientsWorkingWith, clientsNotWorkingWith } = setClientCategories(clientCategories);
 
   return {
-    name: faker.company.name(),
+    name: faker.company.name().substring(0, 120), // Conservative truncation for 128 char limit
     expertSpecializations: {
       connect: uniqueObjectsWithId(expertSpecializations),
     },
@@ -210,8 +243,8 @@ function randomOrganization({ therapies, districts, organizationTypes, expertSpe
     workTime: randomUndefined(randomWorkTime()),
     isFreeReception: faker.datatype.boolean(),
     isActive: faker.datatype.boolean(),
-    phone: nullable(faker.helpers.fromRegExp(phoneRegexp)),
-    email: nullable(faker.internet.email()),
+    phone: nullable(generatePhone()),
+    email: nullableTruncated(() => faker.internet.email(), 320),
     website: nullable(faker.internet.url()),
     description: faker.lorem.paragraph(),
     ...socialMediaLinks,
@@ -242,8 +275,8 @@ function randomEvent({ tags, link }) {
     price = faker.number.int({ min: 1000, max: 5000 });
   }
   return {
-    title: faker.word.noun(),
-    organizerName: faker.company.name(),
+    title: faker.word.noun().substring(0, 120), // Conservative truncation
+    organizerName: faker.company.name().substring(0, 120), // Conservative truncation
     address,
     locationLink,
     priceType,
@@ -262,7 +295,64 @@ function randomEvent({ tags, link }) {
 
 const prisma = new PrismaClient();
 
+specializations.push(
+  {
+    name: 'Психолог',
+    methods: {
+      connectOrCreate: psychologyMethods.map(method => {
+        const { title, description } = method;
+        return {
+          where: { title },
+          create: { title, description },
+        };
+      }),
+    },
+  },
+  {
+    name: 'Психотерапевт',
+    methods: {
+      connectOrCreate: psychotherapyMethods.map(method => {
+        const { title, description } = method;
+        return {
+          where: { title },
+          create: { title, description },
+        };
+      }),
+    },
+  },
+);
+
+async function createIfNotExist(model, data, filter) {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const it of data) {
+    // eslint-disable-next-line no-await-in-loop
+    await model.upsert({ where: filter(it), create: it, update: {} });
+  }
+}
+
+async function seedBaseData() {
+  await createIfNotExist(prisma.clientCategory, clientCategories, ({ name }) => ({ name }));
+  await createIfNotExist(prisma.donationDetails, [donationDetails], ({ title }) => ({ title }));
+  await createIfNotExist(prisma.district, districts, ({ name }) => ({ name }));
+  await createIfNotExist(prisma.request, requests, ({ name }) => ({ name }));
+  await createIfNotExist(prisma.specialization, specializations, ({ name }) => ({ name }));
+  await createIfNotExist(prisma.organizationType, organizationTypes, ({ name }) => ({ name }));
+  await createIfNotExist(
+    prisma.method,
+    psychotherapyMethods
+      .map(method => ({ ...method, specialization: { connect: { name: 'Психотерапевт' } } }))
+      .concat(psychologyMethods.map(method => ({ ...method, specialization: { connect: { name: 'Психолог' } } }))),
+    method => ({ title: method.title }),
+  );
+
+  // depends on 'requests', they should be created before therapies
+  await createIfNotExist(prisma.therapy, therapies, ({ type }) => ({ type }));
+}
+
 async function main() {
+  // First, seed base data (districts, specializations, therapies, etc.)
+  await seedBaseData();
+
   // Clear the database to make sure we can run seed
   await prisma.$transaction(async trx => {
     await trx.address.deleteMany();
@@ -324,6 +414,7 @@ async function main() {
       clientCategories,
       specializationMethods,
     });
+
     // eslint-disable-next-line no-await-in-loop
     await prisma.specialist.create({
       data: {
