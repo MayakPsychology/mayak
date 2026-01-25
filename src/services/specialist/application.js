@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-// const { prisma } = require('@/lib/db');
-
+import { transformSpecialistData } from '@/app/(admin)/admin/_utils/transformSpecialistData';
 import { normalizeForPrisma } from '@/app/_utils/normalizeForPrisma';
+import { prisma } from '@/lib/db';
 
 function formDataToObject(formData) {
   const data = {};
@@ -21,10 +21,9 @@ export async function application(formData) {
   // 1️⃣ FormData → объект
   const data = formDataToObject(formData);
 
-  console.log('RAW DATA FROM FORM:', data);
-  // 1. Email — вфдпавка вчіх даних на електронну пошту
-  //   await sendSpecialistSubmissionEmail(formData);
-
+  console.log('Recived from frontend:', data);
+  // 1. Email — вфдпhавка даних на електронну пошту
+  // TODO: винести в орему утиліту
   // 2. Відбираємо дані (поля) тільки для БД
   const dbInput = {
     firstName: data.firstName,
@@ -63,16 +62,19 @@ export async function application(formData) {
     // бизнес-правило
     isActive: false,
   };
-  console.log('DB fields (before normalize):', dbInput);
 
   // 3. Нормалізація
-
   const normalizedData = normalizeForPrisma(dbInput);
 
-  console.log('DB fields (normalized):', normalizedData);
+  console.log('NORMALIZED DATA', normalizedData);
 
   // 4. Трфнсформація под структурру призма
+  const transformedData = transformSpecialistData(normalizedData);
+  console.log('TRANSFORMED DATA:', transformedData);
 
-  // 5️⃣ create через extension
-  // await prisma.specialist.create({ data: prismaData });
+  // 5️. стоврення спеціаліста в базі через prisma extension
+  await prisma.specialist.create({ data: transformedData });
 }
+
+// TODO: поодумати про безпеку (ін'єкції і т.ін)
+// TODO: додати на фронт капчу
