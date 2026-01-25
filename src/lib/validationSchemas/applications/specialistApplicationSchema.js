@@ -63,7 +63,11 @@ export const zClientsSchema = z
 export const zSupportFocusSchema = z.object({
   id: string().optional().zod,
   price: number('Ціна').min(0).nullish().optional().zod,
-  therapy: string('Терапія').zod,
+  // therapy: string('Терапія').zod,
+  therapy: z.object({
+    id: string('Терапія').zod,
+    title: z.string().optional(), // title можно опционально, если нужен
+  }),
   requestsIds: array('Запити', string().zod, { min: 1, message: 'Необхідно обрати хоча б один запит' }).zod,
 });
 

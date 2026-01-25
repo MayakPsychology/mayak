@@ -20,7 +20,7 @@ export function SupportFocuses({ therapies }) {
     <div>
       <ul className="flex flex-col gap-6">
         {therapies.map(therapy => {
-          const index = fields.findIndex(field => field.therapy === therapy.id);
+          const index = fields.findIndex(field => field.therapy?.id === therapy.id);
           const checked = index !== -1;
           return (
             <li key={therapy.id} className="mb-4">
@@ -32,7 +32,10 @@ export function SupportFocuses({ therapies }) {
                   onChange={e => {
                     if (e.target.checked) {
                       append({
-                        therapy: therapy.id,
+                        therapy: {
+                          id: therapy.id,
+                          // title: therapy.title,
+                        },
                         price: null,
                         requestsIds: [],
                       });
@@ -53,6 +56,7 @@ export function SupportFocuses({ therapies }) {
                       <Controller
                         name={`supportFocuses.${index}.requestsIds`} // index уникален для каждой терапии
                         control={control}
+                        defaultValue={[]}
                         render={({ field }) =>
                           therapy.requests.map(request => (
                             <CheckBox
