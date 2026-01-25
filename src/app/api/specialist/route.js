@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { withErrorHandler } from '@/lib/errors/errorHandler';
-import { submitSpecialistApplication } from '@/services/specialist/submitSpecialistApplication';
+import { application } from '@/services/specialist';
 
 export const POST = withErrorHandler(async request => {
   const formData = await request.formData();
-  await submitSpecialistApplication(formData);
+  await application(formData);
   return NextResponse.json({ success: true });
 });
