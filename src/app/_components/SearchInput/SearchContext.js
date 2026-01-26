@@ -24,10 +24,11 @@ export function SearchProvider({ children }) {
   const [isSelectTypeOpen, setIsSelectTypeOpen] = useState(false);
   const [isAutoCompleteOpen, setIsAutoCompleteOpen] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
 
   function addTags(item) {
+    setIsLoading(true);
     setSelectedTags(prev => {
       const exists = prev.some(tag => tag.title === item.title);
       return exists ? prev : [...prev, { id: item.id, title: item.title }];
@@ -37,10 +38,12 @@ export function SearchProvider({ children }) {
   }
 
   function removeTags(id) {
+    setIsLoading(true);
     setSelectedTags(prev => prev.filter(tag => tag.id !== id));
   }
 
   function clearTags() {
+    setIsLoading(true);
     setSelectedTags([]);
   }
 
@@ -57,6 +60,7 @@ export function SearchProvider({ children }) {
 
   function submitSearch() {
     setIsAutoCompleteOpen(false);
+    setIsLoading(true);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
 
     const tagTitles = selectedTags.map(tag => tag.title);
@@ -65,25 +69,20 @@ export function SearchProvider({ children }) {
 
     const newParams = new URLSearchParams(searchParams);
 
-    if (combinedQuery.length > 0) {
-      newParams.set('query', combinedQuery);
-    } else {
-      newParams.delete('query');
-    }
+    if (combinedQuery.length > 0) newParams.set('query', combinedQuery);
+    else newParams.delete('query');
 
     newParams.set(specialistFiltersConfig.specialistType.filterKey, currentSearchType);
 
-    if (mode) {
-      newParams.set('mode', 'map');
-    } else {
-      newParams.delete('mode');
-    }
+    if (mode) newParams.set('mode', 'map');
+    else newParams.delete('mode');
 
     router.push(`/specialist?${newParams.toString()}`);
   }
 
   function navigateToAutoCompleteItem(autoCompleteItem) {
     setIsAutoCompleteOpen(false);
+    setIsLoading(true);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
 
     if (currentSearchType === specialistTypeEnum.REQUEST) {
@@ -91,24 +90,19 @@ export function SearchProvider({ children }) {
       newParams.set(specialistFiltersConfig.specialistType.filterKey, specialistTypeEnum.REQUEST);
       newParams.set('query', autoCompleteItem.title);
 
-      setTimeout(() => {
-        router.replace(`/specialist?${newParams.toString()}`);
-      }, 0);
-
+      router.replace(`/specialist?${newParams.toString()}`);
       return;
     }
 
     if (currentSearchType === specialistTypeEnum.SPECIALIST || currentSearchType === specialistTypeEnum.ORGANIZATION) {
       setQuery(autoCompleteItem.title);
       const url = getSpecialistURL({ type: currentSearchType, id: autoCompleteItem.id });
-
-      setTimeout(() => {
-        router.push(url);
-      }, 0);
+      router.push(url);
     }
   }
 
   function clearQuery() {
+    setIsLoading(true);
     setQuery('');
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
@@ -120,12 +114,15 @@ export function SearchProvider({ children }) {
     router.replace(`/specialist?${newParams.toString()}`);
   }
 
+  /* ---------- URL -> STATE ---------- */
+
   useEffect(() => {
     if (queryParam === null) return;
     if (queryParam === '') {
       if (selectedTags.length > 0) setSelectedTags([]);
       return;
     }
+
     const tagTitles = [
       ...new Set(
         queryParam
@@ -149,12 +146,15 @@ export function SearchProvider({ children }) {
 
   useEffect(() => {
     if (searchType !== specialistTypeEnum.REQUEST && selectedTags.length > 0) {
+      setIsLoading(true);
       setSelectedTags([]);
     }
   }, [searchType]);
 
   useEffect(() => {
     if (searchType !== specialistTypeEnum.REQUEST) return;
+
+    setIsLoading(true);
 
     const tagTitles = selectedTags.map(tag => tag.title);
     const newQuery = tagTitles.join(', ');
@@ -171,15 +171,13 @@ export function SearchProvider({ children }) {
 
     if (next === current) return;
 
-    setTimeout(() => {
-      router.replace(`/specialist?${next}`);
-    }, 0);
+    router.replace(`/specialist?${next}`);
   }, [selectedTags, searchType]);
 
   useEffect(() => {
     if (!searchTypeParam) return;
-
     if (searchTypeParam !== searchType) {
+      setIsLoading(true);
       setSearchType(searchTypeParam);
     }
   }, [searchTypeParam]);
@@ -187,10 +185,10 @@ export function SearchProvider({ children }) {
   useEffect(() => {
     if (!searchType) return;
 
+    setIsLoading(true);
+
     const newParams = new URLSearchParams(searchParams);
-
     newParams.delete('query');
-
     newParams.set(specialistFiltersConfig.specialistType.filterKey, searchType);
 
     if (query !== '') setQuery('');
@@ -203,6 +201,12 @@ export function SearchProvider({ children }) {
 
     router.replace(`/specialist?${next}`);
   }, [searchType]);
+
+  /* ---------- FINISH LOADING WHEN URL CHANGED ---------- */
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, [searchParams.toString()]);
 
   return (
     <SearchContext.Provider
@@ -218,6 +222,7 @@ export function SearchProvider({ children }) {
         autoCompleteItems,
         isAutoCompleteLoading,
         selectedTags,
+        isLoading,
         clearTags,
         addTags,
         removeTags,
@@ -228,6 +233,7 @@ export function SearchProvider({ children }) {
         setIsInputFocused,
         submitSearch,
         navigateToAutoCompleteItem,
+        setIsLoading,
       }}
     >
       {children}

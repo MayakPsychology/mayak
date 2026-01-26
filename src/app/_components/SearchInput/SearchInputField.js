@@ -46,7 +46,7 @@ export function SearchInputField() {
   }, [query, inputFocused]);
 
   return (
-    <div className="flex w-full items-center gap-2 py-1" onClick={() => inputRef.current?.focus()}>
+    <div className="flex w-full  items-center gap-2 py-1" onClick={() => inputRef.current?.focus()}>
       {/* TAGS */}
       {shouldRenderTags &&
         selectedTags.map(tag => (
@@ -94,23 +94,24 @@ export function SearchInputField() {
       />
 
       {/* CLEAR BUTTON */}
-      {query.length > 0 && !shouldRenderTags && (
-        <button
-          type="button"
-          aria-label="Clear search"
-          className="flex h-10 w-10 items-center justify-center
-            rounded-full text-gray-400
-            transition hover:text-gray-700"
-          onClick={e => {
-            e.stopPropagation();
-            setQuery('');
-            setIsAutoCompleteOpen(false);
-            inputRef.current?.focus();
-          }}
-        >
-          <СrossSmall />
-        </button>
-      )}
+      <div className="flex h-8 w-8 items-center justify-center">
+        {query.length > 0 && !shouldRenderTags && (
+          <button
+            type="button"
+            aria-label="Clear search"
+            className="rounded-full text-gray-400
+        transition hover:text-gray-700"
+            onClick={e => {
+              e.stopPropagation();
+              setQuery('');
+              setIsAutoCompleteOpen(false);
+              inputRef.current?.focus();
+            }}
+          >
+            <СrossSmall />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

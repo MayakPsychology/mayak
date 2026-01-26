@@ -127,18 +127,25 @@ export const countAppliedFilters = (keys, searchParams, options = {}) =>
   }, 0);
 
 export const processFiltersBeforeApply = filtersToProcess => {
-  const priceKeys = [
-    specialistFiltersConfig.price.filterKey.priceMin,
-    specialistFiltersConfig.price.filterKey.priceMax,
-  ];
-  const hasPriceRangeFilter = filtersToProcess.get(priceKeys[0]) || filtersToProcess.get(priceKeys[1]);
-  if (hasPriceRangeFilter) {
+  const minKey = specialistFiltersConfig.price.filterKey.priceMin;
+  const maxKey = specialistFiltersConfig.price.filterKey.priceMax;
+
+  const min = +filtersToProcess.get(minKey);
+  const max = +filtersToProcess.get(maxKey);
+
+  const isDefaultRange = min === MIN_PRICE && max === MAX_PRICE;
+
+  if (isDefaultRange) {
+    filtersToProcess.delete(minKey);
+    filtersToProcess.delete(maxKey);
+  } else {
     filtersToProcess.getAll(specialistFiltersConfig.price.filterKey.price).forEach(value => {
       if (value !== priceTypeEnum.FREE) {
         filtersToProcess.delete(specialistFiltersConfig.price.filterKey.price, value);
       }
     });
   }
+
   return filtersToProcess;
 };
 

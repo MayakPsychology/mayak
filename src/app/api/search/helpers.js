@@ -66,6 +66,7 @@ export function createEntityFilter({
   query,
   searchType,
   category,
+  isFree,
 }) {
   const priceFilter = (prices || (priceMin && priceMax)) && getPriceFilter(prices, priceMin, priceMax);
   const therapyFilter = type && { type };
@@ -85,7 +86,7 @@ export function createEntityFilter({
       })),
     },
   };
-  const isSupportFocusesFilterExist = requestType || type || priceFilter || query || undefined;
+  const isSupportFocusesFilterExist = requestType || type || priceFilter || query || isFree || undefined;
   const supportFocusesFilter = isSupportFocusesFilterExist && {
     some: {
       AND: [

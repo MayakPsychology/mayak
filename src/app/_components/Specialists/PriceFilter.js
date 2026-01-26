@@ -30,7 +30,7 @@ function PricesList({ pricesInUrl }) {
     priceParam.bulkUpdate({
       [specialistFiltersConfig.price.filterKey.price]: {
         method: 'replace',
-        value: prices
+        value: prices,
       },
       [specialistFiltersConfig.price.filterKey.priceMin]: {
         method: 'remove',
@@ -90,4 +90,4 @@ export function PriceFilter({ searchParams }) {
 
 PriceFilter.propTypes = {
   searchParams: PropTypes.object.isRequired,
-}
+};

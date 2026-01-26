@@ -21,6 +21,7 @@ export function SearchInput() {
     setIsSelectTypeOpen,
     setIsAutoCompleteOpen,
     submitSearch,
+    isLoading, // 👈
   } = useSearchContext();
 
   const searchTypeDropDownRef = useRef(null);
@@ -56,20 +57,21 @@ export function SearchInput() {
         >
           <SearchTypeDropDown />
         </div>
+
         <div
           ref={autoCompleteRef}
-          className=" relative flex  grow items-center gap-2 rounded-full border-[1px] border-gray-600 pl-4 pr-[18px] lg:border-0 lg:bg-other-white/0 "
+          className=" relative flex grow items-center gap-2 rounded-full border-[1px] border-gray-600 pl-4 pr-[18px] lg:border-0 lg:bg-other-white/0 "
         >
           <SearchIcon className={cn('group-focus-within:hidden', (query || selectedTags.length > 0) && 'hidden')} />
+
           <div
-            className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent overlay-scrollbar  w-full 
-  min-w-0 overflow-x-auto
-  overflow-y-hidden
-  whitespace-nowrap py-2 pb-[2px]
-  lg:max-w-[515px]"
+            className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent overlay-scrollbar w-full 
+              min-w-0 overflow-x-auto overflow-y-hidden whitespace-nowrap py-2 pb-[2px]
+              lg:max-w-[515px]"
           >
             <SearchInputField />
           </div>
+
           <ClearSearchIcon
             className={cn('hidden cursor-pointer', query || selectedTags.length > 0)}
             onClick={() => {
@@ -77,11 +79,27 @@ export function SearchInput() {
               clearTags();
             }}
           />
+
           <SearchAutoCompleteDropDown />
         </div>
       </div>
-      <PillButton variant="filled" colorVariant="blue" onClick={submitSearch}>
-        Знайти
+
+      {/* BUTTON WITH LOADER */}
+      <PillButton
+        variant="filled"
+        colorVariant="blue"
+        onClick={submitSearch}
+        disabled={isLoading}
+        className="min-w-[120px]"
+      >
+        {isLoading ? (
+          <svg className="h-6 w-6 animate-spin text-white" viewBox="0 0 24 24" fill="none">
+            <circle className="opacity-35" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-85" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+          </svg>
+        ) : (
+          'Знайти'
+        )}
       </PillButton>
     </div>
   );
