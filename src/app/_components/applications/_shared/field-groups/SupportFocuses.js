@@ -9,6 +9,8 @@ export function SupportFocuses({ therapies }) {
   const {
     control,
     register,
+    getValues,
+    setValue,
     formState: { errors },
   } = useFormContext();
 
@@ -34,7 +36,7 @@ export function SupportFocuses({ therapies }) {
                       append({
                         therapy: {
                           id: therapy.id,
-                          // title: therapy.title,
+                          title: therapy.title,
                         },
                         price: null,
                         requestsIds: [],
@@ -54,27 +56,39 @@ export function SupportFocuses({ therapies }) {
                     />
                     <ul className="flex flex-wrap">
                       <Controller
-                        name={`supportFocuses.${index}.requestsIds`} // index уникален для каждой терапии
+                        name={`supportFocuses.${index}.requestsIds`} // для БД
                         control={control}
                         defaultValue={[]}
-                        render={({ field }) =>
-                          therapy.requests.map(request => (
-                            <CheckBox
-                              key={request.id}
-                              name={`supportFocuses.${index}.requestsIds.${request.id}`}
-                              value={request.id}
-                              text={request.name}
-                              checked={field.value.includes(request.id)}
-                              onChange={e => {
-                                if (e.target.checked) {
-                                  field.onChange([...field.value, request.id]);
-                                } else {
-                                  field.onChange(field.value.filter(id => id !== request.id));
-                                }
-                              }}
-                            />
-                          ))
-                        }
+                        render={({ field }) => {
+                          const ids = field.value;
+                          const titles = getValues(`supportFocuses.${index}.requestsNames`) || [];
+
+                          return therapy.requests.map(request => {
+                            const isChecked = ids.includes(request.id);
+
+                            return (
+                              <CheckBox
+                                key={request.id}
+                                name={`supportFocuses.${index}.requestsIds.${request.id}`}
+                                value={request.id}
+                                text={request.name}
+                                checked={isChecked}
+                                onChange={e => {
+                                  if (e.target.checked) {
+                                    field.onChange([...ids, request.id]);
+                                    setValue(`supportFocuses.${index}.requestsNames`, [...titles, request.name]);
+                                  } else {
+                                    field.onChange(ids.filter(id => id !== request.id));
+                                    setValue(
+                                      `supportFocuses.${index}.requestsNames`,
+                                      titles.filter(t => t !== request.name),
+                                    );
+                                  }
+                                }}
+                              />
+                            );
+                          });
+                        }}
                       />
                     </ul>
                   </>

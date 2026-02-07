@@ -83,9 +83,9 @@ export default function SpecialistApplicationTemplate({ data }) {
           <Heading style={{ fontSize: '16px', marginTop: '20px' }}>Напрямки підтримки</Heading>
           {data.supportFocuses.map((sf, i) => (
             <div key={i} style={{ marginBottom: '10px' }}>
-              <Text>Терапія ID: {sf.therapy.id}</Text>
+              <Text>Терапія: {sf.therapy.title}</Text>
               <Text>Ціна: {sf.price}</Text>
-              <Text>Запити: {sf.requestsIds.join(', ')}</Text>
+              <Text>Запити: {sf.requestsNames.join(', ')}</Text>
             </div>
           ))}
         </Container>

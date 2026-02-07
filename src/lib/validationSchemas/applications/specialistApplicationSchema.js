@@ -60,6 +60,11 @@ export const zClientsSchema = z
     }
   });
 
+// export const zRequestItem = z.object({
+//   id: string().zod,
+//   titlle: string().zod,
+// });
+
 export const zSupportFocusSchema = z.object({
   id: string().optional().zod,
   price: number('Ціна').min(0).nullish().optional().zod,
@@ -69,6 +74,7 @@ export const zSupportFocusSchema = z.object({
     title: z.string().optional(), // title можно опционально, если нужен
   }),
   requestsIds: array('Запити', string().zod, { min: 1, message: 'Необхідно обрати хоча б один запит' }).zod,
+  requestsNames: array('Назви запитів', string().zod, { min: 1, message: 'Необхідно обрати хоча б один запит' }).zod,
 });
 
 const zSpecializationAdditionalInfoSchema = z.object({
