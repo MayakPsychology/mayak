@@ -2,6 +2,7 @@
 import { transformSpecialistData } from '@/app/(admin)/admin/_utils/transformSpecialistData';
 import { normalizeForPrisma } from '@/app/_utils/normalizeForPrisma';
 import { prisma } from '@/lib/db';
+import { sendApplicationNotification } from '../email/sendEmail';
 
 function formDataToObject(formData) {
   const data = {};
@@ -74,6 +75,8 @@ export async function application(formData) {
 
   // 5️. стоврення спеціаліста в базі через prisma extension
   await prisma.specialist.create({ data: transformedData });
+  const result = await sendApplicationNotification(data);
+  console.log(result);
 }
 
 // TODO: поодумати про безпеку (ін'єкції і т.ін)
