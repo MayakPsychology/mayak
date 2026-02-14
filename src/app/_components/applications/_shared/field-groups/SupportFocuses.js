@@ -67,25 +67,26 @@ export function SupportFocuses({ therapies }) {
                             const isChecked = ids.includes(request.id);
 
                             return (
-                              <CheckBox
-                                key={request.id}
-                                name={`supportFocuses.${index}.requestsIds.${request.id}`}
-                                value={request.id}
-                                text={request.name}
-                                checked={isChecked}
-                                onChange={e => {
-                                  if (e.target.checked) {
-                                    field.onChange([...ids, request.id]);
-                                    setValue(`supportFocuses.${index}.requestsNames`, [...titles, request.name]);
-                                  } else {
-                                    field.onChange(ids.filter(id => id !== request.id));
-                                    setValue(
-                                      `supportFocuses.${index}.requestsNames`,
-                                      titles.filter(t => t !== request.name),
-                                    );
-                                  }
-                                }}
-                              />
+                              <li key={request.id}>
+                                <CheckBox
+                                  name={`supportFocuses.${index}.requestsIds.${request.id}`}
+                                  value={request.id}
+                                  text={request.name}
+                                  checked={isChecked}
+                                  onChange={e => {
+                                    if (e.target.checked) {
+                                      field.onChange([...ids, request.id]);
+                                      setValue(`supportFocuses.${index}.requestsNames`, [...titles, request.name]);
+                                    } else {
+                                      field.onChange(ids.filter(id => id !== request.id));
+                                      setValue(
+                                        `supportFocuses.${index}.requestsNames`,
+                                        titles.filter(t => t !== request.name),
+                                      );
+                                    }
+                                  }}
+                                />
+                              </li>
                             );
                           });
                         }}
