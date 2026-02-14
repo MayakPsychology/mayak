@@ -2,9 +2,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { DescriptionField } from '../_shared/fields';
-import { ContactsGroup, SocialLinksGroup } from '../_shared/field-groups';
-import { SpecialistGeneralInfo } from './field-groups';
+import { DescriptionField } from '../../_shared/fields';
+import { ContactsGroup, SocialLinksGroup } from '../../_shared/field-groups';
+import { SpecialistGeneralInfo } from '../field-groups';
 
 export function Step1() {
   return (

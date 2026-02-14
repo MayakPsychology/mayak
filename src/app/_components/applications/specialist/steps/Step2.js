@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { getChoicesList } from '@/app/(admin)/admin/_utils/common';
 import { FormTranslations } from '@/app/(admin)/admin/_lib/translations';
 import { CheckBox } from '@/app/_components/CheckBox';
-import { AdressListGroup, WorkTimeGroup } from '../_shared/field-groups';
+import { AdressListGroup, WorkTimeGroup } from '../../_shared/field-groups';
 
 export function Step2({ districts }) {
   const {

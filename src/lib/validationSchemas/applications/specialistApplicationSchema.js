@@ -60,11 +60,6 @@ export const zClientsSchema = z
     }
   });
 
-// export const zRequestItem = z.object({
-//   id: string().zod,
-//   titlle: string().zod,
-// });
-
 export const zSupportFocusSchema = z.object({
   id: string().optional().zod,
   price: number('Ціна').min(0).nullish().optional().zod,
@@ -85,7 +80,8 @@ const zSpecializationAdditionalInfoSchema = z.object({
   supervisionExperience: string('Супервізії та інтервізії').min(10).max(1000).zod,
 });
 
-export const specialistApplicationSchema = z.object({
+// Step 1
+export const specialistApplicationStep1Schema = z.object({
   firstName: string("Ім'я").min(2).max(64).zod,
   lastName: string('Прізвище').min(2).max(64).zod,
   surname: string('По-батькові').min(2).max(64).optional().zod,
@@ -94,27 +90,47 @@ export const specialistApplicationSchema = z.object({
     required_error: 'Оберіть стать',
     invalid_type_error: 'Оберіть стать',
   }),
+  email: string('Пошта').email().optional().zod,
+  website: string('Веб сторінка').url().optional().zod,
+  phone: regexField('Телефон', PHONE_REGEX, 'Введіть номер телефону у міжнародному форматі'),
+  socialLink: zSosialLinkSchema,
+  description: string('Опис').min(10).max(5000).zod,
+});
+
+// Step 2
+export const specialistApplicationStep2Schema = z.object({
   formatOfWork: z.enum(Object.values(FormatOfWork), {
     required_error: 'Оберіть формат роботи',
     invalid_type_error: 'Оберіть формат роботи',
   }),
   addresses: array('Адреси', zCreateAddressSchema).zod,
   workTime: array('Адреси', zWorkDaySchema).zod,
-  email: string('Пошта').email().optional().zod,
-  website: string('Веб сторінка').url().optional().zod,
-  phone: regexField('Телефон', PHONE_REGEX, 'Введіть номер телефону у міжнародному форматі'),
-  socialLink: zSosialLinkSchema,
-  description: string('Опис').min(10).max(5000).zod,
-  clients: zClientsSchema,
+});
+
+// Step3
+export const specialistApplicationStep3Schema = z.object({ clients: zClientsSchema });
+
+// Step4
+export const specialistApplicationStep4Schema = z.object({
   specializations: array('Спеціалізації', string('Спеціалізація').zod, {
     min: 1,
     message: 'Потрібно обрати щонайменше 1 спеціалізацію',
   }).zod,
   specializationMethods: array('Методи спеціалізації', string('Метод спеціалізації').zod).zod,
+  specializationAdditionalInfo: array('Додаткова інформація', zSpecializationAdditionalInfoSchema).zod,
+});
+
+// Step5
+export const specialistApplicationStep5Schema = z.object({
+  isFreeReception: boolean('Безкоштовний прийом').zod,
   supportFocuses: array('Напрямки підтримки', zSupportFocusSchema, {
     min: 1,
     message: 'Необхідно обрати хоча б один тип терапії',
   }).zod,
-  isFreeReception: boolean('Безкоштовний прийом').zod,
-  specializationAdditionalInfo: array('Додаткова інформація', zSpecializationAdditionalInfoSchema).zod,
 });
+
+export const specialistApplicationFullSchema = specialistApplicationStep1Schema
+  .merge(specialistApplicationStep2Schema)
+  .merge(specialistApplicationStep3Schema)
+  .merge(specialistApplicationStep4Schema)
+  .merge(specialistApplicationStep5Schema);

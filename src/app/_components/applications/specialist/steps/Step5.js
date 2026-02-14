@@ -2,8 +2,8 @@
 
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
-import { CheckBox } from '../../CheckBox';
-import { SupportFocuses } from '../_shared/field-groups';
+import { CheckBox } from '../../../CheckBox';
+import { SupportFocuses } from '../../_shared/field-groups';
 
 export function Step5({ therapies }) {
   const { control } = useFormContext();
