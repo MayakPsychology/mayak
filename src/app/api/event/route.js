@@ -20,18 +20,20 @@ export const GET = withErrorHandler(async req => {
     select: {
       id: true,
       title: true,
-      description: true,
       eventDate: true,
       format: true,
-      location: true,
-      registrationLink: true,
-      imagePath: true,
       isActive: true,
+      organizerName: true,
+      notes: true,
+      address: true,
+      locationLink: true,
+      price: true,
+      priceType: true,
       tags: {
         select: { id: true, name: true },
       },
       additionalLink: {
-        select: { id: true, title: true, url: true },
+        select: { id: true, label: true, link: true },
       },
     },
     where: {
