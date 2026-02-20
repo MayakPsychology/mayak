@@ -82,6 +82,10 @@ model Specialist {
   clientsWorkingWith    ClientCategory[] @relation(name: "SpecialistToClientCategoryWorkingWith")
   clientsNotWorkingWith ClientCategory[] @relation(name: "SpecialistToClientCategoryNotWorkingWith")
 
+  @@index([isActive])
+  @@index([formatOfWork])
+  @@index([gender])
+  @@index([lastName, firstName])
   @@map("specialist")
 }
 
@@ -116,6 +120,10 @@ model Organization {
   clientsWorkingWith    ClientCategory[]   @relation(name: "OrganizationToClientCategoryWorkingWith")
   clientsNotWorkingWith ClientCategory[]   @relation(name: "OrganizationToClientCategoryNotWorkingWith")
 
+  @@index([isActive])
+  @@index([formatOfWork])
+  @@index([ownershipType])
+  @@index([name])
   @@map("organization")
 }
 
@@ -133,6 +141,10 @@ model SupportFocus {
   therapyId      String        @db.Uuid
   requests       Request[]
 
+  @@index([specialistId])
+  @@index([organizationId])
+  @@index([therapyId])
+  @@index([price])
   @@map("support_focus")
 }
 
@@ -144,6 +156,9 @@ model SearchEntry {
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId String?       @unique @db.Uuid
 
+  @@index([sortString])
+  @@index([specialistId])
+  @@index([organizationId])
   @@map("search_entry")
 }
 
@@ -189,6 +204,9 @@ model Therapy {
   supportFocuses SupportFocus[]
   requests       Request[]
 
+  @@index([isActive])
+  @@index([priority])
+  @@index([type])
   @@map("therapy")
 }
 
@@ -216,6 +234,9 @@ model Address {
   longitude     Float          @default(0) @db.DoublePrecision
   latitude      Float          @default(0) @db.DoublePrecision
 
+  @@index([districtId])
+  @@index([isPrimary])
+  @@index([latitude, longitude])
   @@map("address")
 }
 
@@ -250,6 +271,9 @@ model Event {
   priceType      EventPriceFormat?
   tags           EventTag[]
 
+  @@index([isActive])
+  @@index([eventDate])
+  @@index([format])
   @@map("event")
 }
 

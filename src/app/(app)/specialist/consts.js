@@ -1,59 +1,136 @@
-export const specialistInclude = {
+export const specialistSelect = {
+  id: true,
+  firstName: true,
+  lastName: true,
+  surname: true,
+  gender: true,
+  yearsOfExperience: true,
+  formatOfWork: true,
+  isFreeReception: true,
+  description: true,
+  phone: true,
+  email: true,
+  website: true,
+  instagram: true,
+  facebook: true,
+  youtube: true,
+  linkedin: true,
+  tiktok: true,
+  viber: true,
+  telegram: true,
+  isActive: true,
   specializations: {
-    orderBy: {
-      name: 'asc',
-    },
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' },
   },
   supportFocuses: {
-    include: {
-      therapy: true,
+    select: {
+      id: true,
+      price: true,
+      therapy: {
+        select: { id: true, type: true, title: true, description: true },
+      },
+      requests: {
+        select: { id: true, name: true, simpleId: true },
+      },
     },
   },
-  workTime: true,
+  workTime: {
+    select: {
+      id: true,
+      weekDay: true,
+      time: true,
+      isDayOff: true,
+    },
+  },
   addresses: {
-    include: {
-      district: true,
+    select: {
+      id: true,
+      nameOfClinic: true,
+      fullAddress: true,
+      latitude: true,
+      longitude: true,
+      isPrimary: true,
+      district: { select: { id: true, name: true } },
     },
   },
   clientsWorkingWith: {
-    orderBy: {
-      name: 'asc',
-    },
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' },
   },
   clientsNotWorkingWith: {
-    orderBy: {
-      name: 'asc',
-    },
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' },
   },
-  specializationMethods: { select: { id: true, title: true, description: true } },
+  specializationMethods: {
+    select: { id: true, simpleId: true, title: true, description: true },
+  },
 };
 
-export const organizationInclude = {
+export const organizationSelect = {
+  id: true,
+  name: true,
+  yearsOnMarket: true,
+  formatOfWork: true,
+  ownershipType: true,
+  isInclusiveSpace: true,
+  isFreeReception: true,
+  description: true,
+  phone: true,
+  email: true,
+  website: true,
+  instagram: true,
+  facebook: true,
+  youtube: true,
+  linkedin: true,
+  tiktok: true,
+  viber: true,
+  telegram: true,
+  isActive: true,
   type: {
-    orderBy: {
-      name: 'asc',
-    },
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' },
   },
-  expertSpecializations: true,
+  expertSpecializations: {
+    select: { id: true, name: true },
+  },
   supportFocuses: {
-    include: {
-      therapy: true,
+    select: {
+      id: true,
+      price: true,
+      therapy: {
+        select: { id: true, type: true, title: true, description: true },
+      },
+      requests: {
+        select: { id: true, name: true, simpleId: true },
+      },
     },
   },
   addresses: {
-    include: {
-      district: true,
+    select: {
+      id: true,
+      nameOfClinic: true,
+      fullAddress: true,
+      latitude: true,
+      longitude: true,
+      isPrimary: true,
+      district: { select: { id: true, name: true } },
     },
   },
-  workTime: true,
-  clientsWorkingWith: {
-    orderBy: {
-      name: 'asc',
+  workTime: {
+    select: {
+      id: true,
+      weekDay: true,
+      time: true,
+      isDayOff: true,
     },
+  },
+  clientsWorkingWith: {
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' },
   },
   clientsNotWorkingWith: {
-    orderBy: {
-      name: 'asc',
-    },
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' },
   },
 };
