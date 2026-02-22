@@ -5,6 +5,7 @@ import { Footer } from '@components/Footer';
 import { Header } from '@components/Header';
 import { Hint } from '@components/Hint';
 import { getLinksList } from '@components/Links/linksActions';
+import { unstable_cache as unstableCache } from 'next/cache';
 import { prisma } from '@/lib/db';
 
 export const metadata = {
@@ -14,9 +15,19 @@ export const metadata = {
   },
 };
 
+const getCachedDonationDetails = unstableCache(async () => prisma.donationDetails.findFirst(), ['donation-details'], {
+  revalidate: 3600, // 1 hour
+  tags: ['donation'],
+});
+
+const getCachedSocialLinks = unstableCache(async () => getLinksList(), ['social-links'], {
+  revalidate: 3600, // 1 hour
+  tags: ['navigation'],
+});
+
 export default async function Layout({ children, modal }) {
-  const donationDetails = await prisma.donationDetails.findFirst();
-  const socialLinks = await getLinksList();
+  const donationDetails = await getCachedDonationDetails();
+  const socialLinks = await getCachedSocialLinks();
 
   return (
     <Hint>

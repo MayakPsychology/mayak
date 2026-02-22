@@ -1,21 +1,21 @@
 import { prisma } from '@/lib/db';
-import { organizationInclude, specialistInclude } from '@/app/(app)/specialist/consts';
+import { organizationSelect, specialistSelect } from '@/app/(app)/specialist/consts';
 
 export const getSpecialistById = async ({ id }) =>
   prisma.specialist.findUnique({
     where: {
       id,
     },
-    include: specialistInclude,
+    select: specialistSelect,
   });
 
-export const getSpecialists = async ({ model, orderByCondition, include }) =>
+export const getSpecialists = async ({ model, orderByCondition, select }) =>
   await prisma[model].findMany({
     where: {
       isActive: true,
     },
     orderBy: [orderByCondition],
-    include,
+    select,
   });
 
 export const sortSpecialistsByName = specialistList =>
@@ -31,7 +31,7 @@ export const getOrganizationById = async ({ id }) =>
     where: {
       id,
     },
-    include: organizationInclude,
+    select: organizationSelect,
   });
 
 export const getOrganizationsIds = async () => {
@@ -43,9 +43,9 @@ export const getOrganizationsIds = async () => {
       id: true,
     },
   });
-  
+
   return organizations.map(({ id }) => id);
-}
+};
 
 export const getSpecialistsIds = async () => {
   const specialists = await prisma.specialist.findMany({
@@ -56,6 +56,6 @@ export const getSpecialistsIds = async () => {
       id: true,
     },
   });
-  
+
   return specialists.map(({ id }) => id);
-}
+};

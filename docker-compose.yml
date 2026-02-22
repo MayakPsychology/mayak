@@ -6,6 +6,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123123
       POSTGRES_DB: mayak_local
+      PGDATA: /var/lib/postgresql/data # fix for 18+ versions
     ports:
       - '5432:5432'
     volumes:

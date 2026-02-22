@@ -144,7 +144,7 @@ export function SpecialistListWithMap({ mapMode, className, searchParams }) {
             {isSuccess &&
               data.pages?.map(page =>
                 page.data?.map(entry => {
-                  const type = entry.organizationId ? 'organization' : 'specialist';
+                  const type = entry.organization ? 'organization' : 'specialist';
                   const entryData = entry[type];
                   return (
                     <Slide id={entryData.id} key={entryData.id} className="!h-auto">
@@ -160,29 +160,29 @@ export function SpecialistListWithMap({ mapMode, className, searchParams }) {
           ref={specialistCardsListRef}
         >
           {isSuccess &&
-              data.pages?.map(page =>
-                page.data?.map((entry, index) => {
-                  const type = entry.organizationId ? 'organization' : 'specialist';
-                  const entryData = entry[type];
+            data.pages?.map(page =>
+              page.data?.map((entry, index) => {
+                const type = entry.organization ? 'organization' : 'specialist';
+                const entryData = entry[type];
 
-                  return (
-                    <li
-                      id={entryData.id}
-                      key={entryData.id}
-                      onMouseEnter={() => handleCardHover(entryData.id)}
-                      onMouseLeave={handleCardLeave}
-                      className={cn({ 'mb-[600px]': index === page.data.length - 1 })}
-                    >
-                      <ShortCardWrapper
-                        data={entryData}
-                        type={type}
-                        className={cardStyle}
-                        isHoveredOn={hoveredCardId === entryData.id}
-                      />
-                    </li>
-                  );
-                }),
-              )}
+                return (
+                  <li
+                    id={entryData.id}
+                    key={entryData.id}
+                    onMouseEnter={() => handleCardHover(entryData.id)}
+                    onMouseLeave={handleCardLeave}
+                    className={cn({ 'mb-[600px]': index === page.data.length - 1 })}
+                  >
+                    <ShortCardWrapper
+                      data={entryData}
+                      type={type}
+                      className={cardStyle}
+                      isHoveredOn={hoveredCardId === entryData.id}
+                    />
+                  </li>
+                );
+              }),
+            )}
         </ul>
       </div>
       <MapLink mapMode={mapMode} className="sticky bottom-10 z-[25] mx-auto my-10 hidden max-w-max lg:block" />
