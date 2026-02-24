@@ -63,7 +63,7 @@ export function SearchInput() {
         >
           <SearchIcon className={cn('group-focus-within:hidden', (query || selectedTags.length > 0) && 'hidden')} />
 
-          <div className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent overlay-scrollbar w-full min-w-0 overflow-x-auto overflow-y-hidden whitespace-nowrap py-2 pb-[6px] lg:max-w-[471px]">
+          <div className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent overlay-scrollbar w-full min-w-0 overflow-x-auto overflow-y-hidden whitespace-nowrap py-2 pb-[6px] lg:max-w-[500px]">
             <SearchInputField />
           </div>
 
