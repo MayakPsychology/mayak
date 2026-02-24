@@ -19,7 +19,7 @@ export const handler = withErrorHandler(async req => {
       .map(t => t.trim())
       .filter(Boolean) || [];
 
-  /* ---------------- OPTIMIZED SELECT (from dev) ---------------- */
+  /* ---------------- FULL SELECT (fixed) ---------------- */
 
   const searchListSelect = {
     id: true,
@@ -35,6 +35,16 @@ export const handler = withErrorHandler(async req => {
         formatOfWork: true,
         isFreeReception: true,
         description: true,
+        phone: true,
+        email: true,
+        website: true,
+        instagram: true,
+        facebook: true,
+        youtube: true,
+        linkedin: true,
+        tiktok: true,
+        viber: true,
+        telegram: true,
         isActive: true,
         _count: {
           select: {
@@ -51,6 +61,7 @@ export const handler = withErrorHandler(async req => {
             fullAddress: true,
             latitude: true,
             longitude: true,
+            isPrimary: true,
             district: { select: { id: true, name: true } },
           },
         },
@@ -63,12 +74,35 @@ export const handler = withErrorHandler(async req => {
             id: true,
             price: true,
             therapy: {
-              select: { id: true, type: true, title: true },
+              select: {
+                id: true,
+                type: true,
+                title: true,
+                description: true,
+              },
             },
             requests: {
-              select: { id: true, name: true },
+              select: {
+                id: true,
+                name: true,
+                simpleId: true,
+              },
             },
           },
+        },
+        specializationMethods: {
+          select: {
+            id: true,
+            simpleId: true,
+            title: true,
+            description: true,
+          },
+        },
+        clientsWorkingWith: {
+          select: { id: true, name: true },
+        },
+        clientsNotWorkingWith: {
+          select: { id: true, name: true },
         },
       },
     },
@@ -78,9 +112,20 @@ export const handler = withErrorHandler(async req => {
         name: true,
         yearsOnMarket: true,
         formatOfWork: true,
+        ownershipType: true,
         isInclusiveSpace: true,
         isFreeReception: true,
         description: true,
+        phone: true,
+        email: true,
+        website: true,
+        instagram: true,
+        facebook: true,
+        youtube: true,
+        linkedin: true,
+        tiktok: true,
+        viber: true,
+        telegram: true,
         isActive: true,
         _count: {
           select: {
@@ -97,6 +142,7 @@ export const handler = withErrorHandler(async req => {
             fullAddress: true,
             latitude: true,
             longitude: true,
+            isPrimary: true,
             district: { select: { id: true, name: true } },
           },
         },
@@ -112,12 +158,27 @@ export const handler = withErrorHandler(async req => {
             id: true,
             price: true,
             therapy: {
-              select: { id: true, type: true, title: true },
+              select: {
+                id: true,
+                type: true,
+                title: true,
+                description: true,
+              },
             },
             requests: {
-              select: { id: true, name: true },
+              select: {
+                id: true,
+                name: true,
+                simpleId: true,
+              },
             },
           },
+        },
+        clientsWorkingWith: {
+          select: { id: true, name: true },
+        },
+        clientsNotWorkingWith: {
+          select: { id: true, name: true },
         },
       },
     },
@@ -126,7 +187,7 @@ export const handler = withErrorHandler(async req => {
   let data = [];
   let totalCount = 0;
 
-  /* ---------------- MAP MODE (lightweight) ---------------- */
+  /* ---------------- MAP MODE ---------------- */
 
   if (mode === 'map') {
     totalCount = await prisma.searchEntry.count({
@@ -136,10 +197,13 @@ export const handler = withErrorHandler(async req => {
     data = await prisma.searchEntry.findMany({
       where: searchEntryFilter,
       select: searchListSelect,
+      orderBy: { sortString: 'asc' },
     });
+
   } else if (terms.length) {
 
-    /* ---------------- SCORE SEARCH ---------------- */
+    /* ---------------- SCORE SEARCH (SQL ENGINE) ---------------- */
+
     const { ids, totalCount: count } = await searchScoreService({
       terms,
       take: takeNum,
@@ -158,9 +222,11 @@ export const handler = withErrorHandler(async req => {
       const byId = new Map(entries.map(e => [e.id, e]));
       data = ids.map(id => byId.get(id)).filter(Boolean);
     }
+
   } else {
 
     /* ---------------- NORMAL FILTER SEARCH ---------------- */
+
     totalCount = await prisma.searchEntry.count({
       where: searchEntryFilter,
     });
@@ -170,7 +236,7 @@ export const handler = withErrorHandler(async req => {
       skip: skipNum,
       take: takeNum,
       select: searchListSelect,
-      orderBy: { id: 'asc' },
+      orderBy: { sortString: 'asc' },
     });
   }
 
