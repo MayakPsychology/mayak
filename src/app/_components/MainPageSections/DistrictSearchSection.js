@@ -3,10 +3,21 @@ import { cn } from '@utils/cn';
 import { Heading } from '@components/Typography';
 import { DistrictList } from '@components/MainPageSections/DistrictList';
 import { MapLinkButton } from '@components/MapLinkButton';
+import { unstable_cache as unstableCache } from 'next/cache';
 import { prisma } from '@/lib/db';
 
+const getCachedDistricts = unstableCache(
+  async () =>
+    prisma.district.findMany({
+      select: { id: true, name: true },
+      orderBy: { name: 'asc' },
+    }),
+  ['districts-list'],
+  { revalidate: 3600, tags: ['districts'] },
+);
+
 export async function DistrictSearchSection({ className }) {
-  const districtsList = await prisma.district.findMany();
+  const districtsList = await getCachedDistricts();
   const optionsList = districtsList
     .sort((a, b) => a.name.localeCompare(b.name))
     .reduce((acc, district) => [...acc, district], [{ id: 'all-districts', name: 'Усі' }]);

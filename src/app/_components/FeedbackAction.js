@@ -1,10 +1,10 @@
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 import useToggleState from '@/app/_hooks/useToggleState';
-import FeedbackModal from "./Feedback";
-import { PillButton } from "./PillButton";
+import FeedbackModal from './Feedback';
+import { PillButton } from './PillButton';
 
-export function FeedbackAction ({className}) {
-  const [isOpen, {close, open}] = useToggleState(false)
+export function FeedbackAction({ className }) {
+  const [isOpen, { close, open }] = useToggleState(false);
   return (
     <>
       <PillButton
@@ -14,7 +14,7 @@ export function FeedbackAction ({className}) {
         onClick={open}
         className={className}
       >
-      Зворотній звʼязок
+        Зворотній звʼязок
       </PillButton>
       <FeedbackModal isOpen={isOpen} onClose={close} />
     </>
@@ -23,4 +23,4 @@ export function FeedbackAction ({className}) {
 
 FeedbackAction.propTypes = {
   className: PropTypes.string,
-}
+};

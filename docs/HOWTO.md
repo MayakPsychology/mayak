@@ -19,7 +19,6 @@ Consider following when creating a migration:
 - use a meaningful name
 - separate dropping/creating tables and columns
 
-
 ### How to seed the database
 
 To populate database with some data(seed it) run `npm run seed`.

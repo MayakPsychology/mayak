@@ -65,4 +65,5 @@ export const sliderBreakpoints = {
 
 export const getProperEnding = count => getProperEndingWithBase('результат', count);
 
-export const getSpecialistURL = ({ type, id }) => `/${type === specialistTypeEnum.ORGANIZATION ? 'organization' : 'specialist'}/${id}`
+export const getSpecialistURL = ({ type, id }) =>
+  `/${type === specialistTypeEnum.ORGANIZATION ? 'organization' : 'specialist'}/${id}`;

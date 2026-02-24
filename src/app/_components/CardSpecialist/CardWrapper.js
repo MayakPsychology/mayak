@@ -14,7 +14,7 @@ export function CardWrapper({ children, className, id, type, extended = false })
   const { toggle } = useHintContext();
 
   const handleClick = () => {
-    router.push(getSpecialistURL({type, id}), { scroll: false });
+    router.push(getSpecialistURL({ type, id }), { scroll: false });
     toggle();
   };
 
@@ -25,7 +25,7 @@ export function CardWrapper({ children, className, id, type, extended = false })
       className={cn(
         'gap-4 transition-all md:grid md:grid-cols-[150px_auto] lg:grid-cols-[200px_auto]',
         {
-          'cursor-pointer md:cursor-auto': hasClickHandler
+          'cursor-pointer md:cursor-auto': hasClickHandler,
         },
         className,
       )}

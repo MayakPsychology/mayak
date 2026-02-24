@@ -34,7 +34,7 @@ export function DistrictList({ list, className }) {
                 icon={isSelected ? <CheckMark /> : <Search />}
                 forceShowIcon={isSelected}
                 className={cn('*:gap-0', {
-                  [activeButtonStyles]: isSelected
+                  [activeButtonStyles]: isSelected,
                 })}
                 aria-label={`Click to see specialists related to the district ${name}`}
               >
