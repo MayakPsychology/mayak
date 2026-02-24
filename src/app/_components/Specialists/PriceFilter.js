@@ -10,7 +10,6 @@ import { INPUT_DEBOUNCE } from '@/lib/consts';
 import { specialistFiltersConfig } from './Filters/utils';
 
 const priceVariants = {
-  notSpecified: 'Не зазначено',
   free: 'Безкоштовно',
   below500: 'до 500 грн',
   from500to1000: '500-1000 грн',

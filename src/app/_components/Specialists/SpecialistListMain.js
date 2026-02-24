@@ -15,8 +15,9 @@ import Loading from '@/app/loading';
 export function SpecialistListMain({ mapMode, className, searchParams }) {
   const { ref, inView } = useInView();
 
-  const { data, error, isPending, hasNextPage, fetchNextPage, isSuccess } = usePaginatedEntries(searchParams);
-  const totalCount = data?.pages?.length && data.pages[0].metaData?.totalCount;
+  const { data, error, isPending, isFetching, hasNextPage, fetchNextPage, isSuccess } =
+    usePaginatedEntries(searchParams);
+  const totalCount = data?.pages?.[0]?.metaData?.totalCount;
 
   useEffect(() => {
     // if the last element is in view and there is a next page, fetch the next page
@@ -37,8 +38,14 @@ export function SpecialistListMain({ mapMode, className, searchParams }) {
   return (
     <div className={className}>
       <ul>
-        {totalCount && (
-          <p className="hidden font-bold uppercase text-primary-600 md:block">{`Знайдено: ${totalCount} ${getProperEnding(totalCount)}`}</p>
+        {typeof totalCount === 'number' && (
+          <p className="hidden items-center gap-2 font-bold uppercase text-primary-600 md:flex">
+            {`Знайдено: ${totalCount} ${getProperEnding(totalCount)}`}
+
+            {isFetching && (
+              <span className="ml-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-400 border-t-transparent" />
+            )}
+          </p>
         )}
         <>
           {isSuccess &&

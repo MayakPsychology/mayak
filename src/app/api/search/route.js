@@ -2,10 +2,14 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { withErrorHandler } from '@/lib/errors/errorHandler';
 import { getSearchFilterQueryParams, createSearchEntryFilter } from './helpers';
+import { searchScoreService } from './searchScoreService';
 
 export const handler = withErrorHandler(async req => {
   const params = getSearchFilterQueryParams(req);
   const { take, skip } = params;
+
+  const takeNum = Number(take ?? 5);
+  const skipNum = Number(skip ?? 0);
 
   const sharedInclude = {
     supportFocuses: {
@@ -40,59 +44,101 @@ export const handler = withErrorHandler(async req => {
 
   const searchEntryFilter = createSearchEntryFilter(params);
 
-  const searchEntries = await prisma.searchEntry.findMany({
-    include: {
-      specialist: {
-        include: {
-          ...sharedInclude,
-          specializationMethods: {
-            select: { id: true, simpleId: true, title: true, description: true },
-          },
-          specializations: {
-            select: { id: true, name: true },
-          },
-        },
-      },
-      organization: {
-        include: {
-          ...sharedInclude,
-          type: { select: { id: true, name: true } },
-          expertSpecializations: {
-            select: { id: true, name: true },
-          },
-        },
-      },
-    },
-    where: searchEntryFilter,
-  });
-
   const terms =
     params.query
       ?.split(',')
-      .map(t => t.trim().toLowerCase())
+      .map(t => t.trim())
       .filter(Boolean) || [];
 
-  function calcScore(entry) {
-    const focuses = entry.specialist?.supportFocuses || entry.organization?.supportFocuses || [];
+  let data = [];
+  let totalCount = 0;
 
-    const tags = focuses.flatMap(f => f.requests.map(r => r.name.toLowerCase()));
+  if (terms.length) {
+    const { ids, totalCount: count } = await searchScoreService({
+      terms,
+      take: takeNum,
+      skip: skipNum,
+      filterParams: params,
+    });
 
-    return terms.filter(t => tags.some(tag => tag.includes(t))).length;
+    totalCount = count;
+
+    if (ids.length) {
+      const entries = await prisma.searchEntry.findMany({
+        where: {
+          id: { in: ids },
+        },
+        include: {
+          specialist: {
+            include: {
+              ...sharedInclude,
+              specializationMethods: {
+                select: { id: true, simpleId: true, title: true, description: true },
+              },
+              specializations: {
+                select: { id: true, name: true },
+              },
+            },
+          },
+          organization: {
+            include: {
+              ...sharedInclude,
+              type: { select: { id: true, name: true } },
+              expertSpecializations: {
+                select: { id: true, name: true },
+              },
+            },
+          },
+        },
+      });
+
+      const byId = new Map(entries.map(e => [e.id, e]));
+      data = ids.map(id => byId.get(id)).filter(Boolean);
+    }
+  } else {
+    totalCount = await prisma.searchEntry.count({
+      where: searchEntryFilter,
+    });
+
+    data = await prisma.searchEntry.findMany({
+      where: searchEntryFilter,
+      skip: skipNum,
+      take: takeNum,
+      include: {
+        specialist: {
+          include: {
+            ...sharedInclude,
+            specializationMethods: {
+              select: { id: true, simpleId: true, title: true, description: true },
+            },
+            specializations: {
+              select: { id: true, name: true },
+            },
+          },
+        },
+        organization: {
+          include: {
+            ...sharedInclude,
+            type: { select: { id: true, name: true } },
+            expertSpecializations: {
+              select: { id: true, name: true },
+            },
+          },
+        },
+      },
+      orderBy: { id: 'asc' },
+    });
   }
 
-  const ranked = searchEntries.map(e => ({ ...e, score: calcScore(e) })).sort((a, b) => b.score - a.score);
-
-  const minScore = terms.length;
-  const filtered = ranked.filter(e => e.score >= minScore);
-
-  const paged = filtered.slice(skip, skip + take);
-  const hasNextPage = filtered.length > skip + take;
+  const hasNextPage = skipNum + data.length < totalCount;
 
   return NextResponse.json({
-    data: paged,
+    data,
     metaData: {
-      totalCount: filtered.length,
+      totalCount,
       hasNextPage,
+      take: takeNum,
+      skip: skipNum,
     },
   });
 });

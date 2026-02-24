@@ -46,7 +46,7 @@ export function SearchInputField() {
   }, [query, inputFocused]);
 
   return (
-    <div className="flex w-full  items-center gap-2 py-1" onClick={() => inputRef.current?.focus()}>
+    <div className="flex w-full   items-center gap-2 py-1 " onClick={() => inputRef.current?.focus()}>
       {/* TAGS */}
       {shouldRenderTags &&
         selectedTags.map(tag => (
@@ -57,7 +57,7 @@ export function SearchInputField() {
               text-[16px] leading-none text-primary-800"
           >
             <span
-              className="inline-block max-w-[120px] overflow-hidden
+              className="inline-block max-w-[100px] overflow-hidden
                 text-ellipsis whitespace-nowrap opacity-80
                 transition-all duration-500 ease-in-out
                 group-hover:max-w-[500px]
@@ -81,7 +81,7 @@ export function SearchInputField() {
       {/* INPUT */}
       <input
         ref={inputRef}
-        className="h-6 grow border-none bg-transparent p-0
+        className=" grow border-none bg-transparent p-0
           caret-primary-500 placeholder:text-p3
           placeholder:text-gray-500 focus:ring-0
           focus:placeholder:text-transparent"
@@ -92,26 +92,6 @@ export function SearchInputField() {
           setQuery(value);
         }}
       />
-
-      {/* CLEAR BUTTON */}
-      <div className="flex h-8 w-8 items-center justify-center">
-        {query.length > 0 && !shouldRenderTags && (
-          <button
-            type="button"
-            aria-label="Clear search"
-            className="rounded-full text-gray-400
-        transition hover:text-gray-700"
-            onClick={e => {
-              e.stopPropagation();
-              setQuery('');
-              setIsAutoCompleteOpen(false);
-              inputRef.current?.focus();
-            }}
-          >
-            <СrossSmall />
-          </button>
-        )}
-      </div>
     </div>
   );
 }

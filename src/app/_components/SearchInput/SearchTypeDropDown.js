@@ -12,7 +12,7 @@ export function SearchTypeDropDown() {
 
   return (
     <>
-      <div className="relative flex min-w-[200px] items-center gap-4 pr-6">
+      <div className="relative flex min-w-[150px] items-center gap-4 pr-6">
         <p className="grow text-center lg:text-left">{currentConfig.title}</p>
         <button className='top-0" absolute right-4'>
           <DownTick className={cn(isSelectTypeOpen && 'rotate-180')} />

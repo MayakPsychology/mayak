@@ -21,7 +21,6 @@ export function SearchInput() {
     setIsSelectTypeOpen,
     setIsAutoCompleteOpen,
     submitSearch,
-    isLoading, // 👈
   } = useSearchContext();
 
   const searchTypeDropDownRef = useRef(null);
@@ -41,12 +40,12 @@ export function SearchInput() {
 
   return (
     <div className="flex w-full flex-col gap-4 lg:flex-row">
-      <div className="flex grow flex-col gap-4 rounded-full lg:flex-row lg:gap-0 lg:border-[1px] lg:border-gray-600 lg:bg-gray-100 ">
+      <div className="flex grow flex-col gap-2 rounded-full lg:flex-row lg:gap-0 lg:border-[1px] lg:border-gray-600 lg:bg-gray-100">
         <div
           ref={searchTypeDropDownRef}
           className={cn(
-            'cursor-pointer after:hidden after:h-[100%] after:w-[1px] after:rounded-full after:bg-gray-500 hover:after:bg-other-white/0 lg:after:block ',
-            'relative rounded-full border-[1px] border-gray-600 bg-gray-200 py-3 pl-6 hover:bg-gray-200 lg:flex lg:border-0 lg:bg-other-white/0',
+            'cursor-pointer after:hidden after:h-[100%] after:w-[1px] after:rounded-full after:bg-gray-500 hover:after:bg-other-white/0 lg:after:block',
+            'relative rounded-full border-[1px] border-gray-600 bg-gray-200 py-2 pl-6 hover:bg-gray-200 lg:flex lg:border-0 lg:bg-other-white/0',
             isSelectTypeOpen && 'bg-other-white',
           )}
           onClick={e => {
@@ -60,46 +59,34 @@ export function SearchInput() {
 
         <div
           ref={autoCompleteRef}
-          className=" relative flex grow items-center gap-2 rounded-full border-[1px] border-gray-600 pl-4 pr-[18px] lg:border-0 lg:bg-other-white/0 "
+          className="relative flex grow items-center gap-2 rounded-full border-[1px] border-gray-600 pl-4 pr-[18px] lg:border-0 lg:bg-other-white/0"
         >
           <SearchIcon className={cn('group-focus-within:hidden', (query || selectedTags.length > 0) && 'hidden')} />
 
-          <div
-            className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent overlay-scrollbar w-full 
-              min-w-0 overflow-x-auto overflow-y-hidden whitespace-nowrap py-2 pb-[2px]
-              lg:max-w-[515px]"
-          >
+          <div className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent overlay-scrollbar w-full min-w-0 overflow-x-auto overflow-y-hidden whitespace-nowrap py-2 pb-[6px] lg:max-w-[471px]">
             <SearchInputField />
           </div>
 
-          <ClearSearchIcon
-            className={cn('hidden cursor-pointer', query || selectedTags.length > 0)}
-            onClick={() => {
-              clearQuery();
-              clearTags();
-            }}
-          />
+          <div className="flex w-9 items-center justify-center">
+            <ClearSearchIcon
+              className={cn(
+                'cursor-pointer transition-opacity duration-200',
+                query || selectedTags.length > 0 ? 'opacity-100' : 'pointer-events-none opacity-0',
+              )}
+              onClick={() => {
+                clearQuery();
+                clearTags();
+              }}
+            />
+          </div>
 
           <SearchAutoCompleteDropDown />
         </div>
       </div>
 
-      {/* BUTTON WITH LOADER */}
-      <PillButton
-        variant="filled"
-        colorVariant="blue"
-        onClick={submitSearch}
-        disabled={isLoading}
-        className="min-w-[120px]"
-      >
-        {isLoading ? (
-          <svg className="h-6 w-6 animate-spin text-white" viewBox="0 0 24 24" fill="none">
-            <circle className="opacity-35" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-85" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-          </svg>
-        ) : (
-          'Знайти'
-        )}
+      {/* BUTTON WITHOUT LOADER */}
+      <PillButton variant="filled" colorVariant="blue" onClick={submitSearch} className="min-w-[120px]">
+        Знайти
       </PillButton>
     </div>
   );

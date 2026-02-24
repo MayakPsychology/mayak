@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { specialistFiltersConfig, specialistTypeEnum } from '@components/Specialists/Filters/utils';
 import { searchSyncKey, useDebounce, useSearchSync } from '@/app/_hooks';
@@ -24,11 +24,11 @@ export function SearchProvider({ children }) {
   const [isSelectTypeOpen, setIsSelectTypeOpen] = useState(false);
   const [isAutoCompleteOpen, setIsAutoCompleteOpen] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
+  const pathname = usePathname();
+  const isSpecialistPage = pathname.startsWith('/specialist');
 
   function addTags(item) {
-    setIsLoading(true);
     setSelectedTags(prev => {
       const exists = prev.some(tag => tag.title === item.title);
       return exists ? prev : [...prev, { id: item.id, title: item.title }];
@@ -38,12 +38,10 @@ export function SearchProvider({ children }) {
   }
 
   function removeTags(id) {
-    setIsLoading(true);
     setSelectedTags(prev => prev.filter(tag => tag.id !== id));
   }
 
   function clearTags() {
-    setIsLoading(true);
     setSelectedTags([]);
   }
 
@@ -60,7 +58,7 @@ export function SearchProvider({ children }) {
 
   function submitSearch() {
     setIsAutoCompleteOpen(false);
-    setIsLoading(true);
+
     queryClient.cancelQueries({ queryKey: searchSyncKey });
 
     const tagTitles = selectedTags.map(tag => tag.title);
@@ -82,7 +80,7 @@ export function SearchProvider({ children }) {
 
   function navigateToAutoCompleteItem(autoCompleteItem) {
     setIsAutoCompleteOpen(false);
-    setIsLoading(true);
+
     queryClient.cancelQueries({ queryKey: searchSyncKey });
 
     if (currentSearchType === specialistTypeEnum.REQUEST) {
@@ -102,7 +100,6 @@ export function SearchProvider({ children }) {
   }
 
   function clearQuery() {
-    setIsLoading(true);
     setQuery('');
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
@@ -145,16 +142,15 @@ export function SearchProvider({ children }) {
   }, [queryParam]);
 
   useEffect(() => {
+    if (!isSpecialistPage) return;
     if (searchType !== specialistTypeEnum.REQUEST && selectedTags.length > 0) {
-      setIsLoading(true);
       setSelectedTags([]);
     }
   }, [searchType]);
 
   useEffect(() => {
+    if (!isSpecialistPage) return;
     if (searchType !== specialistTypeEnum.REQUEST) return;
-
-    setIsLoading(true);
 
     const tagTitles = selectedTags.map(tag => tag.title);
     const newQuery = tagTitles.join(', ');
@@ -177,15 +173,13 @@ export function SearchProvider({ children }) {
   useEffect(() => {
     if (!searchTypeParam) return;
     if (searchTypeParam !== searchType) {
-      setIsLoading(true);
       setSearchType(searchTypeParam);
     }
   }, [searchTypeParam]);
 
   useEffect(() => {
+    if (!isSpecialistPage) return;
     if (!searchType) return;
-
-    setIsLoading(true);
 
     const newParams = new URLSearchParams(searchParams);
     newParams.delete('query');
@@ -202,12 +196,6 @@ export function SearchProvider({ children }) {
     router.replace(`/specialist?${next}`);
   }, [searchType]);
 
-  /* ---------- FINISH LOADING WHEN URL CHANGED ---------- */
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, [searchParams.toString()]);
-
   return (
     <SearchContext.Provider
       value={{
@@ -222,7 +210,7 @@ export function SearchProvider({ children }) {
         autoCompleteItems,
         isAutoCompleteLoading,
         selectedTags,
-        isLoading,
+
         clearTags,
         addTags,
         removeTags,
@@ -233,7 +221,6 @@ export function SearchProvider({ children }) {
         setIsInputFocused,
         submitSearch,
         navigateToAutoCompleteItem,
-        setIsLoading,
       }}
     >
       {children}
