@@ -17,7 +17,25 @@ export const GET = withErrorHandler(async req => {
   const endOfNextMonth = new Date(currentYear, filteredQueryMonth, 0); // останній день наступного місяця
 
   const result = await prisma.event.findMany({
-    include: { tags: true, additionalLink: true },
+    select: {
+      id: true,
+      title: true,
+      eventDate: true,
+      format: true,
+      isActive: true,
+      organizerName: true,
+      notes: true,
+      address: true,
+      locationLink: true,
+      price: true,
+      priceType: true,
+      tags: {
+        select: { id: true, name: true },
+      },
+      additionalLink: {
+        select: { id: true, label: true, link: true },
+      },
+    },
     where: {
       isActive: true,
       eventDate: {

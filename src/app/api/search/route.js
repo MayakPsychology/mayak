@@ -6,41 +6,10 @@ import { searchScoreService } from './searchScoreService';
 
 export const handler = withErrorHandler(async req => {
   const params = getSearchFilterQueryParams(req);
-  const { take, skip } = params;
+  const { take, skip, mode } = params;
 
   const takeNum = Number(take ?? 5);
   const skipNum = Number(skip ?? 0);
-
-  const sharedInclude = {
-    supportFocuses: {
-      select: {
-        id: true,
-        price: true,
-        therapy: true,
-        requests: true,
-      },
-    },
-    addresses: {
-      select: {
-        id: true,
-        nameOfClinic: true,
-        fullAddress: true,
-        latitude: true,
-        longitude: true,
-        district: { select: { id: true, name: true } },
-        isPrimary: true,
-      },
-    },
-    workTime: {
-      select: {
-        weekDay: true,
-        time: true,
-        isDayOff: true,
-      },
-    },
-    clientsWorkingWith: true,
-    clientsNotWorkingWith: true,
-  };
 
   const searchEntryFilter = createSearchEntryFilter(params);
 
@@ -50,10 +19,127 @@ export const handler = withErrorHandler(async req => {
       .map(t => t.trim())
       .filter(Boolean) || [];
 
+  /* ---------------- OPTIMIZED SELECT (from dev) ---------------- */
+
+  const searchListSelect = {
+    id: true,
+    sortString: true,
+    specialist: {
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        surname: true,
+        gender: true,
+        yearsOfExperience: true,
+        formatOfWork: true,
+        isFreeReception: true,
+        description: true,
+        isActive: true,
+        _count: {
+          select: {
+            supportFocuses: true,
+            workTime: true,
+          },
+        },
+        addresses: {
+          where: { isPrimary: true },
+          take: 1,
+          select: {
+            id: true,
+            nameOfClinic: true,
+            fullAddress: true,
+            latitude: true,
+            longitude: true,
+            district: { select: { id: true, name: true } },
+          },
+        },
+        specializations: {
+          take: 3,
+          select: { id: true, name: true },
+        },
+        supportFocuses: {
+          select: {
+            id: true,
+            price: true,
+            therapy: {
+              select: { id: true, type: true, title: true },
+            },
+            requests: {
+              select: { id: true, name: true },
+            },
+          },
+        },
+      },
+    },
+    organization: {
+      select: {
+        id: true,
+        name: true,
+        yearsOnMarket: true,
+        formatOfWork: true,
+        isInclusiveSpace: true,
+        isFreeReception: true,
+        description: true,
+        isActive: true,
+        _count: {
+          select: {
+            supportFocuses: true,
+            workTime: true,
+          },
+        },
+        addresses: {
+          where: { isPrimary: true },
+          take: 1,
+          select: {
+            id: true,
+            nameOfClinic: true,
+            fullAddress: true,
+            latitude: true,
+            longitude: true,
+            district: { select: { id: true, name: true } },
+          },
+        },
+        type: {
+          select: { id: true, name: true },
+        },
+        expertSpecializations: {
+          take: 3,
+          select: { id: true, name: true },
+        },
+        supportFocuses: {
+          select: {
+            id: true,
+            price: true,
+            therapy: {
+              select: { id: true, type: true, title: true },
+            },
+            requests: {
+              select: { id: true, name: true },
+            },
+          },
+        },
+      },
+    },
+  };
+
   let data = [];
   let totalCount = 0;
 
-  if (terms.length) {
+  /* ---------------- MAP MODE (lightweight) ---------------- */
+
+  if (mode === 'map') {
+    totalCount = await prisma.searchEntry.count({
+      where: searchEntryFilter,
+    });
+
+    data = await prisma.searchEntry.findMany({
+      where: searchEntryFilter,
+      select: searchListSelect,
+    });
+  } else if (terms.length) {
+
+    /* ---------------- SCORE SEARCH ---------------- */
     const { ids, totalCount: count } = await searchScoreService({
       terms,
       take: takeNum,
@@ -65,37 +151,16 @@ export const handler = withErrorHandler(async req => {
 
     if (ids.length) {
       const entries = await prisma.searchEntry.findMany({
-        where: {
-          id: { in: ids },
-        },
-        include: {
-          specialist: {
-            include: {
-              ...sharedInclude,
-              specializationMethods: {
-                select: { id: true, simpleId: true, title: true, description: true },
-              },
-              specializations: {
-                select: { id: true, name: true },
-              },
-            },
-          },
-          organization: {
-            include: {
-              ...sharedInclude,
-              type: { select: { id: true, name: true } },
-              expertSpecializations: {
-                select: { id: true, name: true },
-              },
-            },
-          },
-        },
+        where: { id: { in: ids } },
+        select: searchListSelect,
       });
 
       const byId = new Map(entries.map(e => [e.id, e]));
       data = ids.map(id => byId.get(id)).filter(Boolean);
     }
   } else {
+
+    /* ---------------- NORMAL FILTER SEARCH ---------------- */
     totalCount = await prisma.searchEntry.count({
       where: searchEntryFilter,
     });
@@ -104,28 +169,7 @@ export const handler = withErrorHandler(async req => {
       where: searchEntryFilter,
       skip: skipNum,
       take: takeNum,
-      include: {
-        specialist: {
-          include: {
-            ...sharedInclude,
-            specializationMethods: {
-              select: { id: true, simpleId: true, title: true, description: true },
-            },
-            specializations: {
-              select: { id: true, name: true },
-            },
-          },
-        },
-        organization: {
-          include: {
-            ...sharedInclude,
-            type: { select: { id: true, name: true } },
-            expertSpecializations: {
-              select: { id: true, name: true },
-            },
-          },
-        },
-      },
+      select: searchListSelect,
       orderBy: { id: 'asc' },
     });
   }
