@@ -59,7 +59,7 @@ export function SearchInput() {
 
         <div
           ref={autoCompleteRef}
-          className="relative flex grow items-center gap-2 rounded-full border-[1px] border-gray-600 pl-4 pr-[18px] lg:border-0 lg:bg-other-white/0"
+          className="relative flex grow items-center justify-between gap-2 rounded-full border-[1px] border-gray-600 pl-4 pr-[18px] lg:border-0 lg:bg-other-white/0"
         >
           <SearchIcon className={cn('group-focus-within:hidden', (query || selectedTags.length > 0) && 'hidden')} />
 
@@ -67,7 +67,7 @@ export function SearchInput() {
             <SearchInputField />
           </div>
 
-          <div className="flex w-9 items-center justify-center">
+          <div className="flex items-center justify-center">
             <ClearSearchIcon
               className={cn(
                 'cursor-pointer transition-opacity duration-200',
