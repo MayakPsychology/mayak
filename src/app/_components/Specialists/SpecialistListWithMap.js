@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { usePaginatedEntries } from '@hooks';
 import { Slide, Slider } from '@components/Slider';
@@ -12,6 +12,7 @@ import { getProperEnding, mapSpecialistsListIntoPointsList, sliderBreakpoints } 
 import { NoMatches } from '@components/Specialists/NoMatches';
 import { Map } from '@components/Map';
 import { useMediaQuery } from '@mui/material';
+import { toURLSearchParams } from '@utils/searchParams';
 import Loading from '@/app/loading';
 import { screens } from '@/app/styles/tailwind/ui';
 import { useWindowResize } from '@/app/_hooks/useWindowResize';
@@ -31,6 +32,12 @@ export function SpecialistListWithMap({ mapMode, className, searchParams }) {
   const isLargeScreen = useMediaQuery(`(min-width: ${screens.lg})`);
   const { width: screenWidth } = useWindowResize();
 
+  const urlSearchParams = useMemo(
+    () => toURLSearchParams(searchParams),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(searchParams)],
+  );
+
   const slideTo = index => {
     if (swiper) swiper.slideTo(index);
   };
@@ -45,7 +52,7 @@ export function SpecialistListWithMap({ mapMode, className, searchParams }) {
     setHoveredCardId(null);
   };
 
-  const { data, isPending, isSuccess } = usePaginatedEntries(searchParams);
+  const { data, isPending, isSuccess } = usePaginatedEntries(urlSearchParams);
   const totalCount = data?.pages?.length && data.pages[0].metaData?.totalCount;
 
   useEffect(() => {
