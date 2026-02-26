@@ -145,6 +145,8 @@ model SupportFocus {
   @@index([organizationId])
   @@index([therapyId])
   @@index([price])
+  @@index([specialistId, therapyId])
+  @@index([organizationId, therapyId])
   @@map("support_focus")
 }
 
@@ -218,6 +220,7 @@ model Request {
   supportFocuses SupportFocus[]
   therapies      Therapy[]
 
+  @@index([simpleId])
   @@map("request")
 }
 
@@ -236,6 +239,7 @@ model Address {
 
   @@index([districtId])
   @@index([isPrimary])
+  @@index([isPrimary, districtId])
   @@index([latitude, longitude])
   @@map("address")
 }
@@ -319,6 +323,7 @@ model Method {
   specialization   Specialization @relation(fields: [specializationId], references: [id])
   specialists      Specialist[]
 
+  @@index([simpleId])
   @@map("method")
 }
 
