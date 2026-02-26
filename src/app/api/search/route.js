@@ -10,8 +10,10 @@ export const handler = withErrorHandler(async req => {
 
   const searchEntryFilter = createSearchEntryFilter(params);
 
+  const shouldCount = !lastCursor;
+
   const [totalCount, searchEntries] = await Promise.all([
-    prisma.searchEntry.count({ where: searchEntryFilter }),
+    shouldCount ? prisma.searchEntry.count({ where: searchEntryFilter }) : Promise.resolve(null),
     prisma.searchEntry.findMany({
       select: {
         id: true,
@@ -62,6 +64,7 @@ export const handler = withErrorHandler(async req => {
               select: { id: true, name: true },
             },
             supportFocuses: {
+              take: 15,
               select: {
                 id: true,
                 price: true,
@@ -83,12 +86,15 @@ export const handler = withErrorHandler(async req => {
               },
             },
             specializationMethods: {
+              take: 10,
               select: { id: true, simpleId: true, title: true, description: true },
             },
             clientsWorkingWith: {
+              take: 20,
               select: { id: true, name: true },
             },
             clientsNotWorkingWith: {
+              take: 20,
               select: { id: true, name: true },
             },
           },
@@ -141,6 +147,7 @@ export const handler = withErrorHandler(async req => {
               select: { id: true, name: true },
             },
             supportFocuses: {
+              take: 15,
               select: {
                 id: true,
                 price: true,
@@ -162,9 +169,11 @@ export const handler = withErrorHandler(async req => {
               },
             },
             clientsWorkingWith: {
+              take: 20,
               select: { id: true, name: true },
             },
             clientsNotWorkingWith: {
+              take: 20,
               select: { id: true, name: true },
             },
           },
