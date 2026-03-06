@@ -1,11 +1,24 @@
 import { prisma } from '@/lib/db';
 import { buildSqlScoreFilter } from './buildSqlScoreFilter';
 
+function normalizeSearch(value = '') {
+  return value
+    .replace(/['`´ʼ’]/g, '’')
+    .replace(/[“”«»„‟"]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
 export async function searchScoreService({ terms = [], take = 20, skip = 0, filterParams = {} }) {
   const sqlFilter = buildSqlScoreFilter(filterParams);
 
-  // 🔹 якщо без тегів
-  if (!terms.length) {
+  const normalizedTerms = terms
+    .map(t => normalizeSearch(t))
+    .filter(Boolean)
+    .map(t => `%${t}%`);
+
+  if (!normalizedTerms.length) {
     const rows = await prisma.$queryRaw`
       SELECT se.id
       FROM "search_entry" se
@@ -33,7 +46,6 @@ export async function searchScoreService({ terms = [], take = 20, skip = 0, filt
     };
   }
 
-  // 🔥 MULTI TAG AND
   const rows = await prisma.$queryRaw`
     SELECT se.id
     FROM "search_entry" se
@@ -55,8 +67,12 @@ export async function searchScoreService({ terms = [], take = 20, skip = 0, filt
 
     HAVING
       COUNT(DISTINCT r.name)
-      FILTER (WHERE r.name = ANY(${terms}))
-      = ${terms.length}
+      FILTER (
+        WHERE LOWER(
+          REGEXP_REPLACE(r.name, '[\"“”«»„‟]', '', 'g')
+        ) LIKE ANY(${normalizedTerms})
+      )
+      = ${normalizedTerms.length}
 
     ORDER BY se.id
     LIMIT ${take}
@@ -86,8 +102,12 @@ export async function searchScoreService({ terms = [], take = 20, skip = 0, filt
 
       HAVING
         COUNT(DISTINCT r.name)
-        FILTER (WHERE r.name = ANY(${terms}))
-        = ${terms.length}
+        FILTER (
+          WHERE LOWER(
+            REGEXP_REPLACE(r.name, '[\"“”«»„‟]', '', 'g')
+          ) LIKE ANY(${normalizedTerms})
+        )
+        = ${normalizedTerms.length}
     ) t;
   `;
 

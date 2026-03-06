@@ -23,10 +23,6 @@ export function SearchInputField() {
 
   const shouldRenderTags = currentConfig.searchType === specialistTypeEnum.REQUEST;
 
-  function normalizeQuery(value) {
-    return value.replace(/[()"'’]/g, '').replace(/\s{2,}/g, ' ');
-  }
-
   useKeyEvent({
     key: isEnterKey,
     handler: () => {
@@ -46,7 +42,7 @@ export function SearchInputField() {
   }, [query, inputFocused]);
 
   return (
-    <div className="flex w-full   items-center gap-2 py-1 " onClick={() => inputRef.current?.focus()}>
+    <div className="flex w-full items-center gap-2 py-1" onClick={() => inputRef.current?.focus()}>
       {/* TAGS */}
       {shouldRenderTags &&
         selectedTags.map(tag => (
@@ -65,6 +61,7 @@ export function SearchInputField() {
             >
               {tag.title}
             </span>
+
             <button
               className="duration-250 font-bold text-primary-900
                 transition-all ease-out hover:scale-125"
@@ -81,15 +78,14 @@ export function SearchInputField() {
       {/* INPUT */}
       <input
         ref={inputRef}
-        className=" grow border-none bg-transparent p-0
+        className="grow border-none bg-transparent p-0
           caret-primary-500 placeholder:text-p3
           placeholder:text-gray-500 focus:ring-0
           focus:placeholder:text-transparent"
         placeholder={currentConfig.placeholder}
         value={query}
         onChange={e => {
-          const value = normalizeQuery(e.target.value);
-          setQuery(value);
+          setQuery(e.target.value);
         }}
       />
     </div>

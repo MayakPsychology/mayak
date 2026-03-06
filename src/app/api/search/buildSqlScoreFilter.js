@@ -9,7 +9,6 @@ export function buildSqlScoreFilter(params) {
 
   const specializations = Array.isArray(params?.specializations) ? params.specializations.filter(Boolean) : [];
 
-  // ✅ ACTIVE
   conditions.push(Prisma.sql`
     (
       sp."isActive" = true
@@ -18,7 +17,6 @@ export function buildSqlScoreFilter(params) {
     )
   `);
 
-  // ✅ FREE
   if (isFree) {
     conditions.push(Prisma.sql`
       (
@@ -29,7 +27,6 @@ export function buildSqlScoreFilter(params) {
     `);
   }
 
-  // ✅ FORMAT (з BOTH)
   if (params?.format) {
     const format = params.format.toUpperCase();
 
@@ -42,7 +39,7 @@ export function buildSqlScoreFilter(params) {
     )
   `);
   }
-  // ✅ DISTRICTS
+
   if (districts.length) {
     conditions.push(Prisma.sql`
     (
@@ -65,7 +62,6 @@ export function buildSqlScoreFilter(params) {
   `);
   }
 
-  // ✅ SPECIALIZATIONS
   if (specializations.length) {
     conditions.push(Prisma.sql`
     (

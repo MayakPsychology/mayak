@@ -196,6 +196,21 @@ export function SearchProvider({ children }) {
     router.replace(`/specialist?${next}`);
   }, [searchType]);
 
+  useEffect(() => {
+    if (!isSpecialistPage) return;
+
+    const typeKey = specialistFiltersConfig.specialistType.filterKey;
+    const hasTypeParam = searchParams.has(typeKey);
+
+    if (hasTypeParam) return;
+
+    const newParams = new URLSearchParams(searchParams);
+
+    newParams.set(typeKey, specialistTypeEnum.REQUEST);
+
+    router.replace(`/specialist?${newParams.toString()}`);
+  }, [pathname]);
+
   return (
     <SearchContext.Provider
       value={{

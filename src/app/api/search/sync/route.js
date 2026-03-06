@@ -5,48 +5,55 @@ import { withErrorHandler } from '@/lib/errors/errorHandler';
 import { getSearchParamsFromRequest } from '@/utils/getSearchParamsFromRequest';
 import { createSearchSyncFilter } from '../helpers';
 
+function normalizeSearch(value = '') {
+  return value
+    .replace(/['`´ʼ’]/g, '’')
+    .replace(/[“”«»„‟]/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export const handler = withErrorHandler(async req => {
-  const params = getSearchParamsFromRequest(req, { searchType: 'request', query: undefined });
+  const params = getSearchParamsFromRequest(req, {
+    searchType: 'request',
+    query: undefined,
+  });
+
   const { searchType, query } = params;
-  const terms =
-    query
-      ?.split(',')
-      .map(q => q.trim())
-      .filter(Boolean) || [];
+
+  const normalizedQuery = normalizeSearch(query || '');
+
+  const terms = normalizedQuery
+    .split(/[,\s]+/)
+    .map(q => q.trim())
+    .filter(Boolean);
+
   const searchSyncFilter = createSearchSyncFilter(params);
 
   const searchTypeFindAndMap = {
     request: {
-      find: () =>
-        prisma.request.findMany({
-          where: {
-            name: {
-              contains: query,
-              mode: 'insensitive',
-            },
-          },
-        }),
+      find: () => prisma.request.findMany(),
       map: el => ({
         id: el.id,
         title: el.name,
       }),
     },
+
     organization: {
       find: () =>
         prisma.searchEntry.findMany({
           where: searchSyncFilter,
-          orderBy: { sortString: 'asc' },
         }),
       map: el => ({
         id: el.organizationId,
         title: el.sortString,
       }),
     },
+
     specialist: {
       find: () =>
         prisma.searchEntry.findMany({
           where: searchSyncFilter,
-          orderBy: { sortString: 'asc' },
         }),
       map: el => ({
         id: el.specialistId,
@@ -57,32 +64,28 @@ export const handler = withErrorHandler(async req => {
 
   if (!(searchType in searchTypeFindAndMap)) {
     throw new BadRequestException({
-      message: 'searchType, should be either request, specialist or organization',
+      message: 'searchType should be request, specialist or organization',
     });
   }
 
-  const syncItems = await searchTypeFindAndMap[searchType].find();
+  const rawItems = await searchTypeFindAndMap[searchType].find();
 
-  if (searchType !== 'specialist' || terms.lenght === 0) {
-    const mappedSyncItems = syncItems.map(searchTypeFindAndMap[searchType].map);
+  const items = rawItems.map(searchTypeFindAndMap[searchType].map);
 
+  if (!terms.length) {
     return NextResponse.json({
-      data: mappedSyncItems,
+      data: items,
     });
   }
 
-  const ranked = syncItems
-    .map(item => ({
-      ...item,
-      score: terms.filter(term => item.sortString?.toLowerCase().includes(term.toLowerCase())).length,
-    }))
-    .filter(item => item.score > 0)
-    .sort((a, b) => b.score - a.score);
+  const filtered = items.filter(item => {
+    const normalizedTitle = normalizeSearch(item.title || '').toLowerCase();
 
-  const mappedSyncItems = ranked.map(searchTypeFindAndMap[searchType].map);
+    return terms.every(term => normalizedTitle.includes(normalizeSearch(term).toLowerCase()));
+  });
 
   return NextResponse.json({
-    data: mappedSyncItems,
+    data: filtered,
   });
 });
 

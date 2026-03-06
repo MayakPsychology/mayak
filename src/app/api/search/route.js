@@ -199,9 +199,7 @@ export const handler = withErrorHandler(async req => {
       select: searchListSelect,
       orderBy: { sortString: 'asc' },
     });
-
   } else if (terms.length) {
-
     /* ---------------- SCORE SEARCH (SQL ENGINE) ---------------- */
 
     const { ids, totalCount: count } = await searchScoreService({
@@ -222,9 +220,7 @@ export const handler = withErrorHandler(async req => {
       const byId = new Map(entries.map(e => [e.id, e]));
       data = ids.map(id => byId.get(id)).filter(Boolean);
     }
-
   } else {
-
     /* ---------------- NORMAL FILTER SEARCH ---------------- */
 
     totalCount = await prisma.searchEntry.count({
