@@ -22,7 +22,7 @@ export async function sendEmail({ from, to, subject, html }) {
 export async function sendApplicationNotification(data) {
   const html = await getEmailTemplate(data, EMAIL_TYPES.SPECIALIST_APPLICATION);
   return sendEmail({
-    from: 'Заявки спеціалістів <onboarding@resend.dev>',
+    from: 'Заявки спеціалістів <noreply@notify.mayak.co.ua>',
     to: env.ADMIN_EMAIL,
     subject: `Нова заявка: ${data.firstName} ${data.surname || data.lastName}`,
     html,
