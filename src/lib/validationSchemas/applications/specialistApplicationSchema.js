@@ -47,6 +47,10 @@ export const zClientsSchema = z
   .object({
     workingWith: z.string().array().default([]),
     notWorkingWith: z.string().array().default([]),
+    workingWithOther: z.string().optional(),
+    notWorkingWithOther: z.string().optional(),
+    workingWithNames: z.string().array().optional(),
+    notWorkingWithNames: z.string().array().optional(),
   })
   .superRefine((clients, ctx) => {
     const hasDuplicates = clients.workingWith.some(item => clients.notWorkingWith.includes(item));
@@ -75,6 +79,8 @@ export const zSupportFocusSchema = z.object({
 const zSpecializationAdditionalInfoSchema = z.object({
   specializationId: z.string().uuid(),
   specialization: string('Спеціалізація').zod,
+  methodNames: z.string().array().optional(),
+  methodsOther: z.string().optional(),
   professionalDevelopment: string('Професійний розвиток').min(10).max(1000).zod,
   personalTherapy: string('Досвід').min(10).max(1000).zod,
   supervisionExperience: string('Супервізії та інтервізії').min(10).max(1000).zod,

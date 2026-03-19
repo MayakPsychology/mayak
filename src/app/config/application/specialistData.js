@@ -44,6 +44,8 @@ export const specialistDefaultValues = {
 export const additionalInfoDefaultValue = {
   specialization: '',
   specializationId: '',
+  methodNames: [],
+  methodsOther: '',
   professionalDevelopment: '',
   personalTherapy: '',
   supervisionExperience: '',

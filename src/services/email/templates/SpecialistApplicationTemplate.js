@@ -74,11 +74,23 @@ export default function SpecialistApplicationTemplate({ data }) {
               <Text>
                 <strong>{spec.specialization}</strong>
               </Text>
+              {spec.methodNames?.length > 0 && <Text>Методи: {spec.methodNames.join(', ')}</Text>}
+              {spec.methodsOther && <Text>Методи (інше): {spec.methodsOther}</Text>}
               <Text>Професійний розвиток: {spec.professionalDevelopment}</Text>
               <Text>Особиста терапія: {spec.personalTherapy}</Text>
               <Text>Супервізії: {spec.supervisionExperience}</Text>
             </div>
           ))}
+
+          <Heading style={{ fontSize: '16px', marginTop: '20px' }}>Клієнти</Heading>
+          {data.clients?.workingWithNames?.length > 0 && (
+            <Text>Працює з: {data.clients.workingWithNames.join(', ')}</Text>
+          )}
+          {data.clients?.workingWithOther && <Text>Працює з (інше): {data.clients.workingWithOther}</Text>}
+          {data.clients?.notWorkingWithNames?.length > 0 && (
+            <Text>Не працює з: {data.clients.notWorkingWithNames.join(', ')}</Text>
+          )}
+          {data.clients?.notWorkingWithOther && <Text>Не працює з (інше): {data.clients.notWorkingWithOther}</Text>}
 
           <Heading style={{ fontSize: '16px', marginTop: '20px' }}>Напрямки підтримки</Heading>
           {data.supportFocuses.map((sf, i) => (

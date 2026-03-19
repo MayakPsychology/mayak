@@ -7,7 +7,6 @@ export const useFormWizard = (steps, methods) => {
   const currentStep = steps[index];
 
   const next = async () => {
-    // const fields = Object.keys(currentStep.schema._def.shape());
     const fields = Object.keys(currentStep.schema.shape);
     const isValid = await trigger(fields);
     if (isValid && index < steps.length - 1) setIndex(prev => prev + 1);

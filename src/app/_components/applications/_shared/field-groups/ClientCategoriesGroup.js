@@ -2,10 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 import { CheckBox } from '@/app/_components/CheckBox';
+import { OtherOptionField } from '../fields';
 
-export function ClientCategoriesGroup({ clientCategories, title, name, error }) {
+export function ClientCategoriesGroup({ clientCategories, title, name, otherField, categoryLabels, error }) {
   const {
     control,
+    setValue,
     formState: { errors },
   } = useFormContext();
 
@@ -35,10 +37,15 @@ export function ClientCategoriesGroup({ clientCategories, title, name, error }) 
                     error={errors?.clientCategoryIds?.message}
                     onBlur={field.onBlur}
                     onChange={e => {
-                      if (e.target.checked) {
-                        field.onChange([...selected, category.id]);
-                      } else {
-                        field.onChange(selected.filter(id => id !== category.id));
+                      const newSelected = e.target.checked
+                        ? [...selected, category.id]
+                        : selected.filter(id => id !== category.id);
+                      field.onChange(newSelected);
+                      if (categoryLabels) {
+                        setValue(
+                          categoryLabels,
+                          newSelected.map(id => clientCategories.find(c => c.id === id)?.name).filter(Boolean),
+                        );
                       }
                     }}
                   />
@@ -50,19 +57,7 @@ export function ClientCategoriesGroup({ clientCategories, title, name, error }) 
         }}
       />
 
-      {/* <Controller
-        name={additionalName || 'additionalCategory'}
-        control={control}
-        render={({ field }) => (
-          <TextInputField
-            {...field}
-            placeholder="Інші категоріїї (не зазначені у списку вище)"
-            error={errors?.message?.message}
-            required
-            additionalContainerStyle="bg-other-white"
-          />
-        )}
-      /> */}
+      <OtherOptionField name={otherField} placeholder="Інші категорії (не зазначені у списку вище)" />
     </div>
   );
 }
@@ -71,13 +66,14 @@ ClientCategoriesGroup.propTypes = {
   clientCategories: PropTypes.array.isRequired,
   title: PropTypes.string,
   name: PropTypes.string,
-  additionalName: PropTypes.string,
+  otherField: PropTypes.string,
+  categoryLabels: PropTypes.string,
   error: PropTypes.string,
 };
 
 ClientCategoriesGroup.defaultProps = {
   title: 'Категорії клієнтів',
   name: 'clientCategoryIds',
-  additionalName: 'additionalCategory',
+  otherField: 'additionalCategory',
   error: null,
 };

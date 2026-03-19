@@ -86,6 +86,7 @@ export function SpecializationsGroup({ specializations, specializationMethods })
                         <SpecializationMethods
                           specializationId={spec.id}
                           specializationMethods={specializationMethods}
+                          index={index}
                         />
                         <SpecializationAdditionalInfo specialization={spec.id} index={index} />{' '}
                       </>

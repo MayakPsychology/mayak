@@ -1,14 +1,27 @@
-import { Controller, useFormContext } from 'react-hook-form';
+import { useEffect } from 'react';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { CheckBox } from '@/app/_components/CheckBox';
+import { OtherOptionField } from '@/app/_components/applications/_shared/fields';
 
-export function SpecializationMethods({ specializationId, specializationMethods }) {
+export function SpecializationMethods({ specializationId, specializationMethods, index }) {
   const methods = specializationMethods.filter(method => specializationId === method.specializationId);
 
   const {
     control,
+    setValue,
     formState: { errors },
   } = useFormContext();
+
+  const allSelected = useWatch({ name: 'specializationMethods' }) ?? [];
+
+  useEffect(() => {
+    const names = allSelected
+      .filter(id => methods.some(m => m.id === id))
+      .map(id => methods.find(m => m.id === id).title);
+    setValue(`specializationAdditionalInfo.${index}.methodNames`, names);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allSelected.join(',')]);
 
   const errorMessage = errors?.specializationMethods?.message;
 
@@ -39,11 +52,10 @@ export function SpecializationMethods({ specializationId, specializationMethods 
                   error={errors?.specializationMethods?.message}
                   onBlur={field.onBlur}
                   onChange={e => {
-                    if (e.target.checked) {
-                      field.onChange([...selected, method.id]);
-                    } else {
-                      field.onChange(selected.filter(id => id !== method.id));
-                    }
+                    const newSelected = e.target.checked
+                      ? [...selected, method.id]
+                      : selected.filter(id => id !== method.id);
+                    field.onChange(newSelected);
                   }}
                 />
               ))}
@@ -51,6 +63,7 @@ export function SpecializationMethods({ specializationId, specializationMethods 
           );
         }}
       />
+      <OtherOptionField name={`specializationAdditionalInfo.${index}.methodsOther`} placeholder="Інші методи (не зазначені у списку вище)" />
       {errorMessage && (
         <p className="ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4">{errorMessage}</p>
       )}
@@ -61,4 +74,5 @@ export function SpecializationMethods({ specializationId, specializationMethods 
 SpecializationMethods.propTypes = {
   specializationId: PropTypes.string,
   specializationMethods: PropTypes.array,
+  index: PropTypes.number.isRequired,
 };

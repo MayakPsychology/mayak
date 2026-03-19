@@ -17,7 +17,8 @@ export function ClientsPreferences({ clientCategories }) {
         clientCategories={clientCategories}
         title="З якими клієнтами ви працюєте?"
         name="clients.workingWith"
-        // additionalName="clientsWorkingWithAdditional"
+        otherField="clients.workingWithOther"
+        categoryLabels="clients.workingWithNames"
         error={errors?.clients?.message}
       />
 
@@ -25,7 +26,8 @@ export function ClientsPreferences({ clientCategories }) {
         clientCategories={clientCategories}
         title="З якими клієнтами ви не працюєте?"
         name="clients.notWorkingWith"
-        // additionalName="clientsNotWorkingWithAdditional"
+        otherField="clients.notWorkingWithOther"
+        categoryLabels="clients.notWorkingWithNames"
         error={errors?.clients?.message}
       />
 
