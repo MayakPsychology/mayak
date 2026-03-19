@@ -29,12 +29,14 @@ export async function application(formData) {
   const dbInput = {
     firstName: data.firstName,
     lastName: data.lastName,
+    surname: data.surname,
     gender: data.gender,
     yearsOfExperience: data.yearsOfExperience,
     formatOfWork: data.formatOfWork,
 
     phone: data.phone,
     email: data.email,
+    website: data.website,
     description: data.description,
     isFreeReception: data.isFreeReception,
 
