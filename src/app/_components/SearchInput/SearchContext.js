@@ -80,7 +80,17 @@ export function SearchProvider({ children }) {
   }
 
   function clearTextTag() {
-    setTextTag(null);
+    setTextTag(() => {
+      if (isSpecialistPage) {
+        const newParams = new URLSearchParams(searchParams);
+
+        newParams.delete('query');
+
+        router.replace(`/specialist?${newParams.toString()}`);
+      }
+
+      return null;
+    });
   }
 
   const currentConfig = useMemo(() => getSearchTypeConfig(searchType), [searchType]);
