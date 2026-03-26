@@ -347,7 +347,10 @@ export function getSearchFilterQueryParams(req) {
       skip: 0,
       searchSync: false,
       searchType: undefined,
+
       query: undefined,
+      tags: undefined, // 🔥 ДОДАЛИ
+
       districts: undefined,
       requests: undefined,
       price: undefined,
@@ -367,8 +370,29 @@ export function getSearchFilterQueryParams(req) {
         normalizedPrices = params.price;
       }
 
+      // 🔥 ПАРСИНГ TAGS
+      let parsedTags = [];
+
+      if (params.tags) {
+        try {
+          parsedTags = JSON.parse(params.tags);
+        } catch {
+          parsedTags = [];
+        }
+      }
+
+      // 🔥 ЄДИНА ТОЧКА ДЛЯ ПОШУКУ
+      const searchTerms = [...parsedTags, params.query].filter(Boolean);
+
       return {
         ...params,
+
+        // 🔥 нове поле для сервісу
+        terms: searchTerms,
+
+        // 🔥 більше не використовуємо сирий query як основний
+        query: params.query || undefined,
+        tags: parsedTags,
 
         districts: typeof params.district === 'string' ? [params.district] : params.district,
         district: undefined,

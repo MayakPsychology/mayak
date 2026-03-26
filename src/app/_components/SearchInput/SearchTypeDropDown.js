@@ -8,7 +8,8 @@ import { OverlayContainer } from './OverlayContainer';
 import { OverlayList } from './OverlayList';
 
 export function SearchTypeDropDown() {
-  const { currentConfig, isSelectTypeOpen, setSearchType, setIsSelectTypeOpen } = useSearchContext();
+  const { currentConfig, isSelectTypeOpen, setSearchType, setIsSelectTypeOpen, handleSearchTypeChange } =
+    useSearchContext();
 
   return (
     <>
@@ -26,6 +27,7 @@ export function SearchTypeDropDown() {
             onClick: e => {
               e.stopPropagation();
               setSearchType(config.searchType);
+              handleSearchTypeChange(config.searchType);
               setIsSelectTypeOpen(state => !state);
             },
           }))}

@@ -8,7 +8,7 @@ export function InnerLink({ items, className, onClick }) {
         <Link
           key={idx}
           role="listitem"
-          href={link.href}
+          href={`${link.href}/searchType=request`}
           aria-label={`Open ${link.title} on click`}
           className={className}
           onClick={onClick}

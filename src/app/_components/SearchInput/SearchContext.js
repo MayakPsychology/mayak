@@ -13,36 +13,74 @@ const SearchContext = createContext({});
 
 export function SearchProvider({ children }) {
   const searchParams = useSearchParams();
+
   const queryParam = searchParams.get('query');
+  const tagsParam = searchParams.get('tags');
   const searchTypeParam = searchParams.get(specialistFiltersConfig.specialistType.filterKey);
   const mode = searchParams.get('mode');
+
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const [query, setQuery] = useState('');
+  const [textTag, setTextTag] = useState(null);
   const [searchType, setSearchType] = useState(searchTypeParam || '');
   const [isSelectTypeOpen, setIsSelectTypeOpen] = useState(false);
   const [isAutoCompleteOpen, setIsAutoCompleteOpen] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
+
   const pathname = usePathname();
   const isSpecialistPage = pathname.startsWith('/specialist');
 
   function addTags(item) {
     setSelectedTags(prev => {
       const exists = prev.some(tag => tag.title === item.title);
-      return exists ? prev : [...prev, { id: item.id, title: item.title }];
+      if (exists) return prev;
+
+      const newTags = [...prev, { id: item.id, title: item.title }];
+
+      if (isSpecialistPage) {
+        const newParams = new URLSearchParams(searchParams);
+
+        newParams.set('tags', JSON.stringify(newTags.map(t => t.title)));
+
+        router.replace(`/specialist?${newParams.toString()}`);
+      }
+
+      return newTags;
     });
+
     setQuery('');
     setIsAutoCompleteOpen(false);
   }
 
   function removeTags(id) {
-    setSelectedTags(prev => prev.filter(tag => tag.id !== id));
+    setSelectedTags(prev => {
+      const newTags = prev.filter(tag => tag.id !== id);
+
+      if (isSpecialistPage) {
+        const newParams = new URLSearchParams(searchParams);
+
+        if (newTags.length > 0) {
+          newParams.set('tags', JSON.stringify(newTags.map(t => t.title)));
+        } else {
+          newParams.delete('tags');
+        }
+
+        router.replace(`/specialist?${newParams.toString()}`);
+      }
+
+      return newTags;
+    });
   }
 
   function clearTags() {
     setSelectedTags([]);
+  }
+
+  function clearTextTag() {
+    setTextTag(null);
   }
 
   const currentConfig = useMemo(() => getSearchTypeConfig(searchType), [searchType]);
@@ -58,17 +96,23 @@ export function SearchProvider({ children }) {
 
   function submitSearch() {
     setIsAutoCompleteOpen(false);
-
     queryClient.cancelQueries({ queryKey: searchSyncKey });
-
-    const tagTitles = selectedTags.map(tag => tag.title);
-    const textPart = query.trim();
-    const combinedQuery = [...tagTitles, textPart].filter(Boolean).join(', ');
 
     const newParams = new URLSearchParams(searchParams);
 
-    if (combinedQuery.length > 0) newParams.set('query', combinedQuery);
-    else newParams.delete('query');
+    const tagTitles = selectedTags.map(tag => tag.title);
+    const textPart = query.trim();
+
+    if (textPart) {
+      setTextTag(textPart);
+      newParams.set('query', textPart);
+    }
+
+    if (tagTitles.length > 0) {
+      newParams.set('tags', JSON.stringify(tagTitles));
+    } else {
+      newParams.delete('tags');
+    }
 
     newParams.set(specialistFiltersConfig.specialistType.filterKey, currentSearchType);
 
@@ -76,17 +120,20 @@ export function SearchProvider({ children }) {
     else newParams.delete('mode');
 
     router.push(`/specialist?${newParams.toString()}`);
+
+    setQuery('');
   }
 
   function navigateToAutoCompleteItem(autoCompleteItem) {
     setIsAutoCompleteOpen(false);
-
     queryClient.cancelQueries({ queryKey: searchSyncKey });
 
     if (currentSearchType === specialistTypeEnum.REQUEST) {
       const newParams = new URLSearchParams(searchParams);
+
       newParams.set(specialistFiltersConfig.specialistType.filterKey, specialistTypeEnum.REQUEST);
-      newParams.set('query', autoCompleteItem.title);
+
+      newParams.set('tags', JSON.stringify([autoCompleteItem.title]));
 
       router.replace(`/specialist?${newParams.toString()}`);
       return;
@@ -99,117 +146,79 @@ export function SearchProvider({ children }) {
     }
   }
 
+  function handleSearchTypeChange(type) {
+    if (type === searchType) return;
+
+    setSearchType(type);
+    setQuery('');
+    setSelectedTags([]);
+    setTextTag(null);
+    setIsAutoCompleteOpen(false);
+
+    queryClient.cancelQueries({ queryKey: searchSyncKey });
+
+    if (!isSpecialistPage) return;
+
+    const newParams = new URLSearchParams(searchParams);
+
+    newParams.delete('query');
+    newParams.delete('tags');
+    newParams.set(specialistFiltersConfig.specialistType.filterKey, type);
+
+    router.replace(`/specialist?${newParams.toString()}`);
+  }
+
   function clearQuery() {
     setQuery('');
+    setSelectedTags([]);
+    setTextTag(null);
     setIsAutoCompleteOpen(false);
+
     queryClient.cancelQueries({ queryKey: searchSyncKey });
 
     const newParams = new URLSearchParams(searchParams);
+
     newParams.delete('query');
+    newParams.delete('tags');
     newParams.delete(specialistFiltersConfig.specialistType.filterKey);
 
     router.replace(`/specialist?${newParams.toString()}`);
   }
 
-  /* ---------- URL -> STATE ---------- */
-
   useEffect(() => {
-    if (queryParam === null) return;
-    if (queryParam === '') {
-      if (selectedTags.length > 0) setSelectedTags([]);
-      return;
+    let parsedTags = [];
+
+    if (tagsParam) {
+      try {
+        parsedTags = JSON.parse(tagsParam);
+      } catch {
+        parsedTags = [];
+      }
     }
 
-    const tagTitles = [
-      ...new Set(
-        queryParam
-          .split(/,(?![^()]*\))/)
-          .map(t => t.trim())
-          .filter(Boolean),
-      ),
-    ];
+    const newTags = parsedTags.map(title => ({ id: title, title }));
 
-    const prevTitles = selectedTags
-      .map(t => t.title)
-      .sort()
-      .join(',');
-    const newTitles = tagTitles.sort().join(',');
+    const prev = selectedTags.map(t => t.title).join(',');
+    const next = parsedTags.join(',');
 
-    if (prevTitles === newTitles) return;
-
-    setSelectedTags(tagTitles.map(title => ({ id: title, title })));
-    setQuery('');
-  }, [queryParam]);
-
-  useEffect(() => {
-    if (!isSpecialistPage) return;
-    if (searchType !== specialistTypeEnum.REQUEST && selectedTags.length > 0) {
-      setSelectedTags([]);
+    if (prev !== next) {
+      setSelectedTags(newTags);
     }
-  }, [searchType]);
 
-  useEffect(() => {
-    if (!isSpecialistPage) return;
-    if (searchType !== specialistTypeEnum.REQUEST) return;
-
-    const tagTitles = selectedTags.map(tag => tag.title);
-    const newQuery = tagTitles.join(', ');
-
-    const newParams = new URLSearchParams(searchParams);
-
-    if (newQuery) newParams.set('query', newQuery);
-    else newParams.delete('query');
-
-    newParams.set(specialistFiltersConfig.specialistType.filterKey, specialistTypeEnum.REQUEST);
-
-    const next = newParams.toString();
-    const current = searchParams.toString();
-
-    if (next === current) return;
-
-    router.replace(`/specialist?${next}`);
-  }, [selectedTags, searchType]);
+    if (queryParam) {
+      setTextTag(queryParam);
+      setQuery('');
+    } else {
+      setTextTag(null);
+    }
+  }, [tagsParam, selectedTags, queryParam]);
 
   useEffect(() => {
     if (!searchTypeParam) return;
     if (searchTypeParam !== searchType) {
       setSearchType(searchTypeParam);
     }
-  }, [searchTypeParam]);
-
-  useEffect(() => {
-    if (!isSpecialistPage) return;
-    if (!searchType) return;
-
-    const newParams = new URLSearchParams(searchParams);
-    newParams.delete('query');
-    newParams.set(specialistFiltersConfig.specialistType.filterKey, searchType);
-
-    if (query !== '') setQuery('');
-    if (selectedTags.length > 0) setSelectedTags([]);
-
-    const next = newParams.toString();
-    const current = searchParams.toString();
-
-    if (next === current) return;
-
-    router.replace(`/specialist?${next}`);
-  }, [searchType]);
-
-  useEffect(() => {
-    if (!isSpecialistPage) return;
-
-    const typeKey = specialistFiltersConfig.specialistType.filterKey;
-    const hasTypeParam = searchParams.has(typeKey);
-
-    if (hasTypeParam) return;
-
-    const newParams = new URLSearchParams(searchParams);
-
-    newParams.set(typeKey, specialistTypeEnum.REQUEST);
-
-    router.replace(`/specialist?${newParams.toString()}`);
-  }, [pathname]);
+  }, [searchTypeParam, searchType]);
 
   return (
     <SearchContext.Provider
@@ -225,12 +234,15 @@ export function SearchProvider({ children }) {
         autoCompleteItems,
         isAutoCompleteLoading,
         selectedTags,
+        textTag,
 
         clearTags,
+        clearTextTag,
         addTags,
         removeTags,
         setQuery,
         setSearchType,
+        handleSearchTypeChange,
         setIsSelectTypeOpen,
         setIsAutoCompleteOpen,
         setIsInputFocused,

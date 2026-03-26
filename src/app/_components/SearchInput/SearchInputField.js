@@ -16,6 +16,8 @@ export function SearchInputField() {
     submitSearch,
     selectedTags,
     removeTags,
+    textTag,
+    clearTextTag,
   } = useSearchContext();
 
   const inputRef = useRef(null);
@@ -43,7 +45,7 @@ export function SearchInputField() {
 
   return (
     <div className="flex w-full items-center gap-2 py-1" onClick={() => inputRef.current?.focus()}>
-      {/* TAGS */}
+      {/* AUTOCOMPLETE TAGS */}
       {shouldRenderTags &&
         selectedTags.map(tag => (
           <span
@@ -74,6 +76,36 @@ export function SearchInputField() {
             </button>
           </span>
         ))}
+
+      {/* 🔥 MANUAL TEXT TAG (FIXED) */}
+      {shouldRenderTags && textTag && (
+        <span
+          className="group flex items-center gap-1 rounded-full
+            bg-yellow-100 px-1.5 py-[6px]
+            text-[16px] leading-none text-yellow-900"
+        >
+          <span
+            className="inline-block max-w-[100px] overflow-hidden
+              text-ellipsis whitespace-nowrap opacity-80
+              transition-all duration-500 ease-in-out
+              group-hover:max-w-[500px]
+              group-hover:opacity-100"
+          >
+            {textTag}
+          </span>
+
+          <button
+            className="duration-250 font-bold text-yellow-900
+              transition-all ease-out hover:scale-125"
+            onClick={e => {
+              e.stopPropagation();
+              clearTextTag();
+            }}
+          >
+            <СrossSmall />
+          </button>
+        </span>
+      )}
 
       {/* INPUT */}
       <input

@@ -4,6 +4,7 @@ import { buildSqlScoreFilter } from './buildSqlScoreFilter';
 function normalizeSearch(value = '') {
   return value
     .replace(/['`´ʼ’]/g, '’')
+    .replace(/[(),-]/g, ' ')
     .replace(/[“”«»„‟"]/g, '')
     .replace(/\s+/g, ' ')
     .trim()
@@ -69,7 +70,27 @@ export async function searchScoreService({ terms = [], take = 20, skip = 0, filt
       COUNT(DISTINCT r.name)
       FILTER (
         WHERE LOWER(
-          REGEXP_REPLACE(r.name, '[\"“”«»„‟]', '', 'g')
+          REGEXP_REPLACE(
+            REGEXP_REPLACE(
+              REGEXP_REPLACE(
+                REGEXP_REPLACE(
+                  r.name,
+                  '[''\\\`´ʼ’]',
+                  '’',
+                  'g'
+                ),
+                '[(),-]',
+                ' ',
+                'g'
+              ),
+              '[\"“”«»„‟]',
+              '',
+              'g'
+            ),
+            '\\s+',
+            ' ',
+            'g'
+          )
         ) LIKE ANY(${normalizedTerms})
       )
       = ${normalizedTerms.length}
@@ -104,7 +125,27 @@ export async function searchScoreService({ terms = [], take = 20, skip = 0, filt
         COUNT(DISTINCT r.name)
         FILTER (
           WHERE LOWER(
-            REGEXP_REPLACE(r.name, '[\"“”«»„‟]', '', 'g')
+            REGEXP_REPLACE(
+              REGEXP_REPLACE(
+                REGEXP_REPLACE(
+                  REGEXP_REPLACE(
+                    r.name,
+                    '[''\\\`´ʼ’]',
+                    '’',
+                    'g'
+                  ),
+                  '[(),-]',
+                  ' ',
+                  'g'
+                ),
+                '[\"“”«»„‟]',
+                '',
+                'g'
+              ),
+              '\\s+',
+              ' ',
+              'g'
+            )
           ) LIKE ANY(${normalizedTerms})
         )
         = ${normalizedTerms.length}

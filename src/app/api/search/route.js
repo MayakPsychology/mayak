@@ -13,11 +13,7 @@ export const handler = withErrorHandler(async req => {
 
   const searchEntryFilter = createSearchEntryFilter(params);
 
-  const terms =
-    params.query
-      ?.split(',')
-      .map(t => t.trim())
-      .filter(Boolean) || [];
+  const terms = params.terms || [];
 
   /* ---------------- FULL SELECT (fixed) ---------------- */
 
