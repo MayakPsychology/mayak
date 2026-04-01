@@ -40,6 +40,7 @@ export function SearchProvider({ children }) {
 
       const newTags = [...prev, { id: item.id, title: item.title }];
 
+      // 🔥 тільки якщо ми на search page
       if (isSpecialistPage) {
         const newParams = new URLSearchParams(searchParams);
 
@@ -138,20 +139,23 @@ export function SearchProvider({ children }) {
     setIsAutoCompleteOpen(false);
     queryClient.cancelQueries({ queryKey: searchSyncKey });
 
+    //  if (!isSpecialistPage) {
+    //   setSelectedTags(autoCompleteItem); // просто в інпут
+    //   return;
+    // }
+
     if (currentSearchType === specialistTypeEnum.REQUEST) {
-      const newParams = new URLSearchParams(searchParams);
-
-      newParams.set(specialistFiltersConfig.specialistType.filterKey, specialistTypeEnum.REQUEST);
-
-      newParams.set('tags', JSON.stringify([autoCompleteItem.title]));
-
-      router.replace(`/specialist?${newParams.toString()}`);
+      // 🔥 завжди через addTags
+      addTags(autoCompleteItem);
       return;
     }
 
     if (currentSearchType === specialistTypeEnum.SPECIALIST || currentSearchType === specialistTypeEnum.ORGANIZATION) {
       setQuery(autoCompleteItem.title);
-      const url = getSpecialistURL({ type: currentSearchType, id: autoCompleteItem.id });
+      const url = getSpecialistURL({
+        type: currentSearchType,
+        id: autoCompleteItem.id,
+      });
       router.push(url);
     }
   }
@@ -221,7 +225,7 @@ export function SearchProvider({ children }) {
     } else {
       setTextTag(null);
     }
-  }, [tagsParam, selectedTags, queryParam]);
+  }, [tagsParam, queryParam]);
 
   useEffect(() => {
     if (!searchTypeParam) return;
