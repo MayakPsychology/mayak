@@ -22,7 +22,7 @@ import { specialistTypeEnum } from '../../Specialists/Filters/utils';
 import { SpecialistChipLists } from './SpecialistChipLists';
 
 export function CardSpecialist({ specialist, className, extended = false }) {
-  if (!specialist) return null
+  if (!specialist) return null;
   const {
     id,
     gender,
@@ -57,11 +57,11 @@ export function CardSpecialist({ specialist, className, extended = false }) {
   const addressPrimary = addresses[0];
   const points = mapAddressesToPoints({ addressesList: addresses, specialistId: id });
   const contactsList = getContactsList({ phone, email, website });
-  const labelsList = getLabelsList({ 
-    yearsOfExperience, 
-    isFreeReception, 
-    formatOfWork, 
-    specialistType: specialistTypeEnum.SPECIALIST
+  const labelsList = getLabelsList({
+    yearsOfExperience,
+    isFreeReception,
+    formatOfWork,
+    specialistType: specialistTypeEnum.SPECIALIST,
   });
   const socials = getSpecialistSocials({ instagram, facebook, tiktok, youtube, linkedin, viber, telegram });
   const name = surname ? `${lastName} ${firstName} ${surname}` : `${lastName} ${firstName}`;
@@ -137,7 +137,7 @@ export function CardSpecialist({ specialist, className, extended = false }) {
               <AddressesList className="border-t pt-3 md:border-b md:py-3" addresses={[addressPrimary]} />
             )}
             <Link
-              href={getSpecialistURL({type: specialistTypeEnum.SPECIALIST, id})}
+              href={getSpecialistURL({ type: specialistTypeEnum.SPECIALIST, id })}
               scroll={false}
               className="mt-auto hidden self-end justify-self-end md:inline-block"
             >
@@ -147,9 +147,7 @@ export function CardSpecialist({ specialist, className, extended = false }) {
         )}
       </div>
       <div className="col-span-2">
-        {extended && points?.length ? (
-          <Map points={points} className="mt-5 h-[200px] w-full lg:h-[300px]" />
-        ) : null}
+        {extended && points?.length ? <Map points={points} className="mt-5 h-[200px] w-full lg:h-[300px]" /> : null}
       </div>
     </CardWrapper>
   );

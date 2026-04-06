@@ -67,7 +67,7 @@ DistrictList.propTypes = {
   districtsInUrl: PropTypes.arrayOf(PropTypes.string),
 };
 
-export function DistrictFilter({searchParams}) {
+export function DistrictFilter({ searchParams }) {
   const districtsInUrl = searchParams.getAll('district') || [];
 
   return (

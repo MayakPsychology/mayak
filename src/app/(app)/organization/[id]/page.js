@@ -3,7 +3,7 @@ import { CardOrganization } from '@/app/_components/CardSpecialist';
 import { getOrganizationById, getOrganizationsIds } from '@/app/(app)/specialist/utils';
 
 export async function generateStaticParams() {
-  return getOrganizationsIds()
+  return getOrganizationsIds();
 }
 
 export async function generateMetadata({ params }) {
@@ -13,7 +13,7 @@ export async function generateMetadata({ params }) {
     return {
       title: organization.name,
       description: organization.description,
-    }
+    };
   } catch (e) {
     return {
       title: 'Маяк',
@@ -30,5 +30,5 @@ export default async function Page({ params }) {
 }
 
 Page.propTypes = {
-  params: PropTypes.shape({id: PropTypes.string})
-}
+  params: PropTypes.shape({ id: PropTypes.string }),
+};

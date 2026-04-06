@@ -11,7 +11,7 @@ export function FAQSection({ faqs }) {
   const [checked, setChecked] = useState(null);
   const onCheck = id => {
     setChecked(checked === id ? null : id);
-  }
+  };
   return (
     <section className="relative flex flex-col gap-4 bg-secondary-100 pb-[46px] lg:gap-12 lg:pb-[80px]">
       <TopWave className="h-[19px] bg-other-white lg:h-12" />

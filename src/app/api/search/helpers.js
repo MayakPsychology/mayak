@@ -21,7 +21,6 @@ function getPriceFilter(prices, priceMin, priceMax) {
   }
   const priceConditions = {
     notSpecified: { price: { equals: null } },
-    free: { price: { equals: 0 } },
     below500: { AND: [{ price: { gt: 0 } }, { price: { lt: 500 } }] },
     above1500: { price: { gte: 1500 } },
   };
@@ -55,6 +54,7 @@ function parseNumericParam(param) {
   return res;
 }
 
+/* eslint-disable sonarjs/cognitive-complexity */
 export function createEntityFilter({
   type,
   requests,
@@ -66,6 +66,7 @@ export function createEntityFilter({
   query,
   searchType,
   category,
+  isFree,
 }) {
   const priceFilter = (prices || (priceMin && priceMax)) && getPriceFilter(prices, priceMin, priceMax);
   const therapyFilter = type && { type };
@@ -85,14 +86,14 @@ export function createEntityFilter({
       })),
     },
   };
-  const isSupportFocusesFilterExist = requestType || type || priceFilter || query || undefined;
+  const isSupportFocusesFilterExist = requestType || type || priceFilter || query || isFree || undefined;
   const supportFocusesFilter = isSupportFocusesFilterExist && {
     some: {
-      AND: {
-        therapy: therapyFilter,
-        requests: requestFilter,
-        OR: priceFilter,
-      },
+      AND: [
+        therapyFilter && { therapy: therapyFilter },
+        requestFilter && { requests: requestFilter },
+        priceFilter && { OR: priceFilter },
+      ].filter(Boolean),
     },
   };
 
@@ -110,14 +111,17 @@ export function createEntityFilter({
     clientsWorkingWith: categoryFilter,
   };
 }
+/* eslint-enable sonarjs/cognitive-complexity */
 
 export function createSpecialistFilter(queryParams) {
+  const { isFree } = queryParams;
   const sharedWhere = createEntityFilter(queryParams);
   const { specializations, specializationMethods, gender } = queryParams;
   const methods = parseNumericParam(specializationMethods);
 
   return {
     ...sharedWhere,
+    ...(isFree === true && { isFreeReception: true }),
     gender: Gender[(gender || '').toUpperCase()],
     specializations: specializations && {
       some: { id: { in: specializations } },
@@ -129,10 +133,12 @@ export function createSpecialistFilter(queryParams) {
 }
 
 export function createOrganizationFilter(queryParams) {
+  const { isFree } = queryParams;
   const sharedWhere = createEntityFilter(queryParams);
   const { specializations, organizationType } = queryParams;
   return {
     ...sharedWhere,
+    ...(isFree === true && { isFreeReception: true }),
     ownershipType: organizationType,
     expertSpecializations: specializations && {
       some: { id: { in: specializations } },
@@ -142,81 +148,191 @@ export function createOrganizationFilter(queryParams) {
 
 export function createSearchEntryFilter(queryParams) {
   const { query, searchType } = queryParams;
+
   const specialistWhere = createSpecialistFilter(queryParams);
   const organizationWhere = createOrganizationFilter(queryParams);
-  const defaultFilter = { OR: [{ specialist: specialistWhere }, { organization: organizationWhere }] };
 
-  if (!searchType) {
-    return defaultFilter;
+  if (!query) {
+    if (searchType === 'specialist') return { specialist: specialistWhere };
+    if (searchType === 'organization') return { organization: organizationWhere };
+
+    return {
+      OR: [{ specialist: specialistWhere }, { organization: organizationWhere }],
+    };
   }
+
+  const terms = query
+    .split(',')
+    .map(t => t.trim())
+    .filter(Boolean);
+
   switch (searchType) {
-    case 'request': {
-      return defaultFilter;
-    }
+    case 'request':
+      return {
+        OR: [
+          {
+            specialist: {
+              ...specialistWhere,
+              supportFocuses: {
+                some: {
+                  requests: {
+                    some: {
+                      OR: terms.map(term => ({
+                        name: {
+                          contains: term,
+                          mode: 'insensitive',
+                        },
+                      })),
+                    },
+                  },
+                },
+              },
+            },
+          },
+          {
+            organization: {
+              ...organizationWhere,
+              supportFocuses: {
+                some: {
+                  requests: {
+                    some: {
+                      OR: terms.map(term => ({
+                        name: {
+                          contains: term,
+                          mode: 'insensitive',
+                        },
+                      })),
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+      };
 
     case 'specialist':
       return {
-        sortString: {
-          contains: query,
-          mode: 'insensitive',
+        specialist: {
+          ...specialistWhere,
+          AND: terms.map(term => ({
+            sortString: {
+              contains: term,
+              mode: 'insensitive',
+            },
+          })),
         },
-        specialist: specialistWhere,
       };
+
     case 'organization':
       return {
-        sortString: {
-          contains: query,
-          mode: 'insensitive',
+        organization: {
+          ...organizationWhere,
+          AND: terms.map(term => ({
+            sortString: {
+              contains: term,
+              mode: 'insensitive',
+            },
+          })),
         },
-        organization: organizationWhere,
       };
+
     default:
-      return defaultFilter;
+      return {
+        OR: [{ specialist: specialistWhere }, { organization: organizationWhere }],
+      };
   }
 }
 
 export function createSearchSyncFilter(params) {
   const { query, searchType } = params;
-
   const activeFilter = { isActive: true };
-  const defaultFilter = { OR: [{ specialist: activeFilter }, { organization: activeFilter }] };
+
+  if (!query || query.length < 3) {
+    if (searchType === 'specialist') return { specialist: activeFilter };
+    if (searchType === 'organization') return { organization: activeFilter };
+
+    return {
+      OR: [{ specialist: activeFilter }, { organization: activeFilter }],
+    };
+  }
+
+  const terms = query
+    .toLowerCase()
+    .split(/[^\p{L}\p{N}]+/gu)
+    .filter(Boolean);
 
   switch (searchType) {
+    case 'specialist':
+      return {
+        specialist: activeFilter,
+        OR: terms.map(term => ({
+          sortString: {
+            contains: term,
+            mode: 'insensitive',
+          },
+        })),
+      };
+
+    case 'organization':
+      return {
+        organization: activeFilter,
+        OR: terms.map(term => ({
+          sortString: {
+            contains: term,
+            mode: 'insensitive',
+          },
+        })),
+      };
+
     case 'request':
-      Object.assign(activeFilter, {
-        ...activeFilter,
-        supportFocuses: {
-          some: {
-            requests: {
-              some: {
-                name: {
-                  contains: query,
-                  mode: 'insensitive',
+      return {
+        OR: [
+          {
+            specialist: {
+              isActive: true,
+              supportFocuses: {
+                some: {
+                  requests: {
+                    some: {
+                      OR: terms.map(term => ({
+                        name: {
+                          contains: term,
+                          mode: 'insensitive',
+                        },
+                      })),
+                    },
+                  },
                 },
               },
             },
           },
-        },
-      });
-      return defaultFilter;
-    case 'specialist':
-      return {
-        sortString: {
-          contains: query,
-          mode: 'insensitive',
-        },
-        specialist: activeFilter,
+          {
+            organization: {
+              isActive: true,
+              supportFocuses: {
+                some: {
+                  requests: {
+                    some: {
+                      OR: terms.map(term => ({
+                        name: {
+                          contains: term,
+                          mode: 'insensitive',
+                        },
+                      })),
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
       };
-    case 'organization':
-      return {
-        sortString: {
-          contains: query,
-          mode: 'insensitive',
-        },
-        organization: activeFilter,
-      };
+
     default:
-      return defaultFilter;
+      return {
+        OR: [{ specialist: activeFilter }, { organization: activeFilter }],
+      };
   }
 }
 
@@ -231,22 +347,67 @@ export function getSearchFilterQueryParams(req) {
       skip: 0,
       searchSync: false,
       searchType: undefined,
+
       query: undefined,
+      tags: undefined, // 🔥 ДОДАЛИ
+
       districts: undefined,
       requests: undefined,
       price: undefined,
       organizationType: undefined,
+      isFree: undefined,
     },
-    params => ({
-      ...params,
-      districts: typeof params.district === 'string' ? [params.district] : params.district,
-      district: undefined,
-      requests: typeof params.request === 'string' ? [params.request] : params.request,
-      request: undefined,
-      specializations: typeof params.specialization === 'string' ? [params.specialization] : params.specialization,
-      specialization: undefined,
-      prices: typeof params.price === 'string' ? [params.price] : params.price,
-      price: typeof params.price === 'string' ? [params.price] : params.price,
-    }),
+    params => {
+      const isFree = params.price === 'free' || (Array.isArray(params.price) && params.price.includes('free'));
+
+      let normalizedPrices;
+
+      if (Array.isArray(params.price)) {
+        normalizedPrices = params.price.filter(p => p !== 'free');
+      } else if (params.price === 'free') {
+        normalizedPrices = undefined;
+      } else {
+        normalizedPrices = params.price;
+      }
+
+      // 🔥 ПАРСИНГ TAGS
+      let parsedTags = [];
+
+      if (params.tags) {
+        try {
+          parsedTags = JSON.parse(params.tags);
+        } catch {
+          parsedTags = [];
+        }
+      }
+
+      // 🔥 ЄДИНА ТОЧКА ДЛЯ ПОШУКУ
+      const searchTerms = [...parsedTags, params.query].filter(Boolean);
+
+      return {
+        ...params,
+
+        // 🔥 нове поле для сервісу
+        terms: searchTerms,
+
+        // 🔥 більше не використовуємо сирий query як основний
+        query: params.query || undefined,
+        tags: parsedTags,
+
+        districts: typeof params.district === 'string' ? [params.district] : params.district,
+        district: undefined,
+
+        requests: typeof params.request === 'string' ? [params.request] : params.request,
+        request: undefined,
+
+        specializations: typeof params.specialization === 'string' ? [params.specialization] : params.specialization,
+        specialization: undefined,
+
+        prices: typeof normalizedPrices === 'string' ? [normalizedPrices] : normalizedPrices,
+        price: typeof normalizedPrices === 'string' ? [normalizedPrices] : normalizedPrices,
+
+        isFree: isFree || undefined,
+      };
+    },
   );
 }

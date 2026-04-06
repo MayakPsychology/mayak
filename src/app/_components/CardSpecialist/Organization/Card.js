@@ -142,7 +142,7 @@ export function CardOrganization({ organization, className, extended = false }) 
               <AddressesList className="border-t pt-3 md:border-b md:py-3" addresses={[addressPrimary]} />
             )}
             <Link
-              href={getSpecialistURL({type: specialistTypeEnum.ORGANIZATION, id})}
+              href={getSpecialistURL({ type: specialistTypeEnum.ORGANIZATION, id })}
               scroll={false}
               className="mt-auto hidden self-end justify-self-end md:inline-block"
             >
@@ -152,9 +152,7 @@ export function CardOrganization({ organization, className, extended = false }) 
         )}
       </div>
       <div className="col-span-2 mt-5">
-        {extended && points?.length ? (
-          <Map points={points} className="h-[200px] w-full lg:h-[300px]" />
-        ) : null}
+        {extended && points?.length ? <Map points={points} className="h-[200px] w-full lg:h-[300px]" /> : null}
       </div>
     </CardWrapper>
   );

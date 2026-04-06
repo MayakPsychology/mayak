@@ -18,7 +18,9 @@ export function FAQCard({ id, question, answer, checked, onChange }) {
           </label>
         </div>
       </div>
-      <Paragraph className="hidden text-p2 text-gray-900 peer-has-[input:checked]:inline whitespace-pre-line">{answer}</Paragraph>
+      <Paragraph className="hidden whitespace-pre-line text-p2 text-gray-900 peer-has-[input:checked]:inline">
+        {answer}
+      </Paragraph>
     </div>
   );
 }

@@ -21,7 +21,7 @@ const toSearchParams = searchParams => {
     }
   });
   return params;
-}
+};
 
 export function SpecialistListWrapper({ className, searchParams, filterData }) {
   const isMapMode = searchParams.mode === 'map';

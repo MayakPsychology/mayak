@@ -8,7 +8,6 @@ export default async function Page({ params }) {
   return <CardSpecialistExtended specialist={specialist} />;
 }
 
-
 Page.propTypes = {
-  params: PropTypes.shape({id: PropTypes.string})
-}
+  params: PropTypes.shape({ id: PropTypes.string }),
+};

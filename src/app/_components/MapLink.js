@@ -10,11 +10,9 @@ export function MapLink({ mapMode = false, enableAnimation = true, className }) 
   const params = searchParams.toString();
   const restParams = params ? `&${params}` : '';
 
-  return <MapLinkButton mapMode={mapMode}
-    enableAnimation={enableAnimation}
-    className={className}
-    restParams={restParams}
-  />
+  return (
+    <MapLinkButton mapMode={mapMode} enableAnimation={enableAnimation} className={className} restParams={restParams} />
+  );
 }
 
 MapLink.propTypes = {

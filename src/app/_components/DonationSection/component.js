@@ -9,7 +9,7 @@ import { DonateModal } from './modal';
 import { donationDetailsPropTypes } from './prop-types';
 
 export function DonationSection({ donationDetails, className }) {
-  const [isModalOpen, {open: openModal, close: closeModal}] = useToggleState(false);
+  const [isModalOpen, { open: openModal, close: closeModal }] = useToggleState(false);
   return (
     <>
       <div className={cn('w-full shrink-0 bg-secondary-100', className)}>
@@ -20,21 +20,19 @@ export function DonationSection({ donationDetails, className }) {
           <div className="flex w-full items-center justify-end gap-2 px-2 py-1">
             <Paragraph className="whitespace-nowrap text-p3 font-bold">
               <span className="hidden text-gray-700 lg:inline">
-              Підтримайте нас для реалізації волонтерський проектів з наданням допомоги...
+                Підтримайте нас для реалізації волонтерський проектів з наданням допомоги...
               </span>
               <span className="inline lg:hidden">Підтримати нас</span>
             </Paragraph>
           </div>
           <div onClick={openModal} className="flex items-center">
-            <Paragraph className="cursor-pointer select-none text-p3 text-secondary-500 underline">Задонатити</Paragraph>
+            <Paragraph className="cursor-pointer select-none text-p3 text-secondary-500 underline">
+              Задонатити
+            </Paragraph>
           </div>
         </div>
       </div>
-      <DonateModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        donationDetails={donationDetails}
-      />
+      <DonateModal isOpen={isModalOpen} onClose={closeModal} donationDetails={donationDetails} />
     </>
   );
 }
