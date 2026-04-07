@@ -25,9 +25,9 @@ export const TextArea = forwardRef(({ value, onChange, maxLength, placeholder, e
       )}
     </div>
   );
-})
+});
 
-TextArea.displayName = 'TextArea'
+TextArea.displayName = 'TextArea';
 
 TextArea.propTypes = {
   value: PropTypes.string,

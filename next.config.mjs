@@ -20,7 +20,7 @@ const nextConfig = {
         destination: '/specialist',
         permanent: true,
       },
-    ]
+    ];
   },
   // Render SVG icons with @svgr/webpack
   webpack(config) {

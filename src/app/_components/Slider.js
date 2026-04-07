@@ -18,7 +18,7 @@ export const Slider = forwardRef(({ swipeToIndex = 0, children, className, ...sw
       {children}
     </Swiper>
   );
-})
+});
 
 Slider.displayName = 'Slider';
 

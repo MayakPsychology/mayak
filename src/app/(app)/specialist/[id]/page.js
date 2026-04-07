@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import {  CardSpecialist } from '@/app/_components/CardSpecialist';
+import { CardSpecialist } from '@/app/_components/CardSpecialist';
 import { getSpecialistById, getSpecialistsIds } from '@/app/(app)/specialist/utils';
 
 export async function generateStaticParams() {
-  return getSpecialistsIds()
+  return getSpecialistsIds();
 }
 
 export async function generateMetadata({ params }) {
@@ -12,8 +12,8 @@ export async function generateMetadata({ params }) {
     const specialist = await getSpecialistById({ id });
     return {
       title: `${specialist.lastName} ${specialist.firstName}`,
-      description: specialist.description
-    }
+      description: specialist.description,
+    };
   } catch (e) {
     return {
       title: 'Маяк',
@@ -31,5 +31,5 @@ export default async function Page({ params }) {
 }
 
 Page.propTypes = {
-  params: PropTypes.shape({id: PropTypes.string})
-}
+  params: PropTypes.shape({ id: PropTypes.string }),
+};

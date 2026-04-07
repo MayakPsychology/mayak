@@ -16,10 +16,10 @@ export function AllFilters({ filterData, searchParams }) {
     {
       filter: (key, value) => {
         if (key === specialistFiltersConfig.price.filterKey.price) {
-          return value.filter(v => v === priceTypeEnum.FREE)
+          return value.filter(v => v === priceTypeEnum.FREE);
         }
         if (key === specialistFiltersConfig.specialistType.filterKey) {
-          return value.filter(v => specialistFiltersConfig.specialistType.options.find(o => o.value === v))
+          return value.filter(v => specialistFiltersConfig.specialistType.options.find(o => o.value === v));
         }
 
         return value;
@@ -29,9 +29,12 @@ export function AllFilters({ filterData, searchParams }) {
 
   return (
     <>
-      <button className="flex items-center gap-2 md:hidden relative" onClick={open}>
+      <button className="relative flex items-center gap-2 md:hidden" onClick={open}>
         <SettingsIcon />
-        <FilterChipCounter count={filtersAppliedCount} className="absolute top-1/2 -translate-y-1/2 right-0 translate-x-1/2" />
+        <FilterChipCounter
+          count={filtersAppliedCount}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2"
+        />
       </button>
       <div className="max-md:hidden">
         <FilterChip opened={isOpen} text="Усі фільтри" count={filtersAppliedCount} onClick={open} />
