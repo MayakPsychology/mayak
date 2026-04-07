@@ -14,7 +14,7 @@ function SpecializationList({ specializationsInUrl }) {
   const [selectedSpecializations, setSelectedSpecializations] = useState(specializationsInUrl);
   useEffect(() => {
     setSelectedSpecializations(specializationsInUrl);
-  }, [specializationsInUrl])
+  }, [specializationsInUrl]);
   const { data: specializationList, isLoading } = useListSpecialization();
 
   const setParamDebounced = useDebounceCallback(districts => {
@@ -66,7 +66,7 @@ SpecializationList.propTypes = {
   specializationsInUrl: PropTypes.arrayOf(PropTypes.string),
 };
 
-export function SpecializationFilter({searchParams}) {
+export function SpecializationFilter({ searchParams }) {
   const specializationsInUrl = searchParams.getAll('specialization') || [];
 
   return (

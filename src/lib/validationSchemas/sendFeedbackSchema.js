@@ -4,8 +4,8 @@ import { string, boolean } from './utils';
 
 const SendFeedback = z.object({
   name: string('Імʼя').min(1).max(128).zod,
-  phone: string('Мобільний телефон').zod
-    .optional()
+  phone: string('Мобільний телефон')
+    .zod.optional()
     .refine(val => !val || PHONE_REGEX.test(val), {
       message: 'Будь ласка введіть номер телефону у міжнародному форматі',
     }),

@@ -4,14 +4,14 @@ import { cn } from '@/utils/cn';
 import { buttonColorVariant, buttonType } from './style';
 
 export function PillButton({
-  onIconTransitionEnd, 
+  onIconTransitionEnd,
   children,
-  className, 
-  icon, 
-  variant, 
+  className,
+  icon,
+  variant,
   colorVariant,
-  forceShowIcon, 
-  ...props 
+  forceShowIcon,
+  ...props
 }) {
   const buttonVariant = icon ? buttonType[variant]?.icon : buttonType[variant]?.regular || {};
   const buttonColor = buttonColorVariant[variant]?.[colorVariant] || {};
@@ -35,11 +35,12 @@ export function PillButton({
       <div className={cn(layoutStyle)}>
         {icon && (
           <div
-            className={cn('h-fit w-fit transition-all group-hover:mr-1 group-hover:max-w-6 group-hover:scale-100 group-hover:opacity-100', 
+            className={cn(
+              'h-fit w-fit transition-all group-hover:mr-1 group-hover:max-w-6 group-hover:scale-100 group-hover:opacity-100',
               {
                 'mr-1 max-w-6 scale-100 opacity-100': forceShowIcon,
-                'max-w-0 opacity-0 scale-0': !forceShowIcon,
-              }
+                'max-w-0 scale-0 opacity-0': !forceShowIcon,
+              },
             )}
             onTransitionEnd={onIconTransitionEnd}
           >

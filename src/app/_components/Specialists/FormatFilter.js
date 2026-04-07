@@ -14,7 +14,7 @@ function FormatList({ options, formatsInUrl }) {
 
   useEffect(() => {
     setSelectedPrices(formatsInUrl);
-  }, [formatsInUrl])
+  }, [formatsInUrl]);
   const setParamDebounced = useDebounceCallback(prices => {
     formatParam.replace(prices);
   }, INPUT_DEBOUNCE);
