@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { CardOrganization, CardSpecialist } from '@components/CardSpecialist';
 import { useInView } from 'react-intersection-observer';
@@ -9,23 +9,18 @@ import { MapLink } from '@components/MapLink';
 import { cn } from '@utils/cn';
 import { PaginationLoader } from '@components/Specialists/PaginationLoader';
 import { NoMatches } from '@components/Specialists/NoMatches';
-import { toURLSearchParams } from '@utils/searchParams';
 import { usePaginatedEntries } from '@/app/_hooks';
 import Loading from '@/app/loading';
 
 export function SpecialistListMain({ mapMode, className, searchParams }) {
   const { ref, inView } = useInView();
 
-  const urlSearchParams = useMemo(
-    () => toURLSearchParams(searchParams),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(searchParams)],
-  );
-
-  const { data, error, isPending, hasNextPage, fetchNextPage, isSuccess } = usePaginatedEntries(urlSearchParams);
-  const totalCount = data?.pages?.length && data.pages[0].metaData?.totalCount;
+  const { data, error, isPending, isFetching, hasNextPage, fetchNextPage, isSuccess } =
+    usePaginatedEntries(searchParams);
+  const totalCount = data?.pages?.[0]?.metaData?.totalCount;
 
   useEffect(() => {
+    // if the last element is in view and there is a next page, fetch the next page
     if (inView && hasNextPage) {
       fetchNextPage();
     }
@@ -43,8 +38,14 @@ export function SpecialistListMain({ mapMode, className, searchParams }) {
   return (
     <div className={className}>
       <ul>
-        {totalCount && (
-          <p className="hidden font-bold uppercase text-primary-600 md:block">{`Знайдено: ${totalCount} ${getProperEnding(totalCount)}`}</p>
+        {typeof totalCount === 'number' && (
+          <p className="hidden items-center gap-2 font-bold uppercase text-primary-600 md:flex">
+            {`Знайдено: ${totalCount} ${getProperEnding(totalCount)}`}
+
+            {isFetching && (
+              <span className="ml-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-400 border-t-transparent" />
+            )}
+          </p>
         )}
         <>
           {isSuccess &&

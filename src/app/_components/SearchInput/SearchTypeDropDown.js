@@ -8,11 +8,12 @@ import { OverlayContainer } from './OverlayContainer';
 import { OverlayList } from './OverlayList';
 
 export function SearchTypeDropDown() {
-  const { currentConfig, isSelectTypeOpen, setSearchType, setIsSelectTypeOpen } = useSearchContext();
+  const { currentConfig, isSelectTypeOpen, setSearchType, setIsSelectTypeOpen, handleSearchTypeChange } =
+    useSearchContext();
 
   return (
     <>
-      <div className="relative flex min-w-[200px] items-center gap-4 pr-6">
+      <div className="relative flex min-w-[150px] items-center gap-4 pr-6">
         <p className="grow text-center lg:text-left">{currentConfig.title}</p>
         <button className='top-0" absolute right-4'>
           <DownTick className={cn(isSelectTypeOpen && 'rotate-180')} />
@@ -26,6 +27,7 @@ export function SearchTypeDropDown() {
             onClick: e => {
               e.stopPropagation();
               setSearchType(config.searchType);
+              handleSearchTypeChange(config.searchType);
               setIsSelectTypeOpen(state => !state);
             },
           }))}

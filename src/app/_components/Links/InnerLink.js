@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import PropTypes from 'prop-types';
+import { specialistFiltersConfig, specialistTypeEnum } from '@components/Specialists/Filters/utils';
 
 export function InnerLink({ items, className, onClick }) {
   return (
@@ -8,7 +9,12 @@ export function InnerLink({ items, className, onClick }) {
         <Link
           key={idx}
           role="listitem"
-          href={link.href}
+          href={{
+            pathname: link.href,
+            query: {
+              [specialistFiltersConfig.specialistType.filterKey]: specialistTypeEnum.REQUEST,
+            },
+          }}
           aria-label={`Open ${link.title} on click`}
           className={className}
           onClick={onClick}

@@ -16,17 +16,23 @@ export function MonthFilter({ filteredMonths, handleClick, activeMonth }) {
   const widthNormalizedRef = useRef(false);
   const onIconTransitionEnd = () => {
     if (!widthNormalizedRef.current) {
-      sliderRef.current.updateSlides()
-      sliderRef.current.slideToClosest()
+      sliderRef.current.updateSlides();
+      sliderRef.current.slideToClosest();
       widthNormalizedRef.current = true;
     }
-  }
+  };
   const onSlideChange = () => {
     widthNormalizedRef.current = false;
-  }
+  };
   return (
     <div className="flex w-fit max-w-full justify-start">
-      <Slider slidesPerView="auto" className="flex" ref={sliderRef} swipeToIndex={swipeToIndex} onSlideChange={onSlideChange}>
+      <Slider
+        slidesPerView="auto"
+        className="flex"
+        ref={sliderRef}
+        swipeToIndex={swipeToIndex}
+        onSlideChange={onSlideChange}
+      >
         {filteredMonths.map((month, filteredIndex) => {
           const isSelected = activeMonth - 1 === month.index;
           return (
@@ -35,7 +41,7 @@ export function MonthFilter({ filteredMonths, handleClick, activeMonth }) {
                 variant="eventFilter"
                 colorVariant="semiorange"
                 className={cn('*:gap-0', {
-                  [activeButtonStyles]: isSelected
+                  [activeButtonStyles]: isSelected,
                 })}
                 icon={isSelected ? <CheckMark /> : <Search />}
                 forceShowIcon={isSelected}

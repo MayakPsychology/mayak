@@ -20,7 +20,7 @@ const listItemTextHover = 'text-primary-700 hover:text-primary-500';
 export function Header({ socialMediaLinksList, donationDetails }) {
   const { innerLinks } = siteNav;
 
-  const [isMenuOpen, {open: openDrawer, close: closeDrawer}] = useToggleState(false);
+  const [isMenuOpen, { open: openDrawer, close: closeDrawer }] = useToggleState(false);
 
   const showDonationDetails = donationDetails && donationDetails.isDonationEnabled;
 
@@ -62,7 +62,7 @@ export function Header({ socialMediaLinksList, donationDetails }) {
           <FeedbackAction />
         </div>
         {/* Burger menu */}
-        <button className='flex'>
+        <button className="flex">
           <BurgerIcon className="block transition-all lg:hidden" onClick={openDrawer} />
         </button>
         <MobileMenuDrawer

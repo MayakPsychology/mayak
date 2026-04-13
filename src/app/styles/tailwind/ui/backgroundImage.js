@@ -1,5 +1,5 @@
 const backgroundImage = {
-  'noise': 'url("/assets/noise.png")',
+  noise: 'url("/assets/noise.png")',
 };
 
 export default backgroundImage;

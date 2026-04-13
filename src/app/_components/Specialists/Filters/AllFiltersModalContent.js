@@ -16,7 +16,7 @@ import FilterTherapiesSection from '@components/Specialists/Filters/FilterTherap
 import ScrollableList from '@components/Specialists/Filters/ScrollableList';
 import FilterOrganizationTypeSection from '@components/Specialists/Filters/FilterOrganizationTypeSection';
 import { cn } from '@/utils/cn';
-import { useDebounce, useListEntriesCount } from '@/app/_hooks';
+import { useDebounce, usePaginatedEntries } from '@/app/_hooks';
 import { filterDataPropTypes } from './propTypes';
 import {
   getInitialFilters,
@@ -37,8 +37,8 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
 
   const filtersToApply = useMemo(() => processFiltersBeforeApply(filters), [filters]);
   const debouncedFilters = useDebounce(filtersToApply, 500);
-  const { data } = useListEntriesCount(debouncedFilters);
-  const totalCount = data?.data?.count;
+  const { data } = usePaginatedEntries(debouncedFilters);
+  const totalCount = data?.pages?.[0]?.metaData?.totalCount;
 
   const onNewFilterAdded = (key, value, newFilters) => {
     if (key === specialistFiltersConfig.type.filterKey) {
@@ -155,7 +155,7 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
       </div>
       <ScrollableList
         key="scrollList"
-        className="w-full min-w-0 my-4 flex h-full flex-1 flex-col gap-5 border-b border-t border-gray-300 py-5 md:mt-[26px] md:gap-3 md:px-6 md:py-4"
+        className="my-4 flex h-full w-full min-w-0 flex-1 flex-col gap-5 border-b border-t border-gray-300 py-5 md:mt-[26px] md:gap-3 md:px-6 md:py-4"
       >
         <div className="px-4 md:px-0">
           <Tabs
