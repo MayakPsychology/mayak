@@ -1,0 +1,30 @@
+# Dependencies are installed inside the image; the host copy is the wrong
+# platform and is masked by an anonymous volume in docker-compose anyway.
+node_modules
+npm-debug.log*
+
+# Build output
+.next
+out
+
+# Version control and CI
+.git
+.gitignore
+.github
+
+# Secrets: docker-compose supplies these via `environment:` at runtime,
+# so they must not be baked into an image layer.
+.env
+.env.*
+
+# Editor / OS noise
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Docker / deploy metadata
+Dockerfile
+.dockerignore
+docker-compose.yml
+.vercel

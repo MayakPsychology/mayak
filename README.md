@@ -17,7 +17,7 @@ Note: after installing new npm packages, rebuild the image with `docker compose 
 
 #### Requirements
 
-- Node.js 20+
+- Node.js 24 (pinned in `.nvmrc`)
 - Postgres 16+ running somewhere, and `.env` database variables populated
 
 1. `npm install`

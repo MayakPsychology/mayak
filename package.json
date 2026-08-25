@@ -2,6 +2,10 @@
   "name": "mayak",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "24.x",
+    "npm": ">=11"
+  },
   "scripts": {
     "preinstall": "if [ \"$VERCEL\" != \"1\" ]; then npx typesync; fi",
     "postinstall": "prisma generate",
@@ -39,7 +43,7 @@
     "lodash": "^4.17.21",
     "next": "14.1.0",
     "next-auth": "^5.0.0-beta.5",
-    "npm": "^10.4.0",
+    "npm": "^11.0.0",
     "prop-types": "^15.8.1",
     "qrcode.react": "^3.1.0",
     "ra-data-simple-prisma": "^3.1.2",
