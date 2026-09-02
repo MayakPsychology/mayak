@@ -16,6 +16,7 @@ export const FormTranslations = {
   eventFormat: {
     online: 'онлайн',
     offline: 'офлайн',
+    online_offline: 'офлайн + трансляція',
   },
   ownershipType: {
     private: 'Приватна',

@@ -1,8 +1,13 @@
 export const EMAIL_TYPES = {
   SPECIALIST_APPLICATION: 'specialistApplication',
-  COMPANY_APPLICATION: 'companyApplication',
+  ORGANIZATION_APPLICATION: 'organizationApplication',
   EVENT_APPLICATION: 'eventApplication',
 };
 
-// DEFAULT EMAILS
-export const NO_REPLY_EMAIL = 'no-reply@mydomain.com';
+export const APPLICATION_SENDER = 'Заявки Маяк <noreply@notify.mayak.co.ua>';
+
+export const EMAIL_SUBJECT_PREFIX = {
+  [EMAIL_TYPES.SPECIALIST_APPLICATION]: 'Нова заявка спеціаліста',
+  [EMAIL_TYPES.ORGANIZATION_APPLICATION]: 'Нова заявка організації',
+  [EMAIL_TYPES.EVENT_APPLICATION]: 'Нова заявка події',
+};

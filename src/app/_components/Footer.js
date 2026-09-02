@@ -31,7 +31,7 @@ export function Footer({ socialLinks }) {
         <div className={cn(flexColCenter, flexCenterMd, 'gap-2 py-3 text-other-white lg:gap-6')}>
           <Link
             scroll={false}
-            href={ROUTES.APPLY}
+            href={ROUTES.ADD_NEW}
             aria-label="Send your application as a specialist to join the community"
           >
             <PillButton variant="outlined" colorVariant="white" aria-label="Click to fill application form">

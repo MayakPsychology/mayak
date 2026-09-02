@@ -3,10 +3,7 @@ import { emailTemplates } from './templates.config';
 
 export async function getEmailTemplate(data, type) {
   const Template = emailTemplates[type];
-  if (!Template) {
-    console.error(`Email template not found for type "${type}"`);
-    return '';
-  }
+  if (!Template) return '';
 
-  return await render(<Template data={data} />);
+  return render(<Template data={data} />);
 }

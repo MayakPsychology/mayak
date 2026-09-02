@@ -1,92 +1,25 @@
 import { z } from 'zod';
 import { FormatOfWork, Gender } from '@prisma/client';
-import { WEEKDAYS_TRANSLATION } from '@/app/(admin)/admin/_lib/consts';
-import { string, number, boolean, array, regexField } from '@/lib/validationSchemas/utils';
-import { MESSENGER_REGEX, PHONE_REGEX, SOCIAL_REGEX } from '@/lib/consts';
-
-export const zCreateAddressSchema = z.object({
-  fullAddress: string('Адреса').min(2).max(128).zod,
-  district: string('Район').zod,
-  nameOfClinic: string('Назва клініки').min(2).max(128).optional().zod,
-  isPrimary: boolean('Основна').zod,
-});
-
-export const zWorkDaySchema = z
-  .object({
-    weekDay: z.enum(Object.values(WEEKDAYS_TRANSLATION)),
-    time: z
-      .string()
-      .refine(val => !val || /\d{2}:\d{2}\s-\s\d{2}:\d{2}/.test(val), {
-        message: 'Введіть час у форматі ХХ:ХХ - ХХ:ХХ',
-      })
-      .nullish(),
-    isDayOff: z.boolean().nullish(),
-  })
-  .superRefine((data, ctx) => {
-    const { time, isDayOff } = data;
-    if (time && isDayOff) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Приберіть час роботи, якщо це вихідний',
-        path: ['time'],
-      });
-    }
-  });
-
-export const zSosialLinkSchema = z.object({
-  instagram: regexField('Instagram', SOCIAL_REGEX.INSTAGRAM, 'instagram.com/username'),
-  facebook: regexField('Facebook', SOCIAL_REGEX.FACEBOOK, 'facebook.com/username'),
-  linkedin: regexField('LinkedIn', SOCIAL_REGEX.LINKEDIN, 'linkedin.com/in/username'),
-  youtube: regexField('YouTube', SOCIAL_REGEX.YOUTUBE, 'youtube.com/@username'),
-  tiktok: regexField('TikTok', SOCIAL_REGEX.TIKTOK, 'tiktok.com/@username'),
-  telegram: regexField('Telegram', MESSENGER_REGEX.TELEGRAM, 'telegram.me/username'),
-  viber: regexField('Viber', MESSENGER_REGEX.VIBER, 'Невірний формат посилання'),
-});
-
-export const zClientsSchema = z
-  .object({
-    workingWith: z.string().array().default([]),
-    notWorkingWith: z.string().array().default([]),
-    workingWithOther: z.string().optional(),
-    notWorkingWithOther: z.string().optional(),
-    workingWithNames: z.string().array().optional(),
-    notWorkingWithNames: z.string().array().optional(),
-  })
-  .superRefine((clients, ctx) => {
-    const hasDuplicates = clients.workingWith.some(item => clients.notWorkingWith.includes(item));
-
-    if (hasDuplicates) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Категорія клієнта може бути вибрана лише один раз. Перевірте, чи не дублюються поля.',
-        path: ['root'],
-      });
-    }
-  });
-
-export const zSupportFocusSchema = z.object({
-  id: string().optional().zod,
-  price: number('Ціна').min(0).nullish().optional().zod,
-  // therapy: string('Терапія').zod,
-  therapy: z.object({
-    id: string('Терапія').zod,
-    title: z.string().optional(), // title можно опционально, если нужен
-  }),
-  requestsIds: array('Запити', string().zod, { min: 1, message: 'Необхідно обрати хоча б один запит' }).zod,
-  requestsNames: array('Назви запитів', string().zod, { min: 1, message: 'Необхідно обрати хоча б один запит' }).zod,
-});
+import { string, number, boolean, array } from '@/lib/validationSchemas/utils';
+import {
+  zClientsSchema,
+  zContactsShape,
+  zCreateAddressSchema,
+  zSocialLinkSchema,
+  zSupportFocusesField,
+  zWorkDaySchema,
+} from './common';
 
 const zSpecializationAdditionalInfoSchema = z.object({
   specializationId: z.string().uuid(),
   specialization: string('Спеціалізація').zod,
   methodNames: z.string().array().optional(),
-  methodsOther: z.string().optional(),
+  methodsOther: z.string().nullish(),
   professionalDevelopment: string('Професійний розвиток').min(10).max(1000).zod,
   personalTherapy: string('Досвід').min(10).max(1000).zod,
   supervisionExperience: string('Супервізії та інтервізії').min(10).max(1000).zod,
 });
 
-// Step 1
 export const specialistApplicationStep1Schema = z.object({
   firstName: string("Ім'я").min(2).max(64).zod,
   lastName: string('Прізвище').min(2).max(64).zod,
@@ -96,27 +29,36 @@ export const specialistApplicationStep1Schema = z.object({
     required_error: 'Оберіть стать',
     invalid_type_error: 'Оберіть стать',
   }),
-  email: string('Пошта').email().optional().zod,
-  website: string('Веб сторінка').url().optional().zod,
-  phone: regexField('Телефон', PHONE_REGEX, 'Введіть номер телефону у міжнародному форматі'),
-  socialLink: zSosialLinkSchema,
+  ...zContactsShape,
+  socialLink: zSocialLinkSchema,
   description: string('Опис').min(10).max(5000).zod,
 });
 
-// Step 2
-export const specialistApplicationStep2Schema = z.object({
+const requireAddressWhenOffline = (data, ctx) => {
+  if (data.formatOfWork !== FormatOfWork.ONLINE && !data.addresses.length) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Необхідно вказати мінімум одне місце надання послуг',
+      path: ['addresses'],
+    });
+  }
+};
+
+const specialistApplicationStep2Shape = z.object({
   formatOfWork: z.enum(Object.values(FormatOfWork), {
     required_error: 'Оберіть формат роботи',
     invalid_type_error: 'Оберіть формат роботи',
   }),
   addresses: array('Адреси', zCreateAddressSchema).zod,
-  workTime: array('Адреси', zWorkDaySchema).zod,
+  workTime: array('Графік роботи', zWorkDaySchema).zod,
 });
 
-// Step3
+export const specialistApplicationStep2Schema = specialistApplicationStep2Shape.superRefine(
+  requireAddressWhenOffline,
+);
+
 export const specialistApplicationStep3Schema = z.object({ clients: zClientsSchema });
 
-// Step4
 export const specialistApplicationStep4Schema = z.object({
   specializations: array('Спеціалізації', string('Спеціалізація').zod, {
     min: 1,
@@ -126,17 +68,14 @@ export const specialistApplicationStep4Schema = z.object({
   specializationAdditionalInfo: array('Додаткова інформація', zSpecializationAdditionalInfoSchema).zod,
 });
 
-// Step5
 export const specialistApplicationStep5Schema = z.object({
   isFreeReception: boolean('Безкоштовний прийом').zod,
-  supportFocuses: array('Напрямки підтримки', zSupportFocusSchema, {
-    min: 1,
-    message: 'Необхідно обрати хоча б один тип терапії',
-  }).zod,
+  supportFocuses: zSupportFocusesField,
 });
 
 export const specialistApplicationFullSchema = specialistApplicationStep1Schema
-  .merge(specialistApplicationStep2Schema)
+  .merge(specialistApplicationStep2Shape)
   .merge(specialistApplicationStep3Schema)
   .merge(specialistApplicationStep4Schema)
-  .merge(specialistApplicationStep5Schema);
+  .merge(specialistApplicationStep5Schema)
+  .superRefine(requireAddressWhenOffline);

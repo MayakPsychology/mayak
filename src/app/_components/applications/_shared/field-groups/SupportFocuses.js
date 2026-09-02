@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import { CheckBox } from '@/app/_components/CheckBox';
 import { TextInputField } from '@/app/_components/InputFields';
+import { getArrayError } from '../getArrayError';
 
 export function SupportFocuses({ therapies }) {
   const {
@@ -17,7 +18,7 @@ export function SupportFocuses({ therapies }) {
   const { fields, append, remove } = useFieldArray({
     name: 'supportFocuses',
   });
-  const errorMessage = errors.supportFocuses?._errors?.[0] ?? errors.supportFocuses?.message;
+  const errorMessage = getArrayError(errors, 'supportFocuses');
   return (
     <div>
       <ul className="flex flex-col gap-6">

@@ -1,6 +1,5 @@
 'use client';
 
-// import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,30 +13,20 @@ import {
   specialistApplicationStep3Schema as step3Schema,
   specialistApplicationStep4Schema as step4Schema,
   specialistApplicationStep5Schema as step5Schema,
-  // specialistApplicationSchema,
 } from '@/lib/validationSchemas/applications/specialistApplicationSchema';
-import { PillButton } from '../../PillButton';
+import { ApplicationSuccess, WizardNavigation } from '../_shared';
 import { Step1, Step2, Step3, Step4, Step5 } from './steps';
 
 export function SpecialistApplicationWizard({ dicts }) {
-  const { clientCategories, specializations, specializationMethods, districts, therapies, requests } = dicts;
+  const { clientCategories, specializations, specializationMethods, districts, therapies } = dicts;
 
-  // const [step, setStep] = useState(1);
   const methods = useForm({
     defaultValues: specialistDefaultValues,
     mode: 'onChange',
     resolver: zodResolver(specialistApplicationFullSchema),
   });
 
-  const { submit } = useSpecialistApplication();
-
-  const onSubmit = data => {
-    submit(data);
-    // eslint-disable-next-line no-console
-    console.clear();
-    // eslint-disable-next-line no-console
-    console.log(data);
-  };
+  const { submit, isPending, isSuccess } = useSpecialistApplication();
 
   const steps = [
     { id: 1, component: <Step1 />, schema: step1Schema },
@@ -48,36 +37,28 @@ export function SpecialistApplicationWizard({ dicts }) {
       component: <Step4 specializations={specializations} specializationMethods={specializationMethods} />,
       schema: step4Schema,
     },
-    { id: 5, component: <Step5 therapies={therapies} requests={requests} />, schema: step5Schema },
+    { id: 5, component: <Step5 therapies={therapies} />, schema: step5Schema },
   ];
 
-  const { index, next, back, currentStep } = useFormWizard(steps, methods);
+  const { index, total, next, back, currentStep, isFirst, isLast } = useFormWizard(steps, methods);
+
+  if (isSuccess) return <ApplicationSuccess />;
 
   return (
-    <div>
-      <p>Specialist Wizard Component</p>
-
+    <div className="flex flex-col gap-6">
+      <h1 className="text-p2 font-bold text-primary-700 lg:text-h4">Заявка спеціаліста</h1>
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <form onSubmit={methods.handleSubmit(data => submit(data))} noValidate>
           {currentStep.component}
-
-          <div className="flex justify-between">
-            <PillButton
-              variant="outlined"
-              colorVariant="blue"
-              aria-label="Click to go to the previous step"
-              onClick={back}
-            >
-              Назад
-            </PillButton>
-            {index < steps.length - 1 ? (
-              <PillButton variant="filled" colorVariant="blue" aria-label="Click to go to the next step" onClick={next}>
-                Далі
-              </PillButton>
-            ) : (
-              <PillButton type="submit">Submit</PillButton>
-            )}
-          </div>
+          <WizardNavigation
+            index={index}
+            total={total}
+            isFirst={isFirst}
+            isLast={isLast}
+            isPending={isPending}
+            onBack={back}
+            onNext={next}
+          />
         </form>
       </FormProvider>
     </div>
@@ -91,6 +72,5 @@ SpecialistApplicationWizard.propTypes = {
     specializations: PropTypes.array.isRequired,
     specializationMethods: PropTypes.array.isRequired,
     therapies: PropTypes.array.isRequired,
-    requests: PropTypes.array.isRequired,
   }).isRequired,
 };

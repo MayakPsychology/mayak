@@ -1,7 +1,7 @@
 'use client';
 
-import { useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
+import { useFormContext } from 'react-hook-form';
 import { ClientCategoriesGroup } from './ClientCategoriesGroup';
 
 export function ClientsPreferences({ clientCategories }) {
@@ -19,7 +19,6 @@ export function ClientsPreferences({ clientCategories }) {
         name="clients.workingWith"
         otherField="clients.workingWithOther"
         categoryLabels="clients.workingWithNames"
-        error={errors?.clients?.message}
       />
 
       <ClientCategoriesGroup
@@ -28,7 +27,6 @@ export function ClientsPreferences({ clientCategories }) {
         name="clients.notWorkingWith"
         otherField="clients.notWorkingWithOther"
         categoryLabels="clients.notWorkingWithNames"
-        error={errors?.clients?.message}
       />
 
       {errorMessage && (

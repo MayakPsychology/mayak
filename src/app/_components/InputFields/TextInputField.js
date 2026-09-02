@@ -80,7 +80,7 @@ TextInputField.propTypes = {
   value: PropTypes.string,
   name: PropTypes.string,
   onChange: PropTypes.func,
-  type: PropTypes.oneOf(['text', 'email', 'url', 'password', 'search', 'tel', 'number']),
+  type: PropTypes.oneOf(['text', 'email', 'url', 'password', 'search', 'tel', 'number', 'date', 'datetime-local']),
   disabled: PropTypes.bool,
   placeholder: PropTypes.string,
   error: PropTypes.string,

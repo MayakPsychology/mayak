@@ -1,32 +1,12 @@
-/* eslint-disable no-console */
 import { transformSpecialistData } from '@/app/(admin)/admin/_utils/transformSpecialistData';
 import { normalizeForPrisma } from '@/app/_utils/normalizeForPrisma';
 import { prisma } from '@/lib/db';
+import { EMAIL_TYPES } from '@/app/config/emails';
+import { specialistApplicationFullSchema } from '@/lib/validationSchemas/applications/specialistApplicationSchema';
 import { sendApplicationNotification } from '../email/sendEmail';
 
-function formDataToObject(formData) {
-  const data = {};
-
-  formData.forEach((value, key) => {
-    try {
-      data[key] = JSON.parse(value);
-    } catch {
-      data[key] = value;
-    }
-  });
-
-  return data;
-}
-
-export async function application(formData) {
-  // 1️⃣ FormData → объект
-  const data = formDataToObject(formData);
-
-  console.log('Recived from frontend:', data);
-  // 1. Email — вфдпhавка даних на електронну пошту
-  // TODO: винести в орему утиліту
-  // 2. Відбираємо дані (поля) тільки для БД
-  const dbInput = {
+function toDbInput(data) {
+  return {
     firstName: data.firstName,
     lastName: data.lastName,
     surname: data.surname,
@@ -42,7 +22,6 @@ export async function application(formData) {
 
     addresses: data.addresses,
     workTime: data.workTime,
-
     supportFocuses: data.supportFocuses,
 
     specializations: data.specializations,
@@ -53,7 +32,6 @@ export async function application(formData) {
       notWorkingWith: data.clients?.notWorkingWith,
     },
 
-    // socialLink → поля Specialist
     instagram: data.socialLink?.instagram,
     facebook: data.socialLink?.facebook,
     youtube: data.socialLink?.youtube,
@@ -62,24 +40,21 @@ export async function application(formData) {
     viber: data.socialLink?.viber,
     telegram: data.socialLink?.telegram,
 
-    // бизнес-правило
     isActive: false,
   };
-
-  // 3. Нормалізація
-  const normalizedData = normalizeForPrisma(dbInput);
-
-  console.log('NORMALIZED DATA', normalizedData);
-
-  // 4. Трфнсформація под структурру призма
-  const transformedData = transformSpecialistData(normalizedData);
-  console.log('TRANSFORMED DATA:', transformedData);
-
-  // 5️. стоврення спеціаліста в базі через prisma extension
-  await prisma.specialist.create({ data: transformedData });
-  const result = await sendApplicationNotification(data);
-  console.log(result);
 }
 
-// TODO: поодумати про безпеку (ін'єкції і т.ін)
-// TODO: додати на фронт капчу
+export async function application(rawData) {
+  const data = specialistApplicationFullSchema.parse(rawData);
+  const transformedData = transformSpecialistData(normalizeForPrisma(toDbInput(data)));
+
+  const specialist = await prisma.specialist.create({ data: transformedData });
+
+  const notification = await sendApplicationNotification({
+    data,
+    type: EMAIL_TYPES.SPECIALIST_APPLICATION,
+    subjectDetails: `${data.lastName} ${data.firstName}`,
+  });
+
+  return { id: specialist.id, notification };
+}

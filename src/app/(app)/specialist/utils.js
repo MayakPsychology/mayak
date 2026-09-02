@@ -74,3 +74,18 @@ export const getSpecDictionaries = async () => {
   ]);
   return { clientCategories, specializations, specializationMethods, districts, therapies };
 };
+
+export const getOrgDictionaries = async () => {
+  const [clientCategories, specializations, districts, therapies, organizationTypes] = await Promise.all([
+    prisma.clientCategory.findMany(),
+    prisma.specialization.findMany(),
+    prisma.district.findMany(),
+    prisma.therapy.findMany({
+      include: {
+        requests: true,
+      },
+    }),
+    prisma.organizationType.findMany(),
+  ]);
+  return { clientCategories, specializations, districts, therapies, organizationTypes };
+};

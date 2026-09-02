@@ -6,6 +6,7 @@ import { FormatOfWork } from '@prisma/client';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { IoMdCloseCircleOutline, IoMdAddCircleOutline } from 'react-icons/io';
 import { emptyAddress } from '@/app/config/application';
+import { getArrayError } from '../getArrayError';
 import { AdressGroup } from './AdressGroup';
 
 export function AdressListGroup({ districts }) {
@@ -45,9 +46,9 @@ export function AdressListGroup({ districts }) {
           </li>
         ))}
       </ul>
-      {errors.addresses?._errors?.length > 0 && (
+      {getArrayError(errors, 'addresses') && (
         <p className="ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4">
-          {errors.addresses._errors[0]}
+          {getArrayError(errors, 'addresses')}
         </p>
       )}
       <div className="flex gap-3">

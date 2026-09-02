@@ -22,6 +22,7 @@ enum FormatOfWork {
 enum EventFormat {
   OFFLINE
   ONLINE
+  ONLINE_OFFLINE
 }
 
 enum EventPriceFormat {
@@ -95,6 +96,7 @@ model Organization {
   name                  String             @db.VarChar(128)
   type                  OrganizationType[]
   yearsOnMarket         Int?               @db.SmallInt
+  yearsOfExperience     Int?               @db.SmallInt
   formatOfWork          FormatOfWork?
   addresses             Address[]
   ownershipType         OwnershipType?

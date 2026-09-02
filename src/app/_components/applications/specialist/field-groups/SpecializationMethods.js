@@ -3,6 +3,7 @@ import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { CheckBox } from '@/app/_components/CheckBox';
 import { OtherOptionField } from '@/app/_components/applications/_shared/fields';
+import { getArrayError } from '@/app/_components/applications/_shared/getArrayError';
 
 export function SpecializationMethods({ specializationId, specializationMethods, index }) {
   const methods = specializationMethods.filter(method => specializationId === method.specializationId);
@@ -23,7 +24,7 @@ export function SpecializationMethods({ specializationId, specializationMethods,
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allSelected.join(',')]);
 
-  const errorMessage = errors?.specializationMethods?.message;
+  const errorMessage = getArrayError(errors, 'specializationMethods');
 
   if (methods.length === 0) return null;
 

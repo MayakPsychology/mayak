@@ -45,6 +45,7 @@ export function OrganizationShow() {
         <TextField label="Тип власності" source="ownershipType" />
         <DateField label="Дата додавання в сервіс" showTime source="createdAt" />
         <NumberField label="Роки на ринку" source="yearsOnMarket" />
+        <NumberField label="Стаж" source="yearsOfExperience" />
         <TextField label="Формат послуг" source="formatOfWork" />
         <ArrayField label="Місця надання послуг" source="addresses">
           <Datagrid bulkActionButtons={false}>

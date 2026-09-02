@@ -1,4 +1,4 @@
-const { WEEKDAYS_TRANSLATION } = require('@/app/(admin)/admin/_lib/consts');
+import { WEEKDAYS_TRANSLATION } from '@/app/(admin)/admin/_lib/consts';
 
 const weekDays = Object.values(WEEKDAYS_TRANSLATION);
 export const specialistDefaultValues = {
@@ -7,7 +7,7 @@ export const specialistDefaultValues = {
   surname: '',
   yearsOfExperience: null,
   gender: null,
-  formatOfWork: null, // вказати за замувочуванням
+  formatOfWork: null,
   phone: null,
   email: null,
   website: null,
@@ -36,9 +36,6 @@ export const specialistDefaultValues = {
   specializationMethods: [],
   specializationAdditionalInfo: [],
   supportFocuses: [],
-  professionalDevelopment: '',
-  personalTherapy: '',
-  supervisionExperience: '',
 };
 
 export const additionalInfoDefaultValue = {
@@ -49,6 +46,4 @@ export const additionalInfoDefaultValue = {
   professionalDevelopment: '',
   personalTherapy: '',
   supervisionExperience: '',
-  // degreeDocument: [],
-  // additionalDocuments: [],
 };

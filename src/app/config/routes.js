@@ -1,8 +1,8 @@
 const ROUTES = {
-  APPLY: '/apply',
-  APPLY_SPECIALIST: '/apply/specialist',
-  APPLY_ORGANIZATION: '/apply/organization',
-  APPLY_EVENT: '/apply/event',
+  ADD_NEW: '/add-new',
+  ADD_NEW_SPECIALIST: '/add-new/specialist',
+  ADD_NEW_ORGANIZATION: '/add-new/organization',
+  ADD_NEW_EVENT: '/add-new/event',
   SPECIALIST: '/specialist',
   EVENTS: '/event',
 };

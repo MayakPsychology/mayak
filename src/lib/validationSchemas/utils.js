@@ -103,10 +103,10 @@ export const array = (fieldName, itemSchema, options) => {
 export const number = (
   fieldName,
   schema = z.preprocess(
-    val => (val == null ? undefined : Number(val)), // преобразуем null/строку в число
+    val => (val == null || val === '' ? undefined : Number(val)),
     z.number({
       required_error: errors(fieldName).required,
-      invalid_type_error: errors(fieldName).number?.format ?? `${fieldName} має бути числом`,
+      invalid_type_error: errors(fieldName).number.type,
     }),
   ),
 ) => ({
@@ -130,8 +130,16 @@ export const number = (
       fieldName,
       schema.refine(val => Number.isInteger(val * 2), { message: errors(fieldName).number.halfStep }),
     ),
-  optional: () => number(fieldName, schema.optional()),
-  nullish: () => number(fieldName, schema.nullish()),
+  optional: () =>
+    number(
+      fieldName,
+      z.preprocess(val => (val === '' || val === null ? undefined : val), schema.optional()),
+    ),
+  nullish: () =>
+    number(
+      fieldName,
+      z.preprocess(val => (val === '' ? undefined : val), schema.nullish()),
+    ),
   zod: schema,
 });
 

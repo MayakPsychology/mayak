@@ -18,6 +18,8 @@
     "seed:dev": "node prisma/seedDev.mjs",
     "seed": "if [ \"$VERCEL_ENV\" = \"production\" ]; then npm run seed:prod; else npm run seed:dev; fi",
     "lint": "eslint --ext .js,.mjs .",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint:fix": "prettier --write . && eslint --ext .js,.mjs --fix .",
     "prepare": "husky"
   },

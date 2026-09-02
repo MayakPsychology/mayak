@@ -6,6 +6,7 @@ import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { CheckBox } from '@/app/_components/CheckBox';
 import { additionalInfoDefaultValue } from '@/app/config/application';
+import { getArrayError } from '../getArrayError';
 import { SpecializationAdditionalInfo, SpecializationMethods } from '../../specialist/field-groups';
 
 export function SpecializationsGroup({ specializations, specializationMethods }) {
@@ -13,7 +14,7 @@ export function SpecializationsGroup({ specializations, specializationMethods })
     control,
     formState: { errors },
   } = useFormContext();
-  const errorMessage = errors?.specializations?.message;
+  const errorMessage = getArrayError(errors, 'specializations');
 
   const { fields, append, remove } = useFieldArray({
     name: 'specializationAdditionalInfo',
@@ -88,7 +89,7 @@ export function SpecializationsGroup({ specializations, specializationMethods })
                           specializationMethods={specializationMethods}
                           index={index}
                         />
-                        <SpecializationAdditionalInfo specialization={spec.id} index={index} />{' '}
+                        <SpecializationAdditionalInfo specializationName={spec.name} index={index} />
                       </>
                     )}
                   </div>
@@ -110,10 +111,3 @@ SpecializationsGroup.propTypes = {
   specializations: PropTypes.array.isRequired,
   specializationMethods: PropTypes.array.isRequired,
 };
-
-// TODO Aditional fields to be added later:
-// `professionalDevelopment`
-// `personalTherapy`
-// `supervisionExperience`
-// `degreeDocument`
-// `additionalDocuments`;

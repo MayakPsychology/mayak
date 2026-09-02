@@ -1,16 +1,19 @@
-import React from 'react';
+'use client';
+
+import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 import { TextArea } from '@/app/_components/TextArea';
 
-export function DescriptionField() {
+export function DescriptionField({ label }) {
   const {
     control,
     formState: { errors },
   } = useFormContext();
+
   return (
     <div>
-      <label className="text-base mb-2 block font-medium">
-        Що ми можемо добавити добавити про Вас у пункт Опис? <span className="text-red-500">*</span>
+      <label className="text-base mb-2 block font-medium" htmlFor="description">
+        {label} <span className="text-red-500">*</span>
       </label>
       <Controller
         name="description"
@@ -18,9 +21,9 @@ export function DescriptionField() {
         render={({ field }) => (
           <TextArea
             {...field}
-            maxLength={320}
+            value={field.value ?? ''}
+            maxLength={5000}
             placeholder="Ваша відповідь"
-            required
             error={errors?.description?.message}
           />
         )}
@@ -28,3 +31,6 @@ export function DescriptionField() {
     </div>
   );
 }
+
+DescriptionField.propTypes = { label: PropTypes.string };
+DescriptionField.defaultProps = { label: 'Що ми можемо додати про Вас у пункт Опис?' };

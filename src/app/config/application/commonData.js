@@ -4,9 +4,3 @@ export const emptyAddress = {
   nameOfClinic: null,
   district: null,
 };
-
-export const emptySupportFocus = {
-  therapy: null,
-  requestsIds: [],
-  price: null,
-};
