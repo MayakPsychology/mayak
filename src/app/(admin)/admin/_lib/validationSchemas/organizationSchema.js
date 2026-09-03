@@ -16,6 +16,7 @@ import { MESSAGES, zString } from './common';
 
 const zOrganizationSchema = serviceProviderCore.extend({
   yearsOnMarket: zInteger,
+  yearsOfExperience: zInteger,
   description: zString,
 });
 

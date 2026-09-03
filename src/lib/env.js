@@ -8,5 +8,7 @@ export const env = z
     ADMIN_USERNAME: z.string().min(5),
     ADMIN_PASSWORD: z.string().min(5),
     REVALIDATION_TIME: z.preprocess(val => Number(val), z.number()).default(0),
+    RESEND_API_KEY: z.string().min(5),
+    ADMIN_EMAIL: z.string().min(5),
   })
   .parse(process.env);

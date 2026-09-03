@@ -24,6 +24,19 @@ export const errors = fieldName => ({
   boolean: {
     format: `${fieldName} - має бути булевим значенням`,
   },
+  number: {
+    type: `${fieldName} має бути числом`,
+    min: value => `${fieldName} має бути не менше ${value}`,
+    max: value => `${fieldName} має бути не більше ${value}`,
+    integer: `${fieldName} має бути цілим числом`,
+    halfStep: `${fieldName} має бути кратне 0.5`,
+  },
+  email: {
+    format: `${fieldName} - невірний формат пошти`,
+  },
+  url: {
+    format: `${fieldName} - невірний формат веб-адреси`,
+  },
 });
 
 export const string = (
@@ -37,9 +50,18 @@ export const string = (
 ) => ({
   min: minLength => string(fieldName, schema.min(minLength, { message: errors(fieldName).string.min(minLength) })),
   max: maxLength => string(fieldName, schema.max(maxLength, { message: errors(fieldName).string.max(maxLength) })),
-  email: () => string(fieldName, schema.email()),
+  email: () => string(fieldName, schema.email({ message: errors(fieldName).email.format })),
+  url: () => string(fieldName, schema.url({ message: errors(fieldName).url.format })),
   nullish: () => string(fieldName, schema.nullish()),
-  optional: () => string(fieldName, schema.optional()),
+  nullable: () => string(fieldName, schema.nullable()),
+  optional: () =>
+    string(
+      fieldName,
+      z.preprocess(val => {
+        if (val === '' || val === null) return undefined;
+        return val;
+      }, schema.optional()),
+    ),
   zod: schema,
 });
 
@@ -64,6 +86,75 @@ export const boolean = (
   zod: schema,
 });
 
-export const array = (fieldName, itemSchema) => ({
-  zod: z.array(itemSchema, { required_error: errors(fieldName).required }),
+export const array = (fieldName, itemSchema, options) => {
+  let schema = z.array(itemSchema, { required_error: errors(fieldName).required });
+
+  if (options?.min) {
+    schema = schema.min(options.min, {
+      message: options?.message,
+    });
+  }
+
+  return {
+    zod: schema,
+  };
+};
+
+export const number = (
+  fieldName,
+  schema = z.preprocess(
+    val => (val == null || val === '' ? undefined : Number(val)),
+    z.number({
+      required_error: errors(fieldName).required,
+      invalid_type_error: errors(fieldName).number.type,
+    }),
+  ),
+) => ({
+  min: minValue =>
+    number(
+      fieldName,
+      schema.refine(val => val >= minValue, { message: errors(fieldName).number.min(minValue) }),
+    ),
+  max: maxValue =>
+    number(
+      fieldName,
+      schema.refine(val => val <= maxValue, { message: errors(fieldName).number.max(maxValue) }),
+    ),
+  integer: () =>
+    number(
+      fieldName,
+      schema.refine(val => Number.isInteger(val), { message: errors(fieldName).number.integer }),
+    ),
+  halfStep: () =>
+    number(
+      fieldName,
+      schema.refine(val => Number.isInteger(val * 2), { message: errors(fieldName).number.halfStep }),
+    ),
+  optional: () =>
+    number(
+      fieldName,
+      z.preprocess(val => (val === '' || val === null ? undefined : val), schema.optional()),
+    ),
+  nullish: () =>
+    number(
+      fieldName,
+      z.preprocess(val => (val === '' ? undefined : val), schema.nullish()),
+    ),
+  zod: schema,
 });
+
+export const regexField = (fieldName, regex, expectedFormat, required = false) => {
+  let base = string(fieldName).nullable();
+
+  const message = errors(fieldName).format(expectedFormat);
+
+  if (required) {
+    base = base.zod
+      .refine(val => val !== null && val.trim() !== '', { message: errors(fieldName).nonEmpty })
+      .refine(val => regex.test(val), { message });
+  } else {
+    base = base.zod.refine(val => !val || regex.test(val), { message });
+  }
+
+  return base;
+};

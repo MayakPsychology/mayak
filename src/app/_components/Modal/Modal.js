@@ -44,7 +44,7 @@ export const Modal = ({
           <>
             {isBlurBackground && blurBackground}
             <div
-              className="fixed bottom-0 left-0 top-0 z-[1300] grid w-full place-content-center lg:top-1/2 lg:h-[75vh] lg:-translate-y-1/2"
+              className="fixed inset-0 z-[1300] grid w-full overflow-y-auto px-4 py-6"
               onClick={() => {
                 if (closeOnBackdropClick) onClose();
               }}
@@ -52,7 +52,7 @@ export const Modal = ({
               <motion.div
                 className={cn(
                   layout &&
-                    'z-[99] flex flex-col overflow-hidden rounded-xl bg-other-white px-4 py-[18px] shadow-custom-2 md:p-6',
+                    'z-[99] m-auto flex flex-col overflow-hidden rounded-xl bg-other-white px-4 py-[18px] shadow-custom-2 md:p-6',
                   className,
                 )}
                 onClick={e => {
@@ -81,7 +81,7 @@ export const Modal = ({
                     <ModalCloseButton onClose={onClose} />
                   </div>
                 )}
-                <div className={cn('mt-4 overflow-y-auto', classNames.container)}>{children}</div>
+                <div className={cn('mt-4', classNames.container)}>{children}</div>
               </motion.div>
             </div>
           </>

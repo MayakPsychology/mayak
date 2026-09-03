@@ -1,5 +1,9 @@
+import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { withErrorHandler } from '@/lib/errors/errorHandler';
+import { formDataToObject } from '@/lib/formData';
+import { assertWithinRateLimit } from '@/lib/rateLimit';
+import { application } from '@/services/event';
 
 export const GET = withErrorHandler(async req => {
   const today = new Date();
@@ -80,4 +84,13 @@ export const GET = withErrorHandler(async req => {
   };
 
   return new Response(JSON.stringify(data), { status: 200 });
+});
+
+export const POST = withErrorHandler(async request => {
+  assertWithinRateLimit(request, 'event-application');
+
+  const formData = await request.formData();
+  const { id } = await application(formDataToObject(formData));
+
+  return NextResponse.json({ success: true, id }, { status: 201 });
 });
