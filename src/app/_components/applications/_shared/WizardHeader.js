@@ -49,7 +49,7 @@ export function WizardHeader({ index = 0, total = 1, onBack }) {
           aria-valuemin={1}
           aria-valuemax={total}
           aria-label={`Крок ${index + 1} з ${total}`}
-          className="relative flex h-3 w-full items-center rounded-full bg-primary-200"
+          className="relative flex h-3 w-full items-center rounded-full bg-other-white"
         >
           {/* the fill stops half a bar past the current step's dot, the way the mock draws it */}
           <div
