@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { specialistApplicationFullSchema } from '@/lib/validationSchemas/applications/specialistApplicationSchema';
 import { organizationApplicationFullSchema } from '@/lib/validationSchemas/applications/organizationApplicationSchema';
 import { eventApplicationSchema } from '@/lib/validationSchemas/applications/eventApplicationSchema';
-import { eventApplication, organizationApplication, specialistApplication, supportFocuses } from './fixtures';
+import {
+  addressWithoutDistrict,
+  eventApplication,
+  organizationApplication,
+  specialistApplication,
+  supportFocuses,
+} from './fixtures';
 
 const ACCEPTS_COMPLETE = 'accepts a complete application';
 
@@ -40,10 +46,24 @@ describe('specialist application schema', () => {
     expect(result.data.supportFocuses[0].price).toBeUndefined();
   });
 
+  it('requires a phone number', () => {
+    expect(specialistApplicationFullSchema.safeParse({ ...specialistApplication, phone: null }).success).toBe(false);
+  });
+
+  it('accepts an address in a city that has no districts', () => {
+    const noDistrict = { ...specialistApplication, addresses: [addressWithoutDistrict] };
+    expect(specialistApplicationFullSchema.safeParse(noDistrict).success).toBe(true);
+  });
+
+  it('requires a city on every address', () => {
+    const noCity = { ...specialistApplication, addresses: [{ ...addressWithoutDistrict, city: null }] };
+    expect(specialistApplicationFullSchema.safeParse(noCity).success).toBe(false);
+  });
+
   it('rejects a cleared years of experience', () => {
-    expect(
-      specialistApplicationFullSchema.safeParse({ ...specialistApplication, yearsOfExperience: '' }).success,
-    ).toBe(false);
+    expect(specialistApplicationFullSchema.safeParse({ ...specialistApplication, yearsOfExperience: '' }).success).toBe(
+      false,
+    );
   });
 });
 
@@ -116,7 +136,9 @@ describe('event application schema', () => {
   });
 
   it('rejects an event dated in the past', () => {
-    expect(eventApplicationSchema.safeParse({ ...eventApplication, eventDate: '2020-01-01T10:00' }).success).toBe(false);
+    expect(eventApplicationSchema.safeParse({ ...eventApplication, eventDate: '2020-01-01T10:00' }).success).toBe(
+      false,
+    );
   });
 
   it('rejects a malformed link', () => {

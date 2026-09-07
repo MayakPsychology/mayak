@@ -13,7 +13,7 @@ import { PillButton } from '@/app/_components/PillButton';
 import { useEventApplication } from '@/app/_hooks';
 import { eventDefaultValues } from '@/app/config/application';
 import { eventApplicationSchema } from '@/lib/validationSchemas/applications/eventApplicationSchema';
-import { ApplicationSuccess } from '../_shared';
+import { ApplicationSuccess, WizardHeader } from '../_shared';
 
 const errorClass = 'ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4';
 
@@ -81,6 +81,7 @@ export function EventApplicationForm() {
 
   return (
     <div className="flex flex-col gap-6">
+      <WizardHeader />
       <h1 className="text-p2 font-bold text-primary-700 lg:text-h4">Заявка на подію</h1>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(data => submit(data))} noValidate>

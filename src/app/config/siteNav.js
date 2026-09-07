@@ -8,7 +8,7 @@ const siteNav = {
     },
   ],
   innerLinks: [
-    { title: 'Стати партнером', href: ROUTES.ADD_NEW },
+    { title: 'Стати партнером', href: ROUTES.ADD_NEW, badge: 'new' },
     { title: 'Пошук допомоги', href: ROUTES.SPECIALIST },
     { title: 'Події', href: ROUTES.EVENTS },
   ],

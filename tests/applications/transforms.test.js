@@ -3,7 +3,7 @@ import { transformSpecialistData } from '@/app/(admin)/admin/_utils/transformSpe
 import { transformOrganizationData } from '@/app/(admin)/admin/_utils/transformOrganizationData';
 import { transformEventCreateData } from '@/app/(admin)/admin/_utils/transformEventCreateData';
 import { normalizeForPrisma } from '@/app/_utils/normalizeForPrisma';
-import { UUID, addresses, supportFocuses, workTime } from './fixtures';
+import { CITY_UUID, UUID, addressWithoutDistrict, addresses, supportFocuses, workTime } from './fixtures';
 
 const CREATED_INACTIVE = 'is always created inactive';
 const TEST_ADDRESS = 'вул. Тестова 1';
@@ -63,8 +63,22 @@ describe('specialist prisma payload', () => {
     expect(data.specializationMethods.connect[0].id).toBe(UUID);
   });
 
-  it('connects the address district', () => {
+  it('connects the address city and district', () => {
+    expect(data.addresses.create[0].city.connect.id).toBe(CITY_UUID);
     expect(data.addresses.create[0].district.connect.id).toBe(UUID);
+  });
+
+  it('leaves the district unconnected for a city that has none', () => {
+    const withoutDistrict = transformSpecialistData(
+      normalizeForPrisma({
+        ...shared,
+        addresses: [addressWithoutDistrict],
+        specializations: [],
+        specializationMethods: [],
+      }),
+    );
+    expect(withoutDistrict.addresses.create[0].city.connect.id).toBe(CITY_UUID);
+    expect(withoutDistrict.addresses.create[0].district).toBeUndefined();
   });
 
   it('creates support focuses with their therapy and requests', () => {

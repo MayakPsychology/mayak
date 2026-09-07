@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { NavigationUrl, PrismaClient } from '@prisma/client';
 import { getSpecialistFullName } from '../src/utils/getSpecialistFullName.mjs';
 import {
-  districts,
+  cities,
   organizationTypes,
   psychologyMethods,
   psychotherapyMethods,
@@ -52,7 +52,8 @@ function uniqueObjectsWithId(instances) {
 function randomAddress(districtsParam, isPrimary) {
   const companyName = faker.company.name().substring(0, 200); // Truncate company name first
   const randomNameOfClinic = `Клініка ${companyName}`.substring(0, 250); // Then truncate full string
-  const randomDistricts = faker.helpers.arrayElement(districtsParam).id; // returns random object from districts array
+  // districtsParam carries { id, cityId }; the district is optional, the city is not
+  const randomDistrict = faker.helpers.arrayElement(districtsParam);
 
   // among coordinates of Lviv city
   const randomLat = faker.location.latitude({ min: 49.83250892445946, max: 49.843362597265774 });
@@ -61,9 +62,14 @@ function randomAddress(districtsParam, isPrimary) {
   return {
     nameOfClinic: randomNameOfClinic,
     fullAddress: getFullAddress(),
+    city: {
+      connect: {
+        id: randomDistrict.cityId,
+      },
+    },
     district: {
       connect: {
-        id: randomDistricts,
+        id: randomDistrict.id,
       },
     },
     latitude: randomLat,
@@ -327,6 +333,23 @@ specializations.push(
   },
 );
 
+async function seedCitiesAndDistricts() {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const { name, districts } of cities) {
+    // eslint-disable-next-line no-await-in-loop
+    const city = await prisma.city.upsert({ where: { name }, create: { name }, update: {} });
+    // eslint-disable-next-line no-restricted-syntax
+    for (const districtName of districts) {
+      // eslint-disable-next-line no-await-in-loop
+      await prisma.district.upsert({
+        where: { name_cityId: { name: districtName, cityId: city.id } },
+        create: { name: districtName, cityId: city.id },
+        update: {},
+      });
+    }
+  }
+}
+
 async function createIfNotExist(model, data, filter) {
   // eslint-disable-next-line no-restricted-syntax
   for (const it of data) {
@@ -338,7 +361,7 @@ async function createIfNotExist(model, data, filter) {
 async function seedBaseData() {
   await createIfNotExist(prisma.clientCategory, clientCategories, ({ name }) => ({ name }));
   await createIfNotExist(prisma.donationDetails, [donationDetails], ({ title }) => ({ title }));
-  await createIfNotExist(prisma.district, districts, ({ name }) => ({ name }));
+  await seedCitiesAndDistricts();
   await createIfNotExist(prisma.request, requests, ({ name }) => ({ name }));
   await createIfNotExist(prisma.specialization, specializations, ({ name }) => ({ name }));
   await createIfNotExist(prisma.organizationType, organizationTypes, ({ name }) => ({ name }));
@@ -403,7 +426,7 @@ async function main() {
   });
 
   const specializationMethods = await prisma.method.findMany();
-  const districtsData = await prisma.district.findMany({ select: { id: true } });
+  const districtsData = await prisma.district.findMany({ select: { id: true, cityId: true } });
 
   const tags = await prisma.eventTag.findMany({ select: { id: true } });
   const link = await prisma.eventLink.findFirst({ select: { id: true } });

@@ -21,11 +21,16 @@ export function OtherOptionField({ name, placeholder = 'Вкажіть свій 
     <div>
       <CheckBox type="checkbox" name={name} value="other" text="Інше" checked={checked} onChange={handleToggle} />
       {checked && (
-        <TextInputField
-          {...register(name)}
-          placeholder={placeholder}
-          additionalContainerStyle="bg-other-white"
-        />
+        <div className="mt-2">
+          {/* absolute={false}: the floating label is positioned bottom-[49px] and would land on
+              the "Інше" checkbox sitting right above it. In flow it stacks instead. */}
+          <TextInputField
+            {...register(name)}
+            placeholder={placeholder}
+            absolute={false}
+            additionalContainerStyle="bg-other-white"
+          />
+        </div>
       )}
     </div>
   );

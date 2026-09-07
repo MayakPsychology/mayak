@@ -1,6 +1,7 @@
 export * from './Filters';
 export * from './FormatFilter';
 export * from './FilterBase';
+export * from './CityFilter';
 export * from './DistrictFilter';
 export * from './TypeFilter';
 export * from './SpecializationFilter';

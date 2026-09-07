@@ -175,12 +175,27 @@ model Specialization {
   @@map("specialization")
 }
 
+model City {
+  id        String     @id @default(uuid()) @db.Uuid
+  createdAt DateTime   @default(now())
+  name      String     @unique @db.VarChar(64)
+  districts District[]
+  addresses Address[]
+
+  @@map("city")
+}
+
 model District {
   id        String    @id @default(uuid()) @db.Uuid
   createdAt DateTime  @default(now())
-  name      String    @unique @db.VarChar(64)
+  name      String    @db.VarChar(64)
+  city      City      @relation(fields: [cityId], references: [id])
+  cityId    String    @db.Uuid
   Address   Address[]
 
+  // district names repeat across cities — Шевченківський exists in Lviv and in Kyiv
+  @@unique([name, cityId])
+  @@index([cityId])
   @@map("district")
 }
 
@@ -228,14 +243,18 @@ model Address {
   createdAt     DateTime       @default(now())
   nameOfClinic  String?        @db.VarChar(255)
   fullAddress   String         @db.VarChar(128) // street,building number,floor,room number
-  district      District       @relation(fields: [districtId], references: [id])
-  districtId    String         @db.Uuid
+  city          City           @relation(fields: [cityId], references: [id])
+  cityId        String         @db.Uuid
+  // optional: most Ukrainian towns are not split into districts
+  district      District?      @relation(fields: [districtId], references: [id])
+  districtId    String?        @db.Uuid
   specialists   Specialist[]
   organizations Organization[]
   isPrimary     Boolean        @default(false)
   longitude     Float          @default(0) @db.DoublePrecision
   latitude      Float          @default(0) @db.DoublePrecision
 
+  @@index([cityId])
   @@index([districtId])
   @@index([isPrimary])
   @@index([latitude, longitude])

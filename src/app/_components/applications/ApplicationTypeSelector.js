@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { CheckBox } from '@/app/_components/CheckBox';
 import { PillButton } from '@/app/_components/PillButton';
 import ROUTES from '@/app/config/routes';
+import { useRequestClose, WizardHeader } from './_shared';
 
 const ENTITY_OPTIONS = [
   { value: 'organization', label: 'Організацію, представником якої я є', href: ROUTES.ADD_NEW_ORGANIZATION },
@@ -15,11 +16,13 @@ const ENTITY_OPTIONS = [
 export function ApplicationTypeSelector() {
   const [value, setValue] = useState('');
   const router = useRouter();
+  const requestClose = useRequestClose();
 
   const route = ENTITY_OPTIONS.find(option => option.value === value)?.href;
 
   return (
     <div className="flex flex-col gap-8">
+      <WizardHeader />
       <h1 className="text-center text-p3 font-bold text-primary-700 lg:text-p2">
         Заповнюючи цю форму, я хочу висвітлити інформацію про...
       </h1>
@@ -39,12 +42,7 @@ export function ApplicationTypeSelector() {
       </div>
 
       <div className="flex justify-between gap-4">
-        <PillButton
-          variant="outlined"
-          colorVariant="blue"
-          aria-label="Закрити форму заявки"
-          onClick={() => router.back()}
-        >
+        <PillButton variant="outlined" colorVariant="blue" aria-label="Закрити форму заявки" onClick={requestClose}>
           Закрити
         </PillButton>
         <PillButton

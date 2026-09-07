@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { FormatOfWork, Gender } from '@prisma/client';
-import { string, number, boolean, array } from '@/lib/validationSchemas/utils';
+import { string, number, boolean, array, regexField } from '@/lib/validationSchemas/utils';
+import { PHONE_REGEX } from '@/lib/consts';
 import {
   zClientsSchema,
   zContactsShape,
@@ -30,6 +31,8 @@ export const specialistApplicationStep1Schema = z.object({
     invalid_type_error: 'Оберіть стать',
   }),
   ...zContactsShape,
+  // Figma marks "Контактні дані" as required, so the phone is mandatory for specialists.
+  phone: regexField('Телефон', PHONE_REGEX, 'Введіть номер телефону у міжнародному форматі', true),
   socialLink: zSocialLinkSchema,
   description: string('Опис').min(10).max(5000).zod,
 });
@@ -53,9 +56,7 @@ const specialistApplicationStep2Shape = z.object({
   workTime: array('Графік роботи', zWorkDaySchema).zod,
 });
 
-export const specialistApplicationStep2Schema = specialistApplicationStep2Shape.superRefine(
-  requireAddressWhenOffline,
-);
+export const specialistApplicationStep2Schema = specialistApplicationStep2Shape.superRefine(requireAddressWhenOffline);
 
 export const specialistApplicationStep3Schema = z.object({ clients: zClientsSchema });
 

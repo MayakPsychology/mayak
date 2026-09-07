@@ -1,5 +1,5 @@
 import {
-  DistrictSearchSection,
+  CitySearchSection,
   FAQSection,
   SearchSection,
   TherapiesSection,
@@ -59,7 +59,7 @@ export default async function Page() {
   return (
     <>
       <SearchSection />
-      <DistrictSearchSection className="my-8 lg:mb-[88px] lg:mt-8" />
+      <CitySearchSection className="my-8 lg:mb-[88px] lg:mt-8" />
       <TherapiesSection therapies={activeTherapies} />
       <GoalSection />
       <FAQSection faqs={activeFAQs} />

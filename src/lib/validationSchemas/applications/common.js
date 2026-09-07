@@ -5,7 +5,9 @@ import { MESSENGER_REGEX, PHONE_REGEX, SOCIAL_REGEX } from '@/lib/consts';
 
 export const zCreateAddressSchema = z.object({
   fullAddress: string('Адреса').min(2).max(128).zod,
-  district: string('Район').zod,
+  city: string('Місто').zod,
+  // optional: most Ukrainian towns are not split into districts
+  district: string('Район').optional().zod,
   nameOfClinic: string('Назва клініки').min(2).max(128).optional().zod,
   isPrimary: boolean('Основна').zod,
 });

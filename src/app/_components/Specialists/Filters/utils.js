@@ -37,6 +37,10 @@ export const specialistFiltersConfig = {
     title: 'Запити',
     filterKey: 'request',
   },
+  city: {
+    title: 'Місто',
+    filterKey: 'city',
+  },
   district: {
     title: 'Райони',
     filterKey: 'district',

@@ -4,7 +4,6 @@ import {
   BooleanInput,
   FormDataConsumer,
   Labeled,
-  ReferenceInput,
   required,
   SelectInput,
   SimpleFormIterator,
@@ -13,6 +12,7 @@ import {
 } from 'react-admin';
 import PropTypes from 'prop-types';
 import { Stack } from '@mui/material';
+import get from 'lodash/get';
 import { FormatOfWork } from '@prisma/client';
 import { FORM_TYPES, RESOURCES } from '@admin/_lib/consts';
 import { FormFieldWrapper } from '@admin/components/FormFieldWrapper';
@@ -20,7 +20,11 @@ import { districtPropType } from '@/app/(admin)/admin/_lib/specialistPropTypes';
 import Loading from '@/app/loading';
 import { CoordinateInput } from './CoordinateInput';
 
-function AddressForm({ getSource, districts, type, readOnly = false }) {
+function AddressForm({ getSource, cities, type, readOnly = false }) {
+  const isCreate = type === FORM_TYPES.create;
+  const citySource = getSource(isCreate ? 'city' : 'cityId');
+  const districtSource = getSource(isCreate ? 'district' : 'districtId');
+
   return (
     <>
       {readOnly ? (
@@ -48,33 +52,40 @@ function AddressForm({ getSource, districts, type, readOnly = false }) {
         label="Назва клініки"
         fullWidth
       />
-      {type === FORM_TYPES.create ? (
-        <SelectInput
-          fullWidth
-          InputProps={{
-            readOnly,
-          }}
-          label="Район"
-          source={getSource('district')}
-          optionText="name"
-          optionValue="id"
-          validate={required()}
-          choices={districts.map(district => ({ id: district.id, name: district.name }))}
-        />
-      ) : (
-        <ReferenceInput source={getSource('districtId')} reference="District">
-          <SelectInput
-            fullWidth
-            InputProps={{
-              readOnly,
-            }}
-            label="Район"
-            optionText="name"
-            optionValue="id"
-            validate={required()}
-          />
-        </ReferenceInput>
-      )}
+      <SelectInput
+        fullWidth
+        InputProps={{
+          readOnly,
+        }}
+        label="Місто"
+        source={citySource}
+        optionText="name"
+        optionValue="id"
+        validate={required()}
+        choices={cities.map(city => ({ id: city.id, name: city.name }))}
+      />
+      {/* The district list depends on the chosen city, and stays hidden for cities without one. */}
+      <FormDataConsumer>
+        {({ formData }) => {
+          const selectedCityId = get(formData, citySource);
+          const districts = cities.find(city => city.id === selectedCityId)?.districts ?? [];
+          if (!districts.length) return null;
+
+          return (
+            <SelectInput
+              fullWidth
+              InputProps={{
+                readOnly,
+              }}
+              label="Район"
+              source={districtSource}
+              optionText="name"
+              optionValue="id"
+              choices={districts.map(district => ({ id: district.id, name: district.name }))}
+            />
+          );
+        }}
+      </FormDataConsumer>
       <Stack direction="row" gap="10px">
         <CoordinateInput
           label="Широта точки"
@@ -95,7 +106,13 @@ function AddressForm({ getSource, districts, type, readOnly = false }) {
 
 AddressForm.propTypes = {
   getSource: PropTypes.func.isRequired,
-  districts: PropTypes.arrayOf(districtPropType),
+  cities: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      name: PropTypes.string,
+      districts: PropTypes.arrayOf(districtPropType),
+    }),
+  ),
   type: PropTypes.oneOf(Object.values(FORM_TYPES)),
   readOnly: PropTypes.bool,
 };
@@ -109,8 +126,14 @@ HelperText.propTypes = {
 };
 
 export function AddressesForm({ type = FORM_TYPES.create, label, className }) {
-  const { data: districts, isLoading } = useGetList(RESOURCES.district);
-  if (isLoading) return <Loading />;
+  const { data: cities, isLoading } = useGetList(RESOURCES.city);
+  const { data: districts, isLoading: isDistrictsLoading } = useGetList(RESOURCES.district);
+  if (isLoading || isDistrictsLoading) return <Loading />;
+
+  const citiesWithDistricts = (cities ?? []).map(city => ({
+    ...city,
+    districts: (districts ?? []).filter(district => district.cityId === city.id),
+  }));
   return (
     <FormFieldWrapper title={label} className={className}>
       <FormDataConsumer>
@@ -131,9 +154,9 @@ export function AddressesForm({ type = FORM_TYPES.create, label, className }) {
                       {({ scopedFormData, getSource }) => {
                         if (!scopedFormData) return null;
                         return scopedFormData.id ? (
-                          <AddressForm getSource={getSource} readOnly type={type} districts={districts} />
+                          <AddressForm getSource={getSource} readOnly type={type} cities={citiesWithDistricts} />
                         ) : (
-                          <AddressForm getSource={getSource} type={type} districts={districts} />
+                          <AddressForm getSource={getSource} type={type} cities={citiesWithDistricts} />
                         );
                       }}
                     </FormDataConsumer>

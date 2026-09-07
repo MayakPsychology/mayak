@@ -2,6 +2,7 @@ export const RESOURCES = {
   therapy: 'therapy',
   specialist: 'specialist',
   organization: 'organization',
+  city: 'city',
   district: 'district',
   specialization: 'specialization',
   address: 'address',

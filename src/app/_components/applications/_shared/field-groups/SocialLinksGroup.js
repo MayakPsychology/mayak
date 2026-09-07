@@ -1,79 +1,55 @@
+import PropTypes from 'prop-types';
 import { useFormContext } from 'react-hook-form';
 import { TextInputField } from '@/app/_components/InputFields';
 
+// `path` is set for fields that live outside the socialLink object.
 const socialLinks = {
-  instagram: {
-    name: 'instagram',
-    type: 'url',
-    label: 'Instagram',
-    placeholder: 'https://',
-    isRequired: false,
-  },
-  facebook: {
-    name: 'facebook',
-    type: 'url',
-    label: 'Facebook',
-    placeholder: 'https://',
-    isRequired: false,
-  },
-  youtube: {
-    name: 'youtube',
-    type: 'url',
-    label: 'YouTube',
-    placeholder: 'https://',
-    isRequired: false,
-  },
-  linkedin: {
-    name: 'linkedin',
-    type: 'url',
-    label: 'LinkedIn',
-    placeholder: 'https://',
-    isRequired: false,
-  },
-  tiktok: {
-    name: 'tiktok',
-    type: 'url',
-    label: 'TikTok',
-    placeholder: 'https://',
-    isRequired: false,
-  },
-  viber: {
-    name: 'viber',
-    type: 'url',
-    label: 'Viber',
-    placeholder: 'https://',
-    isRequired: false,
-  },
-  telegram: {
-    name: 'telegram',
-    type: 'url',
-    label: 'Telegram',
-    placeholder: 'https://',
-    isRequired: false,
-  },
+  instagram: { name: 'instagram', label: 'Instagram' },
+  facebook: { name: 'facebook', label: 'Facebook' },
+  youtube: { name: 'youtube', label: 'YouTube' },
+  linkedin: { name: 'linkedin', label: 'LinkedIn' },
+  tiktok: { name: 'tiktok', label: 'Tik Tok' },
+  viber: { name: 'viber', label: 'Viber' },
+  telegram: { name: 'telegram', label: 'Telegram' },
+  website: { name: 'website', label: 'Веб сторінка', path: 'website' },
 };
 
-export function SocialLinksGroup() {
+const allFields = Object.keys(socialLinks).filter(name => name !== 'website');
+
+export function SocialLinksGroup({ title = 'Соціальні мережі', fields = allFields, isRequired = false }) {
   const {
     register,
     formState: { errors },
   } = useFormContext();
+
   return (
     <fieldset>
-      <legend className="text-base mb-2 block font-medium">Соціальні мережі</legend>
+      <legend className="text-base mb-2 block font-medium">
+        {title} {isRequired && <span className="text-red-500">*</span>}
+      </legend>
 
-      {Object.values(socialLinks).map(socialLink => (
-        <div key={socialLink.name} className="mb-4 flex flex-col gap-1.5">
-          <TextInputField
-            {...register(`socialLink.${socialLink.name}`)}
-            label={socialLink.label}
-            type={socialLink.type}
-            placeholder={socialLink.label}
-            error={errors?.socialLink?.[socialLink.name]?.message}
-            additionalContainerStyle="bg-other-white"
-          />
-        </div>
-      ))}
+      {fields
+        .map(field => socialLinks[field])
+        .map(socialLink => (
+          <div key={socialLink.name} className="mb-4 flex flex-col gap-1.5">
+            <TextInputField
+              {...register(socialLink.path ?? `socialLink.${socialLink.name}`)}
+              label={socialLink.label}
+              type="url"
+              placeholder={socialLink.label}
+              error={
+                socialLink.path ? errors?.[socialLink.path]?.message : errors?.socialLink?.[socialLink.name]?.message
+              }
+              additionalContainerStyle="bg-other-white"
+            />
+          </div>
+        ))}
     </fieldset>
   );
 }
+
+SocialLinksGroup.propTypes = {
+  title: PropTypes.string,
+  fields: PropTypes.arrayOf(PropTypes.oneOf(Object.keys(socialLinks))),
+  isRequired: PropTypes.bool,
+};

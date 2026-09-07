@@ -3,8 +3,9 @@
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 import { TextArea } from '@/app/_components/TextArea';
+import { FieldHint } from './FieldHint';
 
-export function DescriptionField({ label }) {
+export function DescriptionField({ label, hint, placeholder }) {
   const {
     control,
     formState: { errors },
@@ -15,6 +16,7 @@ export function DescriptionField({ label }) {
       <label className="text-base mb-2 block font-medium" htmlFor="description">
         {label} <span className="text-red-500">*</span>
       </label>
+      {hint && <FieldHint>{hint}</FieldHint>}
       <Controller
         name="description"
         control={control}
@@ -23,7 +25,7 @@ export function DescriptionField({ label }) {
             {...field}
             value={field.value ?? ''}
             maxLength={5000}
-            placeholder="Ваша відповідь"
+            placeholder={placeholder}
             error={errors?.description?.message}
           />
         )}
@@ -32,5 +34,12 @@ export function DescriptionField({ label }) {
   );
 }
 
-DescriptionField.propTypes = { label: PropTypes.string };
-DescriptionField.defaultProps = { label: 'Що ми можемо додати про Вас у пункт Опис?' };
+DescriptionField.propTypes = {
+  label: PropTypes.string,
+  hint: PropTypes.string,
+  placeholder: PropTypes.string,
+};
+DescriptionField.defaultProps = {
+  label: 'Що ми можемо додати про Вас у пункт Опис?',
+  placeholder: 'Ваша відповідь',
+};

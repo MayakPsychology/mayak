@@ -18,9 +18,20 @@ export const socialLink = {
   viber: null,
 };
 
+export const CITY_UUID = 'b2f1a0c4-9d3e-4a71-8f52-2c6d7e18b904';
+
 export const addresses = [
-  { fullAddress: 'вул. Тестова 1', district: UUID, nameOfClinic: null, isPrimary: true },
+  { fullAddress: 'вул. Тестова 1', city: CITY_UUID, district: UUID, nameOfClinic: null, isPrimary: true },
 ];
+
+// a town with no districts — the common case outside Lviv and Kyiv
+export const addressWithoutDistrict = {
+  fullAddress: 'вул. Тестова 2',
+  city: CITY_UUID,
+  district: null,
+  nameOfClinic: null,
+  isPrimary: true,
+};
 
 export const supportFocuses = [
   {

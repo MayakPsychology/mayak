@@ -3,7 +3,7 @@
 import PropTypes from 'prop-types';
 import { AdressListGroup, FormatOfWorkGroup, WorkTimeGroup } from '../../_shared/field-groups';
 
-export function Step2({ districts }) {
+export function Step2({ cities }) {
   return (
     <fieldset className="flex w-full flex-col gap-14 sm:gap-11 lg:w-full lg:max-w-none lg:gap-10">
       <legend>Крок 2: Формат роботи і адреси</legend>
@@ -12,12 +12,12 @@ export function Step2({ districts }) {
         сайті.
       </p>
       <FormatOfWorkGroup />
-      <AdressListGroup districts={districts} />
+      <AdressListGroup cities={cities} />
       <WorkTimeGroup />
     </fieldset>
   );
 }
 
 Step2.propTypes = {
-  districts: PropTypes.array,
+  cities: PropTypes.array,
 };

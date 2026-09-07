@@ -49,6 +49,7 @@ export function SpecialistShow() {
           <Datagrid bulkActionButtons={false}>
             <TextField label="Повна адреса" source="fullAddress" />
             <TextField label="Назва кліники" source="nameOfClinic" />
+            <TextField label="Місто" source="city.name" />
             <TextField label="Район" source="district.name" />
             <BooleanField label="Головна адреса" source="isPrimary" />
             <FunctionField

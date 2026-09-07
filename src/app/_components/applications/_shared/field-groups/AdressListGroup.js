@@ -9,7 +9,7 @@ import { emptyAddress } from '@/app/config/application';
 import { getArrayError } from '../getArrayError';
 import { AdressGroup } from './AdressGroup';
 
-export function AdressListGroup({ districts }) {
+export function AdressListGroup({ cities }) {
   const {
     register,
     setValue,
@@ -42,7 +42,7 @@ export function AdressListGroup({ districts }) {
       <ul>
         {fields.map((filed, index) => (
           <li key={filed.id} className="mb-4">
-            <AdressGroup districts={districts} {...register} index={index} />
+            <AdressGroup cities={cities} {...register} index={index} />
           </li>
         ))}
       </ul>
@@ -66,5 +66,5 @@ export function AdressListGroup({ districts }) {
 }
 
 AdressListGroup.propTypes = {
-  districts: PropTypes.array,
+  cities: PropTypes.array,
 };

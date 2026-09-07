@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import {
-  districts,
+  cities,
   organizationTypes,
   psychologyMethods,
   psychotherapyMethods,
@@ -40,6 +40,23 @@ specializations.push(
   },
 );
 
+async function seedCitiesAndDistricts() {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const { name, districts } of cities) {
+    // eslint-disable-next-line no-await-in-loop
+    const city = await prisma.city.upsert({ where: { name }, create: { name }, update: {} });
+    // eslint-disable-next-line no-restricted-syntax
+    for (const districtName of districts) {
+      // eslint-disable-next-line no-await-in-loop
+      await prisma.district.upsert({
+        where: { name_cityId: { name: districtName, cityId: city.id } },
+        create: { name: districtName, cityId: city.id },
+        update: {},
+      });
+    }
+  }
+}
+
 async function createIfNotExist(model, data, filter) {
   // eslint-disable-next-line no-restricted-syntax
   for (const it of data) {
@@ -51,7 +68,7 @@ async function createIfNotExist(model, data, filter) {
 async function main() {
   await createIfNotExist(prisma.clientCategory, clientCategories, ({ name }) => ({ name }));
   await createIfNotExist(prisma.donationDetails, [donationDetails], ({ title }) => ({ title }));
-  await createIfNotExist(prisma.district, districts, ({ name }) => ({ name }));
+  await seedCitiesAndDistricts();
   await createIfNotExist(prisma.request, requests, ({ name }) => ({ name }));
   await createIfNotExist(prisma.specialization, specializations, ({ name }) => ({ name }));
   await createIfNotExist(prisma.organizationType, organizationTypes, ({ name }) => ({ name }));

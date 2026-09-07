@@ -15,6 +15,7 @@ export const TextInputField = forwardRef(
       type = 'text',
       disabled = false,
       placeholder = '',
+      label = '',
       error = '',
       hasError = false,
       required = false,
@@ -67,7 +68,7 @@ export const TextInputField = forwardRef(
           )}
           htmlFor={id}
         >
-          {placeholder}
+          {label || placeholder}
         </label>
       </div>
     );
@@ -83,6 +84,7 @@ TextInputField.propTypes = {
   type: PropTypes.oneOf(['text', 'email', 'url', 'password', 'search', 'tel', 'number', 'date', 'datetime-local']),
   disabled: PropTypes.bool,
   placeholder: PropTypes.string,
+  label: PropTypes.string,
   error: PropTypes.string,
   hasError: PropTypes.bool,
   required: PropTypes.bool,
