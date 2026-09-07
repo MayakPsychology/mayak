@@ -62,6 +62,14 @@ export const zClientsSchema = z
       });
     }
 
+    if (!clients.notWorkingWith.length && !clients.notWorkingWithOther) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Оберіть хоча б одну категорію клієнтів',
+        path: ['notWorkingWith'],
+      });
+    }
+
     const hasDuplicates = clients.workingWith.some(item => clients.notWorkingWith.includes(item));
 
     if (hasDuplicates) {

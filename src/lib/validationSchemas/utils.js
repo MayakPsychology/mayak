@@ -8,36 +8,41 @@ function numberForm(value) {
   return 'символів';
 }
 
-export const errors = fieldName => ({
-  required: `${fieldName} - обов'язкове поле`,
-  nonEmpty: `${fieldName} - не може бути пустим`,
-  format: expected => `${fieldName} - формат має бути ${expected}`,
-  string: {
-    type: `${fieldName} має бути рядком`,
-    min: length => `${fieldName} має містити не менше ніж ${length} ${numberForm(length)}`,
-    max: length => `${fieldName} має містити не більше ніж ${length} ${numberForm(length)}`,
-  },
-  date: {
-    format: `${fieldName} - невірний формат дати`,
-    min: date => `${fieldName} не може бути ранішою за ${date}`,
-  },
-  boolean: {
-    format: `${fieldName} - має бути булевим значенням`,
-  },
-  number: {
-    type: `${fieldName} має бути числом`,
-    min: value => `${fieldName} має бути не менше ${value}`,
-    max: value => `${fieldName} має бути не більше ${value}`,
-    integer: `${fieldName} має бути цілим числом`,
-    halfStep: `${fieldName} має бути кратне 0.5`,
-  },
-  email: {
-    format: `${fieldName} - невірний формат пошти`,
-  },
-  url: {
-    format: `${fieldName} - невірний формат веб-адреси`,
-  },
-});
+export const errors = fieldName => {
+  // an empty form field arrives as null, so a "wrong type" is really a missing value
+  const required = `${fieldName} - обов'язкове поле`;
+
+  return {
+    required,
+    nonEmpty: `${fieldName} - не може бути пустим`,
+    format: expected => `${fieldName} - формат має бути ${expected}`,
+    string: {
+      type: required,
+      min: length => `${fieldName} має містити не менше ніж ${length} ${numberForm(length)}`,
+      max: length => `${fieldName} має містити не більше ніж ${length} ${numberForm(length)}`,
+    },
+    date: {
+      format: `${fieldName} - невірний формат дати`,
+      min: date => `${fieldName} не може бути ранішою за ${date}`,
+    },
+    boolean: {
+      format: `${fieldName} - має бути булевим значенням`,
+    },
+    number: {
+      type: `${fieldName} має бути числом`,
+      min: value => `${fieldName} має бути не менше ${value}`,
+      max: value => `${fieldName} має бути не більше ${value}`,
+      integer: `${fieldName} має бути цілим числом`,
+      halfStep: `${fieldName} має бути кратне 0.5`,
+    },
+    email: {
+      format: `${fieldName} - невірний формат пошти`,
+    },
+    url: {
+      format: `${fieldName} - невірний формат веб-адреси`,
+    },
+  };
+};
 
 export const string = (
   fieldName,

@@ -2,6 +2,7 @@
 
 import PropTypes from 'prop-types';
 import { CloseIcon } from '@icons';
+import { cn } from '@utils/cn';
 import { useRequestClose } from './ApplicationClose';
 
 export function WizardHeader({ index = 0, total = 1, onBack }) {
@@ -50,15 +51,14 @@ export function WizardHeader({ index = 0, total = 1, onBack }) {
           aria-label={`Крок ${index + 1} з ${total}`}
           className="relative flex h-3 w-full items-center rounded-full bg-primary-200"
         >
+          {/* the fill stops half a bar past the current step's dot, the way the mock draws it */}
           <div
-            className="absolute left-0 flex h-3 items-center justify-end rounded-full bg-primary-500 pr-1.5"
-            style={{ width: `${((index + 1) / total) * 100}%` }}
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-other-white" />
-          </div>
+            className="absolute left-0 h-3 rounded-full bg-primary-500"
+            style={{ width: `calc(${((index + 0.5) / total) * 100}% + 6px)` }}
+          />
           {Array.from({ length: total }, (unused, step) => (
-            <span key={step} className="flex flex-1 justify-center">
-              {step > index && <span className="h-1.5 w-1.5 rounded-full bg-primary-400" />}
+            <span key={step} className="z-10 flex flex-1 justify-center">
+              <span className={cn('h-1.5 w-1.5 rounded-full', step <= index ? 'bg-other-white' : 'bg-primary-400')} />
             </span>
           ))}
         </div>

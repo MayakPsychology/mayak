@@ -4,6 +4,7 @@ import { organizationApplicationFullSchema } from '@/lib/validationSchemas/appli
 import { eventApplicationSchema } from '@/lib/validationSchemas/applications/eventApplicationSchema';
 import {
   addressWithoutDistrict,
+  clients,
   eventApplication,
   organizationApplication,
   specialistApplication,
@@ -31,6 +32,11 @@ describe('specialist application schema', () => {
   it('requires at least one client category', () => {
     const noClients = { ...specialistApplication, clients: { workingWith: [], notWorkingWith: [] } };
     expect(specialistApplicationFullSchema.safeParse(noClients).success).toBe(false);
+  });
+
+  it('requires at least one excluded client category', () => {
+    const noExcluded = { ...specialistApplication, clients: { ...clients, notWorkingWith: [] } };
+    expect(specialistApplicationFullSchema.safeParse(noExcluded).success).toBe(false);
   });
 
   it('requires at least one type of support', () => {
@@ -133,6 +139,12 @@ describe('event application schema', () => {
   it('rejects a free event that carries a price', () => {
     const free = { ...eventApplication, priceType: 'FREE', price: 300 };
     expect(eventApplicationSchema.safeParse(free).success).toBe(false);
+  });
+
+  it('rejects an empty event date with a required-field message', () => {
+    const result = eventApplicationSchema.safeParse({ ...eventApplication, eventDate: '' });
+    expect(result.success).toBe(false);
+    expect(result.error.issues.find(issue => issue.path[0] === 'eventDate').message).toContain('Дата події');
   });
 
   it('rejects an event dated in the past', () => {

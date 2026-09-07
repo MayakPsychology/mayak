@@ -42,10 +42,13 @@ export const supportFocuses = [
   },
 ];
 
+export const OTHER_UUID = 'a1c3e5f7-2b4d-4c6e-8a09-1f2e3d4c5b6a';
+
 export const clients = {
   workingWith: [UUID],
-  notWorkingWith: [],
+  notWorkingWith: [OTHER_UUID],
   workingWithNames: ['Військові'],
+  notWorkingWithNames: ['Діти'],
 };
 
 export const specialistApplication = {

@@ -6,12 +6,20 @@ export const eventApplicationSchema = z
   .object({
     title: string('Назва події').min(2).max(128).zod,
     organizerName: string('Організатор події').min(2).max(128).zod,
-    eventDate: z.coerce
-      .date({
-        required_error: 'Оберіть дату події',
-        invalid_type_error: 'Невірний формат дати',
-      })
-      .refine(value => value.getTime() > Date.now(), { message: 'Дата події не може бути в минулому' }),
+    // an untouched datetime-local input sends '', which would coerce to an "Invalid date"
+    eventDate: z.preprocess(
+      value => {
+        if (value === '' || value == null) return undefined;
+        const parsed = new Date(value);
+        return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+      },
+      z
+        .date({
+          required_error: "Дата події є обов'язковою",
+          invalid_type_error: "Дата події є обов'язковою",
+        })
+        .refine(value => value.getTime() > Date.now(), { message: 'Дата події не може бути в минулому' }),
+    ),
     priceType: z.enum(Object.values(EventPriceFormat), {
       required_error: 'Оберіть вартість події',
       invalid_type_error: 'Оберіть вартість події',
