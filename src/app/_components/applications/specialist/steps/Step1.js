@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { StepHeader } from '../../_shared';
 import { DescriptionField } from '../../_shared/fields';
 import { ContactsGroup, SocialLinksGroup } from '../../_shared/field-groups';
 import { SpecialistGeneralInfo } from '../field-groups';
@@ -8,11 +9,7 @@ import { SpecialistGeneralInfo } from '../field-groups';
 export function Step1() {
   return (
     <fieldset className="flex w-full flex-col gap-10">
-      <legend className="mb-4 text-p2 font-bold text-primary-900">Крок 1: Персональні дані</legend>
-      <p className="text-p4 font-bold text-primary-900">
-        Звертаємо увагу, що вказана Вами інформація у цьому підрозділі після обробки адміністраторами буде висвітлена на
-        сайті.
-      </p>
+      <StepHeader title="Крок 1: Персональні дані" />
       <SpecialistGeneralInfo />
       <ContactsGroup title="Контактні дані" fields={['phone', 'email']} isRequired />
       <SocialLinksGroup

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { isSeededOtherOption } from '@/app/config/application';
 import { specialistApplicationFullSchema } from '@/lib/validationSchemas/applications/specialistApplicationSchema';
 import { organizationApplicationFullSchema } from '@/lib/validationSchemas/applications/organizationApplicationSchema';
 import { eventApplicationSchema } from '@/lib/validationSchemas/applications/eventApplicationSchema';
@@ -155,5 +156,43 @@ describe('event application schema', () => {
 
   it('rejects a malformed link', () => {
     expect(eventApplicationSchema.safeParse({ ...eventApplication, link: 'not-a-url' }).success).toBe(false);
+  });
+});
+
+describe('seeded "Інше" options', () => {
+  it('hides the seeded row so the free-text option is the only "Інше"', () => {
+    expect(isSeededOtherOption({ title: 'Інші' })).toBe(true);
+    expect(isSeededOtherOption({ title: 'Інше' })).toBe(true);
+    expect(isSeededOtherOption({ name: 'інше' })).toBe(true);
+    expect(isSeededOtherOption({ title: 'Гештальт терапія' })).toBe(false);
+    expect(isSeededOtherOption({})).toBe(false);
+  });
+});
+
+describe('closing slides added after QA review', () => {
+  it('requires the contact details of whoever filled the form in', () => {
+    const { submitterContact, ...withoutContact } = specialistApplication;
+    expect(specialistApplicationFullSchema.safeParse(withoutContact).success).toBe(false);
+    expect(eventApplicationSchema.safeParse({ ...eventApplication, submitterContact: undefined }).success).toBe(false);
+    const noContact = { ...organizationApplication, submitterContact: '' };
+    expect(organizationApplicationFullSchema.safeParse(noContact).success).toBe(false);
+  });
+
+  it('asks what the discounts are once "інше" is picked', () => {
+    const chosen = { ...specialistApplication, discounts: 'other' };
+    const result = specialistApplicationFullSchema.safeParse(chosen);
+    expect(result.success).toBe(false);
+    expect(result.error.issues.some(issue => issue.path[0] === 'discountsOther')).toBe(true);
+    const described = { ...chosen, discountsOther: 'Знижка для військових' };
+    expect(specialistApplicationFullSchema.safeParse(described).success).toBe(true);
+  });
+
+  it('keeps the three-way inclusive-space answer from the mocks', () => {
+    ['yes', 'no', 'online'].forEach(value => {
+      const answered = { ...organizationApplication, isInclusiveSpace: value };
+      expect(organizationApplicationFullSchema.safeParse(answered).success).toBe(true);
+    });
+    const legacyBoolean = { ...organizationApplication, isInclusiveSpace: true };
+    expect(organizationApplicationFullSchema.safeParse(legacyBoolean).success).toBe(false);
   });
 });

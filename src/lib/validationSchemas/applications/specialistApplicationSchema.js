@@ -1,14 +1,17 @@
 import { z } from 'zod';
 import { FormatOfWork, Gender } from '@prisma/client';
-import { string, number, boolean, array, regexField } from '@/lib/validationSchemas/utils';
+import { string, number, array, regexField } from '@/lib/validationSchemas/utils';
 import { PHONE_REGEX } from '@/lib/consts';
 import {
   zClientsSchema,
   zContactsShape,
   zCreateAddressSchema,
+  zDiscountsShape,
   zSocialLinkSchema,
+  zSubmitterContactShape,
   zSupportFocusesField,
   zWorkDaySchema,
+  refineDiscounts,
 } from './common';
 
 const zSpecializationAdditionalInfoSchema = z.object({
@@ -30,6 +33,7 @@ export const specialistApplicationStep1Schema = z.object({
     required_error: 'Оберіть стать',
     invalid_type_error: 'Оберіть стать',
   }),
+  experience: string('Досвід').min(10).max(5000).zod,
   ...zContactsShape,
   // Figma marks "Контактні дані" as required, so the phone is mandatory for specialists.
   phone: regexField('Телефон', PHONE_REGEX, 'Введіть номер телефону у міжнародному форматі', true),
@@ -61,22 +65,38 @@ export const specialistApplicationStep2Schema = specialistApplicationStep2Shape.
 export const specialistApplicationStep3Schema = z.object({ clients: zClientsSchema });
 
 export const specialistApplicationStep4Schema = z.object({
+  education: string('Освіта').min(10).max(5000).zod,
   specializations: array('Спеціалізації', string('Спеціалізація').zod, {
     min: 1,
     message: 'Потрібно обрати щонайменше 1 спеціалізацію',
   }).zod,
+});
+
+// Validated on the per-speciality slides that follow step 4.
+export const specializationDetailsSchema = z.object({
   specializationMethods: array('Методи спеціалізації', string('Метод спеціалізації').zod).zod,
   specializationAdditionalInfo: array('Додаткова інформація', zSpecializationAdditionalInfoSchema).zod,
 });
 
-export const specialistApplicationStep5Schema = z.object({
-  isFreeReception: boolean('Безкоштовний прийом').zod,
+const specialistApplicationStep5Shape = z.object({
+  ...zDiscountsShape,
+  isFreeReception: z.boolean({
+    required_error: 'Оберіть відповідь',
+    invalid_type_error: 'Оберіть відповідь',
+  }),
   supportFocuses: zSupportFocusesField,
 });
+
+export const specialistApplicationStep5Schema = specialistApplicationStep5Shape.superRefine(refineDiscounts);
+
+export const submitterContactSchema = z.object(zSubmitterContactShape);
 
 export const specialistApplicationFullSchema = specialistApplicationStep1Schema
   .merge(specialistApplicationStep2Shape)
   .merge(specialistApplicationStep3Schema)
   .merge(specialistApplicationStep4Schema)
-  .merge(specialistApplicationStep5Schema)
-  .superRefine(requireAddressWhenOffline);
+  .merge(specializationDetailsSchema)
+  .merge(specialistApplicationStep5Shape)
+  .merge(submitterContactSchema)
+  .superRefine(requireAddressWhenOffline)
+  .superRefine(refineDiscounts);

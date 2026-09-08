@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useFormContext } from 'react-hook-form';
 import { TextInputField } from '@/app/_components/InputFields';
+import { FieldHeading } from '../fields';
 
 const contacts = {
   phone: {
@@ -33,9 +34,9 @@ export function ContactsGroup({ title = 'Контактна інформація
 
   return (
     <fieldset>
-      <legend className="text-base mb-2 block font-medium">
-        {title} {isRequired && <span className="text-red-500">*</span>}
-      </legend>
+      <FieldHeading as="legend" isRequired={isRequired}>
+        {title}
+      </FieldHeading>
 
       {fields
         .map(field => contacts[field])

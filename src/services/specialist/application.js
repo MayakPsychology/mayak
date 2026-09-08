@@ -12,6 +12,8 @@ function toDbInput(data) {
     surname: data.surname,
     gender: data.gender,
     yearsOfExperience: data.yearsOfExperience,
+    experience: data.experience,
+    education: data.education,
     formatOfWork: data.formatOfWork,
 
     phone: data.phone,

@@ -5,7 +5,7 @@ import { CloseIcon } from '@icons';
 import { cn } from '@utils/cn';
 import { useRequestClose } from './ApplicationClose';
 
-export function WizardHeader({ index = 0, total = 1, onBack }) {
+export function WizardHeader({ index = 0, total = 1, onBack, isFilled = false }) {
   const requestClose = useRequestClose();
 
   return (
@@ -16,8 +16,7 @@ export function WizardHeader({ index = 0, total = 1, onBack }) {
             type="button"
             aria-label="Повернутись до попереднього кроку"
             onClick={onBack}
-            disabled={index === 0}
-            className="p-2 text-primary-700 hover:text-primary-400 disabled:pointer-events-none disabled:opacity-40"
+            className="p-2 text-primary-700 hover:text-primary-400"
           >
             <svg width="10" height="18" viewBox="0 0 10 18" fill="none" aria-hidden="true">
               <path
@@ -54,11 +53,13 @@ export function WizardHeader({ index = 0, total = 1, onBack }) {
           {/* the fill stops half a bar past the current step's dot, the way the mock draws it */}
           <div
             className="absolute left-0 h-3 rounded-full bg-primary-500"
-            style={{ width: `calc(${((index + 0.5) / total) * 100}% + 6px)` }}
+            style={{ width: isFilled ? '100%' : `calc(${((index + 0.5) / total) * 100}% + 6px)` }}
           />
           {Array.from({ length: total }, (unused, step) => (
             <span key={step} className="z-10 flex flex-1 justify-center">
-              <span className={cn('h-1.5 w-1.5 rounded-full', step <= index ? 'bg-other-white' : 'bg-primary-400')} />
+              <span
+                className={cn('h-1.5 w-1.5 rounded-full', isFilled || step <= index ? 'bg-other-white' : 'bg-primary-400')}
+              />
             </span>
           ))}
         </div>
@@ -71,4 +72,5 @@ WizardHeader.propTypes = {
   index: PropTypes.number,
   total: PropTypes.number,
   onBack: PropTypes.func,
+  isFilled: PropTypes.bool,
 };

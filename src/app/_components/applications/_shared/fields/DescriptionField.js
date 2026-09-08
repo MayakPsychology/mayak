@@ -1,36 +1,17 @@
 'use client';
 
 import PropTypes from 'prop-types';
-import { Controller, useFormContext } from 'react-hook-form';
-import { TextArea } from '@/app/_components/TextArea';
-import { FieldHint } from './FieldHint';
+import { TextAreaField } from './TextAreaField';
 
 export function DescriptionField({ label, hint, placeholder }) {
-  const {
-    control,
-    formState: { errors },
-  } = useFormContext();
-
   return (
-    <div>
-      <label className="text-base mb-2 block font-medium" htmlFor="description">
-        {label} <span className="text-red-500">*</span>
-      </label>
-      {hint && <FieldHint>{hint}</FieldHint>}
-      <Controller
-        name="description"
-        control={control}
-        render={({ field }) => (
-          <TextArea
-            {...field}
-            value={field.value ?? ''}
-            maxLength={5000}
-            placeholder={placeholder}
-            error={errors?.description?.message}
-          />
-        )}
-      />
-    </div>
+    <TextAreaField
+      name="description"
+      label={label}
+      hints={hint ? [hint] : undefined}
+      placeholder={placeholder}
+      maxLength={5000}
+    />
   );
 }
 

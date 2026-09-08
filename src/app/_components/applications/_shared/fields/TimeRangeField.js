@@ -5,7 +5,18 @@ import PropTypes from 'prop-types';
 import { MdKeyboard, MdOutlineAccessTime } from 'react-icons/md';
 import { cn } from '@utils/cn';
 import { ClientPortal } from '@/app/_components/ClientPortal';
-import { CENTER, DIAL_SIZE, EMPTY_RANGE, HOURS, MINUTES, formatTime, pad, parseRange, parseTime } from './timeRange';
+import {
+  CENTER,
+  DIAL_SIZE,
+  EMPTY_RANGE,
+  HOURS,
+  MINUTES,
+  formatTime,
+  isOrderedRange,
+  pad,
+  parseRange,
+  parseTime,
+} from './timeRange';
 
 function Chip({ children, isActive, onClick, ariaLabel }) {
   return (
@@ -67,21 +78,39 @@ Dial.propTypes = {
   onSelect: PropTypes.func.isRequired,
 };
 
-export function TimeRangeField({ value, onChange, label, className, hasError }) {
+// Trigger styling shared by the work-schedule grid and the event time field.
+export const TIME_PILL_CLASS =
+  'w-full rounded-lg border border-primary-400/40 bg-primary-300 px-3 py-2 text-p4 font-bold text-primary-800 md:text-p3';
+
+// The work schedule needs a start and an end; a single event time reuses the same dial
+// with only the first row.
+const RANGE_PARTS = [
+  ['start', 'Початок'],
+  ['end', 'Кінець'],
+];
+const SINGLE_PART = [['start', 'Час']];
+
+function TimePickerField({ value, onChange, label, className, hasError, parts }) {
+  const isRange = parts.length > 1;
+
   const [isOpen, setIsOpen] = useState(false);
   const [draft, setDraft] = useState(EMPTY_RANGE);
   const [active, setActive] = useState({ part: 'start', unit: 'h' });
   const [isTyping, setIsTyping] = useState(false);
 
   const open = () => {
-    setDraft(parseRange(value));
+    setDraft(isRange ? parseRange(value) : { ...EMPTY_RANGE, start: parseTime(value) });
     setActive({ part: 'start', unit: 'h' });
     setIsTyping(false);
     setIsOpen(true);
   };
 
   const current = draft[active.part];
-  const isComplete = Boolean(formatTime(draft.start) && formatTime(draft.end));
+  const range = `${formatTime(draft.start)} - ${formatTime(draft.end)}`;
+  const picked = isRange ? range : formatTime(draft.start);
+  const isComplete = parts.every(([part]) => Boolean(formatTime(draft[part])));
+  // only a range can be the wrong way round
+  const isOrdered = isComplete && (!isRange || isOrderedRange(range));
 
   const select = number => {
     setDraft(previous => ({ ...previous, [active.part]: { ...previous[active.part], [active.unit]: number } }));
@@ -92,12 +121,12 @@ export function TimeRangeField({ value, onChange, label, className, hasError }) 
   const typeTime = (part, time) => setDraft(previous => ({ ...previous, [part]: parseTime(time) }));
 
   const confirm = () => {
-    onChange(`${formatTime(draft.start)} - ${formatTime(draft.end)}`);
+    onChange(picked);
     setIsOpen(false);
   };
 
   const renderRow = (part, rowLabel) => (
-    <div className="flex items-center gap-2">
+    <div key={part} className="flex items-center gap-2">
       <span className="w-16 text-p4 text-primary-700">{rowLabel}</span>
       {isTyping ? (
         <input
@@ -159,14 +188,16 @@ export function TimeRangeField({ value, onChange, label, className, hasError }) 
           >
             <p className="mb-6 text-p2 font-bold text-primary-800">Обрати час</p>
             <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-center">
-              <div className="flex flex-col gap-4">
-                {renderRow('start', 'Початок')}
-                {renderRow('end', 'Кінець')}
-              </div>
+              <div className="flex flex-col gap-4">{parts.map(([part, rowLabel]) => renderRow(part, rowLabel))}</div>
               {!isTyping && (
                 <Dial items={active.unit === 'h' ? HOURS : MINUTES} selected={current[active.unit]} onSelect={select} />
               )}
             </div>
+            {isRange && isComplete && !isOrdered && (
+              <p className="mt-4 text-p4 font-semibold text-system-error">
+                Час завершення має бути пізніше за час початку
+              </p>
+            )}
             <div className="mt-6 flex items-center justify-between gap-4">
               <button
                 type="button"
@@ -186,7 +217,7 @@ export function TimeRangeField({ value, onChange, label, className, hasError }) 
                 </button>
                 <button
                   type="button"
-                  disabled={!isComplete}
+                  disabled={!isOrdered}
                   onClick={confirm}
                   className="text-p3 font-bold text-primary-700 disabled:text-gray-500 md:text-p2"
                 >
@@ -201,10 +232,21 @@ export function TimeRangeField({ value, onChange, label, className, hasError }) 
   );
 }
 
-TimeRangeField.propTypes = {
+TimePickerField.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   label: PropTypes.string.isRequired,
   className: PropTypes.string,
   hasError: PropTypes.bool,
+  parts: PropTypes.array.isRequired,
 };
+
+/** "HH:MM - HH:MM" — the work schedule. */
+export function TimeRangeField(props) {
+  return <TimePickerField {...props} parts={RANGE_PARTS} />;
+}
+
+/** "HH:MM" — a single moment, e.g. the start of an event. */
+export function TimeField(props) {
+  return <TimePickerField {...props} parts={SINGLE_PART} />;
+}

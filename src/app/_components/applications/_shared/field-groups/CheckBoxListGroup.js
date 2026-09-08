@@ -3,10 +3,19 @@
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 import { CheckBox } from '@/app/_components/CheckBox';
-import { OtherOptionField } from '../fields';
+import { FieldHeading, FieldHints, OtherOptionField } from '../fields';
 import { getArrayError } from '../getArrayError';
 
-export function CheckBoxListGroup({ options, title, name, labelsField, otherField, otherPlaceholder, columns }) {
+export function CheckBoxListGroup({
+  options,
+  title,
+  hints,
+  name,
+  labelsField,
+  otherField,
+  otherPlaceholder,
+  columns,
+}) {
   const {
     control,
     setValue,
@@ -17,9 +26,8 @@ export function CheckBoxListGroup({ options, title, name, labelsField, otherFiel
 
   return (
     <div>
-      <h3 className="text-base mb-2 block font-medium">
-        {title} <span className="text-red-500">*</span>
-      </h3>
+      <FieldHeading>{title}</FieldHeading>
+      <FieldHints hints={hints} />
 
       <Controller
         name={name}
@@ -74,6 +82,7 @@ export function CheckBoxListGroup({ options, title, name, labelsField, otherFiel
 CheckBoxListGroup.propTypes = {
   options: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired,
+  hints: PropTypes.array,
   name: PropTypes.string.isRequired,
   labelsField: PropTypes.string,
   otherField: PropTypes.string,

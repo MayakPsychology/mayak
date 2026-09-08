@@ -1,97 +1,148 @@
 'use client';
 
+import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
-import { OwnershipType } from '@prisma/client';
-import { FormTranslations } from '@/app/(admin)/admin/_lib/translations';
-import { getChoicesList } from '@/app/(admin)/admin/_utils/common';
 import { CheckBox } from '@/app/_components/CheckBox';
-import { TextInputField } from '@/app/_components/InputFields';
+import { SelectField, TextInputField } from '@/app/_components/InputFields';
+import { OWNERSHIP_OPTIONS } from '@/app/config/application/choices';
+import { FieldHeading, FieldHint, TextAreaField } from '../../_shared/fields';
 
-export function OrganizationGeneralInfo() {
+const errorClass = 'ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4';
+
+const YEARS_ON_MARKET_OPTIONS = Array.from({ length: 60 }, (unused, i) => ({ value: i + 1, name: String(i + 1) }));
+
+const EXPERIENCE_HINTS = [
+  {
+    key: 'focus',
+    text: (
+      <>
+        <strong>Опишіть головний фокус роботи:</strong> у вирішенні яких запитів ваша команда є найбільш досвідченою?
+      </>
+    ),
+  },
+  {
+    key: 'scale',
+    text: (
+      <>
+        <strong>Масштаб діяльності:</strong> за бажанням вкажіть скільком людям/сімʼям Ви вже допомогли або як довго
+        працюєте у цій сфері?
+      </>
+    ),
+  },
+  {
+    key: 'unions',
+    text: 'За наявності, вкажіть приналежність до фахових спілок, асоціацій чи мереж, що підтверджують вашу етичність та якість послуг.',
+  },
+];
+
+export function OrganizationGeneralInfo({ organizationTypes }) {
   const {
     control,
     register,
+    setValue,
     formState: { errors },
   } = useFormContext();
 
-  const ownershipChoices = getChoicesList(Object.values(OwnershipType), FormTranslations.ownershipType);
-
   return (
     <>
-      <h3 className="text-base mb-2 block font-medium">
-        Назва організації <span className="text-red-500">*</span>
-      </h3>
-      <TextInputField
-        {...register('name')}
-        placeholder="Назва організації"
-        error={errors?.name?.message}
-        additionalContainerStyle="bg-other-white"
-      />
-
-      <TextInputField
-        {...register('yearsOnMarket')}
-        placeholder="Роки на ринку"
-        type="number"
-        min={0}
-        step={1}
-        error={errors?.yearsOnMarket?.message}
-        additionalContainerStyle="bg-other-white"
-      />
-
-      <TextInputField
-        {...register('yearsOfExperience')}
-        placeholder="Стаж"
-        type="number"
-        min={0}
-        step={1}
-        error={errors?.yearsOfExperience?.message}
-        additionalContainerStyle="bg-other-white"
-      />
-
       <div>
-        <h3 className="text-base mb-2 block font-medium">
-          Форма власності <span className="text-red-500">*</span>
-        </h3>
+        <FieldHeading>Загальна інформація</FieldHeading>
+        <TextInputField
+          {...register('name')}
+          placeholder="Назва організації"
+          error={errors?.name?.message}
+          additionalContainerStyle="bg-other-white"
+        />
+      </div>
+
+      <fieldset>
+        <FieldHeading as="legend">Який із зазначених типів організацій найближчий до Вашої?</FieldHeading>
+        <Controller
+          name="type"
+          control={control}
+          render={({ field }) => {
+            const [selected] = field.value ?? [];
+            return (
+              <div>
+                {organizationTypes.map(type => (
+                  <CheckBox
+                    key={type.id}
+                    name="type"
+                    type="radio"
+                    value={type.id}
+                    text={type.name.toLocaleLowerCase('uk')}
+                    checked={selected === type.id}
+                    onBlur={field.onBlur}
+                    onChange={() => {
+                      // the schema keeps a list, but the mocks only allow the closest single match
+                      field.onChange([type.id]);
+                      setValue('typeNames', [type.name]);
+                    }}
+                  />
+                ))}
+              </div>
+            );
+          }}
+        />
+        {errors.type && <p className={errorClass}>{errors.type.message}</p>}
+      </fieldset>
+
+      <fieldset>
+        <FieldHeading as="legend">Яка Ви структура за формою власності?</FieldHeading>
         <Controller
           name="ownershipType"
           control={control}
           render={({ field }) => (
             <div>
-              {ownershipChoices.map(choice => (
+              {OWNERSHIP_OPTIONS.map(choice => (
                 <CheckBox
-                  key={choice.id}
+                  key={choice.value}
                   name="ownershipType"
                   type="radio"
-                  value={choice.id}
-                  text={choice.name}
-                  checked={field.value === choice.id}
+                  value={choice.value}
+                  text={choice.label}
+                  checked={field.value === choice.value}
                   onBlur={field.onBlur}
-                  onChange={() => field.onChange(choice.id)}
+                  onChange={() => field.onChange(choice.value)}
                 />
               ))}
             </div>
           )}
         />
-        {errors.ownershipType && (
-          <p className="ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4">
-            {errors.ownershipType.message}
-          </p>
-        )}
+        {errors.ownershipType && <p className={errorClass}>{errors.ownershipType.message}</p>}
+      </fieldset>
+
+      <div>
+        <FieldHeading>Вкажіть місяць та рік початку роботи організації</FieldHeading>
+        <FieldHint>Ми вкажемо &quot;стаж&quot; на ринку у роках.</FieldHint>
+        <Controller
+          name="yearsOnMarket"
+          control={control}
+          render={({ field }) => (
+            <SelectField
+              name="yearsOnMarket"
+              value={field.value ?? ''}
+              onChange={event => field.onChange(event.target.value)}
+              placeholder="Роки стажу"
+              options={YEARS_ON_MARKET_OPTIONS}
+              error={errors?.yearsOnMarket?.message}
+              additionalContainerStyle="bg-other-white"
+            />
+          )}
+        />
       </div>
 
-      <Controller
-        name="isInclusiveSpace"
-        control={control}
-        render={({ field }) => (
-          <CheckBox
-            name={field.name}
-            checked={field.value ?? false}
-            onChange={field.onChange}
-            ref={field.ref}
-            text="Інклюзивний простір"
-          />
-        )}
+      <TextAreaField
+        name="experience"
+        label="Ваш досвід та спеціалізація"
+        hints={EXPERIENCE_HINTS}
+        placeholder="Досвід організації"
+        maxLength={5000}
       />
     </>
   );
 }
+
+OrganizationGeneralInfo.propTypes = {
+  organizationTypes: PropTypes.array.isRequired,
+};

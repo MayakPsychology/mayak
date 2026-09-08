@@ -20,10 +20,10 @@ export function WizardNavigation({ isLast, isPending, onClear, onNext }) {
           type="submit"
           variant="filled"
           colorVariant="blue"
-          aria-label="Надіслати заявку"
+          aria-label="Надіслати форму"
           disabled={isPending}
         >
-          {isPending ? 'Надсилаємо…' : 'Надіслати заявку'}
+          {isPending ? 'Надсилаємо…' : 'Надіслати форму'}
         </PillButton>
       ) : (
         <PillButton

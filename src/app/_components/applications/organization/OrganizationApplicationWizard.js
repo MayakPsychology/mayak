@@ -1,11 +1,10 @@
 'use client';
 
-import { FormProvider, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useOrganizationApplication } from '@/app/_hooks';
 import { organizationDefaultValues } from '@/app/config/application';
-import { useFormWizard } from '@/app/_hooks/useFormWizard';
 import {
   organizationApplicationFullSchema,
   organizationApplicationStep1Schema as step1Schema,
@@ -13,8 +12,9 @@ import {
   organizationApplicationStep3Schema as step3Schema,
   organizationApplicationStep4Schema as step4Schema,
   organizationApplicationStep5Schema as step5Schema,
+  organizationSubmitterContactSchema,
 } from '@/lib/validationSchemas/applications/organizationApplicationSchema';
-import { ApplicationSuccess, WizardHeader, WizardNavigation } from '../_shared';
+import { ApplicationWizard, SubmitterContactStep } from '../_shared';
 import { Step1, Step2, Step3, Step4, Step5 } from './steps';
 
 export function OrganizationApplicationWizard({ dicts }) {
@@ -29,33 +29,35 @@ export function OrganizationApplicationWizard({ dicts }) {
   const { submit, isPending, isSuccess } = useOrganizationApplication();
 
   const steps = [
-    { id: 1, component: <Step1 organizationTypes={organizationTypes} />, schema: step1Schema },
-    { id: 2, component: <Step2 cities={cities} />, schema: step2Schema },
-    { id: 3, component: <Step3 clientCategories={clientCategories} />, schema: step3Schema },
-    { id: 4, component: <Step4 specializations={specializations} />, schema: step4Schema },
-    { id: 5, component: <Step5 therapies={therapies} />, schema: step5Schema },
+    { id: 'step1', progress: 0, component: <Step1 organizationTypes={organizationTypes} />, schema: step1Schema },
+    { id: 'step2', progress: 1, component: <Step2 cities={cities} />, schema: step2Schema },
+    {
+      id: 'step3',
+      progress: 2,
+      component: <Step3 clientCategories={clientCategories} specializations={specializations} />,
+      schema: step3Schema,
+    },
+    { id: 'step4', progress: 3, component: <Step4 therapies={therapies} />, schema: step4Schema },
+    { id: 'step5', progress: 4, component: <Step5 />, schema: step5Schema },
+    {
+      id: 'submitter',
+      progress: 4,
+      isFilled: true,
+      component: <SubmitterContactStep />,
+      schema: organizationSubmitterContactSchema,
+    },
   ];
 
-  const { index, total, next, back, currentStep, isLast } = useFormWizard(steps, methods);
-
-  if (isSuccess) return <ApplicationSuccess />;
-
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="sr-only">Заявка організації</h1>
-      <WizardHeader index={index} total={total} onBack={back} />
-      <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(data => submit(data))} noValidate>
-          {currentStep.component}
-          <WizardNavigation
-            isLast={isLast}
-            isPending={isPending}
-            onClear={() => methods.reset(organizationDefaultValues)}
-            onNext={next}
-          />
-        </form>
-      </FormProvider>
-    </div>
+    <ApplicationWizard
+      title="Заявка організації"
+      steps={steps}
+      methods={methods}
+      defaultValues={organizationDefaultValues}
+      submit={submit}
+      isPending={isPending}
+      isSuccess={isSuccess}
+    />
   );
 }
 

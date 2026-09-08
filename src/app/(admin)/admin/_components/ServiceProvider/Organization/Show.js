@@ -86,6 +86,7 @@ export function OrganizationShow() {
         </ArrayField>
         <BooleanField label="Безкоштовний прийом" source="isFreeReception" />
         <BooleanField label="Активна/неактивна" source="isActive" />
+        <TextField label="Досвід та спеціалізація" source="experience" />
         <FunctionField
           source="description"
           label="Опис"

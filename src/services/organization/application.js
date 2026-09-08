@@ -12,14 +12,17 @@ function toDbInput(data) {
     ownershipType: data.ownershipType,
     yearsOnMarket: data.yearsOnMarket,
     yearsOfExperience: data.yearsOfExperience,
-    isInclusiveSpace: data.isInclusiveSpace,
+    experience: data.experience,
+    // the mocks' third answer, "працюємо виключно онлайн", is not an inclusive physical space
+    isInclusiveSpace: data.isInclusiveSpace === 'yes',
     formatOfWork: data.formatOfWork,
 
     phone: data.phone,
     email: data.email,
     website: data.website,
     description: data.description,
-    isFreeReception: data.isFreeReception,
+    // "інше:" means free sessions do exist, with the details spelled out for the admins
+    isFreeReception: data.isFreeReception === 'other' ? true : data.isFreeReception,
 
     addresses: data.addresses,
     workTime: data.workTime,

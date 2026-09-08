@@ -1,9 +1,6 @@
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import { cn } from '@utils/cn';
-import { FieldHint, TimeRangeField } from '../fields';
-
-const pill =
-  'w-full rounded-lg border border-primary-400/40 bg-primary-300 px-3 py-2 text-p4 font-bold text-primary-800 md:text-p3';
+import { FieldHeading, FieldHint, TIME_PILL_CLASS, TimeRangeField } from '../fields';
 
 export function WorkTimeGroup() {
   const {
@@ -17,9 +14,7 @@ export function WorkTimeGroup() {
 
   return (
     <fieldset>
-      <legend className="mb-2 text-p2 font-bold text-primary-900">
-        Графік роботи <span className="text-system-error">*</span>
-      </legend>
+      <FieldHeading as="legend">Графік роботи</FieldHeading>
       <FieldHint>У форматі: пн 10:00-18:00, вт 10:00-18:00 і т.д.</FieldHint>
       <FieldHint>Зазначте всі робочі дні та години.</FieldHint>
 
@@ -31,14 +26,14 @@ export function WorkTimeGroup() {
             <div key={field.id} className="mb-4">
               <div className="grid grid-cols-3 items-center gap-2 sm:gap-4">
                 <input type="hidden" {...register(`workTime.${index}.weekDay`)} />
-                <p className={cn(pill, 'text-center lowercase')}>{field.weekDay}</p>
+                <p className={cn(TIME_PILL_CLASS, 'text-center lowercase')}>{field.weekDay}</p>
                 <Controller
                   name={`workTime.${index}.time`}
                   control={control}
                   render={({ field: ctrlField }) => (
                     <TimeRangeField
                       label="час роботи"
-                      className={pill}
+                      className={TIME_PILL_CLASS}
                       value={ctrlField.value ?? ''}
                       hasError={Boolean(timeError)}
                       onChange={time => {
@@ -66,7 +61,7 @@ export function WorkTimeGroup() {
                         if (isDayOff) setValue(`workTime.${index}.time`, null);
                         trigger(`workTime.${index}`);
                       }}
-                      className={cn(pill, 'pr-8 lowercase')}
+                      className={cn(TIME_PILL_CLASS, 'pr-8 lowercase')}
                     >
                       <option value="true">Вихідний</option>
                       <option value="false">Робочий</option>

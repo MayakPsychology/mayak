@@ -20,6 +20,7 @@ export default function OrganizationApplicationTemplate({ data }) {
         <Field label="Стаж" value={data.yearsOfExperience} />
         <Field label="Формат роботи" value={FormTranslations.formatOfWork[String(data.formatOfWork).toLowerCase()]} />
         <Field label="Інклюзивний простір" value={data.isInclusiveSpace} />
+        <Field label="Досвід та спеціалізація" value={data.experience} />
         <Field label="Опис" value={data.description} />
       </Section>
 
@@ -72,7 +73,11 @@ export default function OrganizationApplicationTemplate({ data }) {
       </Section>
 
       <Section title="Типи допомоги">
-        <Field label="Безкоштовний прийом" value={data.isFreeReception} />
+        <Field label="Знижки" value={data.discounts === 'other' ? data.discountsOther : 'ні'} />
+        <Field
+          label="Безкоштовна сесія"
+          value={data.isFreeReception === 'other' ? data.freeReceptionOther : data.isFreeReception}
+        />
         {data.supportFocuses?.map(focus => (
           <div key={focus.therapy?.id} style={{ marginBottom: '10px' }}>
             <Field label="Терапія" value={focus.therapy?.title} />
@@ -80,6 +85,27 @@ export default function OrganizationApplicationTemplate({ data }) {
             <Field label="Запити" value={focus.requestsNames} />
           </div>
         ))}
+      </Section>
+
+      <Section title="Відповідність баченню платформи">
+        <Field label="Відбір спеціалістів" value={data.specialistSelection} />
+        <Field label="Середній досвід спеціалістів" value={data.averageExperience} />
+        <Field label="Досягнення" value={data.achievements} />
+        <Field label="Методи роботи" value={data.workMethods} />
+        <Field
+          label="Політика професійного розвитку"
+          value={data.developmentPolicy === 'other' ? data.developmentPolicyOther : 'ні'}
+        />
+        <Field
+          label="Супервізії та інтервізії"
+          value={data.supervisionPolicy === 'other' ? data.supervisionPolicyOther : 'ні'}
+        />
+        <Field label="Етичний контроль" value={data.ethicalControl} />
+        <Field label="Зворотній звʼязок" value={data.feedbackCollection} />
+      </Section>
+
+      <Section title="Хто заповнив форму">
+        <Field label="Контактні дані" value={data.submitterContact} />
       </Section>
     </Layout>
   );

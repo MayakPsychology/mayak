@@ -84,6 +84,8 @@ export function SpecialistShow() {
         </ArrayField>
         <BooleanField label="Безкоштовний прийом" source="isFreeReception" />
         <BooleanField label="Активний/Неактивний" source="isActive" />
+        <TextField label="Досвід" source="experience" />
+        <TextField label="Освіта" source="education" />
         <FunctionField
           source="description"
           label="Опис"

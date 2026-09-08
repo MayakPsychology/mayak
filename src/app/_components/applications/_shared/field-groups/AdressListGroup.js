@@ -6,6 +6,7 @@ import { FormatOfWork } from '@prisma/client';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { IoMdCloseCircleOutline, IoMdAddCircleOutline } from 'react-icons/io';
 import { emptyAddress } from '@/app/config/application';
+import { FieldHeading } from '../fields';
 import { getArrayError } from '../getArrayError';
 import { AdressGroup } from './AdressGroup';
 
@@ -30,7 +31,12 @@ export function AdressListGroup({ cities }) {
   }, [onlyOnline, setValue, addresses.length]);
 
   if (!formatOfWork) {
-    return <p>Оберіть формат роботи</p>;
+    return (
+      <div>
+        <FieldHeading>Адреса / адреси, де надаються послуги</FieldHeading>
+        <p className="text-p3 text-gray-800">Оберіть формат роботи</p>
+      </div>
+    );
   }
 
   if (onlyOnline) {
@@ -38,7 +44,8 @@ export function AdressListGroup({ cities }) {
   }
 
   return (
-    <>
+    <div>
+      <FieldHeading>Адреса / адреси, де надаються послуги</FieldHeading>
       <ul>
         {fields.map((filed, index) => (
           <li key={filed.id} className="mb-4">
@@ -61,7 +68,7 @@ export function AdressListGroup({ cities }) {
           </button>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

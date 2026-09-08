@@ -2,12 +2,10 @@
 
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Gender } from '@prisma/client';
-import { FormTranslations } from '@/app/(admin)/admin/_lib/translations';
-import { getChoicesList } from '@/app/(admin)/admin/_utils/common';
 import { CheckBox } from '@/app/_components/CheckBox';
 import { SelectField, TextInputField } from '@/app/_components/InputFields';
-import { FieldHint } from '../../_shared/fields';
+import { GENDER_OPTIONS } from '@/app/config/application/choices';
+import { FieldHeading, FieldHint, TextAreaField } from '../../_shared/fields';
 
 const errorClass = 'ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4';
 
@@ -30,14 +28,10 @@ export function SpecialistGeneralInfo() {
     formState: { errors },
   } = useFormContext();
 
-  const genderChoicesList = getChoicesList(Object.values(Gender), FormTranslations.gender);
-
   return (
     <>
       <fieldset>
-        <legend className="text-base mb-2 block font-medium">
-          Як до Вас звертатись <span className="text-red-500">*</span>
-        </legend>
+        <FieldHeading as="legend">Як до Вас звертатись</FieldHeading>
         {nameFields.map(field => (
           <div key={field.name} className="mb-4 flex flex-col gap-1.5">
             <TextInputField
@@ -51,24 +45,22 @@ export function SpecialistGeneralInfo() {
       </fieldset>
 
       <fieldset>
-        <legend className="text-base mb-2 block font-medium">
-          Ваша стать <span className="text-red-500">*</span>
-        </legend>
+        <FieldHeading as="legend">Ваша стать</FieldHeading>
         <Controller
           name="gender"
           control={control}
           render={({ field }) => (
             <div>
-              {genderChoicesList.map(gender => (
+              {GENDER_OPTIONS.map(gender => (
                 <CheckBox
-                  key={gender.id}
+                  key={gender.value}
                   name="gender"
                   type="radio"
-                  value={gender.id}
-                  text={gender.name}
-                  checked={field.value === gender.id}
+                  value={gender.value}
+                  text={gender.label}
+                  checked={field.value === gender.value}
                   onBlur={field.onBlur}
-                  onChange={() => field.onChange(gender.id)}
+                  onChange={() => field.onChange(gender.value)}
                 />
               ))}
             </div>
@@ -77,10 +69,18 @@ export function SpecialistGeneralInfo() {
         {errors.gender && <p className={errorClass}>{errors.gender.message}</p>}
       </fieldset>
 
+      <TextAreaField
+        name="experience"
+        label="Досвід"
+        hints={[
+          'Вкажіть орієнтовну кількість клієнтів, з якими ви працювали, та типові запити, у яких маєте найбільший досвід. Опишіть основний фокус вашої практики (детальні запити для фільтрації будуть у наступних питаннях). За бажанням зазначте членство у професійних спілках або чесно вкажіть, якщо ви лише починаєте свій професійний шлях.',
+        ]}
+        placeholder="Опишіть Ваш досвід"
+        maxLength={5000}
+      />
+
       <div>
-        <label className="text-base mb-2 block font-medium" htmlFor="select_yearsOfExperience">
-          Вкажіть орієнтовний місяць та рік початку Вашої роботи <span className="text-red-500">*</span>
-        </label>
+        <FieldHeading>Вкажіть орієнтовний місяць та рік початку Вашої роботи</FieldHeading>
         <FieldHint>Стаж округлюється в меншу сторону з кроком 0,5 року.</FieldHint>
         <Controller
           name="yearsOfExperience"

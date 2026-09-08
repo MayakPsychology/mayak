@@ -16,6 +16,8 @@ export default function SpecialistApplicationTemplate({ data }) {
         <Field label="Стать" value={FormTranslations.gender[String(data.gender).toLowerCase()]} />
         <Field label="Стаж" value={data.yearsOfExperience} />
         <Field label="Формат роботи" value={FormTranslations.formatOfWork[String(data.formatOfWork).toLowerCase()]} />
+        <Field label="Досвід" value={data.experience} />
+        <Field label="Освіта" value={data.education} />
         <Field label="Опис" value={data.description} />
       </Section>
 
@@ -79,7 +81,8 @@ export default function SpecialistApplicationTemplate({ data }) {
       </Section>
 
       <Section title="Типи допомоги">
-        <Field label="Безкоштовний прийом" value={data.isFreeReception} />
+        <Field label="Знижки" value={data.discounts === 'other' ? data.discountsOther : 'ні'} />
+        <Field label="Безкоштовна сесія" value={data.isFreeReception} />
         {data.supportFocuses?.map(focus => (
           <div key={focus.therapy?.id} style={{ marginBottom: '10px' }}>
             <Field label="Терапія" value={focus.therapy?.title} />
@@ -87,6 +90,10 @@ export default function SpecialistApplicationTemplate({ data }) {
             <Field label="Запити" value={focus.requestsNames} />
           </div>
         ))}
+      </Section>
+
+      <Section title="Хто заповнив форму">
+        <Field label="Контактні дані" value={data.submitterContact} />
       </Section>
     </Layout>
   );

@@ -1,25 +1,33 @@
 'use client';
 
 import PropTypes from 'prop-types';
+import { StepHeader } from '../../_shared';
+import { TextAreaField } from '../../_shared/fields';
 import { SpecializationsGroup } from '../../_shared/field-groups';
 
-export function Step4({ specializations, specializationMethods }) {
+const EDUCATION_HINT =
+  'Коротко опишіть документи про освіту, які дають вам право надавати послуги у сфері психічного здоровʼя відповідно до законодавства України. Вкажіть усі релевантні дипломи, сертифікати чи інші підтвердження. За наявності додайте важливі спеціалізовані навчання або акредитації, що вплинули на ваш професійний розвиток.';
+
+export function Step4({ specializations }) {
   return (
-    <fieldset className="flex w-full flex-col gap-14 sm:gap-11 lg:w-full lg:max-w-none lg:gap-10">
-      <legend className="mb-1">Крок 4: Про себе як спеціаліста/-ку</legend>
-      <p className="mb-4">
-        У цьому підрозділі будуть питання, які стосуються специфіки та особливостей послуг, які Ви надаєте.
-      </p>
-      <p className="">
-        Звертаємо увагу, що вказана Вами інформація у цьому підрозділі після обробки адміністраторами буде висвітлена на
-        сайті.
-      </p>
-      <SpecializationsGroup specializations={specializations} specializationMethods={specializationMethods} />
+    <fieldset className="flex w-full flex-col gap-10">
+      <StepHeader
+        title="Крок 4: Про себе, як фахівця/фахівчиню"
+        subTitle="Загальна інформація"
+        intro="У цьому підрозділі будуть питання, які стосуються специфіки та особливостей послуг, які Ви надаєте."
+      />
+      <TextAreaField
+        name="education"
+        label="Освіта"
+        hints={[EDUCATION_HINT]}
+        placeholder="Опис документів про освіту"
+        maxLength={5000}
+      />
+      <SpecializationsGroup specializations={specializations} />
     </fieldset>
   );
 }
 
 Step4.propTypes = {
   specializations: PropTypes.array.isRequired,
-  specializationMethods: PropTypes.array.isRequired,
 };

@@ -4,7 +4,17 @@ import PropTypes from 'prop-types';
 import { useFormContext } from 'react-hook-form';
 import { ClientCategoriesGroup } from './ClientCategoriesGroup';
 
-export function ClientsPreferences({ clientCategories }) {
+const otherHint = subject =>
+  `Якщо Ви бажаєте зазначити ще якусь категорію населення, з якою Ви ${subject}, але вона не ` +
+  'включена в перелік, скористайтесь опцією "Інше".';
+
+export function ClientsPreferences({
+  clientCategories,
+  workingWithTitle = 'З якими клієнтами Ви працюєте?',
+  notWorkingWithTitle = 'З якими клієнтами Ви НЕ працюєте?',
+  workingWithHint = otherHint('працюєте'),
+  notWorkingWithHint = otherHint('НЕ працюєте'),
+}) {
   const {
     formState: { errors },
   } = useFormContext();
@@ -15,7 +25,8 @@ export function ClientsPreferences({ clientCategories }) {
     <div className="flex flex-col gap-10">
       <ClientCategoriesGroup
         clientCategories={clientCategories}
-        title="З якими клієнтами ви працюєте?"
+        title={workingWithTitle}
+        hints={[workingWithHint]}
         name="clients.workingWith"
         otherField="clients.workingWithOther"
         categoryLabels="clients.workingWithNames"
@@ -23,7 +34,8 @@ export function ClientsPreferences({ clientCategories }) {
 
       <ClientCategoriesGroup
         clientCategories={clientCategories}
-        title="З якими клієнтами ви не працюєте?"
+        title={notWorkingWithTitle}
+        hints={[notWorkingWithHint]}
         name="clients.notWorkingWith"
         otherField="clients.notWorkingWithOther"
         categoryLabels="clients.notWorkingWithNames"
@@ -38,4 +50,8 @@ export function ClientsPreferences({ clientCategories }) {
 
 ClientsPreferences.propTypes = {
   clientCategories: PropTypes.array.isRequired,
+  workingWithTitle: PropTypes.string,
+  notWorkingWithTitle: PropTypes.string,
+  workingWithHint: PropTypes.string,
+  notWorkingWithHint: PropTypes.string,
 };

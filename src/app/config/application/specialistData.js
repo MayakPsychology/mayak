@@ -7,12 +7,16 @@ export const specialistDefaultValues = {
   surname: '',
   yearsOfExperience: null,
   gender: null,
+  experience: '',
+  education: '',
   formatOfWork: null,
   phone: null,
   email: null,
   website: null,
   addresses: [],
-  isFreeReception: false,
+  isFreeReception: null,
+  discounts: null,
+  discountsOther: '',
   workTime: weekDays.map(weekDay => ({
     weekDay,
     time: null,
@@ -36,6 +40,7 @@ export const specialistDefaultValues = {
   specializationMethods: [],
   specializationAdditionalInfo: [],
   supportFocuses: [],
+  submitterContact: '',
 };
 
 export const additionalInfoDefaultValue = {

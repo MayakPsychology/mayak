@@ -2,10 +2,9 @@
 
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
-import { FormatOfWork } from '@prisma/client';
-import { getChoicesList } from '@/app/(admin)/admin/_utils/common';
-import { FormTranslations } from '@/app/(admin)/admin/_lib/translations';
 import { CheckBox } from '@/app/_components/CheckBox';
+import { FORMAT_OF_WORK_OPTIONS } from '@/app/config/application/choices';
+import { FieldHeading } from '../fields';
 
 export function FormatOfWorkGroup({ title }) {
   const {
@@ -13,30 +12,26 @@ export function FormatOfWorkGroup({ title }) {
     formState: { errors },
   } = useFormContext();
 
-  const choices = getChoicesList(Object.values(FormatOfWork), FormTranslations.formatOfWork);
-
   return (
     <div>
-      <h3 className="text-base mb-2 block font-medium">
-        {title} <span className="text-red-500">*</span>
-      </h3>
+      <FieldHeading>{title}</FieldHeading>
 
       <Controller
         name="formatOfWork"
         control={control}
         render={({ field }) => (
           <div>
-            {choices.map(choice => (
+            {FORMAT_OF_WORK_OPTIONS.map(choice => (
               <CheckBox
                 ref={field.ref}
                 name="formatOfWork"
                 type="radio"
-                key={choice.id}
-                value={choice.id}
-                text={choice.name}
-                checked={field.value === choice.id}
+                key={choice.value}
+                value={choice.value}
+                text={choice.label}
+                checked={field.value === choice.value}
                 onBlur={field.onBlur}
-                onChange={() => field.onChange(choice.id)}
+                onChange={() => field.onChange(choice.value)}
               />
             ))}
           </div>

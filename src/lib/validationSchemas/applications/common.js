@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { WEEKDAYS_TRANSLATION } from '@/app/(admin)/admin/_lib/consts';
+import { isOrderedRange } from '@/app/_components/applications/_shared/fields/timeRange';
 import { string, number, boolean, array, regexField } from '@/lib/validationSchemas/utils';
 import { MESSENGER_REGEX, PHONE_REGEX, SOCIAL_REGEX } from '@/lib/consts';
 
@@ -19,6 +20,9 @@ export const zWorkDaySchema = z
       .string()
       .refine(val => !val || /\d{2}:\d{2}\s-\s\d{2}:\d{2}/.test(val), {
         message: 'Введіть час у форматі ХХ:ХХ - ХХ:ХХ',
+      })
+      .refine(val => !val || isOrderedRange(val), {
+        message: 'Час завершення має бути пізніше за час початку',
       })
       .nullish(),
     isDayOff: z.boolean().nullish(),
@@ -102,3 +106,27 @@ export const zSupportFocusesField = array('Напрямки підтримки',
   min: 1,
   message: 'Необхідно обрати хоча б один тип терапії',
 }).zod;
+
+// "Чи надаються у Вас знижки…" — "ні" or "інше:" with the details typed in.
+export const zDiscountsShape = {
+  discounts: z.enum(['no', 'other'], {
+    required_error: 'Оберіть відповідь',
+    invalid_type_error: 'Оберіть відповідь',
+  }),
+  discountsOther: string('Знижки').max(500).optional().zod,
+};
+
+export const refineDiscounts = (data, ctx) => {
+  if (data.discounts === 'other' && !data.discountsOther) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Опишіть, які саме знижки Ви надаєте',
+      path: ['discountsOther'],
+    });
+  }
+};
+
+// Closing slide: who filled the form in. Never published, kept for follow-up questions.
+export const zSubmitterContactShape = {
+  submitterContact: string('Контактні дані особи, яка заповнює форму').min(5).max(500).zod,
+};

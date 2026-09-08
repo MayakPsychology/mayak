@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useFormContext } from 'react-hook-form';
 import { TextInputField } from '@/app/_components/InputFields';
+import { FieldHeading } from '../fields';
 
 // `path` is set for fields that live outside the socialLink object.
 const socialLinks = {
@@ -24,9 +25,9 @@ export function SocialLinksGroup({ title = 'Соціальні мережі', fi
 
   return (
     <fieldset>
-      <legend className="text-base mb-2 block font-medium">
-        {title} {isRequired && <span className="text-red-500">*</span>}
-      </legend>
+      <FieldHeading as="legend" isRequired={isRequired}>
+        {title}
+      </FieldHeading>
 
       {fields
         .map(field => socialLinks[field])

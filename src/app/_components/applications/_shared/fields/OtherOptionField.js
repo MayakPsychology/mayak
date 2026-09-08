@@ -6,7 +6,7 @@ import { useFormContext } from 'react-hook-form';
 import { CheckBox } from '@/app/_components/CheckBox';
 import { TextInputField } from '@/app/_components/InputFields';
 
-export function OtherOptionField({ name, placeholder = 'Вкажіть свій варіант' }) {
+export function OtherOptionField({ name, label = 'Інше', placeholder = 'Вкажіть свій варіант' }) {
   const { register, setValue, watch } = useFormContext();
   const currentValue = watch(name);
   const [checked, setChecked] = useState(!!currentValue);
@@ -19,7 +19,7 @@ export function OtherOptionField({ name, placeholder = 'Вкажіть свій 
 
   return (
     <div>
-      <CheckBox type="checkbox" name={name} value="other" text="Інше" checked={checked} onChange={handleToggle} />
+      <CheckBox type="checkbox" name={name} value="other" text={label} checked={checked} onChange={handleToggle} />
       {checked && (
         <div className="mt-2">
           {/* absolute={false}: the floating label is positioned bottom-[49px] and would land on
@@ -38,5 +38,6 @@ export function OtherOptionField({ name, placeholder = 'Вкажіть свій 
 
 OtherOptionField.propTypes = {
   name: PropTypes.string.isRequired,
+  label: PropTypes.string,
   placeholder: PropTypes.string,
 };

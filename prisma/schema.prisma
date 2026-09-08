@@ -62,6 +62,8 @@ model Specialist {
   specializationMethods Method[]
   gender                Gender?
   yearsOfExperience     Float?           @db.Real
+  experience            String?          @db.Text
+  education             String?          @db.Text
   formatOfWork          FormatOfWork?
   addresses             Address[]
   workTime              WorkTime[]
@@ -97,6 +99,7 @@ model Organization {
   type                  OrganizationType[]
   yearsOnMarket         Int?               @db.SmallInt
   yearsOfExperience     Int?               @db.SmallInt
+  experience            String?            @db.Text
   formatOfWork          FormatOfWork?
   addresses             Address[]
   ownershipType         OwnershipType?

@@ -16,7 +16,9 @@ export function AdressGroup({ cities, index }) {
 
   const cityId = useWatch({ control, name: `addresses.${index}.city` });
   const districts = cities.find(city => city.id === cityId)?.districts ?? [];
+  const addressErrors = errors?.addresses?.[index];
 
+  // Order comes from the mocks: city first, then district, then the street line.
   return (
     <div className="flex flex-col gap-6">
       <Controller
@@ -25,16 +27,6 @@ export function AdressGroup({ cities, index }) {
         render={({ field }) => (
           <CheckBox checked={field.value ?? false} onChange={field.onChange} ref={field.ref} text="Головна адреса" />
         )}
-      />
-      <TextInputField
-        {...register(`addresses.${index}.fullAddress`)}
-        placeholder="Повна адреса (Вулиця, номер будинку, поверх, кабінет)"
-        error={errors?.addresses?.[index]?.fullAddress?.message}
-      />
-      <TextInputField
-        {...register(`addresses.${index}.nameOfClinic`)}
-        placeholder="Назва клініки"
-        error={errors?.addresses?.[index]?.nameOfClinic?.message}
       />
       <Controller
         name={`addresses.${index}.city`}
@@ -51,7 +43,7 @@ export function AdressGroup({ cities, index }) {
             options={cities}
             placeholder="Місто"
             required
-            error={errors?.addresses?.[index]?.city?.message}
+            error={addressErrors?.city?.message}
           />
         )}
       />
@@ -67,11 +59,24 @@ export function AdressGroup({ cities, index }) {
               onChange={event => field.onChange(event.target.value)}
               options={districts}
               placeholder="Район"
-              error={errors?.addresses?.[index]?.district?.message}
+              error={addressErrors?.district?.message}
             />
           )}
         />
       )}
+      <div>
+        <TextInputField
+          {...register(`addresses.${index}.fullAddress`)}
+          placeholder="Повна адреса"
+          error={addressErrors?.fullAddress?.message}
+        />
+        <p className="ml-4 mt-1 text-p4 text-gray-800">Вулиця, номер будинку, поверх, кабінет</p>
+      </div>
+      <TextInputField
+        {...register(`addresses.${index}.nameOfClinic`)}
+        placeholder="Назва клініки"
+        error={addressErrors?.nameOfClinic?.message}
+      />
     </div>
   );
 }

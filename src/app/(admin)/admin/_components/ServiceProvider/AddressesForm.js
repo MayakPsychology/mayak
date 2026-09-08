@@ -34,24 +34,6 @@ function AddressForm({ getSource, cities, type, readOnly = false }) {
       ) : (
         <BooleanInput source={getSource('isPrimary')} label="Головна адреса" fullWidth className="mb-[-0.6rem] mt-4" />
       )}
-      <TextInput
-        InputProps={{
-          readOnly,
-        }}
-        fullWidth
-        source={getSource('fullAddress')}
-        label="Повна адреса"
-        validate={required()}
-        helperText="Вулиця, номер будинку, поверх, кабінет"
-      />
-      <TextInput
-        InputProps={{
-          readOnly,
-        }}
-        source={getSource('nameOfClinic')}
-        label="Назва клініки"
-        fullWidth
-      />
       <SelectInput
         fullWidth
         InputProps={{
@@ -86,6 +68,24 @@ function AddressForm({ getSource, cities, type, readOnly = false }) {
           );
         }}
       </FormDataConsumer>
+      <TextInput
+        InputProps={{
+          readOnly,
+        }}
+        fullWidth
+        source={getSource('fullAddress')}
+        label="Повна адреса"
+        validate={required()}
+        helperText="Вулиця, номер будинку, поверх, кабінет"
+      />
+      <TextInput
+        InputProps={{
+          readOnly,
+        }}
+        source={getSource('nameOfClinic')}
+        label="Назва клініки"
+        fullWidth
+      />
       <Stack direction="row" gap="10px">
         <CoordinateInput
           label="Широта точки"

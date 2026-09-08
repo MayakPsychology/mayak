@@ -1,12 +1,17 @@
+'use client';
+
 import { useEffect } from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { CheckBox } from '@/app/_components/CheckBox';
-import { OtherOptionField } from '@/app/_components/applications/_shared/fields';
+import { isSeededOtherOption } from '@/app/config/application';
+import { FieldHeading, OtherOptionField } from '@/app/_components/applications/_shared/fields';
 import { getArrayError } from '@/app/_components/applications/_shared/getArrayError';
 
 export function SpecializationMethods({ specializationId, specializationMethods, index }) {
-  const methods = specializationMethods.filter(method => specializationId === method.specializationId);
+  const methods = specializationMethods.filter(
+    method => specializationId === method.specializationId && !isSeededOtherOption(method),
+  );
 
   const {
     control,
@@ -30,9 +35,7 @@ export function SpecializationMethods({ specializationId, specializationMethods,
 
   return (
     <fieldset>
-      <legend className="text-base mb-2 block font-medium">
-        Виберіть Вашу спеціалізацію <span className="text-red-500">*</span>
-      </legend>
+      <FieldHeading as="legend">Виберіть Вашу спеціалізацію в методі</FieldHeading>
 
       <Controller
         name="specializationMethods"
@@ -41,7 +44,7 @@ export function SpecializationMethods({ specializationId, specializationMethods,
           const selected = field.value || [];
           return (
             <div>
-              {methods?.map(method => (
+              {methods.map(method => (
                 <CheckBox
                   type="checkbox"
                   ref={field.ref}
@@ -50,7 +53,6 @@ export function SpecializationMethods({ specializationId, specializationMethods,
                   value={method.id}
                   text={method.title}
                   checked={selected.includes(method.id) ?? false}
-                  error={errors?.specializationMethods?.message}
                   onBlur={field.onBlur}
                   onChange={e => {
                     const newSelected = e.target.checked
@@ -64,7 +66,11 @@ export function SpecializationMethods({ specializationId, specializationMethods,
           );
         }}
       />
-      <OtherOptionField name={`specializationAdditionalInfo.${index}.methodsOther`} placeholder="Інші методи (не зазначені у списку вище)" />
+      <OtherOptionField
+        name={`specializationAdditionalInfo.${index}.methodsOther`}
+        label="Інше:"
+        placeholder="Інші методи (не зазначені у списку вище)"
+      />
       {errorMessage && (
         <p className="ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4">{errorMessage}</p>
       )}

@@ -1,123 +1,70 @@
 'use client';
 
 import PropTypes from 'prop-types';
-import { Controller, useFormContext } from 'react-hook-form';
-import { TextArea } from '@/app/_components/TextArea';
+import { TextAreaField } from '../../_shared/fields';
 
-export const DEFAULT_FIELD_TEXTS = {
-  professionalDevelopment: {
-    label: 'Професійний розвиток',
-    description: 'Курси, вебінари, тренінги, частота участі',
-  },
-  personalTherapy: {
-    label: 'Досвід власної терапії',
-  },
-  supervisionExperience: {
-    label: 'Супервізії та інтервізії',
-  },
+const PERSONAL_THERAPY_HINTS = [
+  'Вкажіть орієнтовний часовий проміжок або кількість сесій власної терапії.',
+  'Нас цікавить лише інформація про те, яке Ваше ставлення до проходження спеціалістами власної психотерапії, чи Ви таку відвідуєте / відвідували та орієнтовна кількість годин. Ми не потребуємо інформації про подробиці Вашого особистого життя.',
+];
+
+const SUPERVISION_HINTS = [
+  'Вкажіть орієнтовний часовий проміжок або кількість сесій супервізій та інтервізій.',
+  'Нас цікавить лише інформація про те, яке Ваше ставлення до проходження спеціалістами супервізій та інтервізій, чи Ви такі відвідуєте / відвідували, регулярність таких відвідувань та орієнтовна кількість годин.',
+];
+
+const PSYCHOLOGY = 'психології';
+
+// The mocks phrase the self-development question with the field the specialist practises in.
+const SELF_DEVELOPMENT_FIELD = {
+  Психолог: PSYCHOLOGY,
+  Психотерапевт: PSYCHOLOGY,
+  Психіатр: `психіатрії та / або ${PSYCHOLOGY}`,
+  Сексолог: `сексології та / або ${PSYCHOLOGY}`,
+  'Соціальний працівник': `соціальної роботи та / або ${PSYCHOLOGY}`,
 };
 
-export const FIELD_TEXTS = {
-  Психолог: {
+export function getFieldTexts(specializationName) {
+  const area = SELF_DEVELOPMENT_FIELD[specializationName] ?? PSYCHOLOGY;
+  // Only psychotherapists are asked about their own therapy unconditionally.
+  const ownTherapyIsOptional = specializationName !== 'Психотерапевт';
+
+  return {
     professionalDevelopment: {
-      label: 'Професійний розвиток у психології',
-      description: 'Курси, вебінари, тренінги, частота участі',
+      label:
+        `Опишіть Ваш саморозвиток у царині ${area}: чи проходите Ви курси підвищення кваліфікації, ` +
+        'чи відвідуєте або проводите вебінари / тренінги / курси, як часто?',
     },
     personalTherapy: {
-      label: 'Досвід власної психотерапії',
+      label:
+        'Окресліть Ваш досвід проходження власної психотерапії' +
+        `${ownTherapyIsOptional ? ', якщо такий наявний' : ''}`,
+      hints: PERSONAL_THERAPY_HINTS,
     },
     supervisionExperience: {
-      label: 'Супервізії та інтервізії',
+      label: 'Розкажіть про Ваш досвід супервізій та інтервізій, якщо такий наявний',
+      hints: SUPERVISION_HINTS,
     },
-  },
-  Психотерапевт: {
-    professionalDevelopment: {
-      label: 'Підвищення кваліфікації з психотерапії',
-    },
-    personalTherapy: {
-      label: 'Особиста психотерапія',
-    },
-    supervisionExperience: {
-      label: 'Супервізійна практика',
-    },
-  },
-  Психіатр: {
-    professionalDevelopment: {
-      label: 'Професійний розвиток у психіатрії',
-    },
-    personalTherapy: {
-      label: 'Особистий терапевтичний досвід (за наявності)',
-    },
-    supervisionExperience: {
-      label: 'Клінічні супервізії',
-    },
-  },
-  Сексолог: {
-    professionalDevelopment: {
-      label: 'Професійний розвиток у сексології',
-    },
-    personalTherapy: {
-      label: 'Особистий терапевтичний досвід',
-    },
-    supervisionExperience: {
-      label: 'Супервізії у сексологічній практиці',
-    },
-  },
-  'Соціальний працівник': {
-    professionalDevelopment: {
-      label: 'Професійний розвиток у соціальній роботі',
-    },
-    personalTherapy: {
-      label: 'Особистий розвиток (за наявності)',
-    },
-    supervisionExperience: {
-      label: 'Супервізійний досвід',
-    },
-  },
-};
+  };
+}
 
 const FIELD_NAMES = ['professionalDevelopment', 'personalTherapy', 'supervisionExperience'];
 
-export function getFieldTexts(specializationName) {
-  const texts = FIELD_TEXTS[specializationName] ?? {};
-  return FIELD_NAMES.reduce(
-    (acc, field) => ({ ...acc, [field]: { ...DEFAULT_FIELD_TEXTS[field], ...texts[field] } }),
-    {},
-  );
-}
-
 export function SpecializationAdditionalInfo({ specializationName, index }) {
-  const {
-    control,
-    formState: { errors },
-  } = useFormContext();
-
   if (index == null || index < 0) return null;
 
   const texts = getFieldTexts(specializationName);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-10">
       {FIELD_NAMES.map(field => (
-        <div key={field} className="flex flex-col gap-1">
-          <label className="text-base block font-medium" htmlFor={`specializationAdditionalInfo.${index}.${field}`}>
-            {texts[field].label} <span className="text-red-500">*</span>
-          </label>
-          {texts[field].description && <p className="text-p4 text-gray-700">{texts[field].description}</p>}
-          <Controller
-            name={`specializationAdditionalInfo.${index}.${field}`}
-            control={control}
-            render={({ field: controlledField }) => (
-              <TextArea
-                {...controlledField}
-                value={controlledField.value ?? ''}
-                maxLength={1000}
-                placeholder={texts[field].label}
-                error={errors?.specializationAdditionalInfo?.[index]?.[field]?.message}
-              />
-            )}
-          />
-        </div>
+        <TextAreaField
+          key={field}
+          name={`specializationAdditionalInfo.${index}.${field}`}
+          label={texts[field].label}
+          hints={texts[field].hints}
+          placeholder="Ваша відповідь"
+        />
       ))}
     </div>
   );

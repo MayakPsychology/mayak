@@ -6,7 +6,7 @@ export const FormTranslations = {
   formatOfWork: {
     online: 'онлайн',
     offline: 'офлайн',
-    both: 'офлайн + онлайн',
+    both: 'онлайн та офлайн',
   },
   eventPriceFormat: {
     fixed_price: 'фіксована вартість',
@@ -16,10 +16,10 @@ export const FormTranslations = {
   eventFormat: {
     online: 'онлайн',
     offline: 'офлайн',
-    online_offline: 'офлайн + трансляція',
+    online_offline: 'офлайн-подія з трансляцією онлайн',
   },
   ownershipType: {
-    private: 'Приватна',
-    government: 'Державна',
+    private: 'приватна',
+    government: 'державна',
   },
 };

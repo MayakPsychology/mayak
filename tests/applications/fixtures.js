@@ -57,6 +57,8 @@ export const specialistApplication = {
   surname: null,
   yearsOfExperience: 5,
   gender: 'MALE',
+  experience: 'Працюю з дорослими вже пʼять років.',
+  education: 'Диплом магістра психології, сертифікати КПТ.',
   email: null,
   website: null,
   phone: '+380671112233',
@@ -80,7 +82,10 @@ export const specialistApplication = {
     },
   ],
   isFreeReception: false,
+  discounts: 'no',
+  discountsOther: null,
   supportFocuses,
+  submitterContact: 'Іван Петренко, психолог, ivan@example.com',
 };
 
 export const organizationApplication = {
@@ -90,7 +95,8 @@ export const organizationApplication = {
   ownershipType: 'PRIVATE',
   yearsOnMarket: 7,
   yearsOfExperience: 4,
-  isInclusiveSpace: true,
+  isInclusiveSpace: 'yes',
+  experience: 'Команда працює із кризовими станами понад сім років.',
   email: null,
   website: null,
   phone: '+380671112233',
@@ -103,7 +109,18 @@ export const organizationApplication = {
   expertSpecializations: [UUID],
   expertSpecializationNames: ['Психолог'],
   isFreeReception: false,
+  discounts: 'no',
+  discountsOther: null,
   supportFocuses,
+  specialistSelection: 'Відбираємо за освітою та досвідом супервізій.',
+  averageExperience: '5',
+  achievements: 'Входимо до національної психологічної асоціації.',
+  workMethods: 'КПТ, гештальт, схема-терапія.',
+  developmentPolicy: 'no',
+  supervisionPolicy: 'no',
+  ethicalControl: 'Дотримуємось етичного кодексу асоціації.',
+  feedbackCollection: 'Анкети після кожного циклу консультацій.',
+  submitterContact: 'Олена Коваль, директорка, olena@example.com',
 };
 
 export const eventApplication = {
@@ -116,4 +133,5 @@ export const eventApplication = {
   address: 'вул. Тестова 1',
   notes: 'Опис події для перевірки валідації схеми.',
   link: 'https://example.com/event',
+  submitterContact: 'Марія Іванчук, організаторка, maria@example.com',
 };

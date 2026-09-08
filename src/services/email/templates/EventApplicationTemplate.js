@@ -19,7 +19,8 @@ export default function EventApplicationTemplate({ data }) {
       <Field label="Вартість" value={FormTranslations.eventPriceFormat[String(data.priceType).toLowerCase()]} />
       <Field label="Ціна" value={data.price} />
       <Field label="Опис події" value={data.notes} />
-      <Field label="Посилання" value={data.additionalLink?.link} />
+      <Field label="Посилання" value={data.additionalLink?.link ?? data.link} />
+      <Field label="Хто заповнив форму" value={data.submitterContact} />
     </Layout>
   );
 }

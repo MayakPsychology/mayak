@@ -51,3 +51,19 @@ export const MINUTES = Array.from({ length: 12 }, (unused, step) => ({
 }));
 
 export { pad };
+
+const MINUTES_IN_DAY = 24 * 60;
+
+export const toMinutes = ({ h, m }) => (h === null || m === null ? null : h * 60 + m);
+
+/**
+ * A working day has to read from the earlier hour to the later one. A 00:00 end is
+ * the one exception — the dial writes midnight that way and it means "until midnight".
+ */
+export const isOrderedRange = value => {
+  const { start, end } = parseRange(value);
+  const from = toMinutes(start);
+  const to = toMinutes(end);
+  if (from === null || to === null) return false;
+  return (to === 0 ? MINUTES_IN_DAY : to) > from;
+};

@@ -8,4 +8,5 @@ export const eventDefaultValues = {
   address: '',
   notes: '',
   link: '',
+  submitterContact: '',
 };
