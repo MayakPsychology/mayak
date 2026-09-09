@@ -11,6 +11,7 @@ import {
   zSubmitterContactShape,
   zSupportFocusesField,
   zWorkDaySchema,
+  zFilesField,
   refineDiscounts,
 } from './common';
 
@@ -66,6 +67,7 @@ export const specialistApplicationStep3Schema = z.object({ clients: zClientsSche
 
 export const specialistApplicationStep4Schema = z.object({
   education: string('Освіта').min(10).max(5000).zod,
+  educationFiles: zFilesField,
   specializations: array('Спеціалізації', string('Спеціалізація').zod, {
     min: 1,
     message: 'Потрібно обрати щонайменше 1 спеціалізацію',

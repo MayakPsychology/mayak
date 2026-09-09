@@ -2,7 +2,7 @@
 
 import PropTypes from 'prop-types';
 import { StepHeader } from '../../_shared';
-import { TextAreaField } from '../../_shared/fields';
+import { FileUploadField, TextAreaField } from '../../_shared/fields';
 import { SpecializationsGroup } from '../../_shared/field-groups';
 
 const EDUCATION_HINT =
@@ -22,6 +22,11 @@ export function Step4({ specializations }) {
         hints={[EDUCATION_HINT]}
         placeholder="Опис документів про освіту"
         maxLength={5000}
+      />
+      <FileUploadField
+        name="educationFiles"
+        label="Додайте документи про освіту"
+        hints={['Дипломи, сертифікати або інші підтвердження. Файли надходять лише на пошту адміністрації.']}
       />
       <SpecializationsGroup specializations={specializations} />
     </fieldset>

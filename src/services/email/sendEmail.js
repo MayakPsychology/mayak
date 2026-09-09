@@ -9,9 +9,9 @@ function reportEmailFailure(error) {
   return { success: false, error: error.message };
 }
 
-export async function sendEmail({ from, to, subject, html }) {
+export async function sendEmail({ from, to, subject, html, attachments }) {
   try {
-    const { data, error } = await resend.emails.send({ from, to, subject, html });
+    const { data, error } = await resend.emails.send({ from, to, subject, html, attachments });
 
     if (error) {
       return reportEmailFailure(new Error(`${error.name}: ${error.message}`));
@@ -23,7 +23,7 @@ export async function sendEmail({ from, to, subject, html }) {
   }
 }
 
-export async function sendApplicationNotification({ data, type, subjectDetails }) {
+export async function sendApplicationNotification({ data, type, subjectDetails, attachments }) {
   const html = await getEmailTemplate(data, type);
   if (!html) return reportEmailFailure(new Error(`Unknown email template "${type}"`));
 
@@ -32,5 +32,6 @@ export async function sendApplicationNotification({ data, type, subjectDetails }
     to: env.ADMIN_EMAIL,
     subject: `${EMAIL_SUBJECT_PREFIX[type]}: ${subjectDetails}`,
     html,
+    attachments,
   });
 }

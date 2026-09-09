@@ -8,6 +8,10 @@ export const APPLICATION_ERROR_MESSAGE = 'Не вдалося надіслати
 const toFormData = data => {
   const formData = new FormData();
   Object.entries(data).forEach(([key, value]) => {
+    if (Array.isArray(value) && value[0] instanceof File) {
+      value.forEach(file => formData.append(key, file));
+      return;
+    }
     formData.append(key, JSON.stringify(value ?? null));
   });
   return formData;

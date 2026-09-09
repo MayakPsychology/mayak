@@ -130,3 +130,5 @@ export const refineDiscounts = (data, ctx) => {
 export const zSubmitterContactShape = {
   submitterContact: string('Контактні дані особи, яка заповнює форму').min(5).max(500).zod,
 };
+
+export const zFilesField = z.array(z.any()).max(10, 'Не більше 10 файлів').optional();

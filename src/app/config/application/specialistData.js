@@ -9,6 +9,7 @@ export const specialistDefaultValues = {
   gender: null,
   experience: '',
   education: '',
+  educationFiles: [],
   formatOfWork: null,
   phone: null,
   email: null,

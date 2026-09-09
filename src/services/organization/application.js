@@ -46,7 +46,7 @@ function toDbInput(data) {
   };
 }
 
-export async function application(rawData) {
+export async function application(rawData, attachments) {
   const data = organizationApplicationFullSchema.parse(rawData);
   const transformedData = transformOrganizationData(normalizeForPrisma(toDbInput(data)));
 
@@ -56,6 +56,7 @@ export async function application(rawData) {
     data,
     type: EMAIL_TYPES.ORGANIZATION_APPLICATION,
     subjectDetails: data.name,
+    attachments,
   });
 
   return { id: organization.id, notification };
