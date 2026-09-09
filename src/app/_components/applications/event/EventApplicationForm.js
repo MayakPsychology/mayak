@@ -13,7 +13,7 @@ import {
   eventSubmitterContactSchema,
 } from '@/lib/validationSchemas/applications/eventApplicationSchema';
 import { ApplicationWizard, SECTION_NOTE, StepHeader, SubmitterContactStep } from '../_shared';
-import { FieldHeading, RadioGroupField, TextAreaField } from '../_shared/fields';
+import { FieldHeading, FileUploadField, RadioGroupField, TextAreaField } from '../_shared/fields';
 import { EventDateTimeFields } from './EventDateTimeFields';
 
 export function EventApplicationForm() {
@@ -109,6 +109,12 @@ export function EventApplicationForm() {
         label="Посилання на подію у соц. мережах або на сайті"
         placeholder="Соціальні мережі"
         maxLength={500}
+      />
+
+      <FileUploadField
+        name="eventFiles"
+        label="Додайте афішу або інші матеріали події"
+        hints={['Файли надходять лише на пошту адміністрації.']}
       />
     </fieldset>
   );

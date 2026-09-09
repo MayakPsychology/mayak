@@ -2,7 +2,7 @@
 
 import { NO_OR_OTHER_OPTIONS } from '@/app/config/application/choices';
 import { StepHeader } from '../../_shared';
-import { RadioGroupField, TextAreaField } from '../../_shared/fields';
+import { FileUploadField, RadioGroupField, TextAreaField } from '../../_shared/fields';
 
 const INTRO = (
   <>
@@ -109,6 +109,15 @@ export function Step5() {
         name="feedbackCollection"
         label="Яким чином відбувається збір зворотнього звʼязку (інформації від клієнтів про якість наданих послуг)?"
         placeholder="Зворотній звʼязок"
+      />
+
+      <FileUploadField
+        name="documentFiles"
+        label="Додайте документи, що підтверджують зазначену вище інформацію"
+        hints={[
+          'Наприклад, сертифікати, свідоцтва про членство в асоціаціях, етичний кодекс або супервізійна політика.',
+          'Файли надходять лише на пошту адміністрації.',
+        ]}
       />
     </fieldset>
   );

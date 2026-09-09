@@ -10,6 +10,7 @@ import {
   zSubmitterContactShape,
   zSupportFocusesField,
   zWorkDaySchema,
+  zFilesField,
   refineDiscounts,
 } from './common';
 
@@ -100,6 +101,7 @@ const organizationApplicationStep5Shape = z.object({
   supervisionPolicyOther: string('Супервізії та інтервізії').max(2000).optional().zod,
   ethicalControl: string('Етичний контроль').min(10).max(2000).zod,
   feedbackCollection: string('Зворотній звʼязок').min(10).max(2000).zod,
+  documentFiles: zFilesField,
 });
 
 const refineOtherPolicies = (data, ctx) => {
