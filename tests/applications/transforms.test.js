@@ -51,6 +51,13 @@ const buildOrganization = () =>
     }),
   );
 
+describe('normalizeForPrisma', () => {
+  it('keeps a Date instead of flattening it to an empty object', () => {
+    const eventDate = new Date('2026-10-01T18:00:00.000Z');
+    expect(normalizeForPrisma({ eventDate }).eventDate).toEqual(eventDate);
+  });
+});
+
 describe('specialist prisma payload', () => {
   const data = buildSpecialist();
 

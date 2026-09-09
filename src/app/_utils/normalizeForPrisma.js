@@ -3,7 +3,7 @@ export function normalizeForPrisma(obj) {
     return obj.map(normalizeForPrisma);
   }
 
-  if (obj === null || typeof obj !== 'object') {
+  if (obj === null || typeof obj !== 'object' || obj instanceof Date) {
     return obj;
   }
 
