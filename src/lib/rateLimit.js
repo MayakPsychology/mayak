@@ -1,6 +1,5 @@
+import { prisma } from '@/lib/db';
 import { TooManyRequestsException } from '@/lib/errors/TooManyRequestsException';
-
-const buckets = new Map();
 
 export const APPLICATION_RATE_LIMIT = { limit: 10, windowMs: 60 * 60 * 1000 };
 
@@ -9,21 +8,17 @@ function getClientKey(request) {
   return forwarded?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
 }
 
-export function assertWithinRateLimit(request, scope, { limit, windowMs } = APPLICATION_RATE_LIMIT) {
-  const now = Date.now();
+export async function assertWithinRateLimit(request, scope, { limit, windowMs } = APPLICATION_RATE_LIMIT) {
   const key = `${scope}:${getClientKey(request)}`;
-  const hits = (buckets.get(key) ?? []).filter(timestamp => now - timestamp < windowMs);
+  const since = new Date(Date.now() - windowMs);
 
-  if (hits.length >= limit) {
+  await prisma.rateLimitHit.deleteMany({ where: { createdAt: { lt: since } } });
+
+  const hits = await prisma.rateLimitHit.count({ where: { key, createdAt: { gte: since } } });
+
+  if (hits >= limit) {
     throw new TooManyRequestsException({ message: 'Забагато заявок. Спробуйте пізніше.' });
   }
 
-  hits.push(now);
-  buckets.set(key, hits);
-
-  if (buckets.size > 5000) {
-    buckets.forEach((timestamps, bucketKey) => {
-      if (timestamps.every(timestamp => now - timestamp >= windowMs)) buckets.delete(bucketKey);
-    });
-  }
+  await prisma.rateLimitHit.create({ data: { key } });
 }

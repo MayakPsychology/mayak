@@ -87,7 +87,7 @@ export const GET = withErrorHandler(async req => {
 });
 
 export const POST = withErrorHandler(async request => {
-  assertWithinRateLimit(request, 'event-application');
+  await assertWithinRateLimit(request, 'event-application');
 
   const formData = await request.formData();
   const { id } = await application(formDataToObject(formData), await formDataToAttachments(formData));

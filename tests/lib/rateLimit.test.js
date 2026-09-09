@@ -1,60 +1,83 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { APPLICATION_RATE_LIMIT, assertWithinRateLimit } from '@/lib/rateLimit';
+
+const { hits } = vi.hoisted(() => ({ hits: [] }));
+
+vi.mock('@/lib/db', () => ({
+  prisma: {
+    rateLimitHit: {
+      count: async ({ where }) =>
+        hits.filter(hit => hit.key === where.key && hit.createdAt >= where.createdAt.gte).length,
+      create: async ({ data }) => hits.push({ ...data, createdAt: new Date() }),
+      deleteMany: async ({ where }) => {
+        const kept = hits.filter(hit => hit.createdAt >= where.createdAt.lt);
+        hits.length = 0;
+        hits.push(...kept);
+      },
+    },
+  },
+}));
 
 const requestFrom = ip => ({ headers: { get: name => (name === 'x-forwarded-for' ? ip : null) } });
 
+const fillUp = async (request, scope) => {
+  for (let i = 0; i < APPLICATION_RATE_LIMIT.limit; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    await assertWithinRateLimit(request, scope);
+  }
+};
+
 describe('assertWithinRateLimit', () => {
-  it('allows submissions up to the limit then rejects', () => {
+  beforeEach(() => {
+    hits.length = 0;
+  });
+
+  it('allows submissions up to the limit then rejects', async () => {
     const request = requestFrom('203.0.113.1');
 
-    for (let i = 0; i < APPLICATION_RATE_LIMIT.limit; i += 1) {
-      expect(() => assertWithinRateLimit(request, 'test-allow')).not.toThrow();
-    }
+    await fillUp(request, 'test-allow');
 
-    expect(() => assertWithinRateLimit(request, 'test-allow')).toThrowError();
+    await expect(assertWithinRateLimit(request, 'test-allow')).rejects.toThrowError();
   });
 
-  it('reports 429 when the limit is exceeded', () => {
+  it('reports 429 when the limit is exceeded', async () => {
     const request = requestFrom('203.0.113.2');
 
-    for (let i = 0; i < APPLICATION_RATE_LIMIT.limit; i += 1) {
-      assertWithinRateLimit(request, 'test-status');
-    }
+    await fillUp(request, 'test-status');
 
-    try {
-      assertWithinRateLimit(request, 'test-status');
-      throw new Error('expected the rate limiter to reject');
-    } catch (error) {
-      expect(error.status).toBe(429);
-    }
+    await expect(assertWithinRateLimit(request, 'test-status')).rejects.toMatchObject({ status: 429 });
   });
 
-  it('tracks each client separately', () => {
-    for (let i = 0; i < APPLICATION_RATE_LIMIT.limit; i += 1) {
-      assertWithinRateLimit(requestFrom('203.0.113.3'), 'test-isolation');
-    }
+  it('tracks each client separately', async () => {
+    await fillUp(requestFrom('203.0.113.3'), 'test-isolation');
 
-    expect(() => assertWithinRateLimit(requestFrom('203.0.113.4'), 'test-isolation')).not.toThrow();
+    await expect(assertWithinRateLimit(requestFrom('203.0.113.4'), 'test-isolation')).resolves.toBeUndefined();
   });
 
-  it('tracks each endpoint separately', () => {
+  it('tracks each endpoint separately', async () => {
     const request = requestFrom('203.0.113.5');
 
-    for (let i = 0; i < APPLICATION_RATE_LIMIT.limit; i += 1) {
-      assertWithinRateLimit(request, 'test-scope-a');
-    }
+    await fillUp(request, 'test-scope-a');
 
-    expect(() => assertWithinRateLimit(request, 'test-scope-b')).not.toThrow();
+    await expect(assertWithinRateLimit(request, 'test-scope-b')).resolves.toBeUndefined();
   });
 
-  it('uses only the first address from x-forwarded-for', () => {
-    const proxied = { headers: { get: name => (name === 'x-forwarded-for' ? '203.0.113.6, 10.0.0.1' : null) } };
-    const direct = requestFrom('203.0.113.6');
+  it('forgets hits once the window has passed', async () => {
+    const request = requestFrom('203.0.113.6');
 
-    for (let i = 0; i < APPLICATION_RATE_LIMIT.limit; i += 1) {
-      assertWithinRateLimit(proxied, 'test-forwarded');
-    }
+    await fillUp(request, 'test-window');
+    hits.forEach(hit => {
+      Object.assign(hit, { createdAt: new Date(Date.now() - APPLICATION_RATE_LIMIT.windowMs - 1000) });
+    });
 
-    expect(() => assertWithinRateLimit(direct, 'test-forwarded')).toThrowError();
+    await expect(assertWithinRateLimit(request, 'test-window')).resolves.toBeUndefined();
+  });
+
+  it('uses only the first address from x-forwarded-for', async () => {
+    const proxied = { headers: { get: name => (name === 'x-forwarded-for' ? '203.0.113.7, 10.0.0.1' : null) } };
+
+    await fillUp(proxied, 'test-forwarded');
+
+    await expect(assertWithinRateLimit(requestFrom('203.0.113.7'), 'test-forwarded')).rejects.toThrowError();
   });
 });

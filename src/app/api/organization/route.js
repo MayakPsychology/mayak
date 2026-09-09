@@ -5,7 +5,7 @@ import { assertWithinRateLimit } from '@/lib/rateLimit';
 import { application } from '@/services/organization';
 
 export const POST = withErrorHandler(async request => {
-  assertWithinRateLimit(request, 'organization-application');
+  await assertWithinRateLimit(request, 'organization-application');
 
   const formData = await request.formData();
   const { id } = await application(formDataToObject(formData), await formDataToAttachments(formData));

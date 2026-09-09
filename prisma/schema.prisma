@@ -400,3 +400,12 @@ model DonationDetails {
 
   @@map("donation_details")
 }
+
+model RateLimitHit {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now())
+  key       String   @db.VarChar(128)
+
+  @@index([key, createdAt])
+  @@map("rate_limit_hit")
+}
