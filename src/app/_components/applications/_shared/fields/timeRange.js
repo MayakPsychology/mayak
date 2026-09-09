@@ -2,8 +2,8 @@
 
 export const DIAL_SIZE = 256;
 export const CENTER = DIAL_SIZE / 2;
-export const OUTER_RADIUS = 104;
-export const INNER_RADIUS = 68;
+const OUTER_RADIUS = 104;
+const INNER_RADIUS = 68;
 export const EMPTY = { h: null, m: null };
 export const EMPTY_RANGE = { start: EMPTY, end: EMPTY };
 
@@ -54,7 +54,7 @@ export { pad };
 
 const MINUTES_IN_DAY = 24 * 60;
 
-export const toMinutes = ({ h, m }) => (h === null || m === null ? null : h * 60 + m);
+const toMinutes = ({ h, m }) => (h === null || m === null ? null : h * 60 + m);
 
 /**
  * A working day has to read from the earlier hour to the later one. A 00:00 end is

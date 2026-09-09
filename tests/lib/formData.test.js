@@ -63,6 +63,12 @@ describe('formDataToAttachments', () => {
     await expect(formDataToAttachments(withFiles([file('big.pdf', 5 * 1024 * 1024)]))).rejects.toThrow();
   });
 
+  it('strips path segments a client could put in the file name', async () => {
+    const [attachment] = await formDataToAttachments(withFiles([file('../../etc/passwd.pdf')]));
+
+    expect(attachment.filename).toBe('educationFiles-passwd.pdf');
+  });
+
   it('rejects unsupported formats', async () => {
     await expect(formDataToAttachments(withFiles([file('malware.exe')]))).rejects.toThrow();
   });

@@ -3,15 +3,13 @@
 import PropTypes from 'prop-types';
 import get from 'lodash/get';
 import { Controller, useFormContext } from 'react-hook-form';
-import { ALLOWED_ATTACHMENT_TYPES, MAX_ATTACHMENTS_SIZE } from '@/lib/formData';
+import { ALLOWED_ATTACHMENT_TYPES } from '@/lib/formData';
 import { FieldHeading } from './FieldHeading';
 import { FieldHints } from './FieldHint';
 
 const errorClass = 'ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4';
 
-const SIZE_HINT = 'До 4 МБ разом. Формати: PDF, JPG, PNG, DOC.';
-
-const totalSize = files => files.reduce((sum, file) => sum + file.size, 0);
+const SIZE_HINT = 'До 4 МБ разом, не більше 10 файлів. Формати: PDF, JPG, PNG, WEBP, DOC.';
 
 export function FileUploadField({ name, label, hints, isRequired = false }) {
   const {
@@ -34,7 +32,7 @@ export function FileUploadField({ name, label, hints, isRequired = false }) {
             const added = Array.from(target.files);
             // eslint-disable-next-line no-param-reassign
             target.value = '';
-            field.onChange([...files, ...added].slice(0, 10));
+            field.onChange([...files, ...added]);
           };
 
           return (
@@ -51,7 +49,7 @@ export function FileUploadField({ name, label, hints, isRequired = false }) {
                 />
               </label>
               {files.map((file, index) => (
-                <span key={file.name} className="flex items-center gap-2 text-p4 text-primary-900">
+                <span key={`${file.name}-${index}`} className="flex items-center gap-2 text-p4 text-primary-900">
                   {file.name}
                   <button
                     type="button"
@@ -63,9 +61,6 @@ export function FileUploadField({ name, label, hints, isRequired = false }) {
                   </button>
                 </span>
               ))}
-              {totalSize(files) > MAX_ATTACHMENTS_SIZE && (
-                <p className={errorClass}>Файли завеликі — сумарний розмір не має перевищувати 4 МБ</p>
-              )}
             </div>
           );
         }}

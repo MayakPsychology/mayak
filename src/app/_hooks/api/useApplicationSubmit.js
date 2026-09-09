@@ -2,8 +2,8 @@ import ky from 'ky';
 import toast from 'react-hot-toast';
 import { useMutation } from '@tanstack/react-query';
 
-export const APPLICATION_SUCCESS_MESSAGE = 'Дякуємо! Вашу заявку надіслано. Ми зв’яжемося з вами найближчим часом.';
-export const APPLICATION_ERROR_MESSAGE = 'Не вдалося надіслати заявку. Спробуйте ще раз пізніше.';
+const APPLICATION_SUCCESS_MESSAGE = 'Дякуємо! Вашу заявку надіслано. Ми зв’яжемося з вами найближчим часом.';
+const APPLICATION_ERROR_MESSAGE = 'Не вдалося надіслати заявку. Спробуйте ще раз пізніше.';
 
 const toFormData = data => {
   const formData = new FormData();
@@ -23,7 +23,10 @@ export const useApplicationSubmit = endpoint => {
     onSuccess: () => toast.success(APPLICATION_SUCCESS_MESSAGE),
     onError: async error => {
       const body = await error.response?.json().catch(() => null);
-      toast.error(body?.data?.message || body?.message || APPLICATION_ERROR_MESSAGE);
+      const detail = Object.values(body?.data ?? {})
+        .flat()
+        .find(value => typeof value === 'string');
+      toast.error(detail || APPLICATION_ERROR_MESSAGE);
     },
   });
 

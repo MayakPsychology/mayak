@@ -15,5 +15,3 @@ export const transformSpecialistData = ({ specializations, specializationMethods
     },
   };
 };
-
-// TODO: винести в sahred utils

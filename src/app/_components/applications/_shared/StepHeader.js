@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-export const SUBSECTION_NOTE =
+const SUBSECTION_NOTE =
   'Звертаємо увагу, що вказана Вами інформація у цьому підрозділі після обробки адміністраторами буде висвітлена на сайті.';
 
 export const SECTION_NOTE =

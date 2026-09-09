@@ -187,6 +187,17 @@ describe('closing slides added after QA review', () => {
     expect(specialistApplicationFullSchema.safeParse(described).success).toBe(true);
   });
 
+  it('blocks the step when the uploads are over the request budget', () => {
+    const oversized = [{ size: 5 * 1024 * 1024 }];
+    const result = specialistApplicationFullSchema.safeParse({ ...specialistApplication, educationFiles: oversized });
+    expect(result.success).toBe(false);
+    expect(result.error.issues.some(issue => issue.path[0] === 'educationFiles')).toBe(true);
+    const small = [{ size: 1024 }];
+    expect(specialistApplicationFullSchema.safeParse({ ...specialistApplication, educationFiles: small }).success).toBe(
+      true,
+    );
+  });
+
   it('keeps the three-way inclusive-space answer from the mocks', () => {
     ['yes', 'no', 'online'].forEach(value => {
       const answered = { ...organizationApplication, isInclusiveSpace: value };

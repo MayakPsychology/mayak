@@ -3,6 +3,7 @@ import { WEEKDAYS_TRANSLATION } from '@/app/(admin)/admin/_lib/consts';
 import { isOrderedRange } from '@/app/_components/applications/_shared/fields/timeRange';
 import { string, number, boolean, array, regexField } from '@/lib/validationSchemas/utils';
 import { MESSENGER_REGEX, PHONE_REGEX, SOCIAL_REGEX } from '@/lib/consts';
+import { MAX_ATTACHMENTS_SIZE, OVERSIZE_MESSAGE } from '@/lib/formData';
 
 export const zCreateAddressSchema = z.object({
   fullAddress: string('Адреса').min(2).max(128).zod,
@@ -131,4 +132,8 @@ export const zSubmitterContactShape = {
   submitterContact: string('Контактні дані особи, яка заповнює форму').min(5).max(500).zod,
 };
 
-export const zFilesField = z.array(z.any()).max(10, 'Не більше 10 файлів').optional();
+export const zFilesField = z
+  .array(z.any())
+  .max(10, 'Не більше 10 файлів')
+  .refine(files => files.reduce((sum, file) => sum + (file?.size ?? 0), 0) <= MAX_ATTACHMENTS_SIZE, OVERSIZE_MESSAGE)
+  .optional();

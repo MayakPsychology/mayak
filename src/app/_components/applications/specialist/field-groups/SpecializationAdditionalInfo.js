@@ -24,7 +24,7 @@ const SELF_DEVELOPMENT_FIELD = {
   'Соціальний працівник': `соціальної роботи та / або ${PSYCHOLOGY}`,
 };
 
-export function getFieldTexts(specializationName) {
+function getFieldTexts(specializationName) {
   const area = SELF_DEVELOPMENT_FIELD[specializationName] ?? PSYCHOLOGY;
   // Only psychotherapists are asked about their own therapy unconditionally.
   const ownTherapyIsOptional = specializationName !== 'Психотерапевт';

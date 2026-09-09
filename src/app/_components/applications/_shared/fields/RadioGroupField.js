@@ -73,7 +73,6 @@ RadioGroupField.propTypes = {
   hints: PropTypes.array,
   options: PropTypes.arrayOf(
     PropTypes.shape({
-      // eslint-disable-next-line react/forbid-prop-types
       value: PropTypes.any,
       label: PropTypes.string.isRequired,
       isOther: PropTypes.bool,

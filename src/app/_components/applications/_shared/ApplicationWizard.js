@@ -53,7 +53,6 @@ ApplicationWizard.propTypes = {
   title: PropTypes.string.isRequired,
   steps: PropTypes.array.isRequired,
   methods: PropTypes.object.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
   defaultValues: PropTypes.object.isRequired,
   submit: PropTypes.func.isRequired,
   isPending: PropTypes.bool,

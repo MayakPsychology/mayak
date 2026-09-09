@@ -119,7 +119,6 @@ export function transformServiceProvider(instance, modelName) {
       .filter(method => method.specialization === 'psychotherapist')
       .map(m => m.id);
 
-    // eslint-disable-next-line no-param-reassign
     instance.specializationMethodsIds = {
       psychologist: psychologistMethods.length ? psychologistMethods : [],
       psychotherapist: psychotherapistMethods.length ? psychotherapistMethods : [],
@@ -127,7 +126,6 @@ export function transformServiceProvider(instance, modelName) {
   }
 
   if (instance?.workTime?.length) {
-    // eslint-disable-next-line no-param-reassign
     instance.workTime = transformWorkTime(instance.workTime, WEEKDAYS_TRANSLATION);
   }
 

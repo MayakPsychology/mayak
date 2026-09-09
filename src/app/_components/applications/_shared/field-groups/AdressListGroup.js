@@ -18,7 +18,7 @@ export function AdressListGroup({ cities }) {
     formState: { errors },
   } = useFormContext();
   const { fields, append, remove } = useFieldArray({
-    name: 'addresses', // unique name for your Field Array
+    name: 'addresses',
   });
 
   const formatOfWork = useWatch({ control, name: 'formatOfWork' });
