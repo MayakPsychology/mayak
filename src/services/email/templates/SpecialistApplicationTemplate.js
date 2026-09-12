@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Text } from '@react-email/components';
 import { FormTranslations } from '@/app/(admin)/admin/_lib/translations';
-import { Field, Layout, Section, format } from './parts';
+import { Field, FileLinks, Layout, Section, format } from './parts';
 
 export default function SpecialistApplicationTemplate({ data }) {
   const social = data.socialLink ?? {};
@@ -18,6 +18,7 @@ export default function SpecialistApplicationTemplate({ data }) {
         <Field label="Формат роботи" value={FormTranslations.formatOfWork[String(data.formatOfWork).toLowerCase()]} />
         <Field label="Досвід" value={data.experience} />
         <Field label="Освіта" value={data.education} />
+        <FileLinks label="Документи про вищу освіту" files={data.educationFiles} />
         <Field label="Опис" value={data.description} />
       </Section>
 
@@ -76,6 +77,7 @@ export default function SpecialistApplicationTemplate({ data }) {
             <Field label="Професійний розвиток" value={spec.professionalDevelopment} />
             <Field label="Особиста терапія" value={spec.personalTherapy} />
             <Field label="Супервізії" value={spec.supervisionExperience} />
+            <FileLinks label="Підтверджуючі документи" files={spec.supportingFiles} />
           </div>
         ))}
       </Section>

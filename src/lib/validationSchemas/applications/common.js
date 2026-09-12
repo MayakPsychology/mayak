@@ -3,7 +3,6 @@ import { WEEKDAYS_TRANSLATION } from '@/app/(admin)/admin/_lib/consts';
 import { isOrderedRange } from '@/app/_components/applications/_shared/fields/timeRange';
 import { string, number, boolean, array, regexField } from '@/lib/validationSchemas/utils';
 import { MESSENGER_REGEX, PHONE_REGEX, SOCIAL_REGEX } from '@/lib/consts';
-import { MAX_ATTACHMENTS_SIZE, OVERSIZE_MESSAGE } from '@/lib/formData';
 
 export const zCreateAddressSchema = z.object({
   fullAddress: string('Адреса').min(2).max(128).zod,
@@ -140,8 +139,25 @@ export const zFinalStepShape = {
   }),
 };
 
+const zUploadedFile = z.object({
+  url: z.string().url(),
+  pathname: z.string().min(1),
+  name: z.string().min(1),
+  size: z.number(),
+});
+
 export const zFilesField = z
   .array(z.any())
   .max(10, 'Не більше 10 файлів')
-  .refine(files => files.reduce((sum, file) => sum + (file?.size ?? 0), 0) <= MAX_ATTACHMENTS_SIZE, OVERSIZE_MESSAGE)
+  .superRefine((files, ctx) => {
+    files.forEach((file, index) => {
+      if (zUploadedFile.safeParse(file).success) return;
+
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Файл "${file?.name ?? ''}" ще не завантажено — зачекайте або приберіть його`,
+        path: [index],
+      });
+    });
+  })
   .optional();

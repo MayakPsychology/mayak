@@ -23,7 +23,7 @@ function toDbInput(data) {
   };
 }
 
-export async function application(rawData, attachments) {
+export async function application(rawData) {
   const data = eventApplicationSchema.parse(rawData);
   const transformedData = transformEventCreateData(toDbInput(data));
 
@@ -33,7 +33,6 @@ export async function application(rawData, attachments) {
     data: { ...data, additionalLink: { label: LINK_LABEL, link: data.link } },
     type: EMAIL_TYPES.EVENT_APPLICATION,
     subjectDetails: data.title,
-    attachments,
   });
 
   return { id: event.id, notification };

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Body, Container, Heading, Html, Text } from '@react-email/components';
+import { Body, Container, Heading, Html, Link, Text } from '@react-email/components';
 
 const EMPTY = 'не вказано';
 
@@ -43,3 +43,23 @@ export function Field({ label, value }) {
 Layout.propTypes = { title: PropTypes.string, children: PropTypes.node };
 Section.propTypes = { title: PropTypes.string, children: PropTypes.node };
 Field.propTypes = { label: PropTypes.string, value: PropTypes.any };
+
+export function FileLinks({ label, files }) {
+  if (!files?.length) return null;
+
+  return (
+    <Text style={{ margin: '0 0 8px' }}>
+      <strong>{label}:</strong>
+      {files.map(file => (
+        <span key={file.pathname} style={{ display: 'block' }}>
+          <Link href={file.url}>{file.name}</Link>
+        </span>
+      ))}
+    </Text>
+  );
+}
+
+FileLinks.propTypes = {
+  label: PropTypes.string.isRequired,
+  files: PropTypes.array,
+};

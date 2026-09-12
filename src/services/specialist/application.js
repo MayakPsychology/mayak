@@ -46,7 +46,7 @@ function toDbInput(data) {
   };
 }
 
-export async function application(rawData, attachments) {
+export async function application(rawData) {
   const data = specialistApplicationFullSchema.parse(rawData);
   const transformedData = transformSpecialistData(normalizeForPrisma(toDbInput(data)));
 
@@ -56,7 +56,6 @@ export async function application(rawData, attachments) {
     data,
     type: EMAIL_TYPES.SPECIALIST_APPLICATION,
     subjectDetails: `${data.lastName} ${data.firstName}`,
-    attachments,
   });
 
   return { id: specialist.id, notification };

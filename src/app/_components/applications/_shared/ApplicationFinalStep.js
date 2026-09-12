@@ -30,6 +30,9 @@ export function ApplicationFinalStep() {
           <input type="checkbox" className="mt-1 accent-primary-500" {...register('consent')} />
           Я даю згоду на обробку та публікацію даних на платформі &quot;Маяк&quot;
         </label>
+        <p className="ml-7 mt-2 text-p4 text-gray-800">
+          Завантажені документи зберігаються у захищеному сховищі до 90 днів і не публікуються на сайті.
+        </p>
         {errors?.consent?.message && (
           <p className="ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4">
             {errors.consent.message}

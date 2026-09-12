@@ -192,15 +192,26 @@ describe('closing slides added after QA review', () => {
     expect(specialistApplicationFullSchema.safeParse(described).success).toBe(true);
   });
 
-  it('blocks the step when the uploads are over the request budget', () => {
-    const oversized = [{ size: 5 * 1024 * 1024 }];
-    const result = specialistApplicationFullSchema.safeParse({ ...specialistApplication, educationFiles: oversized });
+  it('will not submit while a document is still uploading', () => {
+    const inFlight = [{ id: 'x', name: 'diploma.pdf', size: 1024, url: null, pathname: null }];
+    const result = specialistApplicationFullSchema.safeParse({ ...specialistApplication, educationFiles: inFlight });
     expect(result.success).toBe(false);
     expect(result.error.issues.some(issue => issue.path[0] === 'educationFiles')).toBe(true);
-    const small = [{ size: 1024 }];
-    expect(specialistApplicationFullSchema.safeParse({ ...specialistApplication, educationFiles: small }).success).toBe(
-      true,
-    );
+  });
+
+  it('accepts a document once it has a blob url', () => {
+    const uploaded = [
+      {
+        id: 'x',
+        name: 'diploma.pdf',
+        size: 1024,
+        url: 'https://example.public.blob.vercel-storage.com/applications/diploma.pdf',
+        pathname: 'applications/diploma.pdf',
+      },
+    ];
+    expect(
+      specialistApplicationFullSchema.safeParse({ ...specialistApplication, educationFiles: uploaded }).success,
+    ).toBe(true);
   });
 
   it('keeps the three-way inclusive-space answer from the mocks', () => {

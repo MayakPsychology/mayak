@@ -3,15 +3,16 @@ import { env } from '@/lib/env';
 import { resend } from '@/lib/resend';
 import { APPLICATION_SENDER, EMAIL_SUBJECT_PREFIX } from '@/app/config/emails';
 import { getEmailTemplate } from './getEmailTemplate';
+import { presignFiles } from './presignFiles';
 
 function reportEmailFailure(error) {
   Sentry.captureException(error, { tags: { scope: 'application-email' } });
   return { success: false, error: error.message };
 }
 
-export async function sendEmail({ from, to, subject, html, attachments }) {
+export async function sendEmail({ from, to, subject, html }) {
   try {
-    const { data, error } = await resend.emails.send({ from, to, subject, html, attachments });
+    const { data, error } = await resend.emails.send({ from, to, subject, html });
 
     if (error) {
       return reportEmailFailure(new Error(`${error.name}: ${error.message}`));
@@ -23,8 +24,9 @@ export async function sendEmail({ from, to, subject, html, attachments }) {
   }
 }
 
-export async function sendApplicationNotification({ data, type, subjectDetails, attachments }) {
-  const html = await getEmailTemplate(data, type);
+export async function sendApplicationNotification({ data, type, subjectDetails }) {
+  const signed = await presignFiles(data);
+  const html = await getEmailTemplate(signed, type);
   if (!html) return reportEmailFailure(new Error(`Unknown email template "${type}"`));
 
   return sendEmail({
@@ -32,6 +34,5 @@ export async function sendApplicationNotification({ data, type, subjectDetails, 
     to: env.ADMIN_EMAIL,
     subject: `${EMAIL_SUBJECT_PREFIX[type]}: ${subjectDetails}`,
     html,
-    attachments,
   });
 }
