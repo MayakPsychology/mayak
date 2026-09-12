@@ -36,7 +36,7 @@ export function SpecializationDetailStep({ specialization, specializationId, ind
       />
       <SpecializationAdditionalInfo specializationName={specialization} index={index} />
       <FileUploadField
-        name="supportingFiles"
+        name={`specializationAdditionalInfo.${index}.supportingFiles`}
         label="За наявності, надайте основні підтверджуючі документи до попередніх 3 відкритих питань"
         isRequired
         hints={SUPPORTING_FILES_HINTS}

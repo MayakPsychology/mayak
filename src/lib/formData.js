@@ -22,6 +22,12 @@ export function formDataToObject(formData) {
 
 const hasAllowedType = name => ALLOWED_ATTACHMENT_TYPES.some(ext => name.toLowerCase().endsWith(ext));
 
+const attachmentPrefix = key => {
+  const parts = key.split('.');
+  const position = parts.find(part => /^\d+$/.test(part));
+  return position === undefined ? parts[parts.length - 1] : `${parts[parts.length - 1]}-${Number(position) + 1}`;
+};
+
 const safeName = name => name.split(/[\\/]/).pop().replace(/[\r\n"]/g, '');
 
 export async function formDataToAttachments(formData) {
@@ -42,7 +48,7 @@ export async function formDataToAttachments(formData) {
 
   return Promise.all(
     files.map(async ([key, file]) => ({
-      filename: `${key}-${safeName(file.name)}`,
+      filename: `${attachmentPrefix(key)}-${safeName(file.name)}`,
       content: Buffer.from(await file.arrayBuffer()),
     })),
   );

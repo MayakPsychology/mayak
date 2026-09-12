@@ -23,6 +23,7 @@ const zSpecializationAdditionalInfoSchema = z.object({
   professionalDevelopment: string('Професійний розвиток').min(10).max(1000).zod,
   personalTherapy: string('Досвід').min(10).max(1000).zod,
   supervisionExperience: string('Супервізії та інтервізії').min(10).max(1000).zod,
+  supportingFiles: zFilesField,
 });
 
 export const specialistApplicationStep1Schema = z.object({
@@ -76,7 +77,6 @@ export const specialistApplicationStep4Schema = z.object({
 
 // Validated on the per-speciality slides that follow step 4.
 export const specializationDetailsSchema = z.object({
-  supportingFiles: zFilesField,
   specializationMethods: array('Методи спеціалізації', string('Метод спеціалізації').zod).zod,
   specializationAdditionalInfo: array('Додаткова інформація', zSpecializationAdditionalInfoSchema).zod,
 });

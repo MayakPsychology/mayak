@@ -5,15 +5,36 @@ import { useMutation } from '@tanstack/react-query';
 const APPLICATION_SUCCESS_MESSAGE = 'Дякуємо! Вашу заявку надіслано. Ми зв’яжемося з вами найближчим часом.';
 const APPLICATION_ERROR_MESSAGE = 'Не вдалося надіслати заявку. Спробуйте ще раз пізніше.';
 
-const toFormData = data => {
+const isFileList = value => Array.isArray(value) && value[0] instanceof File;
+
+const extractFiles = (value, path, files) => {
+  if (isFileList(value)) {
+    files.push([path, value]);
+    return undefined;
+  }
+
+  if (Array.isArray(value)) return value.map((item, index) => extractFiles(item, `${path}.${index}`, files));
+
+  if (value && typeof value === 'object' && !(value instanceof Date)) {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, extractFiles(item, path ? `${path}.${key}` : key, files)]),
+    );
+  }
+
+  return value;
+};
+
+export const toFormData = data => {
   const formData = new FormData();
-  Object.entries(data).forEach(([key, value]) => {
-    if (Array.isArray(value) && value[0] instanceof File) {
-      value.forEach(file => formData.append(key, file));
-      return;
-    }
-    formData.append(key, JSON.stringify(value ?? null));
+  const files = [];
+  const payload = extractFiles(data, '', files);
+
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value === undefined) return;
+    formData.append(key, JSON.stringify(value));
   });
+  files.forEach(([path, list]) => list.forEach(file => formData.append(path, file)));
+
   return formData;
 };
 
