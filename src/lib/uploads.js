@@ -27,3 +27,23 @@ export const uploadTokenOptions = () => ({
   validUntil: Date.now() + TOKEN_TTL_MS,
   addRandomSuffix: true,
 });
+
+export const UPLOAD_PREFIX = 'applications';
+
+export const SUBMITTED_PREFIX = 'submitted';
+
+export const ABANDONED_TTL_MS = 24 * 60 * 60 * 1000;
+
+export const RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
+
+export const submittedPathname = pathname =>
+  pathname.startsWith(`${UPLOAD_PREFIX}/`)
+    ? `${SUBMITTED_PREFIX}/${pathname.slice(UPLOAD_PREFIX.length + 1)}`
+    : pathname;
+
+const ttlFor = pathname => (pathname.startsWith(`${SUBMITTED_PREFIX}/`) ? RETENTION_MS : ABANDONED_TTL_MS);
+
+export const expiredPathnames = (blobs, now = Date.now()) =>
+  blobs
+    .filter(blob => now - new Date(blob.uploadedAt).getTime() > ttlFor(blob.pathname))
+    .map(blob => blob.pathname);

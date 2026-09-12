@@ -11,5 +11,6 @@ export const env = z
     RESEND_API_KEY: z.string().min(5),
     ADMIN_EMAIL: z.string().min(5),
     BLOB_READ_WRITE_TOKEN: z.string().min(5).optional(),
+    CRON_SECRET: z.string().min(16).optional(),
   })
   .parse(process.env);

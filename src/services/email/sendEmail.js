@@ -2,8 +2,8 @@ import * as Sentry from '@sentry/nextjs';
 import { env } from '@/lib/env';
 import { resend } from '@/lib/resend';
 import { APPLICATION_SENDER, EMAIL_SUBJECT_PREFIX } from '@/app/config/emails';
+import { finalizeFiles } from '../uploads/finalizeFiles';
 import { getEmailTemplate } from './getEmailTemplate';
-import { presignFiles } from './presignFiles';
 
 function reportEmailFailure(error) {
   Sentry.captureException(error, { tags: { scope: 'application-email' } });
@@ -25,7 +25,7 @@ export async function sendEmail({ from, to, subject, html }) {
 }
 
 export async function sendApplicationNotification({ data, type, subjectDetails }) {
-  const signed = await presignFiles(data);
+  const signed = await finalizeFiles(data);
   const html = await getEmailTemplate(signed, type);
   if (!html) return reportEmailFailure(new Error(`Unknown email template "${type}"`));
 
