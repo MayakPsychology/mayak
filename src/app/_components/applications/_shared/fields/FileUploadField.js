@@ -4,13 +4,14 @@ import PropTypes from 'prop-types';
 import get from 'lodash/get';
 import { Controller, useFormContext } from 'react-hook-form';
 import { ALLOWED_ATTACHMENT_TYPES } from '@/lib/formData';
+import { compressImage } from './compressImage';
 import { FieldHeading } from './FieldHeading';
 import { FieldHints } from './FieldHint';
 
 const errorClass = 'ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4';
 
 const SIZE_HINT =
-  'Завантажте щонайбільше 10 файлів підтримуваного типу (PDF, document або image). Сумарний розмір файлів не може перевищувати 4 МБ.';
+  'Завантажте щонайбільше 10 файлів підтримуваного типу (PDF, document або image). Фото стискаються автоматично; сумарний розмір усіх файлів заявки не може перевищувати 4 МБ.';
 
 export function FileUploadField({ name, label, hints, isRequired = false }) {
   const {
@@ -29,11 +30,11 @@ export function FileUploadField({ name, label, hints, isRequired = false }) {
         control={control}
         render={({ field }) => {
           const files = field.value ?? [];
-          const add = ({ target }) => {
+          const add = async ({ target }) => {
             const added = Array.from(target.files);
             // eslint-disable-next-line no-param-reassign
             target.value = '';
-            field.onChange([...files, ...added]);
+            field.onChange([...files, ...(await Promise.all(added.map(compressImage)))]);
           };
 
           return (
