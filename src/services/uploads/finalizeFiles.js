@@ -36,7 +36,14 @@ async function sign(file) {
     });
 
     return { ...file, url: presignedUrl };
-  } catch {
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { scope: 'application-upload-link' },
+      extra: {
+        pathname: file.pathname,
+        consequence: 'the email carries an unsigned url that only opens for someone with store access',
+      },
+    });
     return file;
   }
 }

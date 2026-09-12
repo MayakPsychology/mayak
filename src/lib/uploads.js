@@ -44,6 +44,4 @@ export const submittedPathname = pathname =>
 const ttlFor = pathname => (pathname.startsWith(`${SUBMITTED_PREFIX}/`) ? RETENTION_MS : ABANDONED_TTL_MS);
 
 export const expiredPathnames = (blobs, now = Date.now()) =>
-  blobs
-    .filter(blob => now - new Date(blob.uploadedAt).getTime() > ttlFor(blob.pathname))
-    .map(blob => blob.pathname);
+  blobs.filter(blob => now - new Date(blob.uploadedAt).getTime() > ttlFor(blob.pathname)).map(blob => blob.pathname);

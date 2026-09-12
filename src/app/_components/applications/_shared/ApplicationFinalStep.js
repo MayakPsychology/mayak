@@ -27,8 +27,8 @@ export function ApplicationFinalStep() {
 
       <div>
         <label className="flex items-start gap-3 text-p4 text-primary-900 md:text-p3">
-          <input type="checkbox" className="mt-1 accent-primary-500" {...register('consent')} />
-          Я даю згоду на обробку та публікацію даних на платформі &quot;Маяк&quot;
+          <input type="checkbox" className="mt-1 accent-primary-500" {...register('consent')} />Я даю згоду на обробку
+          та публікацію даних на платформі &quot;Маяк&quot;
         </label>
         <p className="ml-7 mt-2 text-p4 text-gray-800">
           Завантажені документи зберігаються у захищеному сховищі до 90 днів і не публікуються на сайті.

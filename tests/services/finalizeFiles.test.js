@@ -10,6 +10,10 @@ vi.mock('@sentry/nextjs', () => sentry);
 
 const { finalizeFiles } = await import('@/services/uploads/finalizeFiles');
 
+const SUBMITTED_PATH = 'submitted/educationFiles/diploma.pdf';
+const SUBMITTED_URL = `https://store.blob.vercel-storage.com/${SUBMITTED_PATH}`;
+const renamed = () => ({ url: SUBMITTED_URL, pathname: SUBMITTED_PATH });
+
 const file = () => ({
   url: 'https://store.blob.vercel-storage.com/applications/educationFiles/diploma.pdf',
   pathname: 'applications/educationFiles/diploma.pdf',
@@ -25,14 +29,11 @@ describe('finalizeFiles', () => {
   });
 
   it('moves a submitted document out of the upload prefix and signs the link', async () => {
-    blob.rename.mockResolvedValue({
-      url: 'https://store.blob.vercel-storage.com/submitted/educationFiles/diploma.pdf',
-      pathname: 'submitted/educationFiles/diploma.pdf',
-    });
+    blob.rename.mockResolvedValue(renamed());
 
     const [result] = (await finalizeFiles({ educationFiles: [file()] })).educationFiles;
 
-    expect(result.pathname).toBe('submitted/educationFiles/diploma.pdf');
+    expect(result.pathname).toBe(SUBMITTED_PATH);
     expect(result.url).toBe('https://signed.example/diploma.pdf');
     expect(sentry.captureException).not.toHaveBeenCalled();
   });
@@ -48,6 +49,19 @@ describe('finalizeFiles', () => {
     expect(context.tags.scope).toBe('application-upload-retention');
     expect(context.extra.pathname).toBe('applications/educationFiles/diploma.pdf');
     expect(result.name).toBe('diploma.pdf');
+  });
+
+  it('reports a failed presign instead of swallowing it', async () => {
+    blob.rename.mockResolvedValue(renamed());
+    blob.presignUrl.mockRejectedValue(new Error('signing refused'));
+
+    const [result] = (await finalizeFiles({ educationFiles: [file()] })).educationFiles;
+
+    expect(sentry.captureException).toHaveBeenCalledOnce();
+    const [error, context] = sentry.captureException.mock.calls[0];
+    expect(error.message).toBe('signing refused');
+    expect(context.tags.scope).toBe('application-upload-link');
+    expect(result.pathname).toBe(SUBMITTED_PATH);
   });
 
   it('still sends the application when the whole store is down', async () => {

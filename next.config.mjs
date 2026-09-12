@@ -27,17 +27,18 @@ const nextConfig = {
   },
   // Render SVG icons with @svgr/webpack
   webpack(config) {
-    // the blob client pulls in undici for Node; bundled code uses native fetch, and undici's
-    // private-field syntax is not parseable by the webpack version Next 14.1 ships
-    config.resolve.alias = { ...config.resolve.alias, undici: false };
-
     config.module.rules.push({
       test: /\.svg$/,
       use: ['@svgr/webpack'],
       exclude: [resolve(__dirname, 'src/app/icon.svg'), resolve(__dirname, 'src/app/opengraph-image.png')],
     });
 
-    return config;
+    // the blob client pulls in undici for Node; bundled code uses native fetch, and undici's
+    // private-field syntax is not parseable by the webpack version Next 14.1 ships
+    return {
+      ...config,
+      resolve: { ...config.resolve, alias: { ...config.resolve.alias, undici: false } },
+    };
   },
 };
 

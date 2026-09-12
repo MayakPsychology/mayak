@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  ABANDONED_TTL_MS,
-  RETENTION_MS,
-  expiredPathnames,
-  submittedPathname,
-} from '@/lib/uploads';
+import { ABANDONED_TTL_MS, RETENTION_MS, expiredPathnames, submittedPathname } from '@/lib/uploads';
 
 const NOW = new Date('2026-09-12T03:00:00.000Z').getTime();
 const agoMs = ms => new Date(NOW - ms);

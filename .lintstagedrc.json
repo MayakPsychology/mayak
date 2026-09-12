@@ -1,5 +1,5 @@
 {
-  "*.js": "eslint --ext .js,.mjs",
+  "*.{js,mjs}": "eslint --ext .js,.mjs",
   "*.{scss,md,json,prisma}": "prettier --check",
   "prisma/{schema.prisma,migrations/**}": "node .husky/check-migrations.js"
 }
