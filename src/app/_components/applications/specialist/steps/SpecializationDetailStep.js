@@ -1,7 +1,21 @@
 'use client';
 
 import PropTypes from 'prop-types';
+import { FileUploadField } from '../../_shared/fields';
 import { SpecializationAdditionalInfo, SpecializationMethods } from '../field-groups';
+
+const SUPPORTING_FILES_HINTS = [
+  { key: 'supporting-max', text: 'максимум - 10 шт.;' },
+  { key: 'supporting-kind', text: 'це можуть бути сертифікати, дипломи тощо;' },
+  {
+    key: 'supporting-not-published',
+    text: (
+      <>
+        фото Ваших документів <strong>НЕ</strong> будуть висвітлені на сайті.
+      </>
+    ),
+  },
+];
 
 /** One slide per speciality ticked on step 4, as the mocks draw it. */
 export function SpecializationDetailStep({ specialization, specializationId, index, specializationMethods }) {
@@ -21,6 +35,12 @@ export function SpecializationDetailStep({ specialization, specializationId, ind
         index={index}
       />
       <SpecializationAdditionalInfo specializationName={specialization} index={index} />
+      <FileUploadField
+        name="supportingFiles"
+        label="За наявності, надайте основні підтверджуючі документи до попередніх 3 відкритих питань"
+        isRequired
+        hints={SUPPORTING_FILES_HINTS}
+      />
     </fieldset>
   );
 }

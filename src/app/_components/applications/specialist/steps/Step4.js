@@ -47,19 +47,6 @@ const EDUCATION_FILES_HINTS = [
   },
 ];
 
-const SUPPORTING_FILES_HINTS = [
-  { key: 'supporting-max', text: 'максимум - 10 шт.;' },
-  { key: 'supporting-kind', text: 'це можуть бути сертифікати, дипломи тощо;' },
-  {
-    key: 'supporting-not-published',
-    text: (
-      <>
-        фото Ваших документів <strong>НЕ</strong> будуть висвітлені на сайті.
-      </>
-    ),
-  },
-];
-
 export function Step4({ specializations }) {
   return (
     <fieldset className="flex w-full flex-col gap-10">
@@ -80,12 +67,6 @@ export function Step4({ specializations }) {
         label="Надайте підтверджуючий документ про вищу освіту, який засвідчує Вашу спеціальність"
         isRequired
         hints={EDUCATION_FILES_HINTS}
-      />
-      <FileUploadField
-        name="supportingFiles"
-        label="За наявності, надайте основні підтверджуючі документи до попередніх 3 відкритих питань"
-        isRequired
-        hints={SUPPORTING_FILES_HINTS}
       />
       <SpecializationsGroup specializations={specializations} />
     </fieldset>

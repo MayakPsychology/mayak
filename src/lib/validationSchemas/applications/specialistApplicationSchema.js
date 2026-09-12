@@ -68,7 +68,6 @@ export const specialistApplicationStep3Schema = z.object({ clients: zClientsSche
 export const specialistApplicationStep4Schema = z.object({
   education: string('Освіта').min(10).max(5000).zod,
   educationFiles: zFilesField,
-  supportingFiles: zFilesField,
   specializations: array('Спеціалізації', string('Спеціалізація').zod, {
     min: 1,
     message: 'Потрібно обрати щонайменше 1 спеціалізацію',
@@ -77,6 +76,7 @@ export const specialistApplicationStep4Schema = z.object({
 
 // Validated on the per-speciality slides that follow step 4.
 export const specializationDetailsSchema = z.object({
+  supportingFiles: zFilesField,
   specializationMethods: array('Методи спеціалізації', string('Метод спеціалізації').zod).zod,
   specializationAdditionalInfo: array('Додаткова інформація', zSpecializationAdditionalInfoSchema).zod,
 });
