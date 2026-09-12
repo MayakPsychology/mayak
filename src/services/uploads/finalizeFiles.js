@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { issueSignedToken, presignUrl, rename } from '@vercel/blob';
 import { LINK_TTL_MS, submittedPathname } from '@/lib/uploads';
 
@@ -11,7 +12,14 @@ async function keep(file) {
 
     const moved = await rename(file.pathname, target, { access: 'private' });
     return { ...file, url: moved.url, pathname: moved.pathname };
-  } catch {
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { scope: 'application-upload-retention' },
+      extra: {
+        pathname: file.pathname,
+        consequence: 'document stays under the upload prefix and the 24h cleanup will delete it',
+      },
+    });
     return file;
   }
 }
