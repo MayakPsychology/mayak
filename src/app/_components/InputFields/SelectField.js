@@ -27,7 +27,7 @@ export const SelectField = forwardRef(
     const absoluteError = absolute ? 'absolute top-[48px] transition-transform' : '';
     const absoluteLabel = absolute ? 'absolute bottom-[49px]' : '';
     return (
-      <div className={cn(`relative`, variant.mainContainer.base)}>
+      <div className={cn(`relative`, variant.mainContainer.base, error && absolute && 'pb-5')}>
         {error && <p className={cn(absoluteError, variant.errorParagraph.base)}>{error}</p>}
         <div
           className={cn(
@@ -64,7 +64,6 @@ export const SelectField = forwardRef(
         <label
           className={cn(
             variant.label.base,
-            variant.label.stateful,
             absoluteLabel,
             error && variant.label.error,
             value ? 'block' : 'hidden',

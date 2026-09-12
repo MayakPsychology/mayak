@@ -1,4 +1,5 @@
 export * from './ApplicationClose';
+export * from './ApplicationFinalStep';
 export * from './ApplicationSuccess';
 export * from './ApplicationWizard';
 export * from './getArrayError';

@@ -20,7 +20,7 @@ export default function EventApplicationTemplate({ data }) {
       <Field label="Ціна" value={data.price} />
       <Field label="Опис події" value={data.notes} />
       <Field label="Посилання" value={data.additionalLink?.link ?? data.link} />
-      <Field label="Хто заповнив форму" value={data.submitterContact} />
+      <Field label="Коментар до форми" value={data.feedback} />
     </Layout>
   );
 }

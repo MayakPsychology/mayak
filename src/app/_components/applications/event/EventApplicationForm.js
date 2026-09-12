@@ -10,10 +10,10 @@ import { EVENT_FORMAT_OPTIONS, EVENT_PRICE_OPTIONS } from '@/app/config/applicat
 import {
   eventApplicationSchema,
   eventApplicationStepSchema,
-  eventSubmitterContactSchema,
+  eventFinalStepSchema,
 } from '@/lib/validationSchemas/applications/eventApplicationSchema';
-import { ApplicationWizard, SECTION_NOTE, StepHeader, SubmitterContactStep } from '../_shared';
-import { FieldHeading, FileUploadField, RadioGroupField, TextAreaField } from '../_shared/fields';
+import { ApplicationFinalStep, ApplicationWizard, SECTION_NOTE, StepHeader } from '../_shared';
+import { FieldHeading, RadioGroupField, TextAreaField } from '../_shared/fields';
 import { EventDateTimeFields } from './EventDateTimeFields';
 
 export function EventApplicationForm() {
@@ -110,18 +110,12 @@ export function EventApplicationForm() {
         placeholder="Соціальні мережі"
         maxLength={500}
       />
-
-      <FileUploadField
-        name="eventFiles"
-        label="Додайте афішу або інші матеріали події"
-        hints={['Файли надходять лише на пошту адміністрації.']}
-      />
     </fieldset>
   );
 
   const steps = [
     { id: 'event', component: eventStep, schema: eventApplicationStepSchema },
-    { id: 'submitter', component: <SubmitterContactStep />, schema: eventSubmitterContactSchema },
+    { id: 'final', component: <ApplicationFinalStep />, schema: eventFinalStepSchema },
   ];
 
   return (

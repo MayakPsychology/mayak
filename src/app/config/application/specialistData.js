@@ -10,6 +10,7 @@ export const specialistDefaultValues = {
   experience: '',
   education: '',
   educationFiles: [],
+  supportingFiles: [],
   formatOfWork: null,
   phone: null,
   email: null,
@@ -41,7 +42,8 @@ export const specialistDefaultValues = {
   specializationMethods: [],
   specializationAdditionalInfo: [],
   supportFocuses: [],
-  submitterContact: '',
+  feedback: '',
+  consent: false,
 };
 
 export const additionalInfoDefaultValue = {

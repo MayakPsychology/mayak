@@ -31,7 +31,7 @@ export const TextInputField = forwardRef(
     const absoluteLabel = absolute ? 'absolute bottom-[49px]' : '';
 
     return (
-      <div className={cn(`relative`, variant.mainContainer.base)}>
+      <div className={cn(`relative`, variant.mainContainer.base, error && absolute && 'pb-5')}>
         {error && <p className={cn(absoluteError, variant.errorParagraph.base)}>{error}</p>}
         <div
           className={cn(

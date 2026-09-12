@@ -8,6 +8,6 @@ export const eventDefaultValues = {
   address: '',
   notes: '',
   link: '',
-  eventFiles: [],
-  submitterContact: '',
+  feedback: '',
+  consent: false,
 };

@@ -8,7 +8,7 @@ import {
   zCreateAddressSchema,
   zDiscountsShape,
   zSocialLinkSchema,
-  zSubmitterContactShape,
+  zFinalStepShape,
   zSupportFocusesField,
   zWorkDaySchema,
   zFilesField,
@@ -68,6 +68,7 @@ export const specialistApplicationStep3Schema = z.object({ clients: zClientsSche
 export const specialistApplicationStep4Schema = z.object({
   education: string('Освіта').min(10).max(5000).zod,
   educationFiles: zFilesField,
+  supportingFiles: zFilesField,
   specializations: array('Спеціалізації', string('Спеціалізація').zod, {
     min: 1,
     message: 'Потрібно обрати щонайменше 1 спеціалізацію',
@@ -91,7 +92,7 @@ const specialistApplicationStep5Shape = z.object({
 
 export const specialistApplicationStep5Schema = specialistApplicationStep5Shape.superRefine(refineDiscounts);
 
-export const submitterContactSchema = z.object(zSubmitterContactShape);
+export const finalStepSchema = z.object(zFinalStepShape);
 
 export const specialistApplicationFullSchema = specialistApplicationStep1Schema
   .merge(specialistApplicationStep2Shape)
@@ -99,6 +100,6 @@ export const specialistApplicationFullSchema = specialistApplicationStep1Schema
   .merge(specialistApplicationStep4Schema)
   .merge(specializationDetailsSchema)
   .merge(specialistApplicationStep5Shape)
-  .merge(submitterContactSchema)
+  .merge(finalStepSchema)
   .superRefine(requireAddressWhenOffline)
   .superRefine(refineDiscounts);

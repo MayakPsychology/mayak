@@ -170,12 +170,17 @@ describe('seeded "Інше" options', () => {
 });
 
 describe('closing slides added after QA review', () => {
-  it('requires the contact details of whoever filled the form in', () => {
-    const { submitterContact, ...withoutContact } = specialistApplication;
-    expect(specialistApplicationFullSchema.safeParse(withoutContact).success).toBe(false);
-    expect(eventApplicationSchema.safeParse({ ...eventApplication, submitterContact: undefined }).success).toBe(false);
+  it('makes specialist and event end on the consent checkbox', () => {
+    const { consent, ...withoutConsent } = specialistApplication;
+    expect(specialistApplicationFullSchema.safeParse(withoutConsent).success).toBe(false);
+    expect(specialistApplicationFullSchema.safeParse({ ...specialistApplication, consent: false }).success).toBe(false);
+    expect(eventApplicationSchema.safeParse({ ...eventApplication, consent: false }).success).toBe(false);
+  });
+
+  it('keeps the contact block on organizations only', () => {
     const noContact = { ...organizationApplication, submitterContact: '' };
     expect(organizationApplicationFullSchema.safeParse(noContact).success).toBe(false);
+    expect(organizationApplicationFullSchema.safeParse(organizationApplication).success).toBe(true);
   });
 
   it('asks what the discounts are once "інше" is picked', () => {

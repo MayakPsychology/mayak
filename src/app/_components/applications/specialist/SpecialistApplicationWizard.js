@@ -13,9 +13,9 @@ import {
   specialistApplicationStep4Schema as step4Schema,
   specialistApplicationStep5Schema as step5Schema,
   specializationDetailsSchema,
-  submitterContactSchema,
+  finalStepSchema,
 } from '@/lib/validationSchemas/applications/specialistApplicationSchema';
-import { ApplicationWizard, SubmitterContactStep } from '../_shared';
+import { ApplicationFinalStep, ApplicationWizard } from '../_shared';
 import { SpecializationDetailStep, Step1, Step2, Step3, Step4, Step5 } from './steps';
 
 export function SpecialistApplicationWizard({ dicts }) {
@@ -50,7 +50,7 @@ export function SpecialistApplicationWizard({ dicts }) {
       schema: specializationDetailsSchema,
     })),
     { id: 'step5', progress: 4, component: <Step5 therapies={therapies} />, schema: step5Schema },
-    { id: 'submitter', progress: 4, isFilled: true, component: <SubmitterContactStep />, schema: submitterContactSchema },
+    { id: 'final', progress: 4, isFilled: true, component: <ApplicationFinalStep />, schema: finalStepSchema },
   ];
 
   return (

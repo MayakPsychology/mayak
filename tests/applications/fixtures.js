@@ -85,7 +85,8 @@ export const specialistApplication = {
   discounts: 'no',
   discountsOther: null,
   supportFocuses,
-  submitterContact: 'Іван Петренко, психолог, ivan@example.com',
+  feedback: 'Дякую за платформу!',
+  consent: true,
 };
 
 export const organizationApplication = {
@@ -133,5 +134,6 @@ export const eventApplication = {
   address: 'вул. Тестова 1',
   notes: 'Опис події для перевірки валідації схеми.',
   link: 'https://example.com/event',
-  submitterContact: 'Марія Іванчук, організаторка, maria@example.com',
+  feedback: '',
+  consent: true,
 };

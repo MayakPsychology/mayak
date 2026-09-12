@@ -51,6 +51,5 @@ export const organizationDefaultValues = {
   supervisionPolicyOther: '',
   ethicalControl: '',
   feedbackCollection: '',
-  documentFiles: [],
   submitterContact: '',
 };

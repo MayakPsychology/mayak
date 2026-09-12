@@ -93,7 +93,7 @@ export default function SpecialistApplicationTemplate({ data }) {
       </Section>
 
       <Section title="Хто заповнив форму">
-        <Field label="Контактні дані" value={data.submitterContact} />
+        <Field label="Коментар до форми" value={data.feedback} />
       </Section>
     </Layout>
   );

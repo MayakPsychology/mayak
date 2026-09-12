@@ -132,6 +132,14 @@ export const zSubmitterContactShape = {
   submitterContact: string('Контактні дані особи, яка заповнює форму').min(5).max(500).zod,
 };
 
+export const zFinalStepShape = {
+  feedback: string('Ваша відповідь').max(2000).optional().zod,
+  consent: z.literal(true, {
+    required_error: 'Потрібна згода на обробку даних',
+    invalid_type_error: 'Потрібна згода на обробку даних',
+  }),
+};
+
 export const zFilesField = z
   .array(z.any())
   .max(10, 'Не більше 10 файлів')

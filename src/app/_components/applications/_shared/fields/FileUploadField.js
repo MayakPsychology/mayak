@@ -9,7 +9,8 @@ import { FieldHints } from './FieldHint';
 
 const errorClass = 'ml-4 mt-[4px] text-[12px] font-semibold text-system-error lg:text-p4';
 
-const SIZE_HINT = 'До 4 МБ разом, не більше 10 файлів. Формати: PDF, JPG, PNG, WEBP, DOC.';
+const SIZE_HINT =
+  'Завантажте щонайбільше 10 файлів підтримуваного типу (PDF, document або image). Сумарний розмір файлів не може перевищувати 4 МБ.';
 
 export function FileUploadField({ name, label, hints, isRequired = false }) {
   const {

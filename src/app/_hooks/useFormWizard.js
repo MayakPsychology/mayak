@@ -26,5 +26,7 @@ export const useFormWizard = (steps, methods) => {
 
   const back = useCallback(() => setIndex(prev => Math.max(prev - 1, 0)), []);
 
-  return { index: safeIndex, total: steps.length, next, back, currentStep, isFirst, isLast };
+  const goTo = useCallback(target => setIndex(Math.max(target, 0)), []);
+
+  return { index: safeIndex, total: steps.length, next, back, goTo, currentStep, isFirst, isLast };
 };

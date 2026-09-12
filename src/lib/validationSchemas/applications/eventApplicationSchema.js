@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { EventFormat, EventPriceFormat } from '@prisma/client';
 import { string, number } from '@/lib/validationSchemas/utils';
-import { zFilesField, zSubmitterContactShape } from './common';
+import { zFinalStepShape } from './common';
 
 const eventShape = z.object({
   title: string('Назва події').min(2).max(128).zod,
@@ -34,7 +34,6 @@ const eventShape = z.object({
   address: string('Місце проведення').min(2).max(128).optional().zod,
   notes: string('Опис події').min(10).max(350).zod,
   link: string('Посилання').url().zod,
-  eventFiles: zFilesField,
 });
 
 const refineEvent = (data, ctx) => {
@@ -65,6 +64,6 @@ const refineEvent = (data, ctx) => {
 
 export const eventApplicationStepSchema = eventShape.superRefine(refineEvent);
 
-export const eventSubmitterContactSchema = z.object(zSubmitterContactShape);
+export const eventFinalStepSchema = z.object(zFinalStepShape);
 
-export const eventApplicationSchema = eventShape.merge(eventSubmitterContactSchema).superRefine(refineEvent);
+export const eventApplicationSchema = eventShape.merge(eventFinalStepSchema).superRefine(refineEvent);
