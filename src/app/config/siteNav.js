@@ -1,3 +1,5 @@
+import ROUTES from './routes';
+
 const siteNav = {
   mainNav: [
     {
@@ -6,8 +8,9 @@ const siteNav = {
     },
   ],
   innerLinks: [
-    { title: 'Пошук допомоги', href: '/specialist' },
-    { title: 'Події', href: '/event' },
+    { title: 'Стати партнером', href: ROUTES.ADD_NEW, badge: 'new' },
+    { title: 'Пошук допомоги', href: ROUTES.SPECIALIST },
+    { title: 'Події', href: ROUTES.EVENTS },
   ],
 };
 

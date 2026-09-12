@@ -6,6 +6,7 @@ import { ActivationForm } from '@admin/components/ServiceProvider/ActivationForm
 import { ServicesForm } from '@admin/components/ServiceProvider/ServicesForm';
 import { AddressesForm } from '@admin/components/ServiceProvider/AddressesForm';
 import { DescriptionEdit } from '@admin/components/ServiceProvider/DescriptionEdit';
+import { LongTextEdit } from '@admin/components/ServiceProvider/LongTextEdit';
 import { WorkTimeForm } from '@admin/components/ServiceProvider/WorkTimeForm';
 import { ContactsList } from '@admin/components/ContactsList';
 import { SocialLinks } from '@admin/components/ServiceProvider/SocialLinks';
@@ -21,6 +22,7 @@ export function OrganizationEdit() {
         <AddressesForm label="Адреси надання послуг" type="edit" />
         <WorkTimeForm />
         <ServicesForm label="Послуги" />
+        <LongTextEdit source="experience" label="Досвід" />
         <DescriptionEdit />
         <ContactsList />
         <SocialLinks />

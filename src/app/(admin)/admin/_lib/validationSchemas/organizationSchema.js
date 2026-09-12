@@ -16,6 +16,9 @@ import { MESSAGES, zString } from './common';
 
 const zOrganizationSchema = serviceProviderCore.extend({
   yearsOnMarket: zInteger,
+  yearsOfExperience: zInteger,
+  // free text from the application form; legacy rows have none, so it stays optional here
+  experience: zString.nullish(),
   description: zString,
 });
 

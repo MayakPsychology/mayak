@@ -15,6 +15,11 @@ export const districtFilterPropType = PropTypes.shape({
   id: PropTypes.string.isRequired,
   name: PropTypes.string,
 });
+export const cityFilterPropType = PropTypes.shape({
+  id: PropTypes.string.isRequired,
+  name: PropTypes.string,
+  districts: PropTypes.arrayOf(districtFilterPropType),
+});
 export const specializationFilterPropType = PropTypes.shape({
   id: PropTypes.string.isRequired,
   name: PropTypes.string,
@@ -25,7 +30,7 @@ export const categoryFilterPropType = PropTypes.shape({
 });
 export const filterDataPropTypes = PropTypes.shape({
   therapies: PropTypes.arrayOf(therapyFilterPropType),
-  districts: PropTypes.arrayOf(districtFilterPropType),
+  cities: PropTypes.arrayOf(cityFilterPropType),
   categories: PropTypes.arrayOf(categoryFilterPropType),
   specializations: PropTypes.arrayOf(specializationFilterPropType),
 });

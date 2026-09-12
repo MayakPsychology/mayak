@@ -21,6 +21,14 @@ export function DetailsEditOrg({ className }) {
           validate={requiredIfActive}
           min="0"
         />
+        <NumberInput
+          name="yearsOfExperience"
+          source="yearsOfExperience"
+          label="Стаж"
+          type="number"
+          validate={requiredIfActive}
+          min="0"
+        />
         <FormatOfWorkSelect label="Формат роботи" validate={requiredIfActive} className="flex-1" />
       </div>
     </FormFieldWrapper>

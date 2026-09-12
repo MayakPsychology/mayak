@@ -11,6 +11,7 @@ import FilterCategorySection from '@components/Specialists/Filters/FilterCategor
 import FilterGenderSection from '@components/Specialists/Filters/FilterGenderSection';
 import FilterFormatSection from '@components/Specialists/Filters/FilterFormatSection';
 import FilterPriceSection from '@components/Specialists/Filters/FilterPriceSection';
+import FilterCitySection from '@components/Specialists/Filters/FilterCitySection';
 import FilterDistrictSection from '@components/Specialists/Filters/FilterDistrictSection';
 import FilterTherapiesSection from '@components/Specialists/Filters/FilterTherapiesSection';
 import ScrollableList from '@components/Specialists/Filters/ScrollableList';
@@ -132,7 +133,20 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
     return format.toString() === specialistFormatEnum.ONLINE;
   }, [filters]);
 
-  const hasDistrictFilter = useMemo(() => isOrganization || !isOnlyOnlineFormat, [isOrganization, isOnlyOnlineFormat]);
+  const hasCityFilter = useMemo(() => isOrganization || !isOnlyOnlineFormat, [isOrganization, isOnlyOnlineFormat]);
+
+  const selectedCityIds = filters.getAll(specialistFiltersConfig.city.filterKey);
+  // districts only make sense once a city is chosen, and only for cities that have them
+  const districtsOfSelectedCities = (filterData.cities ?? [])
+    .filter(city => selectedCityIds.includes(city.id))
+    .flatMap(city => city.districts ?? []);
+  const hasDistrictFilter = hasCityFilter && districtsOfSelectedCities.length > 0;
+
+  useEffect(() => {
+    if (!hasCityFilter) {
+      setFilter(specialistFiltersConfig.city.filterKey, null);
+    }
+  }, [hasCityFilter, setFilter]);
 
   useEffect(() => {
     if (!hasDistrictFilter) {
@@ -178,10 +192,18 @@ export default function AllFiltersModalContent({ onClose, filterData }) {
             appendFilter={appendFilter}
           />
         )}
+        {hasCityFilter && (
+          <FilterCitySection
+            className="px-4 md:px-0"
+            cities={filterData.cities}
+            filters={filters}
+            appendFilter={appendFilter}
+          />
+        )}
         {hasDistrictFilter && (
           <FilterDistrictSection
             className="px-4 md:px-0"
-            districts={filterData.districts}
+            districts={districtsOfSelectedCities}
             filters={filters}
             appendFilter={appendFilter}
           />

@@ -67,6 +67,13 @@ export default function AdminPage() {
         options={{ label: 'Заходи' }}
       />
       <Resource
+        name={RESOURCES.city}
+        list={ListGuesser}
+        edit={EditGuesser}
+        show={ShowGuesser}
+        options={{ label: 'Міста' }}
+      />
+      <Resource
         name={RESOURCES.district}
         list={ListGuesser}
         edit={EditGuesser}

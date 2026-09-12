@@ -1,0 +1,19 @@
+name: tests
+
+# github action which runs the test suite on each commit to any branch
+
+on:
+  push:
+    branches:
+      - '*'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+      - run: npm install
+      - run: npm test

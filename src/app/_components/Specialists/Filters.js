@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  CityFilter,
   DistrictFilter,
   FormatFilter,
   PriceFilter,
@@ -18,7 +19,8 @@ export function Filters({ filterData, searchParams }) {
         <AllFilters filterData={filterData} searchParams={searchParams} />
         <TypeFilter options={filterData.therapies} searchParams={searchParams} />
         <SpecializationFilter options={filterData.specializations} searchParams={searchParams} />
-        <DistrictFilter options={filterData.districts || []} searchParams={searchParams} />
+        <CityFilter searchParams={searchParams} />
+        <DistrictFilter searchParams={searchParams} />
         <PriceFilter searchParams={searchParams} />
         <FormatFilter searchParams={searchParams} />
       </div>

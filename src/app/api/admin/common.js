@@ -27,6 +27,7 @@ export const MODEL_INCLUDES = {
         id: true,
         nameOfClinic: true,
         fullAddress: true,
+        city: { select: { id: true, name: true } },
         district: { select: { id: true, name: true } },
         latitude: true,
         longitude: true,
@@ -60,6 +61,7 @@ export const MODEL_INCLUDES = {
         fullAddress: true,
         latitude: true,
         longitude: true,
+        city: { select: { id: true, name: true } },
         district: { select: { id: true, name: true } },
         isPrimary: true,
       },
@@ -117,7 +119,6 @@ export function transformServiceProvider(instance, modelName) {
       .filter(method => method.specialization === 'psychotherapist')
       .map(m => m.id);
 
-    // eslint-disable-next-line no-param-reassign
     instance.specializationMethodsIds = {
       psychologist: psychologistMethods.length ? psychologistMethods : [],
       psychotherapist: psychotherapistMethods.length ? psychotherapistMethods : [],
@@ -125,7 +126,6 @@ export function transformServiceProvider(instance, modelName) {
   }
 
   if (instance?.workTime?.length) {
-    // eslint-disable-next-line no-param-reassign
     instance.workTime = transformWorkTime(instance.workTime, WEEKDAYS_TRANSLATION);
   }
 
@@ -137,7 +137,8 @@ export function transformServiceProvider(instance, modelName) {
 
   instance.addresses = instance?.addresses?.map(address => ({
     ...address,
-    districtId: address.district.id,
+    cityId: address.city?.id,
+    districtId: address.district?.id ?? null,
   }));
   instance.addressesIds = instance.addresses.map(address => address.id);
 }

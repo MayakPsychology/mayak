@@ -37,11 +37,18 @@ function transformAddresses({ addresses, type = 'create' }) {
   return (
     addresses
       ?.filter(address => !address.id)
-      .map(({ district, districtId, ...rest }) => ({
-        ...rest,
-        district: { connect: { id: type === 'create' ? district : districtId } },
-        districtId: undefined,
-      })) ?? []
+      .map(({ city, cityId, district, districtId, ...rest }) => {
+        const selectedCity = type === 'create' ? city : cityId;
+        const selectedDistrict = type === 'create' ? district : districtId;
+        return {
+          ...rest,
+          city: { connect: { id: selectedCity } },
+          cityId: undefined,
+          // the district is optional — cities without one submit nothing here
+          district: selectedDistrict ? { connect: { id: selectedDistrict } } : undefined,
+          districtId: undefined,
+        };
+      }) ?? []
   );
 }
 

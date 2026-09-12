@@ -14,6 +14,7 @@ export const eventFilters = [
       { id: undefined, name: 'Обидва' },
       { id: EventFormat.OFFLINE, name: 'Офлайн' },
       { id: EventFormat.ONLINE, name: 'Онлайн' },
+      { id: EventFormat.ONLINE_OFFLINE, name: 'Офлайн + трансляція' },
     ]}
     alwaysOn
   />,

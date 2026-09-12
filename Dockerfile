@@ -6,6 +6,8 @@ COPY package*.json ./
 
 COPY prisma ./prisma/ 
 
+ENV VERCEL=1
+
 RUN npm install
 
 COPY . .

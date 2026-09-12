@@ -9,6 +9,9 @@ const nextConfig = {
   sassOptions: {
     includePaths: [join(__dirname, 'styles')],
   },
+  experimental: {
+    serverComponentsExternalPackages: ['@vercel/blob'],
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
