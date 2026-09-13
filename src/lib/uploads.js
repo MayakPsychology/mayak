@@ -41,7 +41,16 @@ export const submittedPathname = pathname =>
     ? `${SUBMITTED_PREFIX}/${pathname.slice(UPLOAD_PREFIX.length + 1)}`
     : pathname;
 
-const ttlFor = pathname => (pathname.startsWith(`${SUBMITTED_PREFIX}/`) ? RETENTION_MS : ABANDONED_TTL_MS);
+const ttlFor = pathname => {
+  if (pathname.startsWith(`${SUBMITTED_PREFIX}/`)) return RETENTION_MS;
+  if (pathname.startsWith(`${UPLOAD_PREFIX}/`)) return ABANDONED_TTL_MS;
+  return null;
+};
 
 export const expiredPathnames = (blobs, now = Date.now()) =>
-  blobs.filter(blob => now - new Date(blob.uploadedAt).getTime() > ttlFor(blob.pathname)).map(blob => blob.pathname);
+  blobs
+    .filter(blob => {
+      const ttl = ttlFor(blob.pathname);
+      return ttl !== null && now - new Date(blob.uploadedAt).getTime() > ttl;
+    })
+    .map(blob => blob.pathname);

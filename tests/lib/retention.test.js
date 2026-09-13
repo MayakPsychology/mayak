@@ -32,6 +32,14 @@ describe('expiredPathnames', () => {
     expect(expiredPathnames(blobs, NOW)).toEqual(['submitted/old.pdf']);
   });
 
+  it('leaves blobs outside its own prefixes alone, however old', () => {
+    const blobs = [
+      { pathname: 'avatars/someone.png', uploadedAt: agoMs(RETENTION_MS * 4) },
+      { pathname: 'exports/report.csv', uploadedAt: agoMs(RETENTION_MS * 4) },
+    ];
+    expect(expiredPathnames(blobs, NOW)).toEqual([]);
+  });
+
   it('never applies the one-day rule to a submitted document', () => {
     const blobs = [{ pathname: 'submitted/yesterday.pdf', uploadedAt: agoMs(ABANDONED_TTL_MS + 1000) }];
     expect(expiredPathnames(blobs, NOW)).toEqual([]);
