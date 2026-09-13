@@ -17,6 +17,7 @@ export function WizardNavigation({ isLast, isPending, onClear, onNext }) {
       </PillButton>
       {isLast ? (
         <PillButton
+          key="submit"
           type="submit"
           variant="filled"
           colorVariant="blue"
@@ -27,6 +28,7 @@ export function WizardNavigation({ isLast, isPending, onClear, onNext }) {
         </PillButton>
       ) : (
         <PillButton
+          key="next"
           variant="filled"
           colorVariant="blue"
           aria-label="Перейти до наступного кроку"

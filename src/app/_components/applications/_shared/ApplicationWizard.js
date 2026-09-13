@@ -38,6 +38,15 @@ export function ApplicationWizard({ title, steps, methods, defaultValues, submit
 
   if (isSuccess) return <ApplicationSuccess />;
 
+  const onSubmit = event => {
+    if (!isLast) {
+      event.preventDefault();
+      return;
+    }
+
+    methods.handleSubmit(data => submit(data), onInvalid)(event);
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <h1 className="sr-only">{title}</h1>
@@ -49,11 +58,11 @@ export function ApplicationWizard({ title, steps, methods, defaultValues, submit
         isFilled={Boolean(currentStep?.isFilled)}
       />
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(data => submit(data), onInvalid)} noValidate>
+        <form onSubmit={onSubmit} noValidate>
           {currentStep?.component}
           <WizardNavigation
             isLast={isLast}
-            isPending={isPending}
+            isPending={isPending || methods.formState.isSubmitting}
             onClear={() => methods.reset(defaultValues)}
             onNext={next}
           />
