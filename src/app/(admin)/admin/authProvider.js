@@ -2,6 +2,13 @@ import { getSession, signIn, signOut } from 'next-auth/react';
 import { LOGIN_URL } from '@/lib/consts';
 import { documentPath } from '@/lib/uploads';
 
+const LOGIN_ERRORS = {
+  CredentialsSignin: 'Невірний логін або пароль',
+};
+
+export const loginErrorMessage = result =>
+  (result?.ok ? null : (LOGIN_ERRORS[result?.error] ?? 'Не вдалося увійти. Спробуйте ще раз'));
+
 export const redirectAfterLogin = search => {
   const pathname = new URLSearchParams(search).get('document');
   return pathname ? documentPath(pathname) : null;
@@ -9,10 +16,13 @@ export const redirectAfterLogin = search => {
 
 export const authProvider = {
   login: async credentials => {
-    const result = await signIn('credentials', { redirect: false, ...credentials }, credentials);
-    const target = redirectAfterLogin(window.location.search);
+    const result = await signIn('credentials', { redirect: false, ...credentials }, credentials).catch(() => null);
+    const message = loginErrorMessage(result);
 
-    if (result?.ok && target) window.location.assign(target);
+    if (message) throw new Error(message);
+
+    const target = redirectAfterLogin(window.location.search);
+    if (target) window.location.assign(target);
 
     return result;
   },

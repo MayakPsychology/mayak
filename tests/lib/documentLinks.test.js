@@ -3,7 +3,7 @@ import { documentPath } from '@/lib/uploads';
 
 vi.mock('next-auth/react', () => ({ getSession: vi.fn(), signIn: vi.fn(), signOut: vi.fn() }));
 
-const { redirectAfterLogin } = await import('@/app/(admin)/admin/authProvider');
+const { loginErrorMessage, redirectAfterLogin } = await import('@/app/(admin)/admin/authProvider');
 
 const PATHNAME = 'submitted/educationFiles/диплом №1.pdf';
 
@@ -26,5 +26,19 @@ describe('redirectAfterLogin', () => {
 
   it('cannot be pointed at another site', () => {
     expect(redirectAfterLogin('?document=https://evil.example/steal').startsWith('/api/admin/documents?')).toBe(true);
+  });
+});
+
+describe('loginErrorMessage', () => {
+  it('stays quiet when the sign-in succeeded', () => {
+    expect(loginErrorMessage({ ok: true })).toBeNull();
+  });
+
+  it('names the actual problem for wrong credentials', () => {
+    expect(loginErrorMessage({ ok: false, error: 'CredentialsSignin' })).toBe('Невірний логін або пароль');
+  });
+
+  it('falls back to a generic message when sign-in never answered', () => {
+    expect(loginErrorMessage(null)).toBe('Не вдалося увійти. Спробуйте ще раз');
   });
 });
