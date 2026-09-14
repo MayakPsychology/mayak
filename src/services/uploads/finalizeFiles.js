@@ -1,9 +1,17 @@
 import * as Sentry from '@sentry/nextjs';
-import { issueSignedToken, presignUrl, rename } from '@vercel/blob';
-import { LINK_TTL_MS, submittedPathname } from '@/lib/uploads';
+import { rename } from '@vercel/blob';
+import { submittedPathname } from '@/lib/uploads';
 
 const isUploadedFile = value =>
   Boolean(value) && typeof value === 'object' && typeof value.url === 'string' && typeof value.pathname === 'string';
+
+const siteUrl = () =>
+  process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : 'http://localhost:3000';
+
+export const documentUrl = pathname =>
+  `${siteUrl()}/api/admin/documents?pathname=${encodeURIComponent(pathname)}`;
 
 async function keep(file) {
   try {
@@ -11,7 +19,7 @@ async function keep(file) {
     if (target === file.pathname) return file;
 
     const moved = await rename(file.pathname, target, { access: 'private' });
-    return { ...file, url: moved.url, pathname: moved.pathname };
+    return { ...file, pathname: moved.pathname };
   } catch (error) {
     Sentry.captureException(error, {
       tags: { scope: 'application-upload-retention' },
@@ -24,35 +32,11 @@ async function keep(file) {
   }
 }
 
-async function sign(file) {
-  try {
-    const validUntil = Date.now() + LINK_TTL_MS;
-    const token = await issueSignedToken({ pathname: file.pathname, operations: ['get'], validUntil });
-    const { presignedUrl } = await presignUrl(token, {
-      operation: 'get',
-      pathname: file.pathname,
-      access: 'private',
-      validUntil,
-    });
-
-    return { ...file, url: presignedUrl };
-  } catch (error) {
-    Sentry.captureException(error, {
-      tags: { scope: 'application-upload-link' },
-      extra: {
-        pathname: file.pathname,
-        consequence: 'the email carries an unsigned url that only opens for someone with store access',
-      },
-    });
-    return file;
-  }
-}
-
 export async function finalizeFiles(value) {
   if (Array.isArray(value)) {
     if (value.length && value.every(isUploadedFile)) {
       const kept = await Promise.all(value.map(keep));
-      return Promise.all(kept.map(sign));
+      return kept.map(file => ({ ...file, url: documentUrl(file.pathname) }));
     }
     return Promise.all(value.map(finalizeFiles));
   }
