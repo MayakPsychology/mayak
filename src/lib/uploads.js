@@ -10,6 +10,9 @@ export const TOKEN_TTL_MS = 60 * 1000;
 
 export const VIEW_TTL_MS = 5 * 60 * 1000;
 
+export const documentPath = pathname =>
+  `/api/admin/documents?pathname=${encodeURIComponent(pathname)}`;
+
 export const ALLOWED_UPLOAD_TYPES = [
   'application/pdf',
   'image/jpeg',

@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/nextjs';
 import { rename } from '@vercel/blob';
-import { submittedPathname } from '@/lib/uploads';
+import { documentPath, submittedPathname } from '@/lib/uploads';
 
 const isUploadedFile = value =>
   Boolean(value) && typeof value === 'object' && typeof value.url === 'string' && typeof value.pathname === 'string';
@@ -10,8 +10,7 @@ const siteUrl = () =>
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : 'http://localhost:3000';
 
-export const documentUrl = pathname =>
-  `${siteUrl()}/api/admin/documents?pathname=${encodeURIComponent(pathname)}`;
+export const documentUrl = pathname => `${siteUrl()}${documentPath(pathname)}`;
 
 async function keep(file) {
   try {

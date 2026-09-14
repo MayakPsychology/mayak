@@ -10,9 +10,13 @@ const pathnameSchema = z.string().startsWith(`${SUBMITTED_PREFIX}/`);
 
 export const GET = auth(
   withErrorHandler(async request => {
-    if (!request.auth) return NextResponse.redirect(new URL(LOGIN_URL, request.nextUrl.origin));
-
     const pathname = pathnameSchema.parse(request.nextUrl.searchParams.get('pathname'));
+
+    if (!request.auth) {
+      const login = new URL(LOGIN_URL, request.nextUrl.origin);
+      login.searchParams.set('document', pathname);
+      return NextResponse.redirect(login);
+    }
 
     return NextResponse.redirect(await signDocumentUrl(pathname));
   }),
