@@ -6,30 +6,28 @@ import { MapLinkButton } from '@components/MapLinkButton';
 import { unstable_cache as unstableCache } from 'next/cache';
 import { prisma } from '@/lib/db';
 
-const getCachedDistricts = unstableCache(
+const getCachedCities = unstableCache(
   async () =>
-    prisma.district.findMany({
+    prisma.city.findMany({
       select: { id: true, name: true },
       orderBy: { name: 'asc' },
     }),
-  ['districts-list'],
-  { revalidate: 3600, tags: ['districts'] },
+  ['cities-list'],
+  { revalidate: 3600, tags: ['cities'] },
 );
 
-export async function DistrictSearchSection({ className }) {
-  const districtsList = await getCachedDistricts();
-  const optionsList = districtsList
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .reduce((acc, district) => [...acc, district], [{ id: 'all-districts', name: 'Усі' }]);
+export async function CitySearchSection({ className }) {
+  const cities = await getCachedCities();
+  const optionsList = [{ id: 'all-cities', name: 'Усі' }, ...cities];
 
   return (
     <section className={cn('px-4 lg:px-[80px]', className)}>
       <div className="mx-auto max-w-[910px]">
         <Heading type="h3" className="text-p4 font-bold uppercase text-primary-600">
-          Райони міста Львова
+          Міста України
         </Heading>
         <div className="lg:*:w-[940px] xl:*:w-[1000px]">
-          <DistrictList list={optionsList} className="mx-auto mt-4" />
+          <DistrictList list={optionsList} paramName="city" className="mx-auto mt-4" />
           <MapLinkButton enableAnimation={false} className="mx-auto my-6 mt-8 hidden max-w-max lg:flex" />
         </div>
       </div>
@@ -37,6 +35,6 @@ export async function DistrictSearchSection({ className }) {
   );
 }
 
-DistrictSearchSection.propTypes = {
+CitySearchSection.propTypes = {
   className: PropTypes.string,
 };

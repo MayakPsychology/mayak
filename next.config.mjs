@@ -9,6 +9,9 @@ const nextConfig = {
   sassOptions: {
     includePaths: [join(__dirname, 'styles')],
   },
+  experimental: {
+    serverComponentsExternalPackages: ['@vercel/blob'],
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -30,7 +33,12 @@ const nextConfig = {
       exclude: [resolve(__dirname, 'src/app/icon.svg'), resolve(__dirname, 'src/app/opengraph-image.png')],
     });
 
-    return config;
+    // the blob client pulls in undici for Node; bundled code uses native fetch, and undici's
+    // private-field syntax is not parseable by the webpack version Next 14.1 ships
+    return {
+      ...config,
+      resolve: { ...config.resolve, alias: { ...config.resolve.alias, undici: false } },
+    };
   },
 };
 

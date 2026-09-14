@@ -1,9 +1,34 @@
 import { Prisma } from '@prisma/client';
 
+// "the provider has at least one address whose <column> is one of <ids>", for both entities
+function addressColumnMatches(column, ids) {
+  return Prisma.sql`
+    (
+      EXISTS (
+        SELECT 1
+        FROM "_AddressToSpecialist" ats
+        JOIN "address" a ON a.id = ats."A"
+        WHERE ats."B" = sp.id
+        AND a.${column} = ANY(ARRAY[${Prisma.join(ids)}]::uuid[])
+      )
+      OR
+      EXISTS (
+        SELECT 1
+        FROM "_AddressToOrganization" ato
+        JOIN "address" a ON a.id = ato."A"
+        WHERE ato."B" = org.id
+        AND a.${column} = ANY(ARRAY[${Prisma.join(ids)}]::uuid[])
+      )
+    )
+  `;
+}
+
 export function buildSqlScoreFilter(params) {
   const conditions = [];
 
   const isFree = params?.isFree === true || params?.isFree === 'true';
+
+  const cities = Array.isArray(params?.cities) ? params.cities.filter(Boolean) : [];
 
   const districts = Array.isArray(params?.districts) ? params.districts.filter(Boolean) : [];
 
@@ -40,26 +65,12 @@ export function buildSqlScoreFilter(params) {
   `);
   }
 
+  if (cities.length) {
+    conditions.push(addressColumnMatches(Prisma.sql`"cityId"`, cities));
+  }
+
   if (districts.length) {
-    conditions.push(Prisma.sql`
-    (
-      EXISTS (
-        SELECT 1
-        FROM "_AddressToSpecialist" ats
-        JOIN "address" a ON a.id = ats."A"
-        WHERE ats."B" = sp.id
-        AND a."districtId" = ANY(ARRAY[${Prisma.join(districts)}]::uuid[])
-      )
-      OR
-      EXISTS (
-        SELECT 1
-        FROM "_AddressToOrganization" ato
-        JOIN "address" a ON a.id = ato."A"
-        WHERE ato."B" = org.id
-        AND a."districtId" = ANY(ARRAY[${Prisma.join(districts)}]::uuid[])
-      )
-    )
-  `);
+    conditions.push(addressColumnMatches(Prisma.sql`"districtId"`, districts));
   }
 
   if (specializations.length) {

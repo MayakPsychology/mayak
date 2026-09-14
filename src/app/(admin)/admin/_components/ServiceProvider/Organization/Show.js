@@ -45,11 +45,13 @@ export function OrganizationShow() {
         <TextField label="Тип власності" source="ownershipType" />
         <DateField label="Дата додавання в сервіс" showTime source="createdAt" />
         <NumberField label="Роки на ринку" source="yearsOnMarket" />
+        <NumberField label="Стаж" source="yearsOfExperience" />
         <TextField label="Формат послуг" source="formatOfWork" />
         <ArrayField label="Місця надання послуг" source="addresses">
           <Datagrid bulkActionButtons={false}>
             <TextField label="Повна адреса" source="fullAddress" />
             <TextField label="Назва кліники" source="nameOfClinic" />
+            <TextField label="Місто" source="city.name" />
             <TextField label="Район" source="district.name" />
             <BooleanField label="Головна адреса" source="isPrimary" />
             <FunctionField
@@ -84,6 +86,7 @@ export function OrganizationShow() {
         </ArrayField>
         <BooleanField label="Безкоштовний прийом" source="isFreeReception" />
         <BooleanField label="Активна/неактивна" source="isActive" />
+        <TextField label="Досвід та спеціалізація" source="experience" />
         <FunctionField
           source="description"
           label="Опис"

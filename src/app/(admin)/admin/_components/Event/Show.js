@@ -26,7 +26,7 @@ function ShowLayout() {
       <TextField source="organizerName" />
       <RichTextField source="notes" emptyText="No notes..." />
       <TextField source="format" />
-      {data?.format === EventFormat.OFFLINE && <TextField source="address" />}
+      {data?.format !== EventFormat.ONLINE && <TextField source="address" />}
       {data?.locationLink && (
         <Labeled label="Location link">
           <Wrapped>

@@ -6,7 +6,7 @@ import { cn } from '@utils/cn';
 export function AddressesList({ addresses, className, showIcon = false }) {
   return (
     <ul className={cn('flex flex-col gap-4 border-dashed border-t-gray-200', className)}>
-      {addresses?.map(({ id, nameOfClinic, fullAddress, district }) => (
+      {addresses?.map(({ id, nameOfClinic, fullAddress, city, district }) => (
         <li key={id} className="flex gap-4">
           {showIcon && (
             <span className="text-gray-500">
@@ -17,7 +17,7 @@ export function AddressesList({ addresses, className, showIcon = false }) {
             <h3 className="font-bold text-gray-700">{nameOfClinic || 'Місце надання послуг'}</h3>
             <div>
               <p>{fullAddress}</p>
-              <p>{district.name} район</p>
+              <p>{[district && `${district.name} район`, city?.name].filter(Boolean).join(', ')}</p>
             </div>
           </div>
         </li>

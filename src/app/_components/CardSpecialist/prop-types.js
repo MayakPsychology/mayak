@@ -8,6 +8,8 @@ const relatedInstanceCore = {
 
 export const districtPropType = PropTypes.shape(relatedInstanceCore);
 
+export const cityPropType = PropTypes.shape(relatedInstanceCore);
+
 export const therapyPropType = PropTypes.shape(relatedInstanceCore);
 
 export const supportFocusesPropType = PropTypes.shape({
@@ -24,6 +26,7 @@ export const addressPropType = PropTypes.shape({
   id: PropTypes.string,
   nameOfClinic: PropTypes.string,
   fullAddress: PropTypes.string,
+  city: cityPropType,
   district: districtPropType,
   createdAt: PropTypes.instanceOf(Date),
 });

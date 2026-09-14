@@ -35,8 +35,18 @@ function AddressInput() {
   const format = useWatch({ name: 'format' });
   return (
     <>
-      <TextInput disabled={format !== 'OFFLINE'} source="address" label="Адреса чи назва приміщення" className="w-96" />
-      <TextInput disabled={format !== 'OFFLINE'} source="locationLink" label="Посилання на локацію" className="w-96" />
+      <TextInput
+        disabled={!format || format === 'ONLINE'}
+        source="address"
+        label="Адреса чи назва приміщення"
+        className="w-96"
+      />
+      <TextInput
+        disabled={!format || format === 'ONLINE'}
+        source="locationLink"
+        label="Посилання на локацію"
+        className="w-96"
+      />
     </>
   );
 }

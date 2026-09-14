@@ -22,6 +22,9 @@ const zSpecialistSchema = serviceProviderCore.extend({
     invalid_type_error: 'Неприпустиме значення',
   }),
   yearsOfExperience: zYearsNumber,
+  // free text from the application form; legacy rows have none, so it stays optional here
+  experience: zString.nullish(),
+  education: zString.nullish(),
   description: zString,
 });
 

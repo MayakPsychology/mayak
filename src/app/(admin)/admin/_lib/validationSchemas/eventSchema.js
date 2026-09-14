@@ -30,9 +30,9 @@ const ActiveEventSchema = z.object({
         });
       }
     }),
-  format: z.enum(['ONLINE', 'OFFLINE'], {
+  format: z.enum(['ONLINE', 'OFFLINE', 'ONLINE_OFFLINE'], {
     required_error: errors('Формат').required,
-    invalid_type_error: errors('Формат').format('OFFLINE/ONLINE'),
+    invalid_type_error: errors('Формат').format('OFFLINE/ONLINE/ONLINE_OFFLINE'),
   }),
   priceType: z.enum(['FREE', 'FIXED_PRICE', 'MIN_PRICE'], {
     required_error: errors('Варіант вартості').required,
@@ -59,7 +59,7 @@ export const EventSchema = z
         message: 'Онлайн подія не повинна мати адресу',
       });
     }
-    if (format === 'OFFLINE' && !address) {
+    if (format !== 'ONLINE' && format && !address) {
       ctx.addIssue({
         code: z.ZodIssueCode.invalid_type,
         path: ['address'],

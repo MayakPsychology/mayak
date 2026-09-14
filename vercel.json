@@ -1,5 +1,11 @@
 {
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
-  "installCommand": "npm install && npx prisma migrate deploy && npm run seed:prod"
+  "installCommand": "npm install && npx prisma migrate deploy && npm run seed:prod",
+  "crons": [
+    {
+      "path": "/api/cron/blob-cleanup",
+      "schedule": "0 3 * * *"
+    }
+  ]
 }

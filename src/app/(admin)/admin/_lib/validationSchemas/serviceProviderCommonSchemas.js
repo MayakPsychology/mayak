@@ -152,17 +152,22 @@ const zCoordinateSchema = z.object({
     .max(90, { message: 'Максимальне допустиме значення 90' }),
 });
 
+const zRelatedName = z
+  .object({
+    id: z.string(),
+    name: z.string(),
+  })
+  .nullish();
+
 export const zEditAddressSchema = z.object({
   id: z.string().nullish(),
   fullAddress: zStringWithMax,
   nameOfClinic: z.string().nullish(),
-  districtId: zString,
-  district: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-    })
-    .nullish(),
+  cityId: zString,
+  city: zRelatedName,
+  // optional: most Ukrainian towns are not split into districts
+  districtId: z.string().nullish(),
+  district: zRelatedName,
   isPrimary: z
     .boolean()
     .nullish()
@@ -172,7 +177,8 @@ export const zEditAddressSchema = z.object({
 
 export const zCreateAddressSchema = z.object({
   fullAddress: zStringWithMax,
-  district: zStringWithMax,
+  city: zStringWithMax,
+  district: zStringWithMax.nullish(),
   nameOfClinic: zStringWithMax.nullish(),
   isPrimary: z.boolean(),
   ...zCoordinateSchema.shape,

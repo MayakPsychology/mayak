@@ -22,6 +22,7 @@ enum FormatOfWork {
 enum EventFormat {
   OFFLINE
   ONLINE
+  ONLINE_OFFLINE
 }
 
 enum EventPriceFormat {
@@ -61,6 +62,8 @@ model Specialist {
   specializationMethods Method[]
   gender                Gender?
   yearsOfExperience     Float?           @db.Real
+  experience            String?          @db.Text
+  education             String?          @db.Text
   formatOfWork          FormatOfWork?
   addresses             Address[]
   workTime              WorkTime[]
@@ -95,6 +98,8 @@ model Organization {
   name                  String             @db.VarChar(128)
   type                  OrganizationType[]
   yearsOnMarket         Int?               @db.SmallInt
+  yearsOfExperience     Int?               @db.SmallInt
+  experience            String?            @db.Text
   formatOfWork          FormatOfWork?
   addresses             Address[]
   ownershipType         OwnershipType?
@@ -173,12 +178,27 @@ model Specialization {
   @@map("specialization")
 }
 
+model City {
+  id        String     @id @default(uuid()) @db.Uuid
+  createdAt DateTime   @default(now())
+  name      String     @unique @db.VarChar(64)
+  districts District[]
+  addresses Address[]
+
+  @@map("city")
+}
+
 model District {
   id        String    @id @default(uuid()) @db.Uuid
   createdAt DateTime  @default(now())
-  name      String    @unique @db.VarChar(64)
+  name      String    @db.VarChar(64)
+  city      City      @relation(fields: [cityId], references: [id])
+  cityId    String    @db.Uuid
   Address   Address[]
 
+  // district names repeat across cities — Шевченківський exists in Lviv and in Kyiv
+  @@unique([name, cityId])
+  @@index([cityId])
   @@map("district")
 }
 
@@ -226,14 +246,18 @@ model Address {
   createdAt     DateTime       @default(now())
   nameOfClinic  String?        @db.VarChar(255)
   fullAddress   String         @db.VarChar(128) // street,building number,floor,room number
-  district      District       @relation(fields: [districtId], references: [id])
-  districtId    String         @db.Uuid
+  city          City           @relation(fields: [cityId], references: [id])
+  cityId        String         @db.Uuid
+  // optional: most Ukrainian towns are not split into districts
+  district      District?      @relation(fields: [districtId], references: [id])
+  districtId    String?        @db.Uuid
   specialists   Specialist[]
   organizations Organization[]
   isPrimary     Boolean        @default(false)
   longitude     Float          @default(0) @db.DoublePrecision
   latitude      Float          @default(0) @db.DoublePrecision
 
+  @@index([cityId])
   @@index([districtId])
   @@index([isPrimary])
   @@index([latitude, longitude])
@@ -375,4 +399,13 @@ model DonationDetails {
   qrLink               String  @db.Text // посилання, яке буде відображене QR-кодом
 
   @@map("donation_details")
+}
+
+model RateLimitHit {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now())
+  key       String   @db.VarChar(128)
+
+  @@index([key, createdAt])
+  @@map("rate_limit_hit")
 }

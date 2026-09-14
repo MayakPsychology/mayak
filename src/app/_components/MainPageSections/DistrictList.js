@@ -10,7 +10,7 @@ import { cn } from '@utils/cn';
 
 const activeButtonStyles = 'pointer-events-none !border-secondary-300 !bg-secondary-300 font-semibold text-gray-900';
 
-export function DistrictList({ list, className }) {
+export function DistrictList({ list, className, paramName = 'district' }) {
   const [selected, setSelected] = useState(0);
   const handleClick = index => {
     setSelected(index);
@@ -24,7 +24,7 @@ export function DistrictList({ list, className }) {
         return (
           <Slide key={id} onClick={() => handleClick(index)} className="mr-3.5 !w-auto last:mr-0">
             <Link
-              href={`/specialist?district=${id}`}
+              href={`/specialist?${paramName}=${id}`}
               className={cn(isSelected && 'pointer-events-none cursor-none')}
               tabIndex={-1}
             >
@@ -36,7 +36,7 @@ export function DistrictList({ list, className }) {
                 className={cn('*:gap-0', {
                   [activeButtonStyles]: isSelected,
                 })}
-                aria-label={`Click to see specialists related to the district ${name}`}
+                aria-label={`Click to see specialists related to ${name}`}
               >
                 {name}
               </PillButton>
@@ -55,4 +55,5 @@ DistrictList.propTypes = {
     }),
   ),
   className: PropTypes.string,
+  paramName: PropTypes.string,
 };

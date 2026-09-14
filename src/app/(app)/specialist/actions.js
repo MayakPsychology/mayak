@@ -5,9 +5,13 @@ export const getFilterData = unstableCache(
   async () => {
     'use server';
 
-    const [districts, therapies, categories, specializations] = await Promise.all([
-      prisma.district.findMany({
-        select: { id: true, name: true },
+    const [cities, therapies, categories, specializations] = await Promise.all([
+      prisma.city.findMany({
+        select: {
+          id: true,
+          name: true,
+          districts: { select: { id: true, name: true }, orderBy: { name: 'asc' } },
+        },
         orderBy: { name: 'asc' },
       }),
       prisma.therapy.findMany({
@@ -32,7 +36,7 @@ export const getFilterData = unstableCache(
         orderBy: { name: 'asc' },
       }),
     ]);
-    return { districts, therapies, categories, specializations };
+    return { cities, therapies, categories, specializations };
   },
   ['filter-data'],
   { revalidate: 3600, tags: ['filters'] },

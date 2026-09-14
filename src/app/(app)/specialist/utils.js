@@ -59,3 +59,39 @@ export const getSpecialistsIds = async () => {
 
   return specialists.map(({ id }) => id);
 };
+
+const citiesWithDistricts = () =>
+  prisma.city.findMany({
+    select: { id: true, name: true, districts: { select: { id: true, name: true }, orderBy: { name: 'asc' } } },
+    orderBy: { name: 'asc' },
+  });
+
+export const getSpecDictionaries = async () => {
+  const [clientCategories, specializations, specializationMethods, cities, therapies] = await Promise.all([
+    prisma.clientCategory.findMany(),
+    prisma.specialization.findMany(),
+    prisma.method.findMany(),
+    citiesWithDistricts(),
+    prisma.therapy.findMany({
+      include: {
+        requests: true,
+      },
+    }),
+  ]);
+  return { clientCategories, specializations, specializationMethods, cities, therapies };
+};
+
+export const getOrgDictionaries = async () => {
+  const [clientCategories, specializations, cities, therapies, organizationTypes] = await Promise.all([
+    prisma.clientCategory.findMany(),
+    prisma.specialization.findMany(),
+    citiesWithDistricts(),
+    prisma.therapy.findMany({
+      include: {
+        requests: true,
+      },
+    }),
+    prisma.organizationType.findMany(),
+  ]);
+  return { clientCategories, specializations, cities, therapies, organizationTypes };
+};

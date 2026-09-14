@@ -15,11 +15,14 @@ export const TextInputField = forwardRef(
       type = 'text',
       disabled = false,
       placeholder = '',
+      label = '',
       error = '',
+      hasError = false,
       required = false,
       variant = variants.default,
       absolute = true,
       additionalContainerStyle = '',
+      ...inputProps
     },
     ref,
   ) => {
@@ -28,7 +31,7 @@ export const TextInputField = forwardRef(
     const absoluteLabel = absolute ? 'absolute bottom-[49px]' : '';
 
     return (
-      <div className={cn(`relative`, variant.mainContainer.base)}>
+      <div className={cn(`relative`, variant.mainContainer.base, error && absolute && 'pb-5')}>
         {error && <p className={cn(absoluteError, variant.errorParagraph.base)}>{error}</p>}
         <div
           className={cn(
@@ -36,6 +39,7 @@ export const TextInputField = forwardRef(
             variant.inputContainer.style,
             variant.inputContainer.focusWithin,
             error && variant.inputContainer.error,
+            hasError && variant.inputContainer.error,
             additionalContainerStyle,
           )}
         >
@@ -50,15 +54,21 @@ export const TextInputField = forwardRef(
             placeholder={`${placeholder}${required ? '*' : ''}`}
             required={required}
             ref={ref}
+            {...inputProps}
           />
-          {error && <InputErrorIcon className={cn(variant.errorIcon.base)} />}
+          {(error || hasError) && <InputErrorIcon className={cn(variant.errorIcon.base)} />}
         </div>
 
         <label
-          className={cn(variant.label.base, variant.label.stateful, absoluteLabel, error && variant.label.error)}
+          className={cn(
+            variant.label.base,
+            variant.label.stateful,
+            absoluteLabel,
+            (error || hasError) && variant.label.error,
+          )}
           htmlFor={id}
         >
-          {placeholder}
+          {label || placeholder}
         </label>
       </div>
     );
@@ -71,10 +81,12 @@ TextInputField.propTypes = {
   value: PropTypes.string,
   name: PropTypes.string,
   onChange: PropTypes.func,
-  type: PropTypes.oneOf(['text', 'email', 'url', 'password', 'search', 'tel']),
+  type: PropTypes.oneOf(['text', 'email', 'url', 'password', 'search', 'tel', 'number', 'date', 'datetime-local']),
   disabled: PropTypes.bool,
   placeholder: PropTypes.string,
+  label: PropTypes.string,
   error: PropTypes.string,
+  hasError: PropTypes.bool,
   required: PropTypes.bool,
   absolute: PropTypes.bool,
   additionalContainerStyle: PropTypes.string,

@@ -4,3 +4,10 @@ set -e
 branch=$(git symbolic-ref --short HEAD)
 
 node .husky/pre-push.js "$branch"
+
+if git rev-parse --verify --quiet "origin/$branch" >/dev/null 2>&1 &&
+  git diff --quiet "origin/$branch" HEAD -- prisma; then
+  exit 0
+fi
+
+node .husky/check-migrations.js

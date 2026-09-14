@@ -1,14 +1,48 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 // needed to seed therapies correctly
 
-export const districts = [
-  'Личаківський',
-  'Шевченківський',
-  'Франківський',
-  'Залізничний',
-  'Галицький',
-  'Сихівський',
-].map(name => ({ name }));
+// Districts are optional: only the two cities that are actually split into them carry a list.
+export const cities = [
+  {
+    name: 'Львів',
+    districts: ['Личаківський', 'Шевченківський', 'Франківський', 'Залізничний', 'Галицький', 'Сихівський'],
+  },
+  {
+    name: 'Київ',
+    districts: [
+      'Голосіївський',
+      'Дарницький',
+      'Деснянський',
+      'Дніпровський',
+      'Оболонський',
+      'Печерський',
+      'Подільський',
+      'Святошинський',
+      'Солом’янський',
+      'Шевченківський',
+    ],
+  },
+  { name: 'Вінниця' },
+  { name: 'Дніпро' },
+  { name: 'Житомир' },
+  { name: 'Запоріжжя' },
+  { name: 'Івано-Франківськ' },
+  { name: 'Кропивницький' },
+  { name: 'Луцьк' },
+  { name: 'Миколаїв' },
+  { name: 'Одеса' },
+  { name: 'Полтава' },
+  { name: 'Рівне' },
+  { name: 'Суми' },
+  { name: 'Тернопіль' },
+  { name: 'Ужгород' },
+  { name: 'Харків' },
+  { name: 'Херсон' },
+  { name: 'Хмельницький' },
+  { name: 'Черкаси' },
+  { name: 'Чернівці' },
+  { name: 'Чернігів' },
+].map(city => ({ name: city.name, districts: city.districts ?? [] }));
 
 export const specializations = ['Психолог', 'Психотерапевт', 'Психіатр', 'Сексолог', 'Соціальний працівник'].map(
   name => ({

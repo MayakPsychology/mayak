@@ -59,11 +59,17 @@ export const SpecialistFormFields = {
     label: 'Назва клініки',
     isRequired: false,
   },
+  city: {
+    name: 'city',
+    type: null,
+    label: 'Місто',
+    isRequired: true,
+  },
   district: {
     name: 'district',
     type: null,
     label: 'Район',
-    isRequired: true,
+    isRequired: false,
   },
   therapies: {
     name: 'therapies',

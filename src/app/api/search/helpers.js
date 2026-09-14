@@ -54,11 +54,15 @@ function parseNumericParam(param) {
   return res;
 }
 
+// a query param arrives as a string when given once and as an array when repeated
+const asList = value => (typeof value === 'string' ? [value] : value);
+
 /* eslint-disable sonarjs/cognitive-complexity */
 export function createEntityFilter({
   type,
   requests,
   format,
+  cities,
   districts,
   prices,
   priceMin,
@@ -79,11 +83,10 @@ export function createEntityFilter({
     },
   };
   const formatOfWorkFilter = format && { in: getFormatFilter(format) };
-  const addressesFilter = districts && {
+  const addressesFilter = (cities || districts) && {
     some: {
-      OR: districts.map(id => ({
-        districtId: id,
-      })),
+      ...(cities && { cityId: { in: cities } }),
+      ...(districts && { districtId: { in: districts } }),
     },
   };
   const isSupportFocusesFilterExist = requestType || type || priceFilter || query || isFree || undefined;
@@ -351,6 +354,7 @@ export function getSearchFilterQueryParams(req) {
       query: undefined,
       tags: undefined, // 🔥 ДОДАЛИ
 
+      cities: undefined,
       districts: undefined,
       requests: undefined,
       price: undefined,
@@ -394,17 +398,20 @@ export function getSearchFilterQueryParams(req) {
         query: params.query || undefined,
         tags: parsedTags,
 
-        districts: typeof params.district === 'string' ? [params.district] : params.district,
+        cities: asList(params.city),
+        city: undefined,
+
+        districts: asList(params.district),
         district: undefined,
 
-        requests: typeof params.request === 'string' ? [params.request] : params.request,
+        requests: asList(params.request),
         request: undefined,
 
-        specializations: typeof params.specialization === 'string' ? [params.specialization] : params.specialization,
+        specializations: asList(params.specialization),
         specialization: undefined,
 
-        prices: typeof normalizedPrices === 'string' ? [normalizedPrices] : normalizedPrices,
-        price: typeof normalizedPrices === 'string' ? [normalizedPrices] : normalizedPrices,
+        prices: asList(normalizedPrices),
+        price: asList(normalizedPrices),
 
         isFree: isFree || undefined,
       };

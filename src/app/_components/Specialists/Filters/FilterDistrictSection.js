@@ -7,7 +7,7 @@ import { districtFilterPropType } from './propTypes';
 export default function FilterDistrictSection({ className, districts, filters, appendFilter }) {
   const value = filters.getAll(specialistFiltersConfig.district.filterKey);
   return (
-    <FilterSection title={specialistFiltersConfig.district.title} titleInfo="м. Львів" className={className}>
+    <FilterSection title={specialistFiltersConfig.district.title} className={className}>
       <ul className="flex flex-col gap-y-1 md:flex-row md:flex-wrap md:gap-y-2">
         {districts.map(district => (
           <li key={district.id} className="w-1/3">

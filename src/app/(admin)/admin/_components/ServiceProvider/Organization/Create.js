@@ -8,6 +8,7 @@ import { ActivationForm } from '@admin/components/ServiceProvider/ActivationForm
 import { ServicesForm } from '@admin/components/ServiceProvider/ServicesForm';
 import { AddressesForm } from '@admin/components/ServiceProvider/AddressesForm';
 import { DescriptionEdit } from '@admin/components/ServiceProvider/DescriptionEdit';
+import { LongTextEdit } from '@admin/components/ServiceProvider/LongTextEdit';
 import { useRedirectToList } from '@admin/components/ServiceProvider/hooks';
 import { ContactsList } from '@admin/components/ContactsList';
 import { SocialLinks } from '@admin/components/ServiceProvider/SocialLinks';
@@ -32,6 +33,7 @@ export function OrganizationCreate() {
         <AddressesForm label="Адреси надання послуг" />
         <WorkTimeForm />
         <ServicesForm label="Послуги" />
+        <LongTextEdit source="experience" label="Досвід" />
         <DescriptionEdit />
         <ContactsList />
         <SocialLinks />
